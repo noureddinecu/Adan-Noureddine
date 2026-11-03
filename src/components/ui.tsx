@@ -6,9 +6,9 @@ import { highlight } from '../search/engine';
 
 export const SECTION_STYLE: Record<SectionKey, { bg: string; fg: string; soft: string; icon: LucideIcon; label: string }> = {
   deg1: { bg: 'bg-deg1', fg: 'text-white', soft: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-300', icon: OctagonAlert, label: '1' },
-  deg2: { bg: 'bg-deg2', fg: 'text-neutral-900', soft: 'bg-yellow-50 text-yellow-800 dark:bg-yellow-950/50 dark:text-yellow-200', icon: TriangleAlert, label: '2' },
-  deg3: { bg: 'bg-deg3', fg: 'text-emerald-950', soft: 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300', icon: CircleAlert, label: '3' },
-  admin: { bg: 'bg-admin', fg: 'text-cyan-950', soft: 'bg-cyan-50 text-cyan-800 dark:bg-cyan-950/50 dark:text-cyan-300', icon: FileText, label: 'AD' },
+  deg2: { bg: 'bg-deg2', fg: 'text-white', soft: 'bg-yellow-50 text-yellow-800 dark:bg-yellow-950/50 dark:text-yellow-200', icon: TriangleAlert, label: '2' },
+  deg3: { bg: 'bg-deg3', fg: 'text-white', soft: 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300', icon: CircleAlert, label: '3' },
+  admin: { bg: 'bg-admin', fg: 'text-white', soft: 'bg-cyan-50 text-cyan-800 dark:bg-cyan-950/50 dark:text-cyan-300', icon: FileText, label: 'AD' },
   delit: { bg: 'bg-delit', fg: 'text-white', soft: 'bg-orange-50 text-orange-800 dark:bg-orange-950/50 dark:text-orange-300', icon: Gavel, label: 'DL' },
   art94: { bg: 'bg-art94', fg: 'text-white', soft: 'bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200', icon: Footprints, label: 'C4' },
   stop: { bg: 'bg-stop', fg: 'text-white', soft: 'bg-rose-50 text-rose-900 dark:bg-rose-950/50 dark:text-rose-300', icon: Hand, label: '⏸' },

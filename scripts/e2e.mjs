@@ -32,6 +32,10 @@ try {
   check((await page.getAttribute('html', 'dir')) === 'rtl', 'document is RTL');
   check(await page.isVisible('input[type=search]'), 'search bar visible on home');
   for (const t of ['الدرجة الأولى', 'الدرجة الثانية', 'الدرجة الثالثة', 'المخالفات الإدارية', 'الجنح']) check(await page.isVisible(`text=${t}`), `home shows section «${t}»`);
+  check(await page.isVisible('text=الخاص بأعوان الشرطة محرري المحاضر'), 'full subtitle visible');
+  check(await page.evaluate(() => { const el = [...document.querySelectorAll('header p')].find((p) => p.textContent.includes('محرري المحاضر')); return el && el.scrollWidth <= el.clientWidth + 1; }), 'subtitle not truncated');
+  { const hs = await page.locator('main .grid > button').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().height)));
+    check(hs.length === 8 && new Set(hs).size === 1, `8 uniform section cards (${hs.join(',')})`); }
   await page.screenshot({ path: join(shots, '01-home.png') });
 
   // live search

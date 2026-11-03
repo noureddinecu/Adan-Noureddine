@@ -1,4 +1,4 @@
-import { Clock, Download, Flame, History, Moon, SearchX, Star, Sun, X, Zap } from 'lucide-react';
+import { ChevronLeft, Clock, Download, Flame, History, Moon, SearchX, Star, Sun, X, Zap } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { SearchBar } from '../components/SearchBar';
 import { Card, Empty, Logo, SECTION_STYLE, SectionIcon, SectionTitle } from '../components/ui';
@@ -8,6 +8,8 @@ import { navigate, type Route } from '../lib/router';
 import { useInstall, useOnline } from '../lib/pwa';
 import { search } from '../search/engine';
 import { useApp } from '../store';
+
+const countWord = (n: number) => (n >= 3 && n <= 10 ? 'مخالفات' : 'مخالفة');
 
 const SHORTCUTS = ['السرعة', 'الوقوف', 'حزام السلامة', 'الهاتف', 'الكحول', 'الطريق السيار', 'رخصة السياقة', 'شهادة التسجيل', 'التأمين', 'المراقبة التقنية', 'الحمولة', 'خوذة', 'المادة 184', 'ceinture'];
 
@@ -54,8 +56,16 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
   const recent = app.user.history.map((h) => app.byId.get(h.id)).filter(Boolean).slice(0, 5);
   const favs = app.user.favorites.map((h) => app.byId.get(h.id)).filter(Boolean).slice(0, 5);
   const top = Object.entries(app.user.views).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).map(([id]) => app.byId.get(id)).filter(Boolean).slice(0, 5);
-  const main = app.data.sections.filter((s) => s.main);
-  const extra = app.data.sections.filter((s) => !s.main);
+  const ORDER: SectionKey[] = ['deg1', 'deg2', 'deg3', 'admin', 'delit', 'art94', 'stop'];
+  const CARD_TITLE: Partial<Record<SectionKey, string>> = { art94: 'مخالفات الراجلين', stop: 'مسطرة التوقيف' };
+  const tiles = [
+    ...ORDER.map((k) => app.sections.get(k)!).filter(Boolean).map((s) => ({
+      key: s.key, to: `/section/${s.key}`, title: CARD_TITLE[s.key] ?? s.short, count: s.count,
+      bar: SECTION_STYLE[s.key].bg, tile: `${SECTION_STYLE[s.key].bg} ${SECTION_STYLE[s.key].fg} shadow-sm`,
+      icon: <SectionIcon section={s.key} className="size-6" />,
+    })),
+    { key: 'fav', to: '/favorites', title: 'المفضلة', count: app.user.favorites.length, bar: 'bg-gold', tile: 'bg-gold text-white shadow-sm', icon: <Star className="size-6 fill-current" /> },
+  ];
 
   return (
     <div className="safe-bottom">
@@ -65,7 +75,7 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
             <Logo tile className="size-14" />
             <div className="min-w-0 flex-1">
               <h1 className="text-[21px] font-bold leading-tight">دليل المراقبة الطرقية</h1>
-              <p className="truncate text-[13.5px] text-white/80">الخاص بأعوان الشرطة محرري المحاضر · مدونة السير 52-05</p>
+              <p className="mt-0.5 text-[14px] leading-6 text-white/85 text-balance">الخاص بأعوان الشرطة محرري المحاضر</p>
             </div>
             <button onClick={theme.toggle} className="grid size-10 place-items-center rounded-full bg-white/10 hover:bg-white/20" aria-label={theme.dark ? 'الوضع النهاري' : 'الوضع الليلي'}>
               {theme.dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
@@ -136,22 +146,24 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
             )}
 
             <SectionTitle>أقسام المخالفات</SectionTitle>
-            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-              {main.map((s, i) => (
-                <button key={s.key} onClick={() => navigate(`/section/${s.key}`)} className={`zellige-corner anim-in group relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3.5 text-right shadow-sm transition hover:shadow-md active:scale-[.98] ${i === main.length - 1 && main.length % 2 ? 'col-span-2 sm:col-span-1' : ''}`} style={{ animationDelay: `${i * 40}ms` }}>
-                  <span className={`absolute -left-6 -top-6 size-20 rounded-full opacity-15 ${SECTION_STYLE[s.key].bg}`} />
-                  <span className={`mb-3 grid size-11 place-items-center rounded-xl shadow-sm ${SECTION_STYLE[s.key].bg} ${SECTION_STYLE[s.key].fg}`}><SectionIcon section={s.key} className="size-6" /></span>
-                  <span className="block text-[16px] font-bold leading-6">{s.short}</span>
-                  <span className="text-[13.5px] text-[var(--muted)]"><b className="text-[var(--text)]">{s.count}</b> مخالفة</span>
-                </button>
-              ))}
-            </div>
-            <div className="mt-2.5 flex flex-col gap-2">
-              {extra.map((s) => (
-                <button key={s.key} onClick={() => navigate(`/section/${s.key}`)} className="flex items-center gap-3 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 text-right shadow-sm active:scale-[.99]">
-                  <span className={`grid size-9 shrink-0 place-items-center rounded-lg ${SECTION_STYLE[s.key].bg} ${SECTION_STYLE[s.key].fg}`}><SectionIcon section={s.key} className="size-5" /></span>
-                  <span className="min-w-0 flex-1 text-[14.5px] font-semibold leading-6">{s.title}</span>
-                  <span className="rounded-full bg-[var(--surface-2)] px-2.5 py-0.5 text-[13.5px] font-bold">{s.count}</span>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {tiles.map((t, i) => (
+                <button
+                  key={t.key}
+                  onClick={() => navigate(t.to)}
+                  className="anim-in group relative flex min-h-[136px] flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3.5 text-right shadow-[0_1px_2px_rgba(0,0,0,.04),0_4px_14px_-6px_rgba(11,61,46,.18)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_22px_-8px_rgba(11,61,46,.35)] active:scale-[.98]"
+                  style={{ animationDelay: `${i * 35}ms` }}
+                >
+                  <span className={`absolute inset-x-0 top-0 h-1 ${t.bar}`} />
+                  <span className="flex items-start justify-between gap-2">
+                    <span className={`grid size-11 shrink-0 place-items-center rounded-xl ${t.tile}`}>{t.icon}</span>
+                    <ChevronLeft className="mt-1 size-5 text-[var(--muted)] opacity-50 transition group-hover:-translate-x-0.5 group-hover:opacity-90" />
+                  </span>
+                  <span className="mt-2.5 line-clamp-2 min-h-[48px] text-[16px] font-bold leading-6">{t.title}</span>
+                  <span className="mt-auto flex items-baseline gap-1.5 pt-1">
+                    <span className="ltr-nums text-[22px] font-bold leading-none text-[var(--text)]">{t.count}</span>
+                    <span className="text-[13.5px] text-[var(--muted)]">{countWord(t.count)}</span>
+                  </span>
                 </button>
               ))}
             </div>

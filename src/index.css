@@ -32,13 +32,13 @@
   --color-accent: #c1272d;
   --color-gold: #c9a227;
   --color-ivory: #f8f3e6;
-  --color-deg1: #e2231a;
-  --color-deg2: #f2df00;
-  --color-deg3: #34d399;
-  --color-admin: #1cc8e6;
-  --color-delit: #f07c22;
-  --color-art94: #1f1f1f;
-  --color-stop: #6b1d3f;
+  --color-deg1: #c1272d;
+  --color-deg2: #e3b91c;
+  --color-deg3: #2e9466;
+  --color-admin: #1f7fa6;
+  --color-delit: #d9711f;
+  --color-art94: #3a3f3c;
+  --color-stop: #7a2346;
 }
 
 :root {
