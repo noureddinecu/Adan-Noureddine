@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const zTile = readFileSync(join(root, 'public/patterns/zellige-line-gold.svg'));
 const zColor = readFileSync(join(root, 'public/patterns/zellige-color.svg'));
+const zWarm = readFileSync(join(root, 'public/patterns/zellige-warm.svg'));
 const zUri = (b) => `data:image/svg+xml;base64,${b.toString('base64')}`;
 const logo = readFileSync(join(root, 'public/icons/logo.svg'));
 const zGreen = readFileSync(join(root, 'public/patterns/zellige-line-green.svg'));
@@ -36,7 +37,7 @@ const shots = androidOut ? [
   ['mipmap-xxhdpi/ic_launcher.png', 144, svg(0.86, true)],
   ['mipmap-xxxhdpi/ic_launcher.png', 192, svg(0.86, true)],
   ['drawable/splash_logo.png', 288, svg(0.86, true)],
-  ['drawable/splash_pattern.png', 192, `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 192 192"><rect width="192" height="192" fill="#0b3d2e"/><image href="${zUri(zColor)}" width="96" height="96" opacity=".16"/><image href="${zUri(zColor)}" x="96" width="96" height="96" opacity=".16"/><image href="${zUri(zColor)}" y="96" width="96" height="96" opacity=".16"/><image href="${zUri(zColor)}" x="96" y="96" width="96" height="96" opacity=".16"/></svg>`],
+  ['drawable/splash_pattern.png', 192, `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 192 192"><rect width="192" height="192" fill="#fbe9dc"/><image href="${zUri(zWarm)}" width="96" height="96" opacity=".55"/><image href="${zUri(zWarm)}" x="96" width="96" height="96" opacity=".55"/><image href="${zUri(zWarm)}" y="96" width="96" height="96" opacity=".55"/><image href="${zUri(zWarm)}" x="96" y="96" width="96" height="96" opacity=".55"/></svg>`],
 ] : [
   ['icon-192.png', 192, svg(0.86, true)],
   ['icon-512.png', 512, svg(0.86, true)],

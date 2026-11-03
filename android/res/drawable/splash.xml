@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item><color android:color="#0b3d2e" /></item>
+    <item><color android:color="#fbe9dc" /></item>
     <item><bitmap android:src="@drawable/splash_pattern" android:tileMode="repeat" /></item>
     <item><shape android:shape="rectangle">
-        <gradient android:angle="270" android:startColor="#33006233" android:centerColor="#00000000" android:endColor="#99062a1f" />
+        <gradient android:angle="180" android:startColor="#B3CE1420" android:centerColor="#33DE343C" android:endColor="#00FBE9DC" />
     </shape></item>
-    <item android:gravity="center"><bitmap android:gravity="center" android:src="@drawable/splash_logo" /></item>
 </layer-list>

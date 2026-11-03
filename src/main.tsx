@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { registerSW } from 'virtual:pwa-register';
 import { App } from './App';
-import { Logo } from './components/ui';
+import { STAR_PATH } from './components/star-path';
 import { useTheme } from './lib/theme';
 import { AppProvider } from './store';
 import './index.css';
@@ -12,15 +12,27 @@ if (!import.meta.env.VITE_APK) registerSW({ immediate: true });
 
 function Splash({ leaving = false }: { leaving?: boolean }) {
   return (
-    <div className={`splash-zellige fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-gradient-to-b from-brand-600 via-brand-800 to-brand-900 text-white transition-opacity duration-300 ${leaving ? 'pointer-events-none opacity-0' : 'opacity-100'}`} role="status" aria-label="دليل المراقبة الطرقية">
-      <div className="anim-in relative flex flex-col items-center gap-4 rounded-3xl bg-brand-900/70 px-10 py-9 text-center shadow-2xl ring-1 ring-gold/50 backdrop-blur-sm">
-        <Logo tile className="size-28" />
-        <div>
-          <p className="text-[25px] font-bold leading-tight">دليل المراقبة الطرقية</p>
-          <p className="mt-1.5 text-[14.5px] text-white/80">الخاص بأعوان الشرطة محرري المحاضر</p>
-        </div>
-        <span className="h-px w-28 bg-gradient-to-l from-transparent via-gold to-transparent" />
-        <div className="h-1 w-24 overflow-hidden rounded-full bg-white/15"><div className="h-full w-1/2 animate-pulse rounded-full bg-gold" /></div>
+    <div
+      className={`fixed inset-0 z-[100] overflow-hidden bg-[#fbe9dc] transition-opacity duration-300 ${leaving ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+      role="status"
+      aria-label="دليل المراقبة الطرقية"
+    >
+      {/* warm zellige over the whole screen */}
+      <div className="absolute inset-0 bg-[url('/patterns/zellige-warm.svg')] bg-[length:92px] opacity-55" />
+      {/* soft red drape on the right side */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_70%_at_100%_18%,rgba(206,20,32,.92),rgba(222,52,60,.55)_45%,rgba(240,120,110,0)_80%)]" />
+      <div className="absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-[rgba(176,10,22,.35)] to-transparent" />
+      {/* large translucent green star, upper right */}
+      <svg viewBox="-110 -110 220 220" className="absolute right-[3%] top-[5%] w-[58%] max-w-[340px] opacity-75 drop-shadow-[0_4px_10px_rgba(0,60,20,.25)]" aria-hidden>
+        <path d={STAR_PATH} fill="none" stroke="#1d8a3e" strokeWidth="15" strokeLinejoin="miter" strokeMiterlimit="10" />
+      </svg>
+      {/* light veil behind the title for readability */}
+      <div className="absolute inset-x-0 top-[44%] h-[34%] bg-[radial-gradient(ellipse_60%_55%_at_50%_45%,rgba(255,244,236,.85),rgba(255,244,236,0))]" />
+      <div className="relative flex h-full flex-col items-center justify-center px-6 pt-[22vh] text-center">
+        <h1 className="text-[clamp(30px,9vw,44px)] font-bold leading-tight text-[#a3111c] drop-shadow-[0_2px_2px_rgba(255,255,255,.6)]">دليل المراقبة الطرقية</h1>
+        <p className="mt-5 rounded-full bg-gradient-to-b from-[#d61f2c] to-[#a3111c] px-7 py-2.5 text-[clamp(15px,4.6vw,21px)] font-semibold leading-7 text-white shadow-[0_6px_14px_-4px_rgba(130,10,20,.55)] ring-2 ring-white/80">
+          الخاص بأعوان الشرطة محرري المحاضر
+        </p>
       </div>
     </div>
   );

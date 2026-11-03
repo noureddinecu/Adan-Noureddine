@@ -43,7 +43,9 @@ def tile(S, fills, stroke, sw, mode):
 
 palette = {'green': '#006233', 'red': '#c1272d', 'gold': '#c9a227', 'ivory': '#f8f3e6', 'blue': '#0b3d2e'}
 os.makedirs(OUT, exist_ok=True)
+warm = {'green': '#e9a184', 'red': '#e98a6b', 'gold': '#f2b98f', 'ivory': '#fbe9dc', 'blue': '#d98d86'}
 files = {
+    'zellige-warm.svg': tile(96, warm, '#f6d3bf', 1.4, 'color'),  # splash screen (beige / pink / light orange)
     'zellige-color.svg': tile(96, palette, '#c9a227', 1.2, 'color'),   # body / splash (used at low opacity)
     'zellige-line-gold.svg': tile(72, palette, '#d9b54a', 1.1, 'line'),  # header on green
     'zellige-line-green.svg': tile(72, palette, '#006233', 1.0, 'line'),  # light surfaces
