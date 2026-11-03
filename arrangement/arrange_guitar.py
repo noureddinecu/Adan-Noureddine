@@ -276,7 +276,7 @@ ln = (f"loudnorm=I=-14:TP=-1.2:LRA=11:measured_I={js['input_i']}:measured_TP={js
       f"measured_LRA={js['input_lra']}:measured_thresh={js['input_thresh']}:offset={js['target_offset']}:linear=true")
 final_wav = os.path.join(OUT, 'sax_guitar_arrangement.wav')
 subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', pre, '-af',
-                chain + ln + ',alimiter=limit=0.84:attack=5:release=60:asc=1', '-ar', str(SR), '-c:a', 'pcm_s24le', final_wav], check=True)
+                chain + ln + ',alimiter=limit=0.8:attack=3:release=80:level=false', '-ar', str(SR), '-c:a', 'pcm_s24le', final_wav], check=True)
 subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', final_wav,
                 '-c:a', 'libmp3lame', '-b:a', '320k', final_wav[:-4] + '.mp3'], check=True)
 subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', os.path.join(OUT, 'guitar_stem.wav'),
