@@ -6,6 +6,7 @@ import { ViolationCard } from '../components/ViolationCard';
 import type { SectionKey } from '../data/types';
 import { navigate, type Route } from '../lib/router';
 import { useInstall, useOnline } from '../lib/pwa';
+import { useScrollHide } from '../lib/useScrollHide';
 import { search } from '../search/engine';
 import { useApp } from '../store';
 
@@ -20,6 +21,9 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
   const inputRef = useRef<HTMLInputElement>(null);
   const dq = useDeferredValue(q);
   const online = useOnline();
+  const scrolledDown = useScrollHide(140);
+  const [focused, setFocused] = useState(false);
+  const hideSearch = scrolledDown && !focused;
   const install = useInstall();
 
   // keep the URL in sync (replace, so typing does not flood the history)
@@ -86,9 +90,9 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
         <div className="zellige-band" />
       </header>
 
-      <div className="sticky top-0 z-30 -mt-8 px-3 pb-2 pt-[max(env(safe-area-inset-top),0px)]">
+      <div className={`sticky top-0 z-30 -mt-8 px-3 pb-2 pt-[max(env(safe-area-inset-top),0px)] transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-[130%] opacity-0' : 'translate-y-0 opacity-100'}`}>
         <div className="mx-auto max-w-3xl">
-          <SearchBar ref={inputRef} large value={q} onChange={setQ} onSubmit={() => app.addSearch(q)} />
+          <SearchBar ref={inputRef} large value={q} onChange={setQ} onSubmit={() => app.addSearch(q)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />
         </div>
       </div>
 

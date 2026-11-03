@@ -103,7 +103,21 @@ mark { background: var(--mark); color: var(--mark-text); border-radius: 4px; pad
 @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
 .anim-in { animation: fade-up .28s cubic-bezier(.2,.7,.2,1) both; }
 .anim-pop { animation: pop .35s ease; }
-@media (prefers-reduced-motion: reduce) { .anim-in, .anim-pop { animation: none; } }
+/* page transitions (RTL: a new page enters from the left, going back enters from the right) */
+@keyframes page-forward { from { opacity: 0; transform: translate3d(-18px, 0, 0); } }
+@keyframes page-back { from { opacity: 0; transform: translate3d(18px, 0, 0); } }
+@keyframes page-fade { from { opacity: 0; } }
+.page-forward { animation: page-forward .22s cubic-bezier(.2,.7,.2,1) backwards; }
+.page-back { animation: page-back .2s cubic-bezier(.2,.7,.2,1) backwards; }
+.page-fade { animation: page-fade .18s ease-out backwards; }
+
+/* light press feedback on every tappable element */
+@layer base {
+  button, a { -webkit-tap-highlight-color: transparent; transition: transform .12s ease, background-color .15s ease, box-shadow .15s ease, opacity .15s ease; }
+  button:not(:disabled):active, a:active { transform: scale(.97); }
+}
+
+@media (prefers-reduced-motion: reduce) { .anim-in, .anim-pop, .page-forward, .page-back, .page-fade { animation: none; } }
 
 /* ---------- Moroccan zellige backgrounds (SVG tiles, see scripts/build-patterns.py) ---------- */
 body::before {
@@ -167,3 +181,5 @@ body::before {
   border-radius: 28px;
   pointer-events: none;
 }
+/* returning to a list: show it immediately, no per-card stagger */
+.page-back .anim-in { animation: none; }

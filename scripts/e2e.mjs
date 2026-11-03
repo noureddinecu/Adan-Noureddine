@@ -85,6 +85,27 @@ try {
   await page.click('button[aria-label="مسح البحث"]');
   check((await input.inputValue()) === '', 'clear button empties the query');
 
+  // search bar hides on scroll down, reappears on scroll up
+  await input.fill('السياقة'); await page.waitForTimeout(250);
+  await page.locator('input[type=search]').blur();
+  await page.mouse.wheel(0, 900); await page.waitForTimeout(450);
+  const hiddenBar = await page.evaluate(() => getComputedStyle(document.querySelector('form[role=search]').parentElement.parentElement).opacity);
+  check(hiddenBar === '0', 'search bar hidden while scrolling down');
+  await page.mouse.wheel(0, -300); await page.waitForTimeout(450);
+  const shownBar = await page.evaluate(() => getComputedStyle(document.querySelector('form[role=search]').parentElement.parentElement).opacity);
+  check(shownBar === '1', 'search bar back when scrolling up');
+  // back from a detail restores the list scroll position
+  const target = page.locator('main button:has(mark)').nth(6);
+  await target.scrollIntoViewIfNeeded(); await page.waitForTimeout(150);
+  const yBefore = await page.evaluate(() => window.scrollY);
+  await target.click();
+  await page.waitForSelector('text=العقوبات والإجراءات');
+  check(await page.evaluate(() => window.scrollY) < 5, 'detail opens at top');
+  await page.goBack(); await page.waitForTimeout(400);
+  const yAfter = await page.evaluate(() => window.scrollY);
+  check(Math.abs(yAfter - yBefore) < 80, `back restores list position (${Math.round(yBefore)} → ${Math.round(yAfter)})`);
+  await page.evaluate(() => window.scrollTo(0, 0));
+
   // open a detail
   await input.fill('حزام السلامة');
   await page.waitForTimeout(200);

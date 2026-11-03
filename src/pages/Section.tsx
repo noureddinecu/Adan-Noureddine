@@ -3,6 +3,7 @@ import { SearchBar } from '../components/SearchBar';
 import { Empty, PageHeader, SECTION_STYLE, SectionIcon } from '../components/ui';
 import { ViolationCard } from '../components/ViolationCard';
 import type { SectionKey } from '../data/types';
+import { useScrollHide } from '../lib/useScrollHide';
 import { search } from '../search/engine';
 import { useApp } from '../store';
 
@@ -11,6 +12,8 @@ export function SectionPage({ sectionKey }: { sectionKey: string }) {
   const sec = app.sections.get(sectionKey);
   const [q, setQ] = useState('');
   const dq = useDeferredValue(q);
+  const [focused, setFocused] = useState(false);
+  const hideSearch = useScrollHide(160) && !focused;
   const all = useMemo(() => app.data.violations.filter((v) => v.section === sectionKey), [app.data, sectionKey]);
   const results = useMemo(
     () => (dq.trim() ? search(app.index, dq, 500).filter((h) => h.violation.section === sectionKey) : all.map((v) => ({ violation: v, terms: undefined }))),
@@ -27,8 +30,8 @@ export function SectionPage({ sectionKey }: { sectionKey: string }) {
           <p className="text-[16px] font-bold leading-7">{sec.title}</p>
         </div>
       </div>
-      <div className="sticky top-[67px] z-20 bg-[var(--bg)]/90 px-3 py-2 backdrop-blur">
-        <div className="mx-auto max-w-3xl"><SearchBar value={q} onChange={setQ} placeholder={`ابحث داخل ${sec.short}…`} /></div>
+      <div className={`sticky top-[67px] z-20 bg-[var(--bg)]/90 px-3 py-2 backdrop-blur transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}>
+        <div className="mx-auto max-w-3xl"><SearchBar value={q} onChange={setQ} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} placeholder={`ابحث داخل ${sec.short}…`} /></div>
       </div>
       <main className="mx-auto flex max-w-3xl flex-col gap-2.5 px-3 pt-1">
         {results.length ? results.map((h, i) => <ViolationCard key={h.violation.id} v={h.violation} terms={h.terms} query={dq.trim() || undefined} index={i} showSection={false} />)

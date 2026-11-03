@@ -1,5 +1,6 @@
 import { BottomNav } from './components/BottomNav';
-import { useRoute } from './lib/router';
+import { useLayoutEffect } from 'react';
+import { savedScroll, useRoute } from './lib/router';
 import { useTheme } from './lib/theme';
 import { About } from './pages/About';
 import { Detail } from './pages/Detail';
@@ -20,9 +21,17 @@ export function App({ theme }: { theme: ReturnType<typeof useTheme> }) {
     case 'about': page = <About theme={theme} />; break;
     default: page = <Home route={route} theme={theme} />;
   }
+  // scroll: restore the list position when coming back, top of page otherwise
+  useLayoutEffect(() => {
+    if (route.dir === 'none') return;
+    const y = route.dir === 'back' ? savedScroll() : undefined;
+    window.scrollTo(0, y ?? 0);
+  }, [route.key]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const anim = route.dir === 'back' ? 'page-back' : route.dir === 'forward' ? 'page-forward' : route.dir === 'tab' ? 'page-fade' : '';
   return (
     <>
-      {page}
+      <div key={route.path} className={anim}>{page}</div>
       <BottomNav path={route.path} />
     </>
   );

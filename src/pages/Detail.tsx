@@ -40,7 +40,7 @@ export function Detail({ id, q }: { id: string; q: string }) {
   const [copied, setCopied] = useState(false);
   const [pop, setPop] = useState(false);
 
-  useEffect(() => { if (v) { app.recordView(v.id); window.scrollTo(0, 0); } /* eslint-disable-next-line */ }, [id]);
+  useEffect(() => { if (v) { app.recordView(v.id); } /* eslint-disable-next-line */ }, [id]);
   useEffect(() => { if (q) app.addSearch(q); /* eslint-disable-next-line */ }, [q]);
 
   const terms = useMemo(() => (q && v ? search(app.index, q, 500).find((h) => h.violation.id === v.id)?.terms : undefined), [q, v, app.index]);

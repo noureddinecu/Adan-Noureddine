@@ -1,9 +1,9 @@
 import { Search, X } from 'lucide-react';
 import { forwardRef } from 'react';
 
-interface Props { value: string; onChange: (v: string) => void; onSubmit?: () => void; onFocus?: () => void; autoFocus?: boolean; placeholder?: string; large?: boolean }
+interface Props { value: string; onChange: (v: string) => void; onSubmit?: () => void; onFocus?: () => void; onBlur?: () => void; autoFocus?: boolean; placeholder?: string; large?: boolean }
 
-export const SearchBar = forwardRef<HTMLInputElement, Props>(function SearchBar({ value, onChange, onSubmit, onFocus, autoFocus, placeholder, large }, ref) {
+export const SearchBar = forwardRef<HTMLInputElement, Props>(function SearchBar({ value, onChange, onSubmit, onFocus, onBlur, autoFocus, placeholder, large }, ref) {
   return (
     <form
       role="search"
@@ -23,6 +23,7 @@ export const SearchBar = forwardRef<HTMLInputElement, Props>(function SearchBar(
         value={value}
         autoFocus={autoFocus}
         onFocus={onFocus}
+        onBlur={onBlur}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? 'ابحث باسم المخالفة، الرمز، المادة…'}
         aria-label="البحث في المخالفات"
