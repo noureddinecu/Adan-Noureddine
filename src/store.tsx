@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { clearCustomFines, loadFines, saveCustomFines, type FinesTable } from './data/fines';
 import { loadDataset } from './data/repository';
 import type { Dataset, Section, Violation } from './data/types';
 import { loadUserData, userStore, type UserData } from './data/userStore';
@@ -18,6 +19,9 @@ interface Ctx {
   clearSearches: () => void;
   clearHistory: () => void;
   clearFavorites: () => void;
+  fines: FinesTable;
+  finesCustom: boolean;
+  setCustomFines: (t: FinesTable | null) => Promise<void>;
 }
 
 const AppCtx = createContext<Ctx | null>(null);
@@ -28,14 +32,16 @@ export const useApp = () => {
 };
 
 type State = { status: 'loading' } | { status: 'error'; error: string } | { status: 'ready'; data: Dataset };
+type FinesState = { table: FinesTable; custom: boolean };
 
 export function AppProvider({ children, splash, error }: { children: ReactNode; splash: ReactNode; error: (msg: string) => ReactNode }) {
   const [state, setState] = useState<State>({ status: 'loading' });
+  const [fines, setFines] = useState<FinesState | null>(null);
   const [user, setUser] = useState<UserData>({ favorites: [], history: [], searches: [], views: {} });
 
   useEffect(() => {
-    Promise.all([loadDataset(), loadUserData()])
-      .then(([data, u]) => { setUser(u); setState({ status: 'ready', data }); })
+    Promise.all([loadDataset(), loadUserData(), loadFines()])
+      .then(([data, u, f]) => { setUser(u); setFines(f); setState({ status: 'ready', data }); })
       .catch((e) => setState({ status: 'error', error: String(e?.message ?? e) }));
   }, []);
 
@@ -47,7 +53,7 @@ export function AppProvider({ children, splash, error }: { children: ReactNode; 
   const favSet = useMemo(() => new Set(user.favorites.map((f) => f.id)), [user.favorites]);
 
   const value = useMemo<Ctx | null>(() => {
-    if (!data || !index) return null;
+    if (!data || !index || !fines) return null;
     return {
       data, index, byId, sections, user,
       isFavorite: (id) => favSet.has(id),
@@ -62,8 +68,14 @@ export function AppProvider({ children, splash, error }: { children: ReactNode; 
       clearSearches: () => { userStore.clearSearches().then(refresh); },
       clearHistory: () => { userStore.clearHistory().then(refresh); },
       clearFavorites: () => { userStore.clearFavorites().then(refresh); },
+      fines: fines.table,
+      finesCustom: fines.custom,
+      setCustomFines: async (t) => {
+        if (t) { await saveCustomFines(t); } else { await clearCustomFines(); }
+        setFines(await loadFines());
+      },
     };
-  }, [data, index, byId, sections, user, favSet, refresh]);
+  }, [data, index, byId, sections, user, favSet, refresh, fines]);
 
   if (state.status === 'error') return <>{error(state.error)}</>;
   if (!value) return <>{splash}</>;

@@ -1,5 +1,6 @@
-import { AlertTriangle, BookMarked, ChevronLeft, ChevronRight, ClipboardList, Copy, FileSearch, Info, Link2, Scale, Share2, Star } from 'lucide-react';
+import { AlertTriangle, Banknote, BookMarked, ChevronLeft, ChevronRight, ClipboardList, Copy, FileSearch, Info, Link2, Scale, Share2, Star } from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { FineCard } from '../components/FineCard';
 import { Card, CodeBadge, Empty, Hl, PageHeader, SECTION_STYLE, SectionIcon } from '../components/ui';
 import type { Violation } from '../data/types';
 import { androidBridge } from '../lib/pwa';
@@ -9,7 +10,7 @@ import { useApp } from '../store';
 
 function Block({ icon, title, children, n }: { icon: ReactNode; title: string; children: ReactNode; n: string }) {
   return (
-    <Card className="anim-in overflow-hidden">
+    <Card className="zellige-corner anim-in overflow-hidden">
       <div className="flex items-center gap-2.5 border-b border-[var(--line)] bg-[var(--surface-2)] px-4 py-3">
         <span className="grid size-8 place-items-center rounded-lg bg-brand-600 text-white">{icon}</span>
         <h2 className="text-[15.5px] font-bold">{title}</h2>
@@ -154,7 +155,6 @@ export function Detail({ id, q }: { id: string; q: string }) {
                 )}
               </ol>
             </Row>
-            <Row label="مبلغ الغرامة"><span className="text-[14px] text-[var(--muted)]">لم يرد مبلغ الغرامة في هذا الدليل.</span></Row>
             {shared.length > 0 && (
               <Row label="ملاحظة حول الجدول الأصلي">
                 <p className="text-[14px] leading-7">وردت هذه المسطرة في خلية مشتركة (مدمجة) تشمل أيضا:</p>
@@ -166,7 +166,11 @@ export function Detail({ id, q }: { id: string; q: string }) {
           </dl>
         </Block>
 
-        <Block n="رابعا" icon={<FileSearch className="size-4.5" />} title="مصدر المعلومات">
+        <Block n="رابعا" icon={<Banknote className="size-4.5" />} title="الغرامة وآجال الأداء">
+          <FineCard v={v} />
+        </Block>
+
+        <Block n="خامسا" icon={<FileSearch className="size-4.5" />} title="مصدر المعلومات">
           <dl>
             <Row label="الصفحة في ملف PDF"><span className="font-bold">{v.pdfPage}</span> <span className="text-[13px] text-[var(--muted)]">من {app.data.source.pdfPages} (الترقيم المطبوع على الصفحة: {v.printedPage})</span></Row>
             <Row label="الجدول المستخرج منه">{sec.title}</Row>

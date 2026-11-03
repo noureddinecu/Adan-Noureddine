@@ -10,7 +10,7 @@ function read(): ThemePref {
 export function applyTheme(pref: ThemePref) {
   const dark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.classList.toggle('dark', dark);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0a2a19' : '#14532d');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#062a1f' : '#0b3d2e');
   return dark;
 }
 

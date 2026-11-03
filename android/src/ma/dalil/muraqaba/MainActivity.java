@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -28,12 +30,14 @@ public class MainActivity extends Activity {
     private static final String HOST = "appassets.androidplatform.net";
     private static final String BASE = "https://" + HOST + "/";
     private WebView web;
+    private static final int PICK_FILE = 42;
+    private ValueCallback<Uri[]> fileCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         web = new WebView(this);
-        web.setBackgroundColor(Color.parseColor("#0f3d24"));
+        web.setBackgroundColor(Color.parseColor("#0b3d2e"));
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
@@ -55,6 +59,20 @@ public class MainActivity extends Activity {
                 Uri u = Uri.parse(url);
                 if (HOST.equals(u.getHost())) return false;
                 try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception ignored) { }
+                return true;
+            }
+        });
+        web.setWebChromeClient(new WebChromeClient() {
+            // <input type="file"> — used to import an updated fines table (JSON)
+            @Override
+            public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
+                if (fileCallback != null) fileCallback.onReceiveValue(null);
+                fileCallback = callback;
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("*/*");
+                try { startActivityForResult(Intent.createChooser(i, "اختر ملف جدول الغرامات"), PICK_FILE); }
+                catch (Exception e) { fileCallback = null; return false; }
                 return true;
             }
         });
@@ -113,6 +131,18 @@ public class MainActivity extends Activity {
                 Toast.makeText(MainActivity.this, "تم النسخ", Toast.LENGTH_SHORT).show();
             } });
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_FILE && fileCallback != null) {
+            Uri[] result = null;
+            if (resultCode == RESULT_OK && data != null && data.getData() != null) result = new Uri[] { data.getData() };
+            fileCallback.onReceiveValue(result);
+            fileCallback = null;
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

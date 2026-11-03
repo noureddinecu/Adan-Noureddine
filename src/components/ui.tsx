@@ -36,13 +36,13 @@ export function Logo({ className = 'size-11' }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden>
       <defs>
-        <linearGradient id="lg-shield" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ffffff" /><stop offset="1" stopColor="#e9f3ec" /></linearGradient>
+        <linearGradient id="lg-shield" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ffffff" /><stop offset="1" stopColor="#f8f3e6" /></linearGradient>
       </defs>
       <path d="M32 4 9 12v17c0 15 10 26.5 23 31 13-4.5 23-16 23-31V12L32 4Z" fill="url(#lg-shield)" stroke="#c9a227" strokeWidth="2.5" />
-      <path d="M32 9.5 14 15.8v13.4c0 11.6 7.6 20.7 18 24.6 10.4-3.9 18-13 18-24.6V15.8L32 9.5Z" fill="#14532d" />
+      <path d="M32 9.5 14 15.8v13.4c0 11.6 7.6 20.7 18 24.6 10.4-3.9 18-13 18-24.6V15.8L32 9.5Z" fill="#006233" />
       <path d="M27 50 30.5 18h3L37 50z" fill="#3a4a40" />
       <path d="M32 21v4M32 29.5v4.5M32 38.5v5" stroke="#f2df00" strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="44.5" cy="20.5" r="7" fill="#e2231a" stroke="#fff" strokeWidth="1.6" />
+      <circle cx="44.5" cy="20.5" r="7" fill="#c1272d" stroke="#fff" strokeWidth="1.6" />
       <path d="M41.3 20.6l2.3 2.3 4.2-4.6" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -50,7 +50,7 @@ export function Logo({ className = 'size-11' }: { className?: string }) {
 
 export function PageHeader({ title, subtitle, back = true, right, tone }: { title: ReactNode; subtitle?: ReactNode; back?: boolean; right?: ReactNode; tone?: string }) {
   return (
-    <header className={`sticky top-0 z-30 ${tone ?? 'bg-gradient-to-l from-brand-800 to-brand-700'} text-white shadow-md`} style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <header className={`sticky top-0 z-30 zellige-header ${tone ?? 'bg-gradient-to-l from-brand-800 to-brand-600'} text-white shadow-md`} style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 py-3">
         {back && (
           <button onClick={() => goBack()} className="grid size-10 shrink-0 place-items-center rounded-full hover:bg-white/15 active:bg-white/25" aria-label="رجوع">
@@ -63,7 +63,7 @@ export function PageHeader({ title, subtitle, back = true, right, tone }: { titl
         </div>
         {right}
       </div>
-      <div className="h-[3px] bg-gradient-to-l from-accent via-gold to-brand-500" />
+      <div className="zellige-band" />
     </header>
   );
 }

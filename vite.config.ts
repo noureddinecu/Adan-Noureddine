@@ -11,7 +11,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: false,
-      includeAssets: ['icons/*.png', 'icons/*.svg', 'favicon.svg'],
+      includeAssets: ['icons/*.png', 'icons/*.svg', 'favicon.svg', 'patterns/*.svg'],
       manifest: {
         id: './',
         name: 'دليل المراقبة الطرقية',
@@ -23,8 +23,8 @@ export default defineConfig({
         scope: './',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#0f3d24',
-        theme_color: '#14532d',
+        background_color: '#0b3d2e',
+        theme_color: '#0b3d2e',
         categories: ['productivity', 'reference', 'utilities'],
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },

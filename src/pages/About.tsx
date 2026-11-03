@@ -1,4 +1,5 @@
 import { AlertTriangle, CheckCircle2, Download, FileCheck2, Monitor, Moon, ShieldCheck, Smartphone, Sun, WifiOff } from 'lucide-react';
+import { FinesManager } from '../components/FinesManager';
 import { Card, Logo, PageHeader, SECTION_STYLE, SectionIcon, SectionTitle } from '../components/ui';
 import { navigate } from '../lib/router';
 import { isApk, useInstall } from '../lib/pwa';
@@ -51,7 +52,7 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
             <li className="flex gap-2"><CheckCircle2 className="mt-0.5 size-4.5 shrink-0 text-brand-500" />الصفحات المحتوية على جداول: {Math.min(...pages)}–{Math.max(...pages)} ({pages.size} صفحة). الصفحة 1 غلاف دون مخالفات.</li>
             <li className="flex gap-2"><CheckCircle2 className="mt-0.5 size-4.5 shrink-0 text-brand-500" />يتضمن الدليل سبعة جداول: الأقسام الخمسة الرئيسية، إضافة إلى جدولي «المخالفات لقواعد السير المقررة تطبيقا للمادة 94» و«المخالفات التي تستوجب مسطرة التوقيف»، وقد حوفظ عليهما كتصنيفين مستقلين.</li>
             <li className="flex gap-2"><CheckCircle2 className="mt-0.5 size-4.5 shrink-0 text-brand-500" />{sharedGroups} خلية «مسطرة» مدمجة في الأصل بين عدة مخالفات: نُسخت المسطرة لكل مخالفة مع الإشارة إلى الخلية المشتركة.</li>
-            <li className="flex gap-2"><AlertTriangle className="mt-0.5 size-4.5 shrink-0 text-amber-500" />لا يتضمن الدليل مبالغ الغرامات ولا النصوص الكاملة للمواد؛ لذلك لا يعرضها التطبيق.</li>
+            <li className="flex gap-2"><AlertTriangle className="mt-0.5 size-4.5 shrink-0 text-amber-500" />لا يتضمن الدليل مبالغ الغرامات ولا النصوص الكاملة للمواد. أضيف جدول الغرامات (المادة 219) كمعطى مستقل قابل للتحديث، أدناه.</li>
             <li className="flex gap-2"><AlertTriangle className="mt-0.5 size-4.5 shrink-0 text-amber-500" />الترقيم المطبوع يبدأ بالصفحة 4 (صفحة PDF رقم 2)؛ الصفحتان المطبوعتان 2 و3 غير موجودتين في الملف المرفق.</li>
             {dupCodes.length > 0 && <li className="flex gap-2"><AlertTriangle className="mt-0.5 size-4.5 shrink-0 text-amber-500" />رموز مكررة في الأصل لمخالفات مختلفة (احتفظ بها منفصلة): <span className="ltr-nums">{dupCodes.join('، ')}</span>.</li>}
           </ul>
@@ -68,6 +69,8 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
             </>
           )}
         </Card>
+
+        <FinesManager />
 
         <SectionTitle icon={<Smartphone className="size-4.5 text-brand-600 dark:text-brand-100" />}>التثبيت والعمل دون إنترنت</SectionTitle>
         <Card className="p-4 text-[14px] leading-7">

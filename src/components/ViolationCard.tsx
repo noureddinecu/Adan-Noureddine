@@ -1,5 +1,6 @@
 import { ChevronLeft, Star } from 'lucide-react';
 import type { Violation } from '../data/types';
+import { fineFor } from '../data/fines';
 import { navigate } from '../lib/router';
 import { highlight } from '../search/engine';
 import { useApp } from '../store';
@@ -11,7 +12,8 @@ function matchedLine(lines: string[], terms?: Set<string>) {
 }
 
 export function ViolationCard({ v, terms, query, index = 0, showSection = true }: { v: Violation; terms?: Set<string>; query?: string; index?: number; showSection?: boolean }) {
-  const { sections, isFavorite } = useApp();
+  const { sections, isFavorite, fines } = useApp();
+  const fine = fineFor(fines, v);
   const sec = sections.get(v.section)!;
   const descHit = terms && highlight(v.description, terms).some((s) => s.hit);
   const refLine = !descHit ? matchedLine(v.legalRefs, terms) : null;
@@ -48,6 +50,7 @@ export function ViolationCard({ v, terms, query, index = 0, showSection = true }
             </span>
           )}
           <span>ص {v.pdfPage}</span>
+          {fine?.type === 'transactional' && fine.amounts && <span className="ltr-nums mr-auto rounded-full bg-[var(--surface-2)] px-2 py-0.5 font-bold text-[var(--text)]">{fine.amounts.base} درهم</span>}
         </span>
       </span>
       <ChevronLeft className="m-auto ml-2 size-5 shrink-0 text-[var(--muted)] opacity-60 transition group-hover:-translate-x-0.5" />

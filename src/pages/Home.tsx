@@ -59,8 +59,7 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
 
   return (
     <div className="safe-bottom">
-      <header className="relative overflow-hidden bg-gradient-to-bl from-brand-700 via-brand-800 to-brand-900 text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <svg className="pointer-events-none absolute -left-10 -top-6 h-56 w-56 opacity-[.07]" viewBox="0 0 100 100" aria-hidden><path d="M40 100 48 0h4l8 100z" fill="#fff" /><path d="M50 8v10M50 30v12M50 54v14M50 80v12" stroke="#000" strokeWidth="2" /></svg>
+      <header className="zellige-header relative overflow-hidden bg-gradient-to-bl from-brand-600 via-brand-800 to-brand-900 text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="mx-auto max-w-3xl px-4 pb-10 pt-4">
           <div className="flex items-center gap-3">
             <Logo className="size-12 shrink-0 drop-shadow" />
@@ -74,7 +73,7 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
           </div>
           {!online && <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs"><span className="size-2 rounded-full bg-gold" /> دون اتصال — جميع البيانات متاحة محليا</p>}
         </div>
-        <div className="h-[3px] bg-gradient-to-l from-accent via-gold to-brand-500" />
+        <div className="zellige-band" />
       </header>
 
       <div className="sticky top-0 z-30 -mt-8 px-3 pb-2 pt-[max(env(safe-area-inset-top),0px)]">
@@ -139,7 +138,7 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
             <SectionTitle>أقسام المخالفات</SectionTitle>
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
               {main.map((s, i) => (
-                <button key={s.key} onClick={() => navigate(`/section/${s.key}`)} className={`anim-in group relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3.5 text-right shadow-sm transition hover:shadow-md active:scale-[.98] ${i === main.length - 1 && main.length % 2 ? 'col-span-2 sm:col-span-1' : ''}`} style={{ animationDelay: `${i * 40}ms` }}>
+                <button key={s.key} onClick={() => navigate(`/section/${s.key}`)} className={`zellige-corner anim-in group relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3.5 text-right shadow-sm transition hover:shadow-md active:scale-[.98] ${i === main.length - 1 && main.length % 2 ? 'col-span-2 sm:col-span-1' : ''}`} style={{ animationDelay: `${i * 40}ms` }}>
                   <span className={`absolute -left-6 -top-6 size-20 rounded-full opacity-15 ${SECTION_STYLE[s.key].bg}`} />
                   <span className={`mb-3 grid size-11 place-items-center rounded-xl shadow-sm ${SECTION_STYLE[s.key].bg} ${SECTION_STYLE[s.key].fg}`}><SectionIcon section={s.key} className="size-6" /></span>
                   <span className="block text-[15px] font-bold leading-6">{s.short}</span>
