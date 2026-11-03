@@ -19,6 +19,21 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
     <div className="safe-bottom">
       <PageHeader back={false} title="حول التطبيق" />
       <main className="mx-auto max-w-3xl px-4 pt-4">
+        <section className="mb-5 flex flex-col items-center pt-2 text-center">
+          {/* two concentric rings: gold outside, green inside */}
+          <div className="rounded-full p-[3px] shadow-[0_14px_32px_-16px_rgba(0,0,0,.45)]" style={{ background: 'linear-gradient(160deg,#e4c25a,#c9a227 45%,#a87d12)' }}>
+            <div className="rounded-full bg-[var(--bg)] p-[5px]">
+              <div className="rounded-full p-[2.5px]" style={{ background: 'linear-gradient(160deg,#0d7a4a,#0a5c39)' }}>
+                <div className="rounded-full bg-[var(--surface)] p-[3px]">
+                  <img src="./developer.jpg" alt="نورالدين عربي" width={400} height={500} decoding="async" className="size-[clamp(132px,40vw,168px)] rounded-full object-cover object-[50%_32%]" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="mt-4 text-[17px] font-bold text-[var(--text)]">تصميم وتطوير: <span className="text-brand-700 dark:text-brand-100">نورالدين عربي</span></p>
+          <p className="legal mt-1 flex items-center gap-1.5 text-[16px] font-medium text-[var(--muted)]"><span className="text-[1.2em] leading-none text-gold" aria-hidden>﴿</span>وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ<span className="text-[1.2em] leading-none text-gold" aria-hidden>﴾</span></p>
+        </section>
+
         <Card className="zellige-corner flex flex-col items-center px-5 py-7 text-center">
           <Logo tile className="size-32" />
           <h2 className="mt-4 text-[23px] font-bold leading-snug">دليل المراقبة الطرقية</h2>
@@ -64,17 +79,6 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
           </>
         )}
 
-        <SectionTitle>المطوّر</SectionTitle>
-        <Card className="zellige-corner flex items-center gap-4 p-4">
-          <span className="w-32 shrink-0 rounded-2xl bg-gradient-to-b from-[#e4c25a] via-gold to-[#a87d12] p-[3px] shadow-md">
-            <img src="./developer.jpg" alt="نورالدين عربي" width={400} height={500} decoding="async" className="aspect-[4/5] w-full rounded-[13px] border-2 border-[var(--surface)] object-cover" />
-          </span>
-          <span className="min-w-0">
-            <span className="block text-[13.5px] font-semibold text-[var(--muted)]">المطوّر</span>
-            <span className="block text-[19px] font-bold leading-8 text-brand-700 dark:text-brand-100">نورالدين عربي</span>
-            <span className="mt-1 block h-px w-16 bg-gradient-to-l from-transparent via-gold to-gold" />
-          </span>
-        </Card>
         <div className="h-4" />
       </main>
     </div>

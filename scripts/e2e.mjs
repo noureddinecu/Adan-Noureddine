@@ -204,7 +204,7 @@ try {
   await page.goto(URL + '#/about');
   await page.waitForSelector('text=حول التطبيق');
   await page.waitForFunction(() => { const i = document.querySelector('img[src*="developer.jpg"]'); return i && i.complete && i.naturalWidth > 0; }, null, { timeout: 5000 }).catch(() => {});
-  { const t = await page.textContent('main'); check(t.includes('نورالدين عربي') && (await page.locator('img[src*="developer.jpg"]').evaluate((i) => i.complete && i.naturalWidth > 0)), 'developer photo + caption shown'); check(!t.includes('استخراج') && !t.includes('JSON') && !t.includes('تنبيه') && !t.includes('جدول الغرامات'), 'about page is clean (no report, JSON tools, notice)'); }
+  { const t = await page.textContent('main'); check(t.includes('تصميم وتطوير: نورالدين عربي') && t.includes('وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ') && (await page.locator('img[src*="developer.jpg"]').evaluate((i) => i.complete && i.naturalWidth > 0)), 'developer photo + caption shown'); check(!t.includes('استخراج') && !t.includes('JSON') && !t.includes('تنبيه') && !t.includes('جدول الغرامات'), 'about page is clean (no report, JSON tools, notice)'); }
   await page.screenshot({ path: join(shots, '08-report-dark.png'), fullPage: true });
   await page.click('text=نهاري');
 
