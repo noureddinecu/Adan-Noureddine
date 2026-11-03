@@ -78,8 +78,9 @@ try {
   await input.fill('حزام السلامة');
   await page.waitForTimeout(200);
   await page.locator('main button:has(mark)').first().click();
-  await page.waitForSelector('text=مصدر المعلومات');
-  for (const t of ['معلومات المخالفة', 'النصوص القانونية', 'العقوبات والإجراءات', 'مصدر المعلومات', 'الصفحة في الدليل']) check(await page.isVisible(`text=${t}`), `detail shows «${t}»`);
+  await page.waitForSelector('text=العقوبات والإجراءات');
+  for (const t of ['معلومات المخالفة', 'النصوص القانونية', 'العقوبات والإجراءات', 'الغرامة']) check(await page.isVisible(`text=${t}`), `detail shows «${t}»`);
+  { const t = await page.textContent('main'); check(!/أولا|ثانيا|ثالثا|رابعا|مصدر المعلومات|السابقة|التالية|جميع /.test(t), 'detail page clean (no ordinals, source, prev/next, section link)'); }
   await page.screenshot({ path: join(shots, '03-detail.png'), fullPage: true });
 
   // fines + calculator (185361C2 is degree 2 → 300 / 350 / 500)
@@ -125,7 +126,7 @@ try {
   check(await page.evaluate(() => document.documentElement.classList.contains('dark')), 'dark mode toggles');
   await page.screenshot({ path: join(shots, '06-home-dark.png') });
   await page.goto(URL + '#/v/delit-019');
-  await page.waitForSelector('text=مصدر المعلومات');
+  await page.waitForSelector('text=العقوبات والإجراءات');
   await page.screenshot({ path: join(shots, '07-detail-dark.png'), fullPage: true });
   await page.goto(URL + '#/about');
   await page.waitForSelector('text=حول التطبيق');
@@ -145,7 +146,7 @@ try {
   await page.waitForTimeout(200);
   check((await page.locator('main button:has(mark)').count()) > 0, 'OFFLINE: app loads and search works');
   await page.locator('main button:has(mark)').first().click();
-  await page.waitForSelector('text=مصدر المعلومات');
+  await page.waitForSelector('text=العقوبات والإجراءات');
   check(true, 'OFFLINE: detail page opens');
   const idb = await page.evaluate(() => new Promise((res) => { const r = indexedDB.open('dalil-muraqaba'); r.onsuccess = () => { const tx = r.result.transaction('dataset'); const g = tx.objectStore('dataset').get('current'); g.onsuccess = () => res(g.result?.violations?.length ?? 0); }; }));
   check(idb === 204, `IndexedDB holds the 204 violations (${idb})`);

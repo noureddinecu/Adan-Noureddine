@@ -1,4 +1,4 @@
-import { Banknote, BookMarked, ChevronLeft, ChevronRight, ClipboardList, Copy, FileSearch, Info, Link2, Scale, Share2, Star } from 'lucide-react';
+import { Banknote, ClipboardList, Copy, Info, Link2, Scale, Share2, Star } from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { FineCard } from '../components/FineCard';
 import { Card, CodeBadge, Empty, Hl, PageHeader, SECTION_STYLE, SectionIcon } from '../components/ui';
@@ -7,13 +7,12 @@ import { navigate } from '../lib/router';
 import { search } from '../search/engine';
 import { useApp } from '../store';
 
-function Block({ icon, title, children, n }: { icon: ReactNode; title: string; children: ReactNode; n: string }) {
+function Block({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
   return (
     <Card className="zellige-corner anim-in overflow-hidden">
       <div className="flex items-center gap-2.5 border-b border-[var(--line)] bg-[var(--surface-2)] px-4 py-3">
         <span className="grid size-8 place-items-center rounded-lg bg-brand-600 text-white">{icon}</span>
         <h2 className="text-[16.5px] font-bold">{title}</h2>
-        <span className="mr-auto text-[12.5px] font-semibold text-[var(--muted)]">{n}</span>
       </div>
       <div className="px-4 py-3.5">{children}</div>
     </Card>
@@ -47,15 +46,11 @@ export function Detail({ id, q }: { id: string; q: string }) {
   if (!v) return (<><PageHeader title="غير موجودة" /><Empty title="هذه المخالفة غير موجودة" /></>);
   const sec = app.sections.get(v.section)!;
   const st = SECTION_STYLE[v.section];
-  const list = app.data.violations.filter((x) => x.section === v.section);
-  const pos = list.findIndex((x) => x.id === v.id);
-  const prev = list[pos - 1], next = list[pos + 1];
   const fav = app.isFavorite(v.id);
 
   const plain = [
     `الرمز: ${v.codeRaw}`, `التصنيف: ${sec.title}`, `توصيف المخالفة: ${v.description}`,
     `المرجع القانوني:\n${v.legalRefs.join('\n')}`, `المسطرة:\n${v.procedure.join('\n')}`,
-    `المصدر: ${app.data.source.title} (${app.data.source.edition}) — صفحة ${v.pdfPage}`,
   ].join('\n\n');
 
   const copy = async () => {
@@ -84,7 +79,6 @@ export function Detail({ id, q }: { id: string; q: string }) {
           <div className={`flex items-center gap-2 px-4 py-2.5 ${st.bg} ${st.fg}`}>
             <SectionIcon section={v.section} className="size-5" />
             <span className="text-[14.5px] font-bold">{sec.title}</span>
-            <span className="mr-auto text-[13px] font-semibold opacity-80">{pos + 1} / {list.length}</span>
           </div>
           <div className="p-4">
             <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -105,23 +99,23 @@ export function Detail({ id, q }: { id: string; q: string }) {
           </div>
         </Card>
 
-        <Block n="أولا" icon={<Info className="size-4.5" />} title="معلومات المخالفة">
+        <Block icon={<Info className="size-4.5" />} title="معلومات المخالفة">
           <dl>
             <Row label="رمز المخالفة"><span className="ltr-nums font-bold">{v.codeRaw}</span></Row>
-            <Row label="توصيف المخالفة (كما ورد في الدليل)"><span className="legal whitespace-pre-line"><Hl text={v.description} terms={terms} /></span></Row>
+            <Row label="توصيف المخالفة"><span className="legal whitespace-pre-line"><Hl text={v.description} terms={terms} /></span></Row>
             <Row label="الدرجة / التصنيف">
               <button onClick={() => navigate(`/section/${v.section}`)} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[14.5px] font-semibold ${st.soft}`}><SectionIcon section={v.section} className="size-4" />{sec.title}</button>
             </Row>
           </dl>
         </Block>
 
-        <Block n="ثانيا" icon={<Scale className="size-4.5" />} title="النصوص القانونية">
+        <Block icon={<Scale className="size-4.5" />} title="النصوص القانونية">
           <dl>
             <Row label="المرجع القانوني">
               <ul className="space-y-1">{v.legalRefs.map((r, i) => <li key={i} className="legal rounded-lg bg-[var(--surface-2)] px-3 py-2"><Hl text={r} terms={terms} /></li>)}</ul>
             </Row>
             {v.articles.length > 0 && (
-              <Row label="أرقام المواد المشار إليها (للبحث)">
+              <Row label="المواد المرتبطة">
                 <div className="flex flex-wrap gap-1.5">
                   {v.articles.filter((a) => a.includes('(')).concat(v.articles.filter((a) => !a.includes('(') && !v.articles.some((b) => b.startsWith(`${a}(`)))).map((a) => (
                     <button key={a} onClick={() => navigate(`/?q=${encodeURIComponent(`المادة ${a}`)}`)} className="ltr-nums inline-flex items-center gap-1 rounded-full border border-brand-500/40 px-2.5 py-0.5 text-[14px] font-semibold text-brand-700 dark:text-brand-100">
@@ -132,10 +126,9 @@ export function Detail({ id, q }: { id: string; q: string }) {
               </Row>
             )}
           </dl>
-          <p className="mt-2 rounded-lg bg-[var(--surface-2)] px-3 py-2 text-[13.5px] leading-6 text-[var(--muted)]">يورد الدليل المراجع القانونية دون نص المواد الكامل؛ تُعرض المراجع هنا كما وردت حرفيا.</p>
         </Block>
 
-        <Block n="ثالثا" icon={<ClipboardList className="size-4.5" />} title="العقوبات والإجراءات">
+        <Block icon={<ClipboardList className="size-4.5" />} title="العقوبات والإجراءات">
           <dl>
             <Row label="المسطرة الواجب اتباعها">
               <ol className="legal space-y-2.5">
@@ -156,27 +149,11 @@ export function Detail({ id, q }: { id: string; q: string }) {
           </dl>
         </Block>
 
-        <Block n="رابعا" icon={<Banknote className="size-4.5" />} title="الغرامة">
+        <Block icon={<Banknote className="size-4.5" />} title="الغرامة">
           <FineCard v={v} />
         </Block>
 
-        <Block n="خامسا" icon={<FileSearch className="size-4.5" />} title="مصدر المعلومات">
-          <dl>
-            <Row label="الصفحة في الدليل"><span className="font-bold">{v.pdfPage}</span> <span className="text-[14px] text-[var(--muted)]">(رقم الصفحة المطبوع: {v.printedPage})</span></Row>
-            <Row label="الجدول في الدليل">{sec.title}</Row>
-            <Row label="الوثيقة">{app.data.source.title} — {app.data.source.subtitle} ({app.data.source.edition})</Row>
-          </dl>
-        </Block>
 
-        <div className="mt-1 grid grid-cols-2 gap-2">
-          {prev ? (
-            <button onClick={() => navigate(`/v/${prev.id}`, { replace: true })} className="flex items-center gap-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 text-right text-[14px]"><ChevronRight className="size-5 shrink-0" /><span className="min-w-0"><span className="block text-[13px] text-[var(--muted)]">السابقة</span><span className="ltr-nums font-bold">{prev.code}</span></span></button>
-          ) : <span />}
-          {next ? (
-            <button onClick={() => navigate(`/v/${next.id}`, { replace: true })} className="flex items-center justify-end gap-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 text-left text-[14px]"><span className="min-w-0 text-right"><span className="block text-[13px] text-[var(--muted)]">التالية</span><span className="ltr-nums font-bold">{next.code}</span></span><ChevronLeft className="size-5 shrink-0" /></button>
-          ) : <span />}
-        </div>
-        <button onClick={() => navigate(`/section/${v.section}`)} className="flex items-center justify-center gap-2 rounded-2xl py-3 text-[14.5px] font-semibold text-brand-700 dark:text-brand-100"><BookMarked className="size-4.5" />جميع {sec.short}</button>
       </main>
     </div>
   );

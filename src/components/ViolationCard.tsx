@@ -49,7 +49,6 @@ export function ViolationCard({ v, terms, query, index = 0, showSection = true }
               <SectionIcon section={v.section} className="size-3.5" /> {sec.short}
             </span>
           )}
-          <span>ص {v.pdfPage}</span>
           {fine?.type === 'transactional' && fine.amounts && <span className="ltr-nums mr-auto rounded-full bg-[var(--surface-2)] px-2 py-0.5 font-bold text-[var(--text)]">{fine.amounts.base} درهم</span>}
         </span>
       </span>
