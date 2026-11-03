@@ -103,13 +103,18 @@ mark { background: var(--mark); color: var(--mark-text); border-radius: 4px; pad
 @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
 .anim-in { animation: fade-up .28s cubic-bezier(.2,.7,.2,1) both; }
 .anim-pop { animation: pop .35s ease; }
-/* page transitions (RTL: a new page enters from the left, going back enters from the right) */
-@keyframes page-forward { from { opacity: 0; transform: translate3d(-18px, 0, 0); } }
-@keyframes page-back { from { opacity: 0; transform: translate3d(18px, 0, 0); } }
-@keyframes page-fade { from { opacity: 0; } }
-.page-forward { animation: page-forward .22s cubic-bezier(.2,.7,.2,1) backwards; }
-.page-back { animation: page-back .2s cubic-bezier(.2,.7,.2,1) backwards; }
-.page-fade { animation: page-fade .18s ease-out backwards; }
+/* page transitions: calm fade + slide-up, same for opening, tabs and going back */
+@keyframes page-enter { from { opacity: 0; transform: translate3d(0, 14px, 0); } to { opacity: 1; transform: none; } }
+@keyframes item-enter { from { opacity: 0; transform: translate3d(0, 10px, 0); } to { opacity: 1; transform: none; } }
+.page-forward, .page-back, .page-fade { animation: page-enter .52s cubic-bezier(.45,0,.25,1) backwards; }
+/* gentle stagger of the main blocks of each page */
+:is(.page-forward, .page-back, .page-fade) main > * { animation: item-enter .5s cubic-bezier(.45,0,.25,1) backwards; }
+:is(.page-forward, .page-back, .page-fade) main > *:nth-child(1) { animation-delay: 60ms; }
+:is(.page-forward, .page-back, .page-fade) main > *:nth-child(2) { animation-delay: 110ms; }
+:is(.page-forward, .page-back, .page-fade) main > *:nth-child(3) { animation-delay: 160ms; }
+:is(.page-forward, .page-back, .page-fade) main > *:nth-child(4) { animation-delay: 210ms; }
+:is(.page-forward, .page-back, .page-fade) main > *:nth-child(5) { animation-delay: 250ms; }
+:is(.page-forward, .page-back, .page-fade) main > *:nth-child(n+6) { animation-delay: 280ms; }
 
 /* light press feedback on every tappable element */
 @layer base {
@@ -117,7 +122,7 @@ mark { background: var(--mark); color: var(--mark-text); border-radius: 4px; pad
   button:not(:disabled):active, a:active { transform: scale(.97); }
 }
 
-@media (prefers-reduced-motion: reduce) { .anim-in, .anim-pop, .page-forward, .page-back, .page-fade { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .anim-in, .anim-pop, .page-forward, .page-back, .page-fade, :is(.page-forward, .page-back, .page-fade) main > * { animation: none; } }
 
 /* ---------- Moroccan zellige backgrounds (SVG tiles, see scripts/build-patterns.py) ---------- */
 body::before {
@@ -142,25 +147,30 @@ body::before {
   pointer-events: none;
   background: url('/patterns/zellige-line-gold.svg') repeat;
   background-size: 64px;
-  opacity: .22;
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.25));
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.25));
+  opacity: .16;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.85), rgba(0,0,0,.35) 55%, transparent);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.85), rgba(0,0,0,.35) 55%, transparent);
 }
 /* Headers melt into the page: no border, no ornamental band — a soft gradient fade instead */
 :root { --hdr-top: #0b3d2e; --hdr-bottom: #0e5132; --hdr-fade: rgba(14,81,50,0); }
 .dark { --hdr-top: #062a1f; --hdr-bottom: #0a3a28; --hdr-fade: rgba(10,58,40,0); }
-.header-blend { background: linear-gradient(to bottom, var(--hdr-top), var(--hdr-bottom)); }
+.header-blend { background: linear-gradient(to bottom, var(--hdr-top) 0%, var(--hdr-bottom) 100%); }
 .header-blend::before {
   content: '';
   position: absolute;
   inset-inline: 0;
-  top: 100%;
-  height: 28px;
+  top: calc(100% - 1px);
+  height: 72px;
   pointer-events: none;
-  background: linear-gradient(to bottom, var(--hdr-bottom), rgba(14,81,50,.35) 45%, var(--hdr-fade));
+  background: linear-gradient(to bottom,
+    var(--hdr-bottom) 0%,
+    color-mix(in srgb, var(--hdr-bottom) 80%, transparent) 12%,
+    color-mix(in srgb, var(--hdr-bottom) 55%, transparent) 30%,
+    color-mix(in srgb, var(--hdr-bottom) 22%, transparent) 60%,
+    transparent 100%);
 }
 .home-header {
-  background: linear-gradient(to bottom, var(--hdr-top) 0%, var(--hdr-bottom) 52%, color-mix(in srgb, var(--hdr-bottom) 55%, transparent) 74%, transparent 100%);
+  background: linear-gradient(to bottom, var(--hdr-top) 0%, var(--hdr-bottom) 42%, color-mix(in srgb, var(--hdr-bottom) 70%, transparent) 60%, color-mix(in srgb, var(--hdr-bottom) 30%, transparent) 80%, transparent 100%);
 }
 
 .zellige-corner { position: relative; isolation: isolate; overflow: hidden; }
@@ -193,5 +203,7 @@ body::before {
   border-radius: 28px;
   pointer-events: none;
 }
-/* returning to a list: show it immediately, no per-card stagger */
-.page-back .anim-in { animation: none; }
+/* inside an entering page, cards follow the page animation (no extra per-card stagger) */
+:is(.page-forward, .page-back, .page-fade) .anim-in { animation: none; }
+/* keep the first content clear of the header's fade-out area */
+.header-blend + * { margin-top: 40px; }

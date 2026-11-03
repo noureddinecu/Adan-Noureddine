@@ -51,7 +51,7 @@ export function PageHeader({ title, subtitle, back = true, right }: { title: Rea
   }, []);
   return (
     <header ref={ref} className="header-blend zellige-header sticky top-0 z-30 text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-      <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 py-3">
+      <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 pb-3.5 pt-5">
         {back && (
           <button onClick={() => goBack()} className="grid size-10 shrink-0 place-items-center rounded-full hover:bg-white/15 active:bg-white/25" aria-label="رجوع">
             <ArrowRight className="size-6" />
@@ -59,7 +59,7 @@ export function PageHeader({ title, subtitle, back = true, right }: { title: Rea
         )}
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-[18px] font-bold leading-tight">{title}</h1>
-          {subtitle && <p className="truncate text-[13.5px] opacity-85">{subtitle}</p>}
+          {subtitle && <p className="mt-0.5 truncate text-[14px] opacity-90">{subtitle}</p>}
         </div>
         {right}
       </div>

@@ -74,7 +74,7 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
   return (
     <div className="safe-bottom">
       <header className="home-header zellige-header relative overflow-hidden text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <div className="mx-auto max-w-3xl px-4 pb-16 pt-4">
+        <div className="mx-auto max-w-3xl px-4 pb-20 pt-7">
           <div className="flex items-center gap-3">
             <Logo tile className="size-14" />
             <div className="min-w-0 flex-1">
@@ -89,7 +89,7 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
         </div>
       </header>
 
-      <div className={`sticky top-0 z-30 -mt-12 px-3 pb-2 pt-[max(env(safe-area-inset-top),0px)] transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-[130%] opacity-0' : 'translate-y-0 opacity-100'}`}>
+      <div className={`sticky top-0 z-30 -mt-14 px-3 pb-2 pt-[max(env(safe-area-inset-top),0px)] transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-[130%] opacity-0' : 'translate-y-0 opacity-100'}`}>
         <div className="mx-auto max-w-3xl">
           <SearchBar ref={inputRef} large value={q} onChange={setQ} onSubmit={() => app.addSearch(q)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />
         </div>
