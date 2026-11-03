@@ -1,20 +1,10 @@
-import { AlertOctagon, ExternalLink, Info, ShieldAlert } from 'lucide-react';
+import { AlertOctagon, Info, ShieldAlert } from 'lucide-react';
+import { LawLinks } from './LawLinks';
 import { fineFor } from '../data/fines';
 import type { Violation } from '../data/types';
 import { useApp } from '../store';
 
 const money = (n: number) => n.toLocaleString('fr-MA').replace(/\u202f/g, ' ');
-
-export function OfficialLink({ label }: { label?: string }) {
-  const { fines } = useApp();
-  const src = fines.sources.code;
-  if (!src) return null;
-  return (
-    <a href={src.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[13.5px] font-semibold text-brand-700 underline decoration-dotted underline-offset-4 dark:text-brand-100">
-      <ExternalLink className="size-3.5" />{label ?? 'النص الرسمي (الأمانة العامة للحكومة)'}
-    </a>
-  );
-}
 
 export function FineCard({ v }: { v: Violation }) {
   const { fines } = useApp();
@@ -31,7 +21,6 @@ export function FineCard({ v }: { v: Violation }) {
             <p className="font-bold">{cat.type === 'penal' ? 'جنحة — لا تطبق أسعار الغرامات التصالحية' : cat.type === 'administrative' ? 'مخالفة إدارية — لا تطبق أسعار الدرجات' : 'لا يوجد مبلغ معتمد'}</p>
             <p className="text-[var(--muted)]">{cat.note}</p>
             <p className="mt-1.5 text-[14px]"><b>المرجع:</b> {cat.ref}</p>
-            <div className="mt-1.5"><OfficialLink /></div>
           </div>
         </div>
         {cat.extraNote && <p className="mt-2 rounded-lg border-r-4 border-gold bg-amber-50 px-3 py-2 text-[15px] leading-7 dark:bg-amber-950/30">{cat.extraNote}</p>}
@@ -57,10 +46,8 @@ export function FineCard({ v }: { v: Violation }) {
           </div>
         ))}
       </div>
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[13.5px]">
-        <span className="rounded-full bg-[var(--surface-2)] px-2.5 py-1 font-semibold">{cat.label} · {cat.ref}</span>
-        <OfficialLink label="فتح النص الرسمي" />
-      </div>
+      <p className="mt-2 text-[13.5px]"><span className="rounded-full bg-[var(--surface-2)] px-2.5 py-1 font-semibold">{cat.label} · {cat.ref}</span></p>
+      <div className="mt-3"><LawLinks articles={(cat.ref.match(/\d{1,3}/g) ?? []).filter((n, i, arr) => arr.indexOf(n) === i)} title="فتح النص الرسمي عند مادة الغرامة" /></div>
       {cat.extraNote && <p className="mt-3 rounded-lg border-r-4 border-gold bg-amber-50 px-3 py-2 text-[15px] leading-7 dark:bg-amber-950/30">{cat.extraNote}</p>}
 
     </div>

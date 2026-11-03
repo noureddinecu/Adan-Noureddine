@@ -1,6 +1,8 @@
 import { Banknote, ClipboardList, Copy, Info, Link2, Scale, Share2, Star } from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { FineCard } from '../components/FineCard';
+import { LawLinks } from '../components/LawLinks';
+import { codeArticles } from '../data/law';
 import { Card, CodeBadge, Empty, Hl, PageHeader, SECTION_STYLE, SectionIcon } from '../components/ui';
 import { androidBridge } from '../lib/pwa';
 import { navigate } from '../lib/router';
@@ -114,6 +116,11 @@ export function Detail({ id, q }: { id: string; q: string }) {
             <Row label="المرجع القانوني">
               <ul className="space-y-1">{v.legalRefs.map((r, i) => <li key={i} className="legal rounded-lg bg-[var(--surface-2)] px-3 py-2"><Hl text={r} terms={terms} /></li>)}</ul>
             </Row>
+            {codeArticles(v).length > 0 && (
+              <Row label="النص الرسمي لمدونة السير">
+                <LawLinks articles={codeArticles(v)} />
+              </Row>
+            )}
             {v.articles.length > 0 && (
               <Row label="المواد المرتبطة">
                 <div className="flex flex-wrap gap-1.5">

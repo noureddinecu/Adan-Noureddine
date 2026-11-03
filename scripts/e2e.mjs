@@ -81,6 +81,8 @@ try {
   await page.waitForSelector('text=العقوبات والإجراءات');
   for (const t of ['معلومات المخالفة', 'النصوص القانونية', 'العقوبات والإجراءات', 'الغرامة']) check(await page.isVisible(`text=${t}`), `detail shows «${t}»`);
   { const t = await page.textContent('main'); check(!/أولا|ثانيا|ثالثا|رابعا|مصدر المعلومات|السابقة|التالية|جميع /.test(t), 'detail page clean (no ordinals, source, prev/next, section link)'); }
+  check(await page.isVisible('text=النص الرسمي لمدونة السير'), 'detail shows per-article official text links');
+  check((await page.locator('button:has-text("المادة 185")').count()) >= 1 && (await page.locator('button:has-text("المادة 219")').count()) >= 1, 'buttons for article 185 (offence) and 219 (fine)');
   await page.screenshot({ path: join(shots, '03-detail.png'), fullPage: true });
 
   // fines + calculator (185361C2 is degree 2 → 300 / 350 / 500)
