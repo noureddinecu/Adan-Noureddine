@@ -3,3 +3,7 @@ dist
 *.log
 .DS_Store
 test-results
+build/
+*.idsig
+*.tsbuildinfo
+android/keystore/

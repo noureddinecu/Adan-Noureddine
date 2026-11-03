@@ -1,7 +1,7 @@
 import { AlertTriangle, CheckCircle2, Download, FileCheck2, Monitor, Moon, ShieldCheck, Smartphone, Sun, WifiOff } from 'lucide-react';
 import { Card, Logo, PageHeader, SECTION_STYLE, SectionIcon, SectionTitle } from '../components/ui';
 import { navigate } from '../lib/router';
-import { useInstall } from '../lib/pwa';
+import { isApk, useInstall } from '../lib/pwa';
 import type { ThemePref } from '../lib/theme';
 import { useApp } from '../store';
 
@@ -72,7 +72,7 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
         <SectionTitle icon={<Smartphone className="size-4.5 text-brand-600 dark:text-brand-100" />}>التثبيت والعمل دون إنترنت</SectionTitle>
         <Card className="p-4 text-[14px] leading-7">
           {install.installed ? (
-            <p className="flex items-center gap-2 font-semibold text-brand-600 dark:text-brand-100"><CheckCircle2 className="size-5" />التطبيق مثبت على هذا الجهاز.</p>
+            <p className="flex items-center gap-2 font-semibold text-brand-600 dark:text-brand-100"><CheckCircle2 className="size-5" />{isApk ? 'نسخة تطبيق أندرويد (APK) — جميع البيانات مضمنة في التطبيق.' : 'التطبيق مثبت على هذا الجهاز.'}</p>
           ) : install.canInstall ? (
             <button onClick={install.install} className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 py-3 font-bold text-white"><Download className="size-5" />تثبيت التطبيق الآن</button>
           ) : (

@@ -23,12 +23,20 @@ const svg = (pad, rounded) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="
   <rect width="512" height="512" rx="${rounded ? 112 : 0}" fill="url(#g)"/>
   <g transform="translate(256 256) scale(${pad}) translate(-256 -270)">${shield}</g></svg>`;
 
+const androidOut = process.argv[2] === '--android' ? process.argv[3] : null;
 mkdirSync(join(root, 'public/icons'), { recursive: true });
 writeFileSync(join(root, 'public/favicon.svg'), svg(0.92, true));
 writeFileSync(join(root, 'public/icons/icon.svg'), svg(0.92, true));
 const browser = await chromium.launch();
 const page = await browser.newPage();
-const shots = [
+const shots = androidOut ? [
+  ['mipmap-mdpi/ic_launcher.png', 48, svg(0.92, true)],
+  ['mipmap-hdpi/ic_launcher.png', 72, svg(0.92, true)],
+  ['mipmap-xhdpi/ic_launcher.png', 96, svg(0.92, true)],
+  ['mipmap-xxhdpi/ic_launcher.png', 144, svg(0.92, true)],
+  ['mipmap-xxxhdpi/ic_launcher.png', 192, svg(0.92, true)],
+  ['drawable/splash_logo.png', 288, svg(0.92, true)],
+] : [
   ['icon-192.png', 192, svg(0.92, true)],
   ['icon-512.png', 512, svg(0.92, true)],
   ['maskable-512.png', 512, svg(0.72, false)],
@@ -37,7 +45,9 @@ const shots = [
 for (const [name, size, s] of shots) {
   await page.setViewportSize({ width: size, height: size });
   await page.setContent(`<html><body style="margin:0;background:transparent">${s.replace('width="512" height="512"', `width="${size}" height="${size}"`)}</body></html>`);
-  await page.screenshot({ path: join(root, 'public/icons', name), omitBackground: true, clip: { x: 0, y: 0, width: size, height: size } });
+  const dest = androidOut ? join(androidOut, name) : join(root, 'public/icons', name);
+  mkdirSync(dirname(dest), { recursive: true });
+  await page.screenshot({ path: dest, omitBackground: true, clip: { x: 0, y: 0, width: size, height: size } });
 }
 await browser.close();
 console.log('icons ok');

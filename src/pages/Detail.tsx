@@ -2,6 +2,7 @@ import { AlertTriangle, BookMarked, ChevronLeft, ChevronRight, ClipboardList, Co
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Card, CodeBadge, Empty, Hl, PageHeader, SECTION_STYLE, SectionIcon } from '../components/ui';
 import type { Violation } from '../data/types';
+import { androidBridge } from '../lib/pwa';
 import { navigate } from '../lib/router';
 import { search } from '../search/engine';
 import { useApp } from '../store';
@@ -59,10 +60,14 @@ export function Detail({ id, q }: { id: string; q: string }) {
   ].join('\n\n');
 
   const copy = async () => {
-    try { await navigator.clipboard.writeText(plain); setCopied(true); setTimeout(() => setCopied(false), 1800); } catch { /* ignore */ }
+    try {
+      if (androidBridge) androidBridge.copy(plain); else await navigator.clipboard.writeText(plain);
+      setCopied(true); setTimeout(() => setCopied(false), 1800);
+    } catch { /* ignore */ }
   };
   const share = async () => {
-    if (navigator.share) { try { await navigator.share({ title: `${v.code} — ${sec.short}`, text: plain }); } catch { /* cancelled */ } }
+    if (androidBridge) androidBridge.share(`${v.code} — ${sec.short}`, plain);
+    else if (navigator.share) { try { await navigator.share({ title: `${v.code} — ${sec.short}`, text: plain }); } catch { /* cancelled */ } }
     else copy();
   };
 

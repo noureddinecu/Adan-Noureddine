@@ -7,7 +7,8 @@ import { useTheme } from './lib/theme';
 import { AppProvider } from './store';
 import './index.css';
 
-registerSW({ immediate: true });
+// In the Android APK all files are served locally from the app package: no service worker needed.
+if (!import.meta.env.VITE_APK) registerSW({ immediate: true });
 
 function Splash() {
   return (

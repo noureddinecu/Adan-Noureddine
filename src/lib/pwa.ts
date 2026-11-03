@@ -6,8 +6,10 @@ const listeners = new Set<() => void>();
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferred = e as BIPEvent; listeners.forEach((l) => l()); });
 window.addEventListener('appinstalled', () => { deferred = null; listeners.forEach((l) => l()); });
 
+export const isApk = !!import.meta.env.VITE_APK;
+
 export function isStandalone() {
-  return window.matchMedia('(display-mode: standalone)').matches || (navigator as unknown as { standalone?: boolean }).standalone === true;
+  return isApk || window.matchMedia('(display-mode: standalone)').matches || (navigator as unknown as { standalone?: boolean }).standalone === true;
 }
 
 export function useInstall() {
@@ -35,3 +37,6 @@ export function useOnline() {
   }, []);
   return online;
 }
+
+interface AndroidBridge { share: (title: string, text: string) => void; copy: (text: string) => void }
+export const androidBridge = (window as unknown as { AndroidBridge?: AndroidBridge }).AndroidBridge;
