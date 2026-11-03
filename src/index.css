@@ -153,34 +153,15 @@ body::before {
 :root { --hdr-top: #0a5c39; --hdr-bottom: #0d7a4a; --waves-opacity: 1; }
 .dark { --hdr-top: #073f28; --hdr-bottom: #0a5a37; --waves-opacity: .55; }
 
-/* ---------- one brand header for every page (reference design) ---------- */
-:root { --title: #0b4a2f; }
-.dark { --title: #e8f2ec; }
-.brand-title { color: var(--title); }
-.brand-header, .splash { background-color: var(--bg); isolation: isolate; }
-.brand-header::before, .splash::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: url('/patterns/zellige-line-green.svg') 0 0 / 64px repeat; opacity: var(--zellige-opacity);
+/* one header for every page: green + soft zellige lines, curved flag-striped bottom edge */
+.app-header { isolation: isolate; }
+.app-header-body { position: relative; background: linear-gradient(180deg, var(--hdr-top), var(--hdr-bottom)); }
+.app-header-body::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: url('/patterns/zellige-line-white.svg') repeat; background-size: 54px; opacity: .12;
 }
-.dark .brand-header::before, .dark .splash::before { background-image: url('/patterns/zellige-line-gold.svg'); }
-.brand-header::after, .splash::after {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse 60% 80% at 50% 45%, color-mix(in srgb, var(--surface) 70%, transparent), transparent 75%);
-}
-.brand-corners { position: absolute; inset-inline: 0; top: 0; height: clamp(54px, 15vw, 82px); pointer-events: none; }
-.brand-corner, .brand-corner-z { position: absolute; top: 0; height: 100%; width: 34%; }
-.brand-corner.left, .brand-corner-z.left { left: 0; }
-.brand-corner.right, .brand-corner-z.right { right: 0; transform: scaleX(-1); }
-.brand-corner-z {
-  background: url('/patterns/zellige-line-white.svg') 0 0 / 30px repeat; opacity: .35;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 80' preserveAspectRatio='none'%3E%3Cpath d='M0 0H140C104 20 58 46 0 72Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 80' preserveAspectRatio='none'%3E%3Cpath d='M0 0H140C104 20 58 46 0 72Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
-}
-.brand-header:not(.is-large) .brand-corners { height: 40px; }
-.brand-header:not(.is-large) :is(.brand-corner, .brand-corner-z) { width: 20%; }
-.brand-wave { display: block; width: 100%; height: clamp(18px, 5vw, 28px); margin-top: 2px; }
-.brand-btn { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 9999px; background: var(--surface); color: var(--title); box-shadow: 0 4px 12px -6px rgba(0,0,0,.35); border: 1px solid var(--line); }
-.brand-header + * { margin-top: 8px; }
+.hero-curve { display: block; width: 100%; height: clamp(26px, 8vw, 40px); margin-top: -1px; filter: drop-shadow(0 6px 8px rgba(10,60,36,.12)); }
+.app-header + * { margin-top: 4px; }
 
 .zellige-corner { position: relative; isolation: isolate; overflow: hidden; }
 .zellige-corner::after {

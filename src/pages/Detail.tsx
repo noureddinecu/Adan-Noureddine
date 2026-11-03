@@ -79,8 +79,8 @@ export function Detail({ id, q }: { id: string; q: string }) {
   return (
     <div className="safe-bottom">
       <PageHeader title={v.code} subtitle={sec.title} right={
-        <button onClick={() => { app.toggleFavorite(v.id); setPop(true); setTimeout(() => setPop(false), 400); }} className="brand-btn" aria-label={fav ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'} aria-pressed={fav}>
-          <Star className={`size-5 ${fav ? 'fill-gold text-gold' : ''} ${pop ? 'anim-pop' : ''}`} />
+        <button onClick={() => { app.toggleFavorite(v.id); setPop(true); setTimeout(() => setPop(false), 400); }} className="grid size-10 place-items-center rounded-full hover:bg-white/15" aria-label={fav ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'} aria-pressed={fav}>
+          <Star className={`size-6 ${fav ? 'fill-gold text-gold' : ''} ${pop ? 'anim-pop' : ''}`} />
         </button>
       } />
 

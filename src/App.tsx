@@ -19,7 +19,7 @@ export function App({ theme }: { theme: ReturnType<typeof useTheme> }) {
     case 'favorites': page = <Favorites />; break;
     case 'history': page = <HistoryPage />; break;
     case 'about': page = <About theme={theme} />; break;
-    default: page = <Home route={route} />;
+    default: page = <Home route={route} theme={theme} />;
   }
   // scroll: restore the list position when coming back, top of page otherwise
   useLayoutEffect(() => {
