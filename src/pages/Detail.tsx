@@ -1,0 +1,194 @@
+import { AlertTriangle, BookMarked, ChevronLeft, ChevronRight, ClipboardList, Copy, FileSearch, Info, Link2, Scale, Share2, Star } from 'lucide-react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Card, CodeBadge, Empty, Hl, PageHeader, SECTION_STYLE, SectionIcon } from '../components/ui';
+import type { Violation } from '../data/types';
+import { navigate } from '../lib/router';
+import { search } from '../search/engine';
+import { useApp } from '../store';
+
+function Block({ icon, title, children, n }: { icon: ReactNode; title: string; children: ReactNode; n: string }) {
+  return (
+    <Card className="anim-in overflow-hidden">
+      <div className="flex items-center gap-2.5 border-b border-[var(--line)] bg-[var(--surface-2)] px-4 py-3">
+        <span className="grid size-8 place-items-center rounded-lg bg-brand-600 text-white">{icon}</span>
+        <h2 className="text-[15.5px] font-bold">{title}</h2>
+        <span className="mr-auto text-[11px] font-semibold text-[var(--muted)]">{n}</span>
+      </div>
+      <div className="px-4 py-3.5">{children}</div>
+    </Card>
+  );
+}
+
+function Row({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="border-b border-dashed border-[var(--line)] py-2.5 last:border-0">
+      <dt className="mb-1 text-[12.5px] font-semibold text-[var(--muted)]">{label}</dt>
+      <dd className="text-[15px] leading-7">{children}</dd>
+    </div>
+  );
+}
+
+function isHeading(line: string) {
+  return /^في حالة (سائق|مركبة)/.test(line) && !/^\d/.test(line) && line.length < 80;
+}
+
+export function Detail({ id, q }: { id: string; q: string }) {
+  const app = useApp();
+  const v = app.byId.get(id);
+  const [copied, setCopied] = useState(false);
+  const [pop, setPop] = useState(false);
+
+  useEffect(() => { if (v) { app.recordView(v.id); window.scrollTo(0, 0); } /* eslint-disable-next-line */ }, [id]);
+  useEffect(() => { if (q) app.addSearch(q); /* eslint-disable-next-line */ }, [q]);
+
+  const terms = useMemo(() => (q && v ? search(app.index, q, 500).find((h) => h.violation.id === v.id)?.terms : undefined), [q, v, app.index]);
+
+  if (!v) return (<><PageHeader title="غير موجودة" /><Empty title="هذه المخالفة غير موجودة" /></>);
+  const sec = app.sections.get(v.section)!;
+  const st = SECTION_STYLE[v.section];
+  const list = app.data.violations.filter((x) => x.section === v.section);
+  const pos = list.findIndex((x) => x.id === v.id);
+  const prev = list[pos - 1], next = list[pos + 1];
+  const fav = app.isFavorite(v.id);
+  const shared = v.sharedWith.map((sid) => app.byId.get(sid)).filter(Boolean) as Violation[];
+
+  const plain = [
+    `الرمز: ${v.codeRaw}`, `التصنيف: ${sec.title}`, `توصيف المخالفة: ${v.description}`,
+    `المرجع القانوني:\n${v.legalRefs.join('\n')}`, `المسطرة:\n${v.procedure.join('\n')}`,
+    `المصدر: ${app.data.source.title} (${app.data.source.edition}) — صفحة ${v.pdfPage}`,
+  ].join('\n\n');
+
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(plain); setCopied(true); setTimeout(() => setCopied(false), 1800); } catch { /* ignore */ }
+  };
+  const share = async () => {
+    if (navigator.share) { try { await navigator.share({ title: `${v.code} — ${sec.short}`, text: plain }); } catch { /* cancelled */ } }
+    else copy();
+  };
+
+  return (
+    <div className="safe-bottom">
+      <PageHeader title={v.code} subtitle={sec.title} right={
+        <button onClick={() => { app.toggleFavorite(v.id); setPop(true); setTimeout(() => setPop(false), 400); }} className="grid size-10 place-items-center rounded-full hover:bg-white/15" aria-label={fav ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'} aria-pressed={fav}>
+          <Star className={`size-6 ${fav ? 'fill-gold text-gold' : ''} ${pop ? 'anim-pop' : ''}`} />
+        </button>
+      } />
+
+      <main className="mx-auto flex max-w-3xl flex-col gap-3 px-3 pt-3">
+        {/* Hero */}
+        <Card className="anim-in overflow-hidden">
+          <div className={`flex items-center gap-2 px-4 py-2.5 ${st.bg} ${st.fg}`}>
+            <SectionIcon section={v.section} className="size-5" />
+            <span className="text-[13.5px] font-bold">{sec.title}</span>
+            <span className="mr-auto text-[12px] font-semibold opacity-80">{pos + 1} / {list.length}</span>
+          </div>
+          <div className="p-4">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <CodeBadge code={v.code} section={v.section} />
+              {v.relatedCodes.map((c) => (
+                <button key={c} onClick={() => navigate(`/?q=${c}`)} className="ltr-nums rounded-lg border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[13px] font-bold">+ {c}</button>
+              ))}
+              {v.codeNote && <span className="rounded-lg bg-[var(--surface-2)] px-2 py-1 text-[13px] font-semibold">+ {v.codeNote}</span>}
+            </div>
+            <p className="whitespace-pre-line text-[17px] font-bold leading-8"><Hl text={v.description} terms={terms} /></p>
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              <button onClick={() => app.toggleFavorite(v.id)} className={`flex flex-col items-center gap-1 rounded-xl border py-2 text-[12.5px] font-semibold transition ${fav ? 'border-gold bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200' : 'border-[var(--line)]'}`}>
+                <Star className={`size-5 ${fav ? 'fill-gold text-gold' : ''}`} />{fav ? 'في المفضلة' : 'أضف للمفضلة'}
+              </button>
+              <button onClick={copy} className="flex flex-col items-center gap-1 rounded-xl border border-[var(--line)] py-2 text-[12.5px] font-semibold"><Copy className="size-5" />{copied ? 'تم النسخ ✓' : 'نسخ'}</button>
+              <button onClick={share} className="flex flex-col items-center gap-1 rounded-xl border border-[var(--line)] py-2 text-[12.5px] font-semibold"><Share2 className="size-5" />مشاركة</button>
+            </div>
+          </div>
+        </Card>
+
+        <Block n="أولا" icon={<Info className="size-4.5" />} title="معلومات المخالفة">
+          <dl>
+            <Row label="رمز المخالفة"><span className="ltr-nums font-bold">{v.codeRaw}</span></Row>
+            <Row label="توصيف المخالفة (كما ورد في الدليل)"><span className="whitespace-pre-line"><Hl text={v.description} terms={terms} /></span></Row>
+            <Row label="الدرجة / التصنيف">
+              <button onClick={() => navigate(`/section/${v.section}`)} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13.5px] font-semibold ${st.soft}`}><SectionIcon section={v.section} className="size-4" />{sec.title}</button>
+            </Row>
+          </dl>
+        </Block>
+
+        <Block n="ثانيا" icon={<Scale className="size-4.5" />} title="النصوص القانونية">
+          <dl>
+            <Row label="المرجع القانوني">
+              <ul className="space-y-1">{v.legalRefs.map((r, i) => <li key={i} className="rounded-lg bg-[var(--surface-2)] px-3 py-1.5"><Hl text={r} terms={terms} /></li>)}</ul>
+            </Row>
+            {v.articles.length > 0 && (
+              <Row label="أرقام المواد المشار إليها (للبحث)">
+                <div className="flex flex-wrap gap-1.5">
+                  {v.articles.filter((a) => a.includes('(')).concat(v.articles.filter((a) => !a.includes('(') && !v.articles.some((b) => b.startsWith(`${a}(`)))).map((a) => (
+                    <button key={a} onClick={() => navigate(`/?q=${encodeURIComponent(`المادة ${a}`)}`)} className="ltr-nums inline-flex items-center gap-1 rounded-full border border-brand-500/40 px-2.5 py-0.5 text-[13px] font-semibold text-brand-700 dark:text-brand-100">
+                      <Link2 className="size-3.5" />{a}
+                    </button>
+                  ))}
+                </div>
+              </Row>
+            )}
+          </dl>
+          <p className="mt-2 rounded-lg bg-[var(--surface-2)] px-3 py-2 text-[12.5px] leading-6 text-[var(--muted)]">يورد الدليل المراجع القانونية دون نص المواد الكامل؛ تُعرض المراجع هنا كما وردت حرفيا.</p>
+        </Block>
+
+        <Block n="ثالثا" icon={<ClipboardList className="size-4.5" />} title="العقوبات والإجراءات">
+          <dl>
+            <Row label="المسطرة الواجب اتباعها">
+              <ol className="space-y-2">
+                {v.procedure.map((p, i) =>
+                  isHeading(p) ? (
+                    <li key={i} className="mt-3 rounded-lg bg-brand-50 px-3 py-1.5 text-[14px] font-bold text-brand-700 dark:bg-brand-900 dark:text-brand-100">{p}</li>
+                  ) : p.startsWith('ملاحظة') || p.startsWith('(ملاحظة') ? (
+                    <li key={i} className="rounded-lg border-r-4 border-gold bg-amber-50 px-3 py-2 text-[14.5px] leading-7 dark:bg-amber-950/30"><Hl text={p} terms={terms} /></li>
+                  ) : (
+                    <li key={i} className="flex gap-2.5 leading-7">
+                      <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand-500" />
+                      <span><Hl text={p} terms={terms} /></span>
+                    </li>
+                  ),
+                )}
+              </ol>
+            </Row>
+            <Row label="مبلغ الغرامة"><span className="text-[14px] text-[var(--muted)]">لم يرد مبلغ الغرامة في هذا الدليل.</span></Row>
+            {shared.length > 0 && (
+              <Row label="ملاحظة حول الجدول الأصلي">
+                <p className="text-[14px] leading-7">وردت هذه المسطرة في خلية مشتركة (مدمجة) تشمل أيضا:</p>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {shared.map((s) => <button key={s.id} onClick={() => navigate(`/v/${s.id}`)}><CodeBadge code={s.code} section={s.section} small /></button>)}
+                </div>
+              </Row>
+            )}
+          </dl>
+        </Block>
+
+        <Block n="رابعا" icon={<FileSearch className="size-4.5" />} title="مصدر المعلومات">
+          <dl>
+            <Row label="الصفحة في ملف PDF"><span className="font-bold">{v.pdfPage}</span> <span className="text-[13px] text-[var(--muted)]">من {app.data.source.pdfPages} (الترقيم المطبوع على الصفحة: {v.printedPage})</span></Row>
+            <Row label="الجدول المستخرج منه">{sec.title}</Row>
+            <Row label="الوثيقة">{app.data.source.title} — {app.data.source.subtitle} ({app.data.source.edition})</Row>
+          </dl>
+          {(v.extractionNotes.length > 0 || v.duplicateCode) && (
+            <div className="mt-2 space-y-2">
+              {v.extractionNotes.map((n, i) => (
+                <p key={i} className="flex gap-2 rounded-lg border border-amber-300/70 bg-amber-50 px-3 py-2 text-[13px] leading-6 text-amber-900 dark:border-amber-700/50 dark:bg-amber-950/30 dark:text-amber-200"><AlertTriangle className="mt-1 size-4 shrink-0" />{n}</p>
+              ))}
+              {v.duplicateCode && !v.extractionNotes.some((n) => n.includes('نفس الرمز')) && (
+                <p className="flex gap-2 rounded-lg border border-amber-300/70 bg-amber-50 px-3 py-2 text-[13px] leading-6 text-amber-900 dark:border-amber-700/50 dark:bg-amber-950/30 dark:text-amber-200"><AlertTriangle className="mt-1 size-4 shrink-0" />هذا الرمز مستعمل في الدليل لأكثر من مخالفة واحدة؛ تم الاحتفاظ بكل مخالفة منفصلة كما وردت.</p>
+              )}
+            </div>
+          )}
+        </Block>
+
+        <div className="mt-1 grid grid-cols-2 gap-2">
+          {prev ? (
+            <button onClick={() => navigate(`/v/${prev.id}`, { replace: true })} className="flex items-center gap-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 text-right text-[13px]"><ChevronRight className="size-5 shrink-0" /><span className="min-w-0"><span className="block text-[11.5px] text-[var(--muted)]">السابقة</span><span className="ltr-nums font-bold">{prev.code}</span></span></button>
+          ) : <span />}
+          {next ? (
+            <button onClick={() => navigate(`/v/${next.id}`, { replace: true })} className="flex items-center justify-end gap-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 text-left text-[13px]"><span className="min-w-0 text-right"><span className="block text-[11.5px] text-[var(--muted)]">التالية</span><span className="ltr-nums font-bold">{next.code}</span></span><ChevronLeft className="size-5 shrink-0" /></button>
+          ) : <span />}
+        </div>
+        <button onClick={() => navigate(`/section/${v.section}`)} className="flex items-center justify-center gap-2 rounded-2xl py-3 text-[13.5px] font-semibold text-brand-700 dark:text-brand-100"><BookMarked className="size-4.5" />جميع {sec.short}</button>
+      </main>
+    </div>
+  );
+}
