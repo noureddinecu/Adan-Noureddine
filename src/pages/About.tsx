@@ -65,11 +65,11 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
 
         <SectionTitle>المطوّر</SectionTitle>
         <Card className="zellige-corner flex flex-col items-center px-5 py-6 text-center">
-          <div className="rounded-full bg-gradient-to-b from-gold via-[#e4c25a] to-[#a87d12] p-[3px] shadow-lg">
-            <div className="rounded-full bg-[var(--surface)] p-1">
-              <img src="./developer.jpg" alt="المطوّر: نورالدين عربي" width={128} height={128} loading="lazy" className="size-32 rounded-full object-cover" />
+          <figure className="w-full max-w-[260px] rounded-2xl bg-gradient-to-b from-gold via-[#e4c25a] to-[#a87d12] p-[3px] shadow-lg">
+            <div className="rounded-[14px] bg-[var(--surface)] p-1.5">
+              <img src="./developer.jpg" alt="المطوّر: نورالدين عربي" width={560} height={700} loading="lazy" className="aspect-[4/5] w-full rounded-xl object-cover" />
             </div>
-          </div>
+          </figure>
           <p className="mt-4 text-[17px] font-bold">المطوّر: نورالدين عربي</p>
           <span className="mt-3 h-px w-24 bg-gradient-to-l from-transparent via-gold to-transparent" />
         </Card>
