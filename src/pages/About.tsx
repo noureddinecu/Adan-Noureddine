@@ -1,5 +1,4 @@
-import { CheckCircle2, Download, Monitor, Moon, Search, ShieldCheck, Smartphone, Star, Sun, WifiOff } from 'lucide-react';
-import { FinesManager } from '../components/FinesManager';
+import { CheckCircle2, Download, Monitor, Moon, Search, Smartphone, Star, Sun, WifiOff } from 'lucide-react';
 import { Card, Logo, PageHeader, SectionTitle } from '../components/ui';
 import { isApk, useInstall } from '../lib/pwa';
 import type { ThemePref } from '../lib/theme';
@@ -49,8 +48,6 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
           ))}
         </Card>
 
-        <FinesManager />
-
         {!isApk && (
           <>
             <SectionTitle icon={<Smartphone className="size-5 text-brand-600 dark:text-brand-100" />}>التثبيت على الهاتف</SectionTitle>
@@ -66,10 +63,6 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
           </>
         )}
 
-        <SectionTitle icon={<ShieldCheck className="size-5 text-brand-600 dark:text-brand-100" />}>تنبيه</SectionTitle>
-        <Card className="p-4 text-[16px] leading-8 text-[var(--muted)]">
-          أداة مساعدة للبحث في محتوى الدليل. في حالة الشك يُرجع إلى النصوص التشريعية والتنظيمية الجاري بها العمل.
-        </Card>
       </main>
     </div>
   );
