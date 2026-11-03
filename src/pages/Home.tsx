@@ -72,8 +72,8 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
   ];
 
   return (
-    <div className="safe-bottom">
-      <header className="home-header zellige-header relative overflow-hidden text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="safe-bottom home-page">
+      <header className="home-header relative text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="mx-auto max-w-3xl px-4 pb-20 pt-7">
           <div className="flex items-center gap-3">
             <Logo tile className="size-14" />

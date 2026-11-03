@@ -154,24 +154,57 @@ body::before {
 /* Headers melt into the page: no border, no ornamental band — a soft gradient fade instead */
 :root { --hdr-top: #0b3d2e; --hdr-bottom: #0e5132; --hdr-fade: rgba(14,81,50,0); }
 .dark { --hdr-top: #062a1f; --hdr-bottom: #0a3a28; --hdr-fade: rgba(10,58,40,0); }
-.header-blend { background: linear-gradient(to bottom, var(--hdr-top) 0%, var(--hdr-bottom) 100%); }
-.header-blend::before {
+/* Long green glow at the top of every page (reference design): dark green at the top,
+   slowly fading into the zellige background; the zellige shows progressively through it. */
+.safe-bottom { position: relative; isolation: isolate; }
+.safe-bottom::before, .safe-bottom::after {
   content: '';
   position: absolute;
   inset-inline: 0;
-  top: calc(100% - 1px);
-  height: 72px;
+  top: 0;
+  height: var(--glow-h, 290px);
+  z-index: -1;
   pointer-events: none;
+}
+.safe-bottom::before {
   background: linear-gradient(to bottom,
-    var(--hdr-bottom) 0%,
-    color-mix(in srgb, var(--hdr-bottom) 80%, transparent) 12%,
-    color-mix(in srgb, var(--hdr-bottom) 55%, transparent) 30%,
-    color-mix(in srgb, var(--hdr-bottom) 22%, transparent) 60%,
+    var(--hdr-top) 0%,
+    var(--hdr-bottom) 26%,
+    color-mix(in srgb, var(--hdr-bottom) 90%, transparent) 36%,
+    color-mix(in srgb, var(--hdr-bottom) 68%, transparent) 48%,
+    color-mix(in srgb, var(--hdr-bottom) 42%, transparent) 61%,
+    color-mix(in srgb, var(--hdr-bottom) 20%, transparent) 75%,
+    color-mix(in srgb, var(--hdr-bottom) 7%, transparent) 88%,
     transparent 100%);
 }
-.home-header {
-  background: linear-gradient(to bottom, var(--hdr-top) 0%, var(--hdr-bottom) 42%, color-mix(in srgb, var(--hdr-bottom) 70%, transparent) 60%, color-mix(in srgb, var(--hdr-bottom) 30%, transparent) 80%, transparent 100%);
+.safe-bottom::after {
+  background: url('/patterns/zellige-line-gold.svg') repeat;
+  background-size: 64px;
+  opacity: .14;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,.6) 45%, transparent 85%);
+  mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,.6) 45%, transparent 85%);
 }
+.home-page { --glow-h: 340px; }
+
+/* Sticky header: transparent over the glow at the top of the page; once the page scrolls it gets
+   its own green background with a soft fade (no border, no line) so titles stay readable. */
+.header-blend { background: transparent; }
+.header-blend .hdr-bg {
+  position: absolute;
+  inset: 0 0 -72px 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .25s ease;
+  background: linear-gradient(to bottom,
+    var(--hdr-top) 0%,
+    var(--hdr-bottom) calc(100% - 72px),
+    color-mix(in srgb, var(--hdr-bottom) 70%, transparent) calc(100% - 52px),
+    color-mix(in srgb, var(--hdr-bottom) 30%, transparent) calc(100% - 26px),
+    transparent 100%);
+}
+.header-blend.is-scrolled .hdr-bg { opacity: 1; }
+.home-header { background: transparent; }
 
 .zellige-corner { position: relative; isolation: isolate; overflow: hidden; }
 .zellige-corner::after {
@@ -206,4 +239,4 @@ body::before {
 /* inside an entering page, cards follow the page animation (no extra per-card stagger) */
 :is(.page-forward, .page-back, .page-fade) .anim-in { animation: none; }
 /* keep the first content clear of the header's fade-out area */
-.header-blend + * { margin-top: 40px; }
+.header-blend + * { margin-top: 28px; }
