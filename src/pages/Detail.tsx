@@ -78,7 +78,7 @@ export function Detail({ id, q }: { id: string; q: string }) {
       <main className="mx-auto flex max-w-3xl flex-col gap-3 px-3 pt-3">
         {/* Hero */}
         <Card className="anim-in overflow-hidden">
-          <div className={`flex items-center gap-2 px-4 py-2.5 ${st.bg} ${st.fg}`}>
+          <div className={`flex items-center gap-2 border-t-4 px-4 py-2.5 ${st.soft}`} style={{ borderTopColor: `var(--color-${v.section})` }}>
             <SectionIcon section={v.section} className="size-5" />
             <span className="text-[14.5px] font-bold">{sec.title}</span>
           </div>

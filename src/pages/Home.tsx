@@ -1,7 +1,7 @@
 import { Clock, Download, Flame, History, Moon, SearchX, Star, Sun, X, Zap } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { SearchBar } from '../components/SearchBar';
-import { Card, Empty, Logo, OrnamentTitle, SECTION_STYLE, SectionIcon, SectionTitle } from '../components/ui';
+import { Card, Empty, HeroCurve, Logo, OrnamentTitle, SECTION_STYLE, SectionIcon, SectionTitle } from '../components/ui';
 import { ViolationCard } from '../components/ViolationCard';
 import type { SectionKey } from '../data/types';
 import { morph, navigate, type Route } from '../lib/router';
@@ -73,8 +73,8 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
 
   return (
     <div className="safe-bottom">
-      <header className="home-hero relative text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <div className="relative z-10 mx-auto flex max-w-3xl items-center gap-3 px-4 pb-6 pt-8">
+      <header className="app-header relative text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="app-header-body"><div className="relative z-10 mx-auto flex max-w-3xl items-center gap-3 px-4 pb-5 pt-7">
           <Logo tile className="size-[72px] ring-4 ring-white/90" />
           <div className="min-w-0 flex-1 text-center">
             <h1 className="text-[clamp(21px,6.2vw,27px)] font-bold leading-tight drop-shadow-sm">دليل المراقبة الطرقية</h1>
@@ -90,13 +90,8 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
           <button onClick={theme.toggle} className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-brand-700 shadow-md" aria-label={theme.dark ? 'الوضع النهاري' : 'الوضع الليلي'}>
             {theme.dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
           </button>
-        </div>
-        <svg className="hero-curve" viewBox="0 0 400 44" preserveAspectRatio="none" aria-hidden>
-          <path d="M0 0H400V14C300 38 110 36 0 8Z" fill="var(--hdr-bottom)" />
-          <path d="M0 8C110 36 300 38 400 14" fill="none" stroke="#fff" strokeWidth="3.2" vectorEffect="non-scaling-stroke" />
-          <path d="M0 13C110 41 300 43 400 19" fill="none" stroke="#d81e2b" strokeWidth="2.6" vectorEffect="non-scaling-stroke" />
-          <path d="M0 18C110 45 300 47 400 24" fill="none" stroke="#0d7a4a" strokeWidth="1.4" opacity=".55" vectorEffect="non-scaling-stroke" />
-        </svg>
+        </div></div>
+        <HeroCurve />
       </header>
       {!online && <p className="mx-4 mt-2 inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] px-3 py-1 text-xs shadow-sm"><span className="size-2 rounded-full bg-gold" /> دون اتصال — جميع البيانات متاحة محليا</p>}
 

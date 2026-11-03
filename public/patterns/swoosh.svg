@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="none" fill="none" stroke-linecap="round">
-  <path d="M-10 40 C 120 10, 260 30, 410 120" stroke="#d81e2b" stroke-width="1.4" opacity=".55"/>
-  <path d="M-10 58 C 130 30, 270 52, 410 142" stroke="#d81e2b" stroke-width="1" opacity=".35"/>
-  <path d="M-10 76 C 140 50, 280 74, 410 164" stroke="#0b6b40" stroke-width="1" opacity=".35"/>
-  <path d="M-10 94 C 150 70, 290 96, 410 186" stroke="#0b6b40" stroke-width="1" opacity=".22"/>
-</svg>

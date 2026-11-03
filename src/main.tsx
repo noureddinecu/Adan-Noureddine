@@ -2,6 +2,7 @@ import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { registerSW } from 'virtual:pwa-register';
 import { App } from './App';
+import { HeroCurve } from './components/ui';
 import { useTheme } from './lib/theme';
 import { AppProvider } from './store';
 import './index.css';
@@ -12,18 +13,18 @@ if (!import.meta.env.VITE_APK) registerSW({ immediate: true });
 function Splash({ leaving = false }: { leaving?: boolean }) {
   return (
     <div
-      className={`fixed inset-0 z-[100] overflow-hidden bg-[#faf6ee] transition-opacity duration-300 ${leaving ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+      className={`fixed inset-0 z-[100] overflow-hidden bg-[#f7f3ea] transition-opacity duration-300 ${leaving ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
       role="status"
       aria-label="دليل المراقبة الطرقية"
     >
-      <div className="absolute inset-0 bg-[url('/patterns/zellige-color.svg')] bg-[length:92px] opacity-[.12]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_45%_48%,#faf6ee_30%,rgba(250,246,238,0)_75%)]" />
-      <div className="edge-deco !absolute" style={{ opacity: 1 }} aria-hidden><span className="edge-waves" /><span className="edge-zellige" /></div>
-      <div className="swoosh !absolute" aria-hidden />
+      <div className="absolute inset-0 bg-[url('/patterns/zellige-line-green.svg')] bg-[length:72px] opacity-[.08]" />
+      <div className="absolute inset-x-0 top-0"><div className="h-[18vh] bg-gradient-to-b from-[#0a5c39] to-[#0d7a4a]" /><HeroCurve /></div>
+      <div className="absolute inset-x-0 bottom-0 rotate-180"><div className="h-[9vh] bg-gradient-to-b from-[#0a5c39] to-[#0d7a4a]" /><HeroCurve /></div>
       <div className="relative flex h-full flex-col items-center justify-center px-8 text-center">
         <img src="./icons/app-icon.png" alt="" className="anim-in w-[min(62vw,250px)] rounded-full bg-white shadow-[0_18px_40px_-18px_rgba(0,0,0,.45)]" />
         <h1 className="mt-6 text-[clamp(26px,7.5vw,34px)] font-bold leading-tight text-[#0a5c39]">دليل المراقبة الطرقية</h1>
-        <p className="mt-2 text-[clamp(14px,4.2vw,17px)] font-semibold text-[#b3101c]">الخاص بأعوان الشرطة محرري المحاضر</p>
+        <div className="my-3 flex items-center gap-2" aria-hidden><span className="h-px w-12 bg-[#0a5c39]/40" /><span className="size-2 rotate-45 bg-[#c8202c]" /><span className="h-px w-12 bg-[#0a5c39]/40" /></div>
+        <p className="text-[clamp(14px,4.2vw,17px)] font-semibold text-[#3d4a43]">الخاص بأعوان الشرطة محرري المحاضر</p>
       </div>
     </div>
   );

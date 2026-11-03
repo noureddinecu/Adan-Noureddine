@@ -43,31 +43,45 @@ export function Logo({ className = 'size-11', tile = false }: { className?: stri
   );
 }
 
+/** Curved bottom edge shared by every header: green fill + white / red / green hairlines. */
+export function HeroCurve() {
+  return (
+    <svg className="hero-curve" viewBox="0 0 400 44" preserveAspectRatio="none" aria-hidden>
+      <path d="M0 0H400V14C300 38 110 36 0 8Z" fill="var(--hdr-bottom)" />
+      <path d="M0 8C110 36 300 38 400 14" fill="none" stroke="#fff" strokeWidth="3" vectorEffect="non-scaling-stroke" />
+      <path d="M0 13C110 41 300 43 400 19" fill="none" stroke="#c8202c" strokeWidth="2.4" vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+
 export function PageHeader({ title, subtitle, back = true, right }: { title: ReactNode; subtitle?: ReactNode; back?: boolean; right?: ReactNode }) {
   const ref = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const set = () => document.documentElement.style.setProperty('--hdr', `${el.offsetHeight}px`);
+    const set = () => document.documentElement.style.setProperty('--hdr', `${el.offsetHeight - 18}px`);
     set();
     const ro = new ResizeObserver(set);
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
   return (
-    <header ref={ref} className="header-v2 sticky top-0 z-30 flex justify-start" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-      <div className="hdr-blob flex min-w-[58%] max-w-[92%] items-center gap-2 py-4 pe-4 ps-3 text-white">
-        {back && (
-          <button onClick={() => goBack()} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/10 hover:bg-white/20" aria-label="رجوع">
-            <ArrowRight className="size-6" />
-          </button>
-        )}
-        <div className="min-w-0 flex-1 ps-1">
-          <h1 className="truncate text-[20px] font-bold leading-tight">{title}</h1>
-          {subtitle && <p className="mt-0.5 truncate text-[14px] text-white/85">{subtitle}</p>}
+    <header ref={ref} className="app-header sticky top-0 z-30 text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="app-header-body">
+        <div className="relative z-10 mx-auto flex max-w-3xl items-center gap-2 px-3 pb-2 pt-4">
+          {back && (
+            <button onClick={() => goBack()} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/12 hover:bg-white/20" aria-label="رجوع">
+              <ArrowRight className="size-6" />
+            </button>
+          )}
+          <div className={`min-w-0 flex-1 ${back ? '' : 'ps-1'}`}>
+            <h1 className="truncate text-[20px] font-bold leading-tight">{title}</h1>
+            {subtitle && <p className="mt-0.5 truncate text-[14px] text-white/85">{subtitle}</p>}
+          </div>
+          {right}
         </div>
-        {right}
       </div>
+      <HeroCurve />
     </header>
   );
 }
@@ -78,8 +92,9 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
 
 export function SectionTitle({ children, action, icon }: { children: ReactNode; action?: ReactNode; icon?: ReactNode }) {
   return (
-    <div className="mb-3 mt-7 flex items-center justify-between pe-1 ps-7">
-      <h2 className="flex items-center gap-2 text-[17px] font-bold text-[var(--text)]"><span className="h-5 w-1 rounded-full bg-accent" aria-hidden />{icon}{children}</h2>
+    <div className="mb-3 mt-7 flex items-center gap-3 px-1">
+      <h2 className="flex shrink-0 items-center gap-2 text-[17px] font-bold text-[var(--text)]"><span className="size-2 rotate-45 bg-accent" aria-hidden />{icon}{children}</h2>
+      <span className="h-px flex-1 bg-gradient-to-l from-brand-600/35 to-transparent" aria-hidden />
       {action}
     </div>
   );

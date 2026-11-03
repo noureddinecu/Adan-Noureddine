@@ -42,11 +42,11 @@
 }
 
 :root {
-  --bg: #faf6ee;
+  --bg: #f7f3ea;
   --surface: #ffffff;
   --surface-2: #f8f3ea;
   --line: #ece4d4;
-  --zellige-opacity: .11;
+  --zellige-opacity: .07;
   --text: #14211b;
   --muted: #56645c;
   --mark: #fff1a8;
@@ -58,7 +58,7 @@
   --surface: #0f1d17;
   --surface-2: #14261e;
   --line: #24392e;
-  --zellige-opacity: .06;
+  --zellige-opacity: .05;
   --text: #e6eee9;
   --muted: #95a69c;
   --mark: #6b5a00;
@@ -131,13 +131,11 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: url('/patterns/zellige-color.svg') repeat;
-  background-size: 88px;
+  background: url('/patterns/zellige-line-green.svg') repeat;
+  background-size: 72px;
   opacity: var(--zellige-opacity);
-  /* stronger on the edges of the screen, faded behind the content column */
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,.25), #000 85%);
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, rgba(0,0,0,.25), #000 85%);
 }
+.dark body::before, .dark::before { background-image: url('/patterns/zellige-line-gold.svg'); }
 .zellige-header { position: relative; isolation: isolate; }
 .zellige-header::after {
   content: '';
@@ -155,40 +153,15 @@ body::before {
 :root { --hdr-top: #0a5c39; --hdr-bottom: #0d7a4a; --waves-opacity: 1; }
 .dark { --hdr-top: #073f28; --hdr-bottom: #0a5a37; --waves-opacity: .55; }
 
-/* fixed decoration on the right edge (behind all content) */
-.edge-deco { position: fixed; inset-block: 0; right: 0; width: clamp(100px, 32vw, 190px); z-index: -1; pointer-events: none; opacity: var(--waves-opacity); }
-.edge-deco > * { position: absolute; inset: 0; }
-.edge-waves { background: url('/patterns/edge-waves.svg') no-repeat 0 0 / 100% 100%; filter: drop-shadow(-3px 0 6px rgba(0,0,0,.12)); }
-.edge-zellige {
-  background: url('/patterns/zellige-line-white.svg') repeat;
-  background-size: 46px;
-  opacity: .75;
-  -webkit-mask: url('/patterns/edge-zellige-mask.svg') no-repeat 0 0 / 100% 100%;
-  mask: url('/patterns/edge-zellige-mask.svg') no-repeat 0 0 / 100% 100%;
+/* one header for every page: green + soft zellige lines, curved flag-striped bottom edge */
+.app-header { isolation: isolate; }
+.app-header-body { position: relative; background: linear-gradient(180deg, var(--hdr-top), var(--hdr-bottom)); }
+.app-header-body::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: url('/patterns/zellige-line-white.svg') repeat; background-size: 54px; opacity: .12;
 }
-.swoosh { position: fixed; top: 0; left: 0; width: 78vw; max-width: 520px; height: 260px; z-index: -1; pointer-events: none;
-  background: url('/patterns/swoosh.svg') no-repeat 0 0 / 100% 100%; opacity: .8; }
-.dark .swoosh { opacity: .35; }
-
-/* title blob attached to the top-right corner */
-.hdr-blob {
-  background: linear-gradient(160deg, var(--hdr-bottom), var(--hdr-top));
-  border-end-start-radius: 46px;
-  box-shadow: 0 10px 24px -14px rgba(6,60,36,.7);
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-}
-.hdr-blob::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: url('/patterns/zellige-line-white.svg') repeat;
-  background-size: 46px;
-  opacity: .08;
-}
-.header-v2 + * { margin-top: 18px; }
+.hero-curve { display: block; width: 100%; height: clamp(26px, 8vw, 40px); margin-top: -1px; filter: drop-shadow(0 6px 8px rgba(10,60,36,.12)); }
+.app-header + * { margin-top: 4px; }
 
 .zellige-corner { position: relative; isolation: isolate; overflow: hidden; }
 .zellige-corner::after {
@@ -199,7 +172,7 @@ body::before {
   pointer-events: none;
   background: url('/patterns/zellige-line-green.svg') repeat;
   background-size: 48px;
-  opacity: .14;
+  opacity: .08;
   -webkit-mask-image: radial-gradient(circle at 0% 0%, #000, transparent 55%);
   mask-image: radial-gradient(circle at 0% 0%, #000, transparent 55%);
 }
@@ -214,21 +187,12 @@ body::before {
 .dark { --card: var(--surface); --card-shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px -14px rgba(0,0,0,.7); }
 
 /* home has its own curved hero: no side waves there */
-[data-page='home'] .edge-deco, [data-page='home'] .swoosh { display: none; }
-
-.home-hero { background: linear-gradient(180deg, var(--hdr-top), var(--hdr-bottom)); isolation: isolate; }
-.home-hero::before {
-  content: ''; position: absolute; inset: 0 0 30px 0; z-index: 0; pointer-events: none;
-  background: url('/patterns/zellige-line-white.svg') repeat; background-size: 54px; opacity: .13;
-  -webkit-mask-image: linear-gradient(to bottom, #000, rgba(0,0,0,.5)); mask-image: linear-gradient(to bottom, #000, rgba(0,0,0,.5));
-}
-.hero-curve { display: block; width: 100%; height: clamp(30px, 9vw, 46px); margin-top: -1px; position: relative; z-index: 1; }
 
 .sec-card {
   position: relative; isolation: isolate; overflow: hidden;
   display: flex; flex-direction: column; align-items: center; text-align: center;
   min-height: 176px; padding: 18px 12px 14px;
-  border-radius: 24px; background: var(--card);
+  border-radius: 22px; background: var(--surface);
   border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
   border-top: 4px solid var(--sec);
   box-shadow: var(--card-shadow);
@@ -238,7 +202,7 @@ body::before {
 .sec-card:active { transform: scale(.97); }
 .sec-card-zellige {
   position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: var(--sec); opacity: .32;
+  background: var(--sec); opacity: .22;
   -webkit-mask: url('/patterns/zellige-line-white.svg') 0 0 / 34px repeat, radial-gradient(circle at 0 0, #000 0, transparent 48%);
   -webkit-mask-composite: source-in;
   mask: url('/patterns/zellige-line-white.svg') 0 0 / 34px repeat, radial-gradient(circle at 0 0, #000 0, transparent 48%);
