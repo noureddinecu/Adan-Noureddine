@@ -99,7 +99,7 @@ try {
   await target.scrollIntoViewIfNeeded(); await page.waitForTimeout(150);
   const yBefore = await page.evaluate(() => window.scrollY);
   await target.click();
-  await page.waitForSelector('text=العقوبات والإجراءات');
+  await page.waitForSelector('text=الإجراءات الواجب اتخاذها');
   check(await page.evaluate(() => window.scrollY) < 5, 'detail opens at top');
   await page.goBack(); await page.waitForTimeout(400);
   const yAfter = await page.evaluate(() => window.scrollY);
@@ -110,24 +110,28 @@ try {
   await input.fill('حزام السلامة');
   await page.waitForTimeout(200);
   await page.locator('main button:has(mark)').first().click();
-  await page.waitForSelector('text=العقوبات والإجراءات');
-  for (const t of ['معلومات المخالفة', 'النصوص القانونية', 'العقوبات والإجراءات', 'الغرامة']) check(await page.isVisible(`text=${t}`), `detail shows «${t}»`);
+  await page.waitForSelector('text=الإجراءات الواجب اتخاذها');
+  for (const t of ['معلومات المخالفة', 'النصوص القانونية', 'العقوبات والغرامات', 'الإجراءات الواجب اتخاذها']) check(await page.isVisible(`text=${t}`), `detail shows «${t}»`);
   { const t = await page.textContent('main'); check(!/أولا|ثانيا|ثالثا|رابعا|مصدر المعلومات|السابقة|التالية|جميع /.test(t), 'detail page clean (no ordinals, source, prev/next, section link)'); }
   check(await page.isVisible('text=النص الرسمي لمدونة السير'), 'detail shows per-article official text links');
   check((await page.locator('button:has-text("المادة 185")').count()) >= 1 && (await page.locator('button:has-text("المادة 219")').count()) >= 1, 'buttons for article 185 (offence) and 219 (fine)');
+  { const order = await page.evaluate(() => [...document.querySelectorAll('main h2')].map((h) => h.textContent));
+    const i = (t) => order.indexOf(t);
+    check(i('العقوبات والغرامات') < i('الإجراءات الواجب اتخاذها') && i('الإجراءات الواجب اتخاذها') < i('النصوص القانونية'), `detail order: fines → procedures → legal texts`); }
+  check((await page.locator('.zellige-band').count()) === 0, 'no ornamental band under headers');
   await page.screenshot({ path: join(shots, '03-detail.png'), fullPage: true });
 
   // fines + calculator (185361C2 is degree 2 → 300 / 350 / 500)
-  check(await page.isVisible('text=الغرامة'), 'detail shows fines block');
+  check(await page.isVisible('text=العقوبات والغرامات'), 'detail shows fines block');
   const fineText = await page.textContent('main');
   check(fineText.includes('300') && fineText.includes('350') && fineText.includes('500') && fineText.includes('المادة 219'), 'degree-2 amounts 300/350/500 with art. 219 reference');
   check(!fineText.includes('حاسبة') && !fineText.includes('غير مطابق'), 'no calculator and no unverified warning');
   await page.screenshot({ path: join(shots, '09-fines.png'), fullPage: true });
   await page.goto(URL + '#/v/delit-019');
-  await page.waitForSelector('text=الغرامة');
+  await page.waitForSelector('text=العقوبات والغرامات');
   check((await page.textContent('main')).includes('جنحة — لا تطبق أسعار الغرامات التصالحية'), 'délit: no degree prices applied');
   await page.goBack();
-  await page.waitForSelector('text=الغرامة');
+  await page.waitForSelector('text=العقوبات والغرامات');
 
   // favorite
   await page.click('button[aria-label="إضافة إلى المفضلة"]');
@@ -166,7 +170,7 @@ try {
   check(await page.evaluate(() => document.documentElement.classList.contains('dark')), 'dark mode toggles');
   await page.screenshot({ path: join(shots, '06-home-dark.png') });
   await page.goto(URL + '#/v/delit-019');
-  await page.waitForSelector('text=العقوبات والإجراءات');
+  await page.waitForSelector('text=الإجراءات الواجب اتخاذها');
   await page.screenshot({ path: join(shots, '07-detail-dark.png'), fullPage: true });
   await page.goto(URL + '#/about');
   await page.waitForSelector('text=حول التطبيق');
@@ -186,7 +190,7 @@ try {
   await page.waitForTimeout(200);
   check((await page.locator('main button:has(mark)').count()) > 0, 'OFFLINE: app loads and search works');
   await page.locator('main button:has(mark)').first().click();
-  await page.waitForSelector('text=العقوبات والإجراءات');
+  await page.waitForSelector('text=الإجراءات الواجب اتخاذها');
   check(true, 'OFFLINE: detail page opens');
   const idb = await page.evaluate(() => new Promise((res) => { const r = indexedDB.open('dalil-muraqaba'); r.onsuccess = () => { const tx = r.result.transaction('dataset'); const g = tx.objectStore('dataset').get('current'); g.onsuccess = () => res(g.result?.violations?.length ?? 0); }; }));
   check(idb === 204, `IndexedDB holds the 204 violations (${idb})`);

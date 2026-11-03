@@ -1,5 +1,5 @@
 import { ArrowRight, BookOpenText, CircleAlert, FileText, Footprints, Gavel, Hand, OctagonAlert, TriangleAlert, type LucideIcon } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import type { SectionKey } from '../data/types';
 import { goBack } from '../lib/router';
 import { highlight } from '../search/engine';
@@ -38,9 +38,19 @@ export function Logo({ className = 'size-11', tile = false }: { className?: stri
   return <span className={`${className} inline-grid shrink-0 place-items-center rounded-2xl bg-[#fffdf8] p-1 shadow-md ring-1 ring-gold/40`}>{img}</span>;
 }
 
-export function PageHeader({ title, subtitle, back = true, right, tone }: { title: ReactNode; subtitle?: ReactNode; back?: boolean; right?: ReactNode; tone?: string }) {
+export function PageHeader({ title, subtitle, back = true, right }: { title: ReactNode; subtitle?: ReactNode; back?: boolean; right?: ReactNode }) {
+  const ref = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const set = () => document.documentElement.style.setProperty('--hdr', `${el.offsetHeight}px`);
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   return (
-    <header className={`sticky top-0 z-30 zellige-header ${tone ?? 'bg-gradient-to-l from-brand-800 to-brand-600'} text-white shadow-md`} style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <header ref={ref} className="header-blend zellige-header sticky top-0 z-30 text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 py-3">
         {back && (
           <button onClick={() => goBack()} className="grid size-10 shrink-0 place-items-center rounded-full hover:bg-white/15 active:bg-white/25" aria-label="رجوع">
@@ -53,7 +63,6 @@ export function PageHeader({ title, subtitle, back = true, right, tone }: { titl
         </div>
         {right}
       </div>
-      <div className="zellige-band" />
     </header>
   );
 }

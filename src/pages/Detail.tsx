@@ -101,12 +101,30 @@ export function Detail({ id, q }: { id: string; q: string }) {
           </div>
         </Card>
 
-        <Block icon={<Info className="size-4.5" />} title="معلومات المخالفة">
+        <Block icon={<Banknote className="size-4.5" />} title="العقوبات والغرامات">
+          <FineCard v={v} />
+        </Block>
+
+        <Block icon={<ClipboardList className="size-4.5" />} title="الإجراءات الواجب اتخاذها">
           <dl>
-            <Row label="رمز المخالفة"><span className="ltr-nums font-bold">{v.codeRaw}</span></Row>
-            <Row label="توصيف المخالفة"><span className="legal whitespace-pre-line"><Hl text={v.description} terms={terms} /></span></Row>
-            <Row label="الدرجة / التصنيف">
-              <button onClick={() => navigate(`/section/${v.section}`)} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[14.5px] font-semibold ${st.soft}`}><SectionIcon section={v.section} className="size-4" />{sec.title}</button>
+            <Row label="المسطرة الواجب اتباعها">
+              <ol className="legal space-y-2.5">
+                {v.procedure.map((p, i) =>
+                  isHeading(p) ? (
+                    <li key={i} className="mt-3 rounded-lg bg-brand-50 px-3 py-1.5 text-[15px] font-bold text-brand-700 dark:bg-brand-900 dark:text-brand-100">{p}</li>
+                  ) : p.startsWith('ملاحظة') || p.startsWith('(ملاحظة') ? (
+                    <li key={i} className="rounded-lg border-r-4 border-gold bg-amber-50 px-3 py-2 text-[16px] dark:bg-amber-950/30"><Hl text={p} terms={terms} /></li>
+                  ) : (
+                    <li key={i} className="flex gap-2.5">
+                      <span className="mt-3.5 size-2 shrink-0 rounded-full bg-brand-500" />
+                      <span><Hl text={p} terms={terms} /></span>
+                    </li>
+                  ),
+                )}
+              </ol>
+            </Row>
+            <Row label="السند القانوني للمخالفة">
+              <p className="legal text-[15px] text-[var(--muted)]">{v.legalRefs.map((r) => r.replace(/^-\s*/, '')).join(' · ')}</p>
             </Row>
           </dl>
         </Block>
@@ -135,29 +153,14 @@ export function Detail({ id, q }: { id: string; q: string }) {
           </dl>
         </Block>
 
-        <Block icon={<ClipboardList className="size-4.5" />} title="العقوبات والإجراءات">
+        <Block icon={<Info className="size-4.5" />} title="معلومات المخالفة">
           <dl>
-            <Row label="المسطرة الواجب اتباعها">
-              <ol className="legal space-y-2.5">
-                {v.procedure.map((p, i) =>
-                  isHeading(p) ? (
-                    <li key={i} className="mt-3 rounded-lg bg-brand-50 px-3 py-1.5 text-[15px] font-bold text-brand-700 dark:bg-brand-900 dark:text-brand-100">{p}</li>
-                  ) : p.startsWith('ملاحظة') || p.startsWith('(ملاحظة') ? (
-                    <li key={i} className="rounded-lg border-r-4 border-gold bg-amber-50 px-3 py-2 text-[16px] dark:bg-amber-950/30"><Hl text={p} terms={terms} /></li>
-                  ) : (
-                    <li key={i} className="flex gap-2.5">
-                      <span className="mt-3.5 size-2 shrink-0 rounded-full bg-brand-500" />
-                      <span><Hl text={p} terms={terms} /></span>
-                    </li>
-                  ),
-                )}
-              </ol>
+            <Row label="رمز المخالفة"><span className="ltr-nums font-bold">{v.codeRaw}</span></Row>
+            <Row label="توصيف المخالفة"><span className="legal whitespace-pre-line"><Hl text={v.description} terms={terms} /></span></Row>
+            <Row label="الدرجة / التصنيف">
+              <button onClick={() => navigate(`/section/${v.section}`)} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[14.5px] font-semibold ${st.soft}`}><SectionIcon section={v.section} className="size-4" />{sec.title}</button>
             </Row>
           </dl>
-        </Block>
-
-        <Block icon={<Banknote className="size-4.5" />} title="الغرامة">
-          <FineCard v={v} />
         </Block>
 
 

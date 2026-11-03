@@ -23,14 +23,14 @@ export function SectionPage({ sectionKey }: { sectionKey: string }) {
   const st = SECTION_STYLE[sec.key as SectionKey];
   return (
     <div className="safe-bottom">
-      <PageHeader title={sec.short} subtitle={`${sec.count} مخالفة · صفحات ${sec.firstPdfPage}–${sec.lastPdfPage} من الدليل`} />
-      <div className={`${st.bg} ${st.fg}`}>
-        <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-4">
-          <span className="grid size-12 place-items-center rounded-2xl bg-black/10"><SectionIcon section={sec.key} className="size-7" /></span>
+      <PageHeader title={sec.short} subtitle={`${sec.count} ${sec.count >= 3 && sec.count <= 10 ? 'مخالفات' : 'مخالفة'}`} />
+      <div className="mx-auto max-w-3xl px-3 pt-3">
+        <div className="flex items-center gap-3 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3.5 shadow-sm">
+          <span className={`grid size-12 shrink-0 place-items-center rounded-xl ${st.bg} ${st.fg}`}><SectionIcon section={sec.key} className="size-7" /></span>
           <p className="text-[16px] font-bold leading-7">{sec.title}</p>
         </div>
       </div>
-      <div className={`sticky top-[67px] z-20 bg-[var(--bg)]/90 px-3 py-2 backdrop-blur transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}>
+      <div className={`sticky top-[var(--hdr,64px)] z-20 px-3 py-2 transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}>
         <div className="mx-auto max-w-3xl"><SearchBar value={q} onChange={setQ} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} placeholder={`ابحث داخل ${sec.short}…`} /></div>
       </div>
       <main className="mx-auto flex max-w-3xl flex-col gap-2.5 px-3 pt-1">
