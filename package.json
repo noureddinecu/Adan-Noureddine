@@ -1,7 +1,7 @@
 {
   "name": "dalil-muraqaba-tarqiya",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "description": "دليل المراقبة الطرقية — تطبيق PWA للبحث في مخالفات مدونة السير (القانون 52-05)",
   "scripts": {

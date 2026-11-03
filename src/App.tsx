@@ -28,6 +28,7 @@ export function App({ theme }: { theme: ReturnType<typeof useTheme> }) {
     window.scrollTo(0, y ?? 0);
   }, [route.key]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useLayoutEffect(() => { document.documentElement.dataset.page = head ?? 'home'; }, [head]);
   const anim = route.dir === 'back' ? 'page-back' : route.dir === 'forward' ? 'page-forward' : route.dir === 'tab' ? 'page-fade' : '';
   return (
     <>

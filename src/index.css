@@ -208,3 +208,68 @@ body::before {
 :is(.page-forward, .page-back, .page-fade) .anim-in { animation: none; }
 /* keep the first content clear of the header's fade-out area */
 .header-blend + * { margin-top: 28px; }
+
+/* ================= v2.1 home: hero header, section cards, bottom bar ================= */
+:root { --card: #fffcf7; --card-shadow: 0 1px 2px rgba(60,40,10,.05), 0 10px 24px -14px rgba(60,40,10,.28); }
+.dark { --card: var(--surface); --card-shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 24px -14px rgba(0,0,0,.7); }
+
+/* home has its own curved hero: no side waves there */
+[data-page='home'] .edge-deco, [data-page='home'] .swoosh { display: none; }
+
+.home-hero { background: linear-gradient(180deg, var(--hdr-top), var(--hdr-bottom)); isolation: isolate; }
+.home-hero::before {
+  content: ''; position: absolute; inset: 0 0 30px 0; z-index: 0; pointer-events: none;
+  background: url('/patterns/zellige-line-white.svg') repeat; background-size: 54px; opacity: .13;
+  -webkit-mask-image: linear-gradient(to bottom, #000, rgba(0,0,0,.5)); mask-image: linear-gradient(to bottom, #000, rgba(0,0,0,.5));
+}
+.hero-curve { display: block; width: 100%; height: clamp(30px, 9vw, 46px); margin-top: -1px; position: relative; z-index: 1; }
+
+.sec-card {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  min-height: 176px; padding: 18px 12px 14px;
+  border-radius: 24px; background: var(--card);
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  border-top: 4px solid var(--sec);
+  box-shadow: var(--card-shadow);
+  transition: transform .25s cubic-bezier(.3,.7,.3,1), box-shadow .25s ease;
+}
+.sec-card:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(60,40,10,.06), 0 16px 30px -16px rgba(60,40,10,.38); }
+.sec-card:active { transform: scale(.97); }
+.sec-card-zellige {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--sec); opacity: .32;
+  -webkit-mask: url('/patterns/zellige-line-white.svg') 0 0 / 34px repeat, radial-gradient(circle at 0 0, #000 0, transparent 48%);
+  -webkit-mask-composite: source-in;
+  mask: url('/patterns/zellige-line-white.svg') 0 0 / 34px repeat, radial-gradient(circle at 0 0, #000 0, transparent 48%);
+  mask-composite: intersect;
+}
+
+.bottom-nav { view-transition-name: bottom-nav; }
+.nav-curve { display: block; width: 100%; height: 22px; margin-bottom: -1px; }
+.nav-panel { background: var(--surface); border-radius: 22px 22px 0 0; box-shadow: 0 -8px 22px -16px rgba(0,0,0,.35); max-width: none; }
+.safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 98px); }
+
+/* ================= View Transitions (smooth page changes + shared-element morphing) ================= */
+@keyframes vt-fade-out { to { opacity: 0; } }
+@keyframes vt-fade-in { from { opacity: 0; } }
+@keyframes vt-out-fwd { to { opacity: 0; transform: translateX(6%) scale(.985); filter: blur(1px); } }
+@keyframes vt-in-fwd { from { opacity: 0; transform: translateX(-9%); } }
+@keyframes vt-out-back { to { opacity: 0; transform: translateX(-6%) scale(.985); filter: blur(1px); } }
+@keyframes vt-in-back { from { opacity: 0; transform: translateX(9%); } }
+@keyframes vt-out-tab { to { opacity: 0; transform: translateY(6px); } }
+@keyframes vt-in-tab { from { opacity: 0; transform: translateY(14px); } }
+::view-transition-group(*) { animation-duration: .46s; animation-timing-function: cubic-bezier(.45,0,.2,1); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .46s; animation-timing-function: cubic-bezier(.45,0,.2,1); }
+html[data-nav-dir='forward']::view-transition-old(root) { animation-name: vt-out-fwd; animation-duration: .3s; }
+html[data-nav-dir='forward']::view-transition-new(root) { animation-name: vt-in-fwd; }
+html[data-nav-dir='back']::view-transition-old(root) { animation-name: vt-out-back; animation-duration: .3s; }
+html[data-nav-dir='back']::view-transition-new(root) { animation-name: vt-in-back; }
+html[data-nav-dir='tab']::view-transition-old(root) { animation-name: vt-out-tab; animation-duration: .24s; }
+html[data-nav-dir='tab']::view-transition-new(root) { animation-name: vt-in-tab; animation-duration: .42s; }
+::view-transition-old(vt-sec-title), ::view-transition-new(vt-sec-title), ::view-transition-old(vt-desc), ::view-transition-new(vt-desc) { animation-duration: .4s; }
+::view-transition-group(bottom-nav) { animation: none; }
+::view-transition-group(vt-nav-pill) { animation-duration: .38s; animation-timing-function: cubic-bezier(.3,1.3,.5,1); }
+/* when View Transitions run, the page-level CSS animation would double up: keep only the inner stagger */
+.vt .page-forward, .vt .page-back, .vt .page-fade { animation: none; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }

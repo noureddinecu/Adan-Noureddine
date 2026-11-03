@@ -1,6 +1,6 @@
 import { ChevronLeft, Star, Trash2 } from 'lucide-react';
 import type { Violation } from '../data/types';
-import { navigate } from '../lib/router';
+import { morph, navigate } from '../lib/router';
 import { highlight } from '../search/engine';
 import { useApp } from '../store';
 import { CodeBadge, Hl, SECTION_STYLE, SectionIcon } from './ui';
@@ -24,18 +24,18 @@ export function ViolationCard({ v, terms, query, index = 0, showSection = true, 
     >
     <span className={`absolute inset-y-0 right-0 w-1.5 ${SECTION_STYLE[v.section].bg}`} />
     <button
-      onClick={() => navigate(href)}
+      onClick={(e) => { morph(e.currentTarget.querySelector('[data-morph=code]'), 'vt-code'); morph(e.currentTarget.querySelector('[data-morph=desc]'), 'vt-desc'); navigate(href); }}
       className="group flex w-full items-stretch pr-1.5 text-right active:scale-[.99]"
     >
       <span className="min-w-0 flex-1 p-3.5">
         <span className="mb-1.5 flex flex-wrap items-center gap-1.5">
-          <CodeBadge code={v.code} section={v.section} small />
+          <span data-morph="code" className="inline-flex"><CodeBadge code={v.code} section={v.section} small /></span>
           {v.relatedCodes.map((c) => (
             <span key={c} className="ltr-nums rounded-md border border-[var(--line)] px-1.5 py-0.5 text-[12.5px] font-semibold text-[var(--muted)]">+ {c}</span>
           ))}
           {isFavorite(v.id) && <Star className="size-4 fill-gold text-gold" aria-label="في المفضلة" />}
         </span>
-        <span className="legal line-clamp-3 block text-[16px] font-semibold text-[var(--text)]">
+        <span data-morph="desc" className="legal line-clamp-3 block text-[16px] font-semibold text-[var(--text)]">
           <Hl text={v.description} terms={terms} />
         </span>
         {(refLine || procLine) && (

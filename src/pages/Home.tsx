@@ -1,10 +1,10 @@
-import { ChevronLeft, Clock, Download, Flame, History, Moon, SearchX, Star, Sun, X, Zap } from 'lucide-react';
+import { Clock, Download, Flame, History, Moon, SearchX, Star, Sun, X, Zap } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { SearchBar } from '../components/SearchBar';
-import { Card, Empty, Logo, SECTION_STYLE, SectionIcon, SectionTitle } from '../components/ui';
+import { Card, Empty, Logo, OrnamentTitle, SECTION_STYLE, SectionIcon, SectionTitle } from '../components/ui';
 import { ViolationCard } from '../components/ViolationCard';
 import type { SectionKey } from '../data/types';
-import { navigate, type Route } from '../lib/router';
+import { morph, navigate, type Route } from '../lib/router';
 import { useInstall, useOnline } from '../lib/pwa';
 import { useScrollHide } from '../lib/useScrollHide';
 import { search } from '../search/engine';
@@ -65,29 +65,42 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
   const tiles = [
     ...ORDER.map((k) => app.sections.get(k)!).filter(Boolean).map((s) => ({
       key: s.key, to: `/section/${s.key}`, title: CARD_TITLE[s.key] ?? s.short, count: s.count,
-      bar: SECTION_STYLE[s.key].bg, tile: `${SECTION_STYLE[s.key].bg} ${SECTION_STYLE[s.key].fg} shadow-sm`,
+      color: `var(--color-${s.key})`, tile: `${SECTION_STYLE[s.key].bg} ${SECTION_STYLE[s.key].fg}`,
       icon: <SectionIcon section={s.key} className="size-6" />,
     })),
-    { key: 'fav', to: '/favorites', title: 'المفضلة', count: app.user.favorites.length, bar: 'bg-gold', tile: 'bg-gold text-white shadow-sm', icon: <Star className="size-6 fill-current" /> },
+    { key: 'fav', to: '/favorites', title: 'المفضلة', count: app.user.favorites.length, color: 'var(--color-gold)', tile: 'bg-gold text-white', icon: <Star className="size-6 fill-current" /> },
   ];
 
   return (
     <div className="safe-bottom">
-      <header className="relative flex items-start justify-between gap-2" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <div className="hdr-blob flex max-w-[88%] items-center gap-3 py-4 pe-4 ps-5 text-white">
-          <Logo tile className="size-14" />
-          <div className="min-w-0">
-            <h1 className="text-[21px] font-bold leading-tight">دليل المراقبة الطرقية</h1>
-            <p className="mt-0.5 text-[14px] leading-6 text-white/90 text-balance">الخاص بأعوان الشرطة محرري المحاضر</p>
+      <header className="home-hero relative text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="relative z-10 mx-auto flex max-w-3xl items-center gap-3 px-4 pb-6 pt-8">
+          <Logo tile className="size-[72px] ring-4 ring-white/90" />
+          <div className="min-w-0 flex-1 text-center">
+            <h1 className="text-[clamp(21px,6.2vw,27px)] font-bold leading-tight drop-shadow-sm">دليل المراقبة الطرقية</h1>
+            <div className="my-1.5 flex items-center justify-center gap-2" aria-hidden>
+              <span className="h-px w-[18%] bg-gradient-to-l from-white/0 to-white/80" />
+              <span className="h-[3px] w-[10%] rounded-full bg-accent" />
+              <Star className="size-4 text-white" strokeWidth={2.2} />
+              <span className="h-[3px] w-[10%] rounded-full bg-accent" />
+              <span className="h-px w-[18%] bg-gradient-to-r from-white/0 to-white/80" />
+            </div>
+            <p className="text-[clamp(13.5px,3.9vw,15.5px)] font-medium leading-6 text-white/90">الخاص بأعوان الشرطة محرري المحاضر</p>
           </div>
+          <button onClick={theme.toggle} className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-brand-700 shadow-md" aria-label={theme.dark ? 'الوضع النهاري' : 'الوضع الليلي'}>
+            {theme.dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
+          </button>
         </div>
-        <button onClick={theme.toggle} className="m-3 grid size-11 shrink-0 place-items-center rounded-full bg-[var(--surface)] text-brand-700 shadow-md ring-1 ring-black/5 dark:text-brand-100" aria-label={theme.dark ? 'الوضع النهاري' : 'الوضع الليلي'}>
-          {theme.dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
-        </button>
+        <svg className="hero-curve" viewBox="0 0 400 44" preserveAspectRatio="none" aria-hidden>
+          <path d="M0 0H400V14C300 38 110 36 0 8Z" fill="var(--hdr-bottom)" />
+          <path d="M0 8C110 36 300 38 400 14" fill="none" stroke="#fff" strokeWidth="3.2" vectorEffect="non-scaling-stroke" />
+          <path d="M0 13C110 41 300 43 400 19" fill="none" stroke="#d81e2b" strokeWidth="2.6" vectorEffect="non-scaling-stroke" />
+          <path d="M0 18C110 45 300 47 400 24" fill="none" stroke="#0d7a4a" strokeWidth="1.4" opacity=".55" vectorEffect="non-scaling-stroke" />
+        </svg>
       </header>
       {!online && <p className="mx-4 mt-2 inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] px-3 py-1 text-xs shadow-sm"><span className="size-2 rounded-full bg-gold" /> دون اتصال — جميع البيانات متاحة محليا</p>}
 
-      <div className={`sticky top-0 z-30 mt-4 px-3 pb-2 pt-[max(env(safe-area-inset-top),0px)] transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-[130%] opacity-0' : 'translate-y-0 opacity-100'}`}>
+      <div className={`sticky top-0 z-30 mt-1 px-3 pb-2 pt-[max(env(safe-area-inset-top),0px)] transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-[130%] opacity-0' : 'translate-y-0 opacity-100'}`}>
         <div className="mx-auto max-w-3xl">
           <SearchBar ref={inputRef} large value={q} onChange={setQ} onSubmit={() => app.addSearch(q)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />
         </div>
@@ -146,24 +159,21 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
               </>
             )}
 
-            <SectionTitle>أقسام المخالفات</SectionTitle>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <OrnamentTitle>أقسام المخالفات</OrnamentTitle>
+            <div className="grid auto-rows-fr grid-cols-2 gap-3.5 sm:grid-cols-4">
               {tiles.map((t, i) => (
                 <button
                   key={t.key}
-                  onClick={() => navigate(t.to)}
-                  className="anim-in group relative flex min-h-[136px] flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3.5 text-right shadow-[0_1px_2px_rgba(0,0,0,.04),0_4px_14px_-6px_rgba(11,61,46,.18)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_22px_-8px_rgba(11,61,46,.35)] active:scale-[.98]"
-                  style={{ animationDelay: `${i * 35}ms` }}
+                  onClick={(e) => { morph(e.currentTarget.querySelector('[data-morph=title]'), 'vt-sec-title'); navigate(t.to); }}
+                  className="sec-card anim-in group"
+                  style={{ animationDelay: `${i * 45}ms`, '--sec': t.color } as React.CSSProperties}
                 >
-                  <span className={`absolute inset-x-0 top-0 h-1 ${t.bar}`} />
-                  <span className="flex items-start justify-between gap-2">
-                    <span className={`grid size-11 shrink-0 place-items-center rounded-xl ${t.tile}`}>{t.icon}</span>
-                    <ChevronLeft className="mt-1 size-5 text-[var(--muted)] opacity-50 transition group-hover:-translate-x-0.5 group-hover:opacity-90" />
-                  </span>
-                  <span className="mt-2.5 line-clamp-2 min-h-[48px] text-[16px] font-bold leading-6">{t.title}</span>
-                  <span className="mt-auto flex items-baseline gap-1.5 pt-1">
-                    <span className="ltr-nums text-[22px] font-bold leading-none text-[var(--text)]">{t.count}</span>
-                    <span className="text-[13.5px] text-[var(--muted)]">{countWord(t.count)}</span>
+                  <span className="sec-card-zellige" aria-hidden />
+                  <span className={`relative grid size-[52px] place-items-center rounded-2xl shadow-md transition group-hover:scale-105 ${t.tile}`} style={{ viewTransitionName: `vt-ico-${t.key}` }}>{t.icon}</span>
+                  <span data-morph="title" className="relative mt-3 line-clamp-2 text-[17.5px] font-bold leading-7 text-[var(--text)]">{t.title}</span>
+                  <span className="relative mt-auto inline-flex items-baseline gap-1.5 rounded-full bg-[var(--surface-2)] px-4 py-1">
+                    <span className="ltr-nums text-[21px] font-bold leading-7 text-[var(--text)]">{t.count}</span>
+                    <span className="text-[13.5px] font-medium text-[var(--muted)]">{countWord(t.count)}</span>
                   </span>
                 </button>
               ))}

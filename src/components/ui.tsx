@@ -85,6 +85,22 @@ export function SectionTitle({ children, action, icon }: { children: ReactNode; 
   );
 }
 
+export function OrnamentTitle({ children }: { children: ReactNode }) {
+  return (
+    <div className="mb-4 mt-6 flex items-center justify-center gap-2" role="heading" aria-level={2}>
+      <span className="flex flex-1 items-center justify-end gap-1.5" aria-hidden>
+        <span className="h-[2px] w-full max-w-24 rounded-full bg-gradient-to-l from-brand-600 to-brand-600/0" />
+        <span className="size-2 rotate-45 bg-accent" />
+      </span>
+      <span className="rounded-full border-2 border-brand-600/70 bg-[var(--surface)] px-5 py-1.5 text-[18px] font-bold text-[var(--text)] shadow-sm">{children}</span>
+      <span className="flex flex-1 items-center gap-1.5" aria-hidden>
+        <span className="size-2 rotate-45 bg-accent" />
+        <span className="h-[2px] w-full max-w-24 rounded-full bg-gradient-to-r from-brand-600 to-brand-600/0" />
+      </span>
+    </div>
+  );
+}
+
 export function Empty({ icon, title, text }: { icon?: ReactNode; title: string; text?: string }) {
   return (
     <div className="flex flex-col items-center px-6 pb-14 pt-24 text-center text-[var(--muted)]">

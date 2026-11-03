@@ -67,7 +67,7 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
         <SectionTitle>المطوّر</SectionTitle>
         <Card className="zellige-corner flex items-center gap-4 p-4">
           <span className="w-32 shrink-0 rounded-2xl bg-gradient-to-b from-[#e4c25a] via-gold to-[#a87d12] p-[3px] shadow-md">
-            <img src="./developer.jpg" alt="نورالدين عربي" width={400} height={500} loading="lazy" className="aspect-[4/5] w-full rounded-[13px] border-2 border-[var(--surface)] object-cover" />
+            <img src="./developer.jpg" alt="نورالدين عربي" width={400} height={500} decoding="async" className="aspect-[4/5] w-full rounded-[13px] border-2 border-[var(--surface)] object-cover" />
           </span>
           <span className="min-w-0">
             <span className="block text-[13.5px] font-semibold text-[var(--muted)]">المطوّر</span>

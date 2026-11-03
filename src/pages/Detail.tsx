@@ -84,13 +84,13 @@ export function Detail({ id, q }: { id: string; q: string }) {
           </div>
           <div className="p-4">
             <div className="mb-3 flex flex-wrap items-center gap-2">
-              <CodeBadge code={v.code} section={v.section} />
+              <span className="inline-flex" style={{ viewTransitionName: 'vt-code' }}><CodeBadge code={v.code} section={v.section} /></span>
               {v.relatedCodes.map((c) => (
                 <button key={c} onClick={() => navigate(`/?q=${c}`)} className="ltr-nums rounded-lg border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[14px] font-bold">+ {c}</button>
               ))}
               {v.codeNote && <span className="rounded-lg bg-[var(--surface-2)] px-2 py-1 text-[14px] font-semibold">+ {v.codeNote}</span>}
             </div>
-            <p className="legal whitespace-pre-line text-[19px] font-bold"><Hl text={v.description} terms={terms} /></p>
+            <p className="legal whitespace-pre-line text-[19px] font-bold" style={{ viewTransitionName: 'vt-desc' }}><Hl text={v.description} terms={terms} /></p>
             <div className="mt-4 grid grid-cols-3 gap-2">
               <button onClick={() => app.toggleFavorite(v.id)} className={`flex flex-col items-center gap-1 rounded-xl border py-2 text-[13.5px] font-semibold transition ${fav ? 'border-gold bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200' : 'border-[var(--line)]'}`}>
                 <Star className={`size-5 ${fav ? 'fill-gold text-gold' : ''}`} />{fav ? 'في المفضلة' : 'أضف للمفضلة'}

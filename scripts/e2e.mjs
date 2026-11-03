@@ -106,6 +106,10 @@ try {
   check(Math.abs(yAfter - yBefore) < 80, `back restores list position (${Math.round(yBefore)} → ${Math.round(yAfter)})`);
   await page.evaluate(() => window.scrollTo(0, 0));
 
+  // view transitions: section card → section page morph runs without errors
+  { const vtOk = await page.evaluate(() => typeof document.startViewTransition === 'function');
+    check(vtOk, 'View Transitions API available (Chromium)'); }
+
   // open a detail
   await input.fill('حزام السلامة');
   await page.waitForTimeout(200);
@@ -174,6 +178,7 @@ try {
   await page.screenshot({ path: join(shots, '07-detail-dark.png'), fullPage: true });
   await page.goto(URL + '#/about');
   await page.waitForSelector('text=حول التطبيق');
+  await page.waitForFunction(() => { const i = document.querySelector('img[src*="developer.jpg"]'); return i && i.complete && i.naturalWidth > 0; }, null, { timeout: 5000 }).catch(() => {});
   { const t = await page.textContent('main'); check(t.includes('نورالدين عربي') && (await page.locator('img[src*="developer.jpg"]').evaluate((i) => i.complete && i.naturalWidth > 0)), 'developer photo + caption shown'); check(!t.includes('استخراج') && !t.includes('JSON') && !t.includes('تنبيه') && !t.includes('جدول الغرامات'), 'about page is clean (no report, JSON tools, notice)'); }
   await page.screenshot({ path: join(shots, '08-report-dark.png'), fullPage: true });
   await page.click('text=نهاري');
