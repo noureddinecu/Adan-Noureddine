@@ -23,7 +23,7 @@ export function HistoryPage() {
       <main className="mx-auto max-w-3xl px-3 pt-3">
         <div className="grid grid-cols-2 gap-1 rounded-2xl bg-[var(--surface-2)] p-1">
           {([['views', 'المعاينة', History], ['searches', 'عمليات البحث', Search]] as const).map(([k, label, Icon]) => (
-            <button key={k} onClick={() => setTab(k)} className={`flex items-center justify-center gap-1.5 rounded-xl py-2 text-[15px] font-semibold transition ${tab === k ? 'bg-[var(--surface)] shadow-sm' : 'text-[var(--muted)]'}`}><Icon className="size-4" />{label}</button>
+            <button key={k} onClick={() => setTab(k)} className={`flex items-center justify-center gap-1.5 rounded-xl py-2 text-[15px] font-semibold transition ${tab === k ? 'bg-[var(--surface)] text-brand-700 shadow-sm ring-2 ring-brand-600 dark:text-brand-100' : 'text-[var(--muted)]'}`}><Icon className="size-4" />{label}</button>
           ))}
         </div>
         {tab === 'views' ? (
@@ -33,7 +33,7 @@ export function HistoryPage() {
               <div className="flex flex-col gap-2.5">
                 {views.map((h, i) => (
                   <div key={h.id}>
-                    <p className="mb-1 px-1 text-[13px] text-[var(--muted)]">{when(h.at)} · {app.user.views[h.id] ?? 1} معاينة</p>
+                    <p className="mb-1 pe-1 ps-7 text-[13px] text-[var(--muted)]">{when(h.at)} · {app.user.views[h.id] ?? 1} معاينة</p>
                     <ViolationCard v={app.byId.get(h.id)!} index={i} />
                   </div>
                 ))}

@@ -47,6 +47,7 @@ warm = {'green': '#e9a184', 'red': '#e98a6b', 'gold': '#f2b98f', 'ivory': '#fbe9
 files = {
     'zellige-warm.svg': tile(96, warm, '#f6d3bf', 1.4, 'color'),  # splash screen (beige / pink / light orange)
     'zellige-color.svg': tile(96, palette, '#c9a227', 1.2, 'color'),   # body / splash (used at low opacity)
+    'zellige-line-white.svg': tile(56, palette, '#ffffff', 1.6, 'line'),  # inside the green edge wave
     'zellige-line-gold.svg': tile(72, palette, '#d9b54a', 1.1, 'line'),  # header on green
     'zellige-line-green.svg': tile(72, palette, '#006233', 1.0, 'line'),  # light surfaces
 }

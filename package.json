@@ -1,12 +1,12 @@
 {
   "name": "dalil-muraqaba-tarqiya",
   "private": true,
-  "version": "1.6.2",
+  "version": "2.0.0",
   "type": "module",
   "description": "دليل المراقبة الطرقية — تطبيق PWA للبحث في مخالفات مدونة السير (القانون 52-05)",
   "scripts": {
     "data": "node scripts/build-data.mjs",
-    "icons": "node scripts/build-icons.mjs",
+    "icons": "python3 scripts/build-icons.py",
     "dev": "npm run data && vite",
     "build": "npm run data && tsc -b && vite build",
     "preview": "vite preview --host",

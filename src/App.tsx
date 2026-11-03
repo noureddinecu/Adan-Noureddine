@@ -31,6 +31,8 @@ export function App({ theme }: { theme: ReturnType<typeof useTheme> }) {
   const anim = route.dir === 'back' ? 'page-back' : route.dir === 'forward' ? 'page-forward' : route.dir === 'tab' ? 'page-fade' : '';
   return (
     <>
+      <div className="edge-deco" aria-hidden><span className="edge-waves" /><span className="edge-zellige" /></div>
+      <div className="swoosh" aria-hidden />
       <div key={route.path} className={anim}>{page}</div>
       <BottomNav path={route.path} />
     </>

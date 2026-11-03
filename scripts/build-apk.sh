@@ -20,7 +20,7 @@ cp -r "$ROOT/dist/." "$OUT/assets/www/"
 rm -f "$OUT"/assets/www/sw.js "$OUT"/assets/www/workbox-*.js "$OUT"/assets/www/registerSW.js
 
 echo "› launcher icons"
-node "$ROOT/scripts/build-icons.mjs" --android "$OUT/res-icons" >/dev/null
+python3 "$ROOT/scripts/build-icons.py" --android "$OUT/res-icons"
 cp -r "$ROOT/android/res/." "$OUT/res-src/" 2>/dev/null || { mkdir -p "$OUT/res-src"; cp -r "$ROOT/android/res/." "$OUT/res-src/"; }
 cp -r "$OUT/res-icons/." "$OUT/res-src/"
 

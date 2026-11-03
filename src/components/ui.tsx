@@ -1,5 +1,5 @@
 import { ArrowRight, BookOpenText, CircleAlert, FileText, Footprints, Gavel, Hand, OctagonAlert, TriangleAlert, type LucideIcon } from 'lucide-react';
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import type { SectionKey } from '../data/types';
 import { goBack } from '../lib/router';
 import { highlight } from '../search/engine';
@@ -33,20 +33,18 @@ export function Hl({ text, terms }: { text: string; terms?: Set<string> }) {
 }
 
 export function Logo({ className = 'size-11', tile = false }: { className?: string; tile?: boolean }) {
-  const img = <img src="./icons/logo.svg" alt="" className={tile ? 'size-full' : className} draggable={false} />;
-  if (!tile) return img;
-  return <span className={`${className} inline-grid shrink-0 place-items-center rounded-2xl bg-[#fffdf8] p-1 shadow-md ring-1 ring-gold/40`}>{img}</span>;
+  return (
+    <img
+      src="./icons/app-icon.png"
+      alt=""
+      draggable={false}
+      className={`${className} shrink-0 rounded-full bg-white object-contain ${tile ? 'shadow-[0_8px_22px_-10px_rgba(0,0,0,.45)] ring-1 ring-black/5' : ''}`}
+    />
+  );
 }
 
 export function PageHeader({ title, subtitle, back = true, right }: { title: ReactNode; subtitle?: ReactNode; back?: boolean; right?: ReactNode }) {
   const ref = useRef<HTMLElement>(null);
-  const [scrolled, setScrolled] = useState(() => window.scrollY > 8);
-  useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 8);
-    window.addEventListener('scroll', on, { passive: true });
-    on();
-    return () => window.removeEventListener('scroll', on);
-  }, []);
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -57,17 +55,16 @@ export function PageHeader({ title, subtitle, back = true, right }: { title: Rea
     return () => ro.disconnect();
   }, []);
   return (
-    <header ref={ref} className={`header-blend sticky top-0 z-30 isolate text-white ${scrolled ? 'is-scrolled' : ''}`} style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-      <span className="hdr-bg" aria-hidden />
-      <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 pb-3.5 pt-5">
+    <header ref={ref} className="header-v2 sticky top-0 z-30 flex justify-start" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="hdr-blob flex min-w-[58%] max-w-[92%] items-center gap-2 py-4 pe-4 ps-3 text-white">
         {back && (
-          <button onClick={() => goBack()} className="grid size-10 shrink-0 place-items-center rounded-full hover:bg-white/15 active:bg-white/25" aria-label="رجوع">
+          <button onClick={() => goBack()} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/10 hover:bg-white/20" aria-label="رجوع">
             <ArrowRight className="size-6" />
           </button>
         )}
-        <div className="min-w-0 flex-1">
-          <h1 className="truncate text-[18px] font-bold leading-tight">{title}</h1>
-          {subtitle && <p className="mt-0.5 truncate text-[14px] opacity-90">{subtitle}</p>}
+        <div className="min-w-0 flex-1 ps-1">
+          <h1 className="truncate text-[20px] font-bold leading-tight">{title}</h1>
+          {subtitle && <p className="mt-0.5 truncate text-[14px] text-white/85">{subtitle}</p>}
         </div>
         {right}
       </div>
@@ -81,8 +78,8 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
 
 export function SectionTitle({ children, action, icon }: { children: ReactNode; action?: ReactNode; icon?: ReactNode }) {
   return (
-    <div className="mb-2.5 mt-6 flex items-center justify-between px-1">
-      <h2 className="flex items-center gap-2 text-[16px] font-bold text-[var(--text)]">{icon}{children}</h2>
+    <div className="mb-3 mt-7 flex items-center justify-between pe-1 ps-7">
+      <h2 className="flex items-center gap-2 text-[17px] font-bold text-[var(--text)]"><span className="h-5 w-1 rounded-full bg-accent" aria-hidden />{icon}{children}</h2>
       {action}
     </div>
   );

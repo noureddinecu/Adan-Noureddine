@@ -72,24 +72,22 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
   ];
 
   return (
-    <div className="safe-bottom home-page">
-      <header className="home-header relative text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <div className="mx-auto max-w-3xl px-4 pb-20 pt-7">
-          <div className="flex items-center gap-3">
-            <Logo tile className="size-14" />
-            <div className="min-w-0 flex-1">
-              <h1 className="text-[21px] font-bold leading-tight">دليل المراقبة الطرقية</h1>
-              <p className="mt-0.5 text-[14px] leading-6 text-white/85 text-balance">الخاص بأعوان الشرطة محرري المحاضر</p>
-            </div>
-            <button onClick={theme.toggle} className="grid size-10 place-items-center rounded-full bg-white/10 hover:bg-white/20" aria-label={theme.dark ? 'الوضع النهاري' : 'الوضع الليلي'}>
-              {theme.dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
-            </button>
+    <div className="safe-bottom">
+      <header className="relative flex items-start justify-between gap-2" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+        <div className="hdr-blob flex max-w-[88%] items-center gap-3 py-4 pe-4 ps-5 text-white">
+          <Logo tile className="size-14" />
+          <div className="min-w-0">
+            <h1 className="text-[21px] font-bold leading-tight">دليل المراقبة الطرقية</h1>
+            <p className="mt-0.5 text-[14px] leading-6 text-white/90 text-balance">الخاص بأعوان الشرطة محرري المحاضر</p>
           </div>
-          {!online && <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs"><span className="size-2 rounded-full bg-gold" /> دون اتصال — جميع البيانات متاحة محليا</p>}
         </div>
+        <button onClick={theme.toggle} className="m-3 grid size-11 shrink-0 place-items-center rounded-full bg-[var(--surface)] text-brand-700 shadow-md ring-1 ring-black/5 dark:text-brand-100" aria-label={theme.dark ? 'الوضع النهاري' : 'الوضع الليلي'}>
+          {theme.dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
+        </button>
       </header>
+      {!online && <p className="mx-4 mt-2 inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] px-3 py-1 text-xs shadow-sm"><span className="size-2 rounded-full bg-gold" /> دون اتصال — جميع البيانات متاحة محليا</p>}
 
-      <div className={`sticky top-0 z-30 -mt-14 px-3 pb-2 pt-[max(env(safe-area-inset-top),0px)] transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-[130%] opacity-0' : 'translate-y-0 opacity-100'}`}>
+      <div className={`sticky top-0 z-30 mt-4 px-3 pb-2 pt-[max(env(safe-area-inset-top),0px)] transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-[130%] opacity-0' : 'translate-y-0 opacity-100'}`}>
         <div className="mx-auto max-w-3xl">
           <SearchBar ref={inputRef} large value={q} onChange={setQ} onSubmit={() => app.addSearch(q)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />
         </div>
@@ -98,7 +96,7 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
       <main className="mx-auto max-w-3xl px-3">
         {searching ? (
           <section aria-live="polite">
-            <div className="mb-2 mt-1 flex items-center justify-between px-1 text-[14px] text-[var(--muted)]">
+            <div className="mb-2 mt-1 flex items-center justify-between pe-1 ps-7 text-[14px] text-[var(--muted)]">
               <span><b className="text-[var(--text)]">{hits.length}</b> نتيجة</span>
               <span className="ltr-nums">{ms < 1 ? '<1' : ms.toFixed(0)} ms</span>
             </div>
