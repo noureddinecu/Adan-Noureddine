@@ -1,6 +1,5 @@
-import { ChevronLeft, Star } from 'lucide-react';
+import { ChevronLeft, Star, Trash2 } from 'lucide-react';
 import type { Violation } from '../data/types';
-import { fineFor } from '../data/fines';
 import { navigate } from '../lib/router';
 import { highlight } from '../search/engine';
 import { useApp } from '../store';
@@ -11,21 +10,23 @@ function matchedLine(lines: string[], terms?: Set<string>) {
   return lines.find((l) => highlight(l, terms).some((s) => s.hit)) ?? null;
 }
 
-export function ViolationCard({ v, terms, query, index = 0, showSection = true }: { v: Violation; terms?: Set<string>; query?: string; index?: number; showSection?: boolean }) {
-  const { sections, isFavorite, fines } = useApp();
-  const fine = fineFor(fines, v);
+export function ViolationCard({ v, terms, query, index = 0, showSection = true, onRemove }: { v: Violation; terms?: Set<string>; query?: string; index?: number; showSection?: boolean; onRemove?: () => void }) {
+  const { sections, isFavorite } = useApp();
   const sec = sections.get(v.section)!;
   const descHit = terms && highlight(v.description, terms).some((s) => s.hit);
   const refLine = !descHit ? matchedLine(v.legalRefs, terms) : null;
   const procLine = !descHit && !refLine ? matchedLine(v.procedure, terms) : null;
   const href = `/v/${v.id}${query ? `?q=${encodeURIComponent(query)}` : ''}`;
   return (
-    <button
-      onClick={() => navigate(href)}
-      className="anim-in group relative flex w-full items-stretch overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] text-right shadow-[0_1px_2px_rgba(0,0,0,.05)] transition hover:shadow-md active:scale-[.99]"
+    <div
+      className="anim-in relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[0_1px_2px_rgba(0,0,0,.05)] transition hover:shadow-md"
       style={{ animationDelay: `${Math.min(index, 12) * 22}ms` }}
     >
-      <span className={`w-1.5 shrink-0 ${SECTION_STYLE[v.section].bg}`} />
+    <span className={`absolute inset-y-0 right-0 w-1.5 ${SECTION_STYLE[v.section].bg}`} />
+    <button
+      onClick={() => navigate(href)}
+      className="group flex w-full items-stretch pr-1.5 text-right active:scale-[.99]"
+    >
       <span className="min-w-0 flex-1 p-3.5">
         <span className="mb-1.5 flex flex-wrap items-center gap-1.5">
           <CodeBadge code={v.code} section={v.section} small />
@@ -49,10 +50,17 @@ export function ViolationCard({ v, terms, query, index = 0, showSection = true }
               <SectionIcon section={v.section} className="size-3.5" /> {sec.short}
             </span>
           )}
-          {fine?.type === 'transactional' && fine.amounts && <span className="ltr-nums mr-auto rounded-full bg-[var(--surface-2)] px-2 py-0.5 font-bold text-[var(--text)]">{fine.amounts.base} درهم</span>}
         </span>
       </span>
       <ChevronLeft className="m-auto ml-2 size-5 shrink-0 text-[var(--muted)] opacity-60 transition group-hover:-translate-x-0.5" />
     </button>
+    {onRemove && (
+      <div className="flex justify-end border-t border-[var(--line)] pr-1.5">
+        <button onClick={onRemove} className="flex items-center gap-1.5 px-4 py-2.5 text-[14px] font-semibold text-accent hover:bg-red-50 dark:hover:bg-red-950/30" aria-label={`حذف ${v.code} من المفضلة`}>
+          <Trash2 className="size-4" />حذف من المفضلة
+        </button>
+      </div>
+    )}
+    </div>
   );
 }

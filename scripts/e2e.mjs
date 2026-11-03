@@ -55,6 +55,9 @@ try {
   const t184 = await page.textContent('main');
   check(/46\s*نتيجة/.test(t184), '«المادة 184» → 46 results');
 
+  await input.fill('الهاتف');
+  await page.waitForTimeout(150);
+  check(!(await page.textContent('main')).includes('درهم'), 'no amounts on search result cards');
   await input.fill('185361C2');
   await page.waitForTimeout(150);
   check((await page.locator('main button').first().textContent()).includes('185361C2'), 'code search puts exact code first');
@@ -109,6 +112,12 @@ try {
   await page.waitForTimeout(300);
   check((await page.locator('main button').count()) >= 1, 'favorites page lists the item');
   await page.screenshot({ path: join(shots, '04-favorites.png') });
+  check(await page.isVisible('text=حذف من المفضلة'), 'favorite card has a remove button');
+
+  // per-item removal (re-add afterwards so later checks keep working)
+  { const before = await page.locator('main button:has-text("حذف من المفضلة")').count();
+    await page.locator('main button:has-text("حذف من المفضلة")').first().click(); await page.waitForTimeout(300);
+    check((await page.locator('main button:has-text("حذف من المفضلة")').count()) === before - 1, 'remove single favorite works'); }
 
   // history persists after reload
   await page.reload({ waitUntil: 'networkidle' });
@@ -122,7 +131,7 @@ try {
   // section page
   await page.goto(URL + '#/section/deg2');
   await page.waitForSelector('text=مخالفات من الدرجة الثانية');
-  check((await page.locator('main > button').count()) === 39, 'degree-2 section lists 39 violations');
+  check((await page.locator('main > div > button').count()) === 39, 'degree-2 section lists 39 violations');
   await page.screenshot({ path: join(shots, '05-section.png') });
 
   // dark mode
@@ -136,7 +145,7 @@ try {
   await page.screenshot({ path: join(shots, '07-detail-dark.png'), fullPage: true });
   await page.goto(URL + '#/about');
   await page.waitForSelector('text=حول التطبيق');
-  { const t = await page.textContent('main'); check(!t.includes('استخراج') && !t.includes('JSON') && !t.includes('تنبيه') && !t.includes('جدول الغرامات'), 'about page is clean (no report, JSON tools, notice)'); }
+  { const t = await page.textContent('main'); check(t.includes('تطوير: نورالدين عربي'), 'developer credit shown'); check(!t.includes('استخراج') && !t.includes('JSON') && !t.includes('تنبيه') && !t.includes('جدول الغرامات'), 'about page is clean (no report, JSON tools, notice)'); }
   await page.screenshot({ path: join(shots, '08-report-dark.png'), fullPage: true });
   await page.click('text=نهاري');
 

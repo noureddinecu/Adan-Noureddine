@@ -29,27 +29,35 @@ export function FineCard({ v }: { v: Violation }) {
   }
 
   const a = cat.amounts;
-  const tiles = [
-    { k: 'h24', label: 'خلال 24 ساعة', value: a.h24, tone: 'from-brand-600 to-brand-700 text-white' },
-    { k: 'd15', label: 'خلال 15 يوما', value: a.d15, tone: 'from-gold to-amber-600 text-white' },
-    { k: 'base', label: 'الغرامة الأصلية', value: a.base, tone: 'from-accent to-red-700 text-white' },
-  ];
+  const tone: Record<string, string> = { h24: 'bg-brand-600', d15: 'bg-gold', base: 'bg-accent' };
+  const when: Record<string, string> = {
+    h24: 'عند الأداء الفوري أو داخل 24 ساعة',
+    d15: 'عند الأداء بعد 24 ساعة وداخل 15 يوما',
+    base: 'عند الأداء بعد 15 يوما وداخل أجل الأداء القانوني',
+  };
 
   return (
     <div>
-      <div className="grid grid-cols-3 gap-2">
-        {tiles.map((t) => (
-          <div key={t.k} className={`relative overflow-hidden rounded-xl bg-gradient-to-b p-2.5 text-center shadow-sm ${t.tone}`}>
-            <p className="text-[13px] font-semibold opacity-90">{t.label}</p>
-            <p className="ltr-nums mt-1 text-[24px] font-bold leading-none">{money(t.value)}</p>
-            <p className="mt-1 text-[13px] opacity-90">درهم</p>
-          </div>
-        ))}
+      <div className="flex items-center justify-between rounded-xl bg-[var(--surface-2)] px-3.5 py-3">
+        <span className="text-[15px] font-semibold">المبلغ الأصلي للغرامة</span>
+        <span className="ltr-nums text-[22px] font-bold">{money(a.base)} <span className="text-[14px] font-semibold">درهم</span></span>
       </div>
-      <p className="mt-2 text-[13.5px]"><span className="rounded-full bg-[var(--surface-2)] px-2.5 py-1 font-semibold">{cat.label} · {cat.ref}</span></p>
-      <div className="mt-3"><LawLinks articles={(cat.ref.match(/\d{1,3}/g) ?? []).filter((n, i, arr) => arr.indexOf(n) === i)} title="فتح النص الرسمي عند مادة الغرامة" /></div>
+      <p className="mb-2 mt-4 text-[14px] font-semibold text-[var(--muted)]">المبلغ المستحق حسب تاريخ الأداء</p>
+      <ol className="overflow-hidden rounded-xl border border-[var(--line)]">
+        {fines.tiers.map((t) => (
+          <li key={t.key} className="flex items-center gap-3 border-b border-[var(--line)] px-3.5 py-3 last:border-0">
+            <span className={`h-10 w-1.5 shrink-0 rounded-full ${tone[t.amount] ?? 'bg-brand-600'}`} />
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15.5px] font-semibold leading-7">{t.label.split(' — ')[0]}</span>
+              <span className="block text-[13px] leading-6 text-[var(--muted)]">{when[t.amount]}</span>
+            </span>
+            <span className="ltr-nums shrink-0 text-[20px] font-bold">{money(a[t.amount])} <span className="text-[13px] font-semibold">درهم</span></span>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-2 text-[13.5px] text-[var(--muted)]">{cat.label} · المرجع: <b className="text-[var(--text)]">{cat.ref}</b></p>
       {cat.extraNote && <p className="mt-3 rounded-lg border-r-4 border-gold bg-amber-50 px-3 py-2 text-[15px] leading-7 dark:bg-amber-950/30">{cat.extraNote}</p>}
-
+      <div className="mt-3"><LawLinks articles={(cat.ref.match(/\d{1,3}/g) ?? []).filter((n, i, arr) => arr.indexOf(n) === i)} title="فتح النص الرسمي عند مادة الغرامة" /></div>
     </div>
   );
 }

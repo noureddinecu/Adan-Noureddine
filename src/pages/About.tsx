@@ -63,6 +63,10 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
           </>
         )}
 
+        <footer className="mt-8 flex flex-col items-center gap-2 pb-4 text-center">
+          <span className="h-px w-24 bg-gradient-to-l from-transparent via-gold to-transparent" />
+          <p className="text-[15px] text-[var(--muted)]">تطوير: <span className="font-bold text-brand-700 dark:text-brand-100">نورالدين عربي</span></p>
+        </footer>
       </main>
     </div>
   );

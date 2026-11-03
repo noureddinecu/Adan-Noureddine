@@ -12,7 +12,7 @@ export function Favorites() {
         <button onClick={() => confirm('إزالة جميع المخالفات من المفضلة؟') && app.clearFavorites()} className="rounded-full bg-white/10 px-3 py-1.5 text-[13.5px]">مسح الكل</button>
       )} />
       <main className="mx-auto flex max-w-3xl flex-col gap-2.5 px-3 pt-3">
-        {list.length ? list.map((v, i) => <ViolationCard key={v!.id} v={v!} index={i} />)
+        {list.length ? list.map((v, i) => <ViolationCard key={v!.id} v={v!} index={i} onRemove={() => app.toggleFavorite(v!.id)} />)
           : <Empty icon={<Star className="size-8" />} title="لا توجد مخالفات في المفضلة" text="اضغط على النجمة في صفحة أي مخالفة لإضافتها هنا والوصول إليها بسرعة، حتى دون إنترنت." />}
       </main>
     </div>
