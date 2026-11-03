@@ -12,7 +12,7 @@ if (!import.meta.env.VITE_APK) registerSW({ immediate: true });
 
 function Splash({ leaving = false }: { leaving?: boolean }) {
   return (
-    <div className={`splash-zellige fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-gradient-to-b from-brand-600 via-brand-800 to-brand-900 text-white transition-opacity duration-500 ${leaving ? 'pointer-events-none opacity-0' : 'opacity-100'}`} role="status" aria-label="دليل المراقبة الطرقية">
+    <div className={`splash-zellige fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-gradient-to-b from-brand-600 via-brand-800 to-brand-900 text-white transition-opacity duration-300 ${leaving ? 'pointer-events-none opacity-0' : 'opacity-100'}`} role="status" aria-label="دليل المراقبة الطرقية">
       <div className="anim-in relative flex flex-col items-center gap-4 rounded-3xl bg-brand-900/70 px-10 py-9 text-center shadow-2xl ring-1 ring-gold/50 backdrop-blur-sm">
         <Logo tile className="size-28" />
         <div>
@@ -26,7 +26,8 @@ function Splash({ leaving = false }: { leaving?: boolean }) {
   );
 }
 
-const SPLASH_MS = 2000;
+const SPLASH_MS = 1300;
+const FADE_MS = 300;
 
 function ErrorScreen({ msg }: { msg: string }) {
   return (
@@ -45,7 +46,7 @@ function Root() {
   const [phase, setPhase] = useState<'show' | 'leaving' | 'gone'>('show');
   useEffect(() => {
     const t1 = setTimeout(() => setPhase('leaving'), SPLASH_MS);
-    const t2 = setTimeout(() => setPhase('gone'), SPLASH_MS + 500);
+    const t2 = setTimeout(() => setPhase('gone'), SPLASH_MS + FADE_MS);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
   return (

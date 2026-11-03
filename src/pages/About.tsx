@@ -5,9 +5,9 @@ import type { ThemePref } from '../lib/theme';
 import { useApp } from '../store';
 
 const FEATURES = [
-  { icon: Search, text: 'بحث فوري بالاسم أو الرمز أو رقم المادة' },
-  { icon: WifiOff, text: 'يعمل بالكامل دون اتصال بالإنترنت' },
-  { icon: Star, text: 'المفضلة وسجل المعاينة والبحث' },
+  { icon: Search, title: 'بحث فوري', text: 'بالاسم أو الرمز أو رقم المادة', tone: 'from-brand-500 to-brand-700' },
+  { icon: WifiOff, title: 'دون إنترنت', text: 'يعمل بالكامل دون اتصال', tone: 'from-[#d23a3f] to-accent' },
+  { icon: Star, title: 'المفضلة والسجل', text: 'المعاينة وعمليات البحث', tone: 'from-[#e4c25a] to-[#a87d12]' },
 ];
 
 export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemePref) => void } }) {
@@ -32,14 +32,15 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
           </div>
         </Card>
 
-        <div className="mt-3 grid gap-2">
-          {FEATURES.map(({ icon: Icon, text }) => (
-            <Card key={text} className="flex items-center gap-3 px-4 py-3.5">
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-900 dark:text-brand-100"><Icon className="size-5" /></span>
-              <span className="text-[16.5px] font-medium">{text}</span>
-            </Card>
+        <Card className="mt-3 grid grid-cols-3 overflow-hidden">
+          {FEATURES.map(({ icon: Icon, title, text, tone }) => (
+            <div key={title} className="flex flex-col items-center border-l border-[var(--line)] px-2 py-5 text-center last:border-l-0">
+              <span className={`grid size-12 place-items-center rounded-2xl bg-gradient-to-b ${tone} text-white shadow-md ring-4 ring-[var(--surface-2)]`}><Icon className="size-6" /></span>
+              <span className="mt-3 text-[15px] font-bold leading-6">{title}</span>
+              <span className="mt-0.5 text-[12.5px] leading-5 text-[var(--muted)]">{text}</span>
+            </div>
           ))}
-        </div>
+        </Card>
 
         <SectionTitle>المظهر</SectionTitle>
         <Card className="grid grid-cols-3 gap-1 p-1">
@@ -64,14 +65,15 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
         )}
 
         <SectionTitle>المطوّر</SectionTitle>
-        <Card className="zellige-corner flex flex-col items-center px-5 py-6 text-center">
-          <figure className="w-full max-w-[260px] rounded-2xl bg-gradient-to-b from-gold via-[#e4c25a] to-[#a87d12] p-[3px] shadow-lg">
-            <div className="rounded-[14px] bg-[var(--surface)] p-1.5">
-              <img src="./developer.jpg" alt="المطوّر: نورالدين عربي" width={560} height={700} loading="lazy" className="aspect-[4/5] w-full rounded-xl object-cover" />
-            </div>
-          </figure>
-          <p className="mt-4 text-[17px] font-bold">المطوّر: نورالدين عربي</p>
-          <span className="mt-3 h-px w-24 bg-gradient-to-l from-transparent via-gold to-transparent" />
+        <Card className="zellige-corner flex items-center gap-4 p-4">
+          <span className="shrink-0 rounded-full bg-gradient-to-b from-[#e4c25a] via-gold to-[#a87d12] p-[3px] shadow-md">
+            <img src="./developer.jpg" alt="نورالدين عربي" width={80} height={80} loading="lazy" className="size-20 rounded-full border-2 border-[var(--surface)] object-cover" />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[13.5px] font-semibold text-[var(--muted)]">المطوّر</span>
+            <span className="block text-[19px] font-bold leading-8 text-brand-700 dark:text-brand-100">نورالدين عربي</span>
+            <span className="mt-1 block h-px w-16 bg-gradient-to-l from-transparent via-gold to-gold" />
+          </span>
         </Card>
         <div className="h-4" />
       </main>
