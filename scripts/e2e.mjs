@@ -79,7 +79,7 @@ try {
   await page.waitForTimeout(200);
   await page.locator('main button:has(mark)').first().click();
   await page.waitForSelector('text=مصدر المعلومات');
-  for (const t of ['معلومات المخالفة', 'النصوص القانونية', 'العقوبات والإجراءات', 'مصدر المعلومات', 'الصفحة في ملف PDF']) check(await page.isVisible(`text=${t}`), `detail shows «${t}»`);
+  for (const t of ['معلومات المخالفة', 'النصوص القانونية', 'العقوبات والإجراءات', 'مصدر المعلومات', 'الصفحة في الدليل']) check(await page.isVisible(`text=${t}`), `detail shows «${t}»`);
   await page.screenshot({ path: join(shots, '03-detail.png'), fullPage: true });
 
   // fines + calculator (185361C2 is degree 2 → 300 / 350 / 500)
@@ -136,7 +136,8 @@ try {
   await page.waitForSelector('text=مصدر المعلومات');
   await page.screenshot({ path: join(shots, '07-detail-dark.png'), fullPage: true });
   await page.goto(URL + '#/about');
-  await page.waitForSelector('text=تقرير استخراج البيانات');
+  await page.waitForSelector('text=حول التطبيق');
+  check(!(await page.textContent('main')).includes('استخراج'), 'about page has no extraction report');
   await page.screenshot({ path: join(shots, '08-report-dark.png'), fullPage: true });
   await page.click('text=نهاري');
 

@@ -24,7 +24,7 @@ export function SectionPage({ sectionKey }: { sectionKey: string }) {
       <div className={`${st.bg} ${st.fg}`}>
         <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-4">
           <span className="grid size-12 place-items-center rounded-2xl bg-black/10"><SectionIcon section={sec.key} className="size-7" /></span>
-          <p className="text-[15px] font-bold leading-7">{sec.title}</p>
+          <p className="text-[16px] font-bold leading-7">{sec.title}</p>
         </div>
       </div>
       <div className="sticky top-[67px] z-20 bg-[var(--bg)]/90 px-3 py-2 backdrop-blur">

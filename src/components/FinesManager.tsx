@@ -33,8 +33,8 @@ export function FinesManager() {
     <>
       <SectionTitle icon={<Banknote className="size-4.5 text-brand-600 dark:text-brand-100" />}>جدول الغرامات التصالحية والجزافية</SectionTitle>
       <Card className="p-4">
-        <table className="w-full text-center text-[13.5px]">
-          <thead><tr className="text-[12px] text-[var(--muted)]"><th className="pb-2 text-right">الدرجة</th><th className="pb-2">24 ساعة</th><th className="pb-2">15 يوما</th><th className="pb-2">الأصلية</th></tr></thead>
+        <table className="w-full text-center text-[14.5px]">
+          <thead><tr className="text-[13px] text-[var(--muted)]"><th className="pb-2 text-right">الدرجة</th><th className="pb-2">24 ساعة</th><th className="pb-2">15 يوما</th><th className="pb-2">الأصلية</th></tr></thead>
           <tbody>
             {rows.map((c) => (
               <tr key={c!.label} className="border-t border-[var(--line)]">
@@ -44,18 +44,18 @@ export function FinesManager() {
             ))}
           </tbody>
         </table>
-        <p className="mt-2 text-[12px] text-[var(--muted)]">المبالغ بالدرهم المغربي · المرجع: المادة 219 من مدونة السير · <OfficialLink label="النص الرسمي" /></p>
-        <p className="mt-2 text-[12.5px]">النسخة: <b className="ltr-nums">{f.version}</b> · المصدر: {app.finesCustom ? 'جدول مستورد من طرف المستخدم' : 'الجدول المضمن في التطبيق'} · الحالة: {f.status === 'verified' ? 'مطابق للنص الرسمي' : 'في انتظار المطابقة مع النص الرسمي'}</p>
+        <p className="mt-2 text-[13px] text-[var(--muted)]">المبالغ بالدرهم المغربي · المرجع: المادة 219 من مدونة السير · <OfficialLink label="النص الرسمي" /></p>
+        <p className="mt-2 text-[13.5px]">النسخة: <b className="ltr-nums">{f.version}</b> · المصدر: {app.finesCustom ? 'جدول مستورد من طرف المستخدم' : 'الجدول المضمن في التطبيق'} · الحالة: {f.status === 'verified' ? 'مطابق للنص الرسمي' : 'في انتظار المطابقة مع النص الرسمي'}</p>
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <button onClick={() => input.current?.click()} className="flex items-center justify-center gap-1.5 rounded-xl bg-brand-600 py-2.5 text-[13.5px] font-bold text-white"><Upload className="size-4" />تحديث من ملف JSON</button>
-          <button onClick={exportJson} className="rounded-xl border border-[var(--line)] py-2.5 text-[13.5px] font-semibold">تصدير الجدول الحالي</button>
+          <button onClick={() => input.current?.click()} className="flex items-center justify-center gap-1.5 rounded-xl bg-brand-600 py-2.5 text-[14.5px] font-bold text-white"><Upload className="size-4" />تحديث من ملف JSON</button>
+          <button onClick={exportJson} className="rounded-xl border border-[var(--line)] py-2.5 text-[14.5px] font-semibold">تصدير الجدول الحالي</button>
         </div>
         {app.finesCustom && (
-          <button onClick={async () => { await app.setCustomFines(null); setMsg({ ok: true, text: 'تمت العودة إلى الجدول المضمن.' }); }} className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-[13px] text-[var(--muted)]"><RotateCcw className="size-4" />العودة إلى الجدول المضمن</button>
+          <button onClick={async () => { await app.setCustomFines(null); setMsg({ ok: true, text: 'تمت العودة إلى الجدول المضمن.' }); }} className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-[14px] text-[var(--muted)]"><RotateCcw className="size-4" />العودة إلى الجدول المضمن</button>
         )}
         <input ref={input} type="file" accept="application/json,.json" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
-        {msg && <p className={`mt-2 rounded-lg px-3 py-2 text-[13px] ${msg.ok ? 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-100' : 'bg-red-50 text-red-800 dark:bg-red-950/40 dark:text-red-200'}`}>{msg.text}</p>}
-        <p className="mt-3 text-[11.5px] leading-5 text-[var(--muted)]">لتحديث المبالغ مستقبلا: صدّر الجدول الحالي، عدّل القيم في الملف (الحقل categories، والاستثناءات في overrides، واجعل status = "verified" بعد المطابقة)، ثم استورده. يُحفظ الجدول محليا ويُطبق فورا دون إعادة بناء التطبيق.</p>
+        {msg && <p className={`mt-2 rounded-lg px-3 py-2 text-[14px] ${msg.ok ? 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-100' : 'bg-red-50 text-red-800 dark:bg-red-950/40 dark:text-red-200'}`}>{msg.text}</p>}
+        <p className="mt-3 text-[13px] leading-5 text-[var(--muted)]">لتحديث المبالغ مستقبلا: صدّر الجدول الحالي، عدّل القيم في الملف (الحقل categories، والاستثناءات في overrides، واجعل status = "verified" بعد المطابقة)، ثم استورده. يُحفظ الجدول محليا ويُطبق فورا دون إعادة بناء التطبيق.</p>
       </Card>
     </>
   );

@@ -6,6 +6,10 @@
 @import '@fontsource/ibm-plex-sans-arabic/latin-400.css';
 @import '@fontsource/ibm-plex-sans-arabic/latin-600.css';
 @import '@fontsource/ibm-plex-sans-arabic/latin-700.css';
+@import '@fontsource/noto-naskh-arabic/arabic-400.css';
+@import '@fontsource/noto-naskh-arabic/arabic-500.css';
+@import '@fontsource/noto-naskh-arabic/arabic-600.css';
+@import '@fontsource/noto-naskh-arabic/arabic-700.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -14,6 +18,8 @@
    administrative cyan, misdemeanours orange, art. 94 black, stop procedure maroon). */
 @theme {
   --font-sans: 'IBM Plex Sans Arabic', system-ui, 'Segoe UI', Tahoma, sans-serif;
+  /* Naskh face for long legal texts: most legible style for continuous Arabic reading */
+  --font-legal: 'Noto Naskh Arabic', 'IBM Plex Sans Arabic', 'Traditional Arabic', serif;
   /* Moroccan identity: dark Moroccan green, Moroccan red, gold, ivory */
   --color-brand-50: #eef6ef;
   --color-brand-100: #d3eadb;
@@ -68,9 +74,27 @@ body {
   font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
   text-rendering: optimizeLegibility;
+  font-size: 16px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+h1, h2, h3 { letter-spacing: 0; line-height: 1.45; }
+@layer components {
+/* Legal content (description, references, procedures): Naskh, larger, airy line height */
+.legal {
+  font-family: var(--font-legal);
+  font-size: 1.07em;
+  line-height: 2.05;
+  font-weight: 500;
+  word-spacing: .03em;
+}
+.legal b, .legal strong, .legal.font-bold, .legal.font-semibold { font-weight: 700; }
+/* Latin codes / numbers stay in the UI face, tabular and slightly heavier for scanning */
+.ltr-nums { font-family: var(--font-sans); font-weight: 600; }
 }
 mark { background: var(--mark); color: var(--mark-text); border-radius: 4px; padding: 0 2px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
-.ltr-nums { direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
+.ltr-nums { direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; letter-spacing: .01em; }
 .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 76px); }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }

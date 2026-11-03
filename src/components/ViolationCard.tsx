@@ -30,20 +30,20 @@ export function ViolationCard({ v, terms, query, index = 0, showSection = true }
         <span className="mb-1.5 flex flex-wrap items-center gap-1.5">
           <CodeBadge code={v.code} section={v.section} small />
           {v.relatedCodes.map((c) => (
-            <span key={c} className="ltr-nums rounded-md border border-[var(--line)] px-1.5 py-0.5 text-[11px] font-semibold text-[var(--muted)]">+ {c}</span>
+            <span key={c} className="ltr-nums rounded-md border border-[var(--line)] px-1.5 py-0.5 text-[12.5px] font-semibold text-[var(--muted)]">+ {c}</span>
           ))}
           {isFavorite(v.id) && <Star className="size-4 fill-gold text-gold" aria-label="في المفضلة" />}
         </span>
-        <span className="line-clamp-3 block text-[15px] font-semibold leading-7 text-[var(--text)]">
+        <span className="legal line-clamp-3 block text-[16px] font-semibold text-[var(--text)]">
           <Hl text={v.description} terms={terms} />
         </span>
         {(refLine || procLine) && (
-          <span className="mt-1.5 line-clamp-2 block rounded-lg bg-[var(--surface-2)] px-2.5 py-1.5 text-[13px] leading-6 text-[var(--muted)]">
+          <span className="legal mt-1.5 line-clamp-2 block rounded-lg bg-[var(--surface-2)] px-2.5 py-1.5 text-[14px] text-[var(--muted)]">
             <b className="text-[var(--text)]">{refLine ? 'المرجع: ' : 'المسطرة: '}</b>
             <Hl text={(refLine ?? procLine)!} terms={terms} />
           </span>
         )}
-        <span className="mt-2 flex items-center gap-2 text-[12px] text-[var(--muted)]">
+        <span className="mt-2 flex items-center gap-2 text-[13px] text-[var(--muted)]">
           {showSection && (
             <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${SECTION_STYLE[v.section].soft}`}>
               <SectionIcon section={v.section} className="size-3.5" /> {sec.short}

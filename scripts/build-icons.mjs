@@ -11,42 +11,37 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const shield = `
-  <path d="M256 70 92 128v120c0 106 72 188 164 220 92-32 164-114 164-220V128L256 70Z" fill="#fff" stroke="#c9a227" stroke-width="16"/>
-  <path d="M256 108 124 154v96c0 84 54 149 132 178 78-29 132-94 132-178v-96L256 108Z" fill="#006233"/>
-  <path d="M220 400 246 170h20l26 230z" fill="#3a4a40"/>
-  <path d="M256 188v28M256 248v32M256 312v36" stroke="#f2df00" stroke-width="12" stroke-linecap="round"/>
-  <circle cx="346" cy="178" r="50" fill="#c1272d" stroke="#fff" stroke-width="10"/>
-  <path d="M322 179l17 17 31-34" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>`;
 const zTile = readFileSync(join(root, 'public/patterns/zellige-line-gold.svg'));
 const zColor = readFileSync(join(root, 'public/patterns/zellige-color.svg'));
 const zUri = (b) => `data:image/svg+xml;base64,${b.toString('base64')}`;
+const logo = readFileSync(join(root, 'public/icons/logo.svg'));
+const zGreen = readFileSync(join(root, 'public/patterns/zellige-line-green.svg'));
 const svg = (pad, rounded) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a7a3e"/><stop offset="1" stop-color="#062a1f"/></linearGradient></defs>
-  <pattern id="z" width="96" height="96" patternUnits="userSpaceOnUse"><image href="${zUri(zTile)}" width="96" height="96"/></pattern>
-  <rect width="512" height="512" rx="${rounded ? 112 : 0}" fill="url(#g)"/>
-  <rect width="512" height="512" rx="${rounded ? 112 : 0}" fill="url(#z)" opacity=".28"/>
-  <g transform="translate(256 256) scale(${pad}) translate(-256 -270)">${shield}</g></svg>`;
-
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf8"/><stop offset="1" stop-color="#f3ead3"/></linearGradient>
+  <pattern id="z" width="96" height="96" patternUnits="userSpaceOnUse"><image href="${zUri(zGreen)}" width="96" height="96"/></pattern></defs>
+  <rect width="512" height="512" rx="${rounded ? 112 : 0}" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="${rounded ? 112 : 0}" fill="url(#z)" opacity=".07"/>
+  ${rounded ? '<rect x="10" y="10" width="492" height="492" rx="104" fill="none" stroke="#c9a227" stroke-width="6" opacity=".7"/>' : ''}
+  <image href="${zUri(logo)}" x="${256 - 256 * pad}" y="${256 - 256 * pad}" width="${512 * pad}" height="${512 * pad}"/></svg>`;
 const androidOut = process.argv[2] === '--android' ? process.argv[3] : null;
 mkdirSync(join(root, 'public/icons'), { recursive: true });
-writeFileSync(join(root, 'public/favicon.svg'), svg(0.92, true));
-writeFileSync(join(root, 'public/icons/icon.svg'), svg(0.92, true));
+writeFileSync(join(root, 'public/favicon.svg'), svg(0.86, true));
+writeFileSync(join(root, 'public/icons/icon.svg'), svg(0.86, true));
 const browser = await chromium.launch();
 const page = await browser.newPage();
 const shots = androidOut ? [
-  ['mipmap-mdpi/ic_launcher.png', 48, svg(0.92, true)],
-  ['mipmap-hdpi/ic_launcher.png', 72, svg(0.92, true)],
-  ['mipmap-xhdpi/ic_launcher.png', 96, svg(0.92, true)],
-  ['mipmap-xxhdpi/ic_launcher.png', 144, svg(0.92, true)],
-  ['mipmap-xxxhdpi/ic_launcher.png', 192, svg(0.92, true)],
-  ['drawable/splash_logo.png', 288, svg(0.92, true)],
+  ['mipmap-mdpi/ic_launcher.png', 48, svg(0.86, true)],
+  ['mipmap-hdpi/ic_launcher.png', 72, svg(0.86, true)],
+  ['mipmap-xhdpi/ic_launcher.png', 96, svg(0.86, true)],
+  ['mipmap-xxhdpi/ic_launcher.png', 144, svg(0.86, true)],
+  ['mipmap-xxxhdpi/ic_launcher.png', 192, svg(0.86, true)],
+  ['drawable/splash_logo.png', 288, svg(0.86, true)],
   ['drawable/splash_pattern.png', 192, `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 192 192"><rect width="192" height="192" fill="#0b3d2e"/><image href="${zUri(zColor)}" width="96" height="96" opacity=".16"/><image href="${zUri(zColor)}" x="96" width="96" height="96" opacity=".16"/><image href="${zUri(zColor)}" y="96" width="96" height="96" opacity=".16"/><image href="${zUri(zColor)}" x="96" y="96" width="96" height="96" opacity=".16"/></svg>`],
 ] : [
-  ['icon-192.png', 192, svg(0.92, true)],
-  ['icon-512.png', 512, svg(0.92, true)],
-  ['maskable-512.png', 512, svg(0.72, false)],
-  ['apple-touch-icon.png', 180, svg(0.86, false)],
+  ['icon-192.png', 192, svg(0.86, true)],
+  ['icon-512.png', 512, svg(0.86, true)],
+  ['maskable-512.png', 512, svg(0.66, false)],
+  ['apple-touch-icon.png', 180, svg(0.8, false)],
 ];
 for (const [name, size, s] of shots) {
   await page.setViewportSize({ width: size, height: size });

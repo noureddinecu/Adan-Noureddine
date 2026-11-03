@@ -1,8 +1,7 @@
-import { AlertTriangle, Banknote, BookMarked, ChevronLeft, ChevronRight, ClipboardList, Copy, FileSearch, Info, Link2, Scale, Share2, Star } from 'lucide-react';
+import { Banknote, BookMarked, ChevronLeft, ChevronRight, ClipboardList, Copy, FileSearch, Info, Link2, Scale, Share2, Star } from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { FineCard } from '../components/FineCard';
 import { Card, CodeBadge, Empty, Hl, PageHeader, SECTION_STYLE, SectionIcon } from '../components/ui';
-import type { Violation } from '../data/types';
 import { androidBridge } from '../lib/pwa';
 import { navigate } from '../lib/router';
 import { search } from '../search/engine';
@@ -13,8 +12,8 @@ function Block({ icon, title, children, n }: { icon: ReactNode; title: string; c
     <Card className="zellige-corner anim-in overflow-hidden">
       <div className="flex items-center gap-2.5 border-b border-[var(--line)] bg-[var(--surface-2)] px-4 py-3">
         <span className="grid size-8 place-items-center rounded-lg bg-brand-600 text-white">{icon}</span>
-        <h2 className="text-[15.5px] font-bold">{title}</h2>
-        <span className="mr-auto text-[11px] font-semibold text-[var(--muted)]">{n}</span>
+        <h2 className="text-[16.5px] font-bold">{title}</h2>
+        <span className="mr-auto text-[12.5px] font-semibold text-[var(--muted)]">{n}</span>
       </div>
       <div className="px-4 py-3.5">{children}</div>
     </Card>
@@ -24,8 +23,8 @@ function Block({ icon, title, children, n }: { icon: ReactNode; title: string; c
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="border-b border-dashed border-[var(--line)] py-2.5 last:border-0">
-      <dt className="mb-1 text-[12.5px] font-semibold text-[var(--muted)]">{label}</dt>
-      <dd className="text-[15px] leading-7">{children}</dd>
+      <dt className="mb-1 text-[13.5px] font-semibold text-[var(--muted)]">{label}</dt>
+      <dd className="text-[16px] leading-8">{children}</dd>
     </div>
   );
 }
@@ -52,7 +51,6 @@ export function Detail({ id, q }: { id: string; q: string }) {
   const pos = list.findIndex((x) => x.id === v.id);
   const prev = list[pos - 1], next = list[pos + 1];
   const fav = app.isFavorite(v.id);
-  const shared = v.sharedWith.map((sid) => app.byId.get(sid)).filter(Boolean) as Violation[];
 
   const plain = [
     `الرمز: ${v.codeRaw}`, `التصنيف: ${sec.title}`, `توصيف المخالفة: ${v.description}`,
@@ -85,24 +83,24 @@ export function Detail({ id, q }: { id: string; q: string }) {
         <Card className="anim-in overflow-hidden">
           <div className={`flex items-center gap-2 px-4 py-2.5 ${st.bg} ${st.fg}`}>
             <SectionIcon section={v.section} className="size-5" />
-            <span className="text-[13.5px] font-bold">{sec.title}</span>
-            <span className="mr-auto text-[12px] font-semibold opacity-80">{pos + 1} / {list.length}</span>
+            <span className="text-[14.5px] font-bold">{sec.title}</span>
+            <span className="mr-auto text-[13px] font-semibold opacity-80">{pos + 1} / {list.length}</span>
           </div>
           <div className="p-4">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <CodeBadge code={v.code} section={v.section} />
               {v.relatedCodes.map((c) => (
-                <button key={c} onClick={() => navigate(`/?q=${c}`)} className="ltr-nums rounded-lg border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[13px] font-bold">+ {c}</button>
+                <button key={c} onClick={() => navigate(`/?q=${c}`)} className="ltr-nums rounded-lg border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[14px] font-bold">+ {c}</button>
               ))}
-              {v.codeNote && <span className="rounded-lg bg-[var(--surface-2)] px-2 py-1 text-[13px] font-semibold">+ {v.codeNote}</span>}
+              {v.codeNote && <span className="rounded-lg bg-[var(--surface-2)] px-2 py-1 text-[14px] font-semibold">+ {v.codeNote}</span>}
             </div>
-            <p className="whitespace-pre-line text-[17px] font-bold leading-8"><Hl text={v.description} terms={terms} /></p>
+            <p className="legal whitespace-pre-line text-[19px] font-bold"><Hl text={v.description} terms={terms} /></p>
             <div className="mt-4 grid grid-cols-3 gap-2">
-              <button onClick={() => app.toggleFavorite(v.id)} className={`flex flex-col items-center gap-1 rounded-xl border py-2 text-[12.5px] font-semibold transition ${fav ? 'border-gold bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200' : 'border-[var(--line)]'}`}>
+              <button onClick={() => app.toggleFavorite(v.id)} className={`flex flex-col items-center gap-1 rounded-xl border py-2 text-[13.5px] font-semibold transition ${fav ? 'border-gold bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200' : 'border-[var(--line)]'}`}>
                 <Star className={`size-5 ${fav ? 'fill-gold text-gold' : ''}`} />{fav ? 'في المفضلة' : 'أضف للمفضلة'}
               </button>
-              <button onClick={copy} className="flex flex-col items-center gap-1 rounded-xl border border-[var(--line)] py-2 text-[12.5px] font-semibold"><Copy className="size-5" />{copied ? 'تم النسخ ✓' : 'نسخ'}</button>
-              <button onClick={share} className="flex flex-col items-center gap-1 rounded-xl border border-[var(--line)] py-2 text-[12.5px] font-semibold"><Share2 className="size-5" />مشاركة</button>
+              <button onClick={copy} className="flex flex-col items-center gap-1 rounded-xl border border-[var(--line)] py-2 text-[13.5px] font-semibold"><Copy className="size-5" />{copied ? 'تم النسخ ✓' : 'نسخ'}</button>
+              <button onClick={share} className="flex flex-col items-center gap-1 rounded-xl border border-[var(--line)] py-2 text-[13.5px] font-semibold"><Share2 className="size-5" />مشاركة</button>
             </div>
           </div>
         </Card>
@@ -110,9 +108,9 @@ export function Detail({ id, q }: { id: string; q: string }) {
         <Block n="أولا" icon={<Info className="size-4.5" />} title="معلومات المخالفة">
           <dl>
             <Row label="رمز المخالفة"><span className="ltr-nums font-bold">{v.codeRaw}</span></Row>
-            <Row label="توصيف المخالفة (كما ورد في الدليل)"><span className="whitespace-pre-line"><Hl text={v.description} terms={terms} /></span></Row>
+            <Row label="توصيف المخالفة (كما ورد في الدليل)"><span className="legal whitespace-pre-line"><Hl text={v.description} terms={terms} /></span></Row>
             <Row label="الدرجة / التصنيف">
-              <button onClick={() => navigate(`/section/${v.section}`)} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13.5px] font-semibold ${st.soft}`}><SectionIcon section={v.section} className="size-4" />{sec.title}</button>
+              <button onClick={() => navigate(`/section/${v.section}`)} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[14.5px] font-semibold ${st.soft}`}><SectionIcon section={v.section} className="size-4" />{sec.title}</button>
             </Row>
           </dl>
         </Block>
@@ -120,13 +118,13 @@ export function Detail({ id, q }: { id: string; q: string }) {
         <Block n="ثانيا" icon={<Scale className="size-4.5" />} title="النصوص القانونية">
           <dl>
             <Row label="المرجع القانوني">
-              <ul className="space-y-1">{v.legalRefs.map((r, i) => <li key={i} className="rounded-lg bg-[var(--surface-2)] px-3 py-1.5"><Hl text={r} terms={terms} /></li>)}</ul>
+              <ul className="space-y-1">{v.legalRefs.map((r, i) => <li key={i} className="legal rounded-lg bg-[var(--surface-2)] px-3 py-2"><Hl text={r} terms={terms} /></li>)}</ul>
             </Row>
             {v.articles.length > 0 && (
               <Row label="أرقام المواد المشار إليها (للبحث)">
                 <div className="flex flex-wrap gap-1.5">
                   {v.articles.filter((a) => a.includes('(')).concat(v.articles.filter((a) => !a.includes('(') && !v.articles.some((b) => b.startsWith(`${a}(`)))).map((a) => (
-                    <button key={a} onClick={() => navigate(`/?q=${encodeURIComponent(`المادة ${a}`)}`)} className="ltr-nums inline-flex items-center gap-1 rounded-full border border-brand-500/40 px-2.5 py-0.5 text-[13px] font-semibold text-brand-700 dark:text-brand-100">
+                    <button key={a} onClick={() => navigate(`/?q=${encodeURIComponent(`المادة ${a}`)}`)} className="ltr-nums inline-flex items-center gap-1 rounded-full border border-brand-500/40 px-2.5 py-0.5 text-[14px] font-semibold text-brand-700 dark:text-brand-100">
                       <Link2 className="size-3.5" />{a}
                     </button>
                   ))}
@@ -134,35 +132,27 @@ export function Detail({ id, q }: { id: string; q: string }) {
               </Row>
             )}
           </dl>
-          <p className="mt-2 rounded-lg bg-[var(--surface-2)] px-3 py-2 text-[12.5px] leading-6 text-[var(--muted)]">يورد الدليل المراجع القانونية دون نص المواد الكامل؛ تُعرض المراجع هنا كما وردت حرفيا.</p>
+          <p className="mt-2 rounded-lg bg-[var(--surface-2)] px-3 py-2 text-[13.5px] leading-6 text-[var(--muted)]">يورد الدليل المراجع القانونية دون نص المواد الكامل؛ تُعرض المراجع هنا كما وردت حرفيا.</p>
         </Block>
 
         <Block n="ثالثا" icon={<ClipboardList className="size-4.5" />} title="العقوبات والإجراءات">
           <dl>
             <Row label="المسطرة الواجب اتباعها">
-              <ol className="space-y-2">
+              <ol className="legal space-y-2.5">
                 {v.procedure.map((p, i) =>
                   isHeading(p) ? (
-                    <li key={i} className="mt-3 rounded-lg bg-brand-50 px-3 py-1.5 text-[14px] font-bold text-brand-700 dark:bg-brand-900 dark:text-brand-100">{p}</li>
+                    <li key={i} className="mt-3 rounded-lg bg-brand-50 px-3 py-1.5 text-[15px] font-bold text-brand-700 dark:bg-brand-900 dark:text-brand-100">{p}</li>
                   ) : p.startsWith('ملاحظة') || p.startsWith('(ملاحظة') ? (
-                    <li key={i} className="rounded-lg border-r-4 border-gold bg-amber-50 px-3 py-2 text-[14.5px] leading-7 dark:bg-amber-950/30"><Hl text={p} terms={terms} /></li>
+                    <li key={i} className="rounded-lg border-r-4 border-gold bg-amber-50 px-3 py-2 text-[16px] dark:bg-amber-950/30"><Hl text={p} terms={terms} /></li>
                   ) : (
-                    <li key={i} className="flex gap-2.5 leading-7">
-                      <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand-500" />
+                    <li key={i} className="flex gap-2.5">
+                      <span className="mt-3.5 size-2 shrink-0 rounded-full bg-brand-500" />
                       <span><Hl text={p} terms={terms} /></span>
                     </li>
                   ),
                 )}
               </ol>
             </Row>
-            {shared.length > 0 && (
-              <Row label="ملاحظة حول الجدول الأصلي">
-                <p className="text-[14px] leading-7">وردت هذه المسطرة في خلية مشتركة (مدمجة) تشمل أيضا:</p>
-                <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  {shared.map((s) => <button key={s.id} onClick={() => navigate(`/v/${s.id}`)}><CodeBadge code={s.code} section={s.section} small /></button>)}
-                </div>
-              </Row>
-            )}
           </dl>
         </Block>
 
@@ -172,31 +162,21 @@ export function Detail({ id, q }: { id: string; q: string }) {
 
         <Block n="خامسا" icon={<FileSearch className="size-4.5" />} title="مصدر المعلومات">
           <dl>
-            <Row label="الصفحة في ملف PDF"><span className="font-bold">{v.pdfPage}</span> <span className="text-[13px] text-[var(--muted)]">من {app.data.source.pdfPages} (الترقيم المطبوع على الصفحة: {v.printedPage})</span></Row>
-            <Row label="الجدول المستخرج منه">{sec.title}</Row>
+            <Row label="الصفحة في الدليل"><span className="font-bold">{v.pdfPage}</span> <span className="text-[14px] text-[var(--muted)]">(رقم الصفحة المطبوع: {v.printedPage})</span></Row>
+            <Row label="الجدول في الدليل">{sec.title}</Row>
             <Row label="الوثيقة">{app.data.source.title} — {app.data.source.subtitle} ({app.data.source.edition})</Row>
           </dl>
-          {(v.extractionNotes.length > 0 || v.duplicateCode) && (
-            <div className="mt-2 space-y-2">
-              {v.extractionNotes.map((n, i) => (
-                <p key={i} className="flex gap-2 rounded-lg border border-amber-300/70 bg-amber-50 px-3 py-2 text-[13px] leading-6 text-amber-900 dark:border-amber-700/50 dark:bg-amber-950/30 dark:text-amber-200"><AlertTriangle className="mt-1 size-4 shrink-0" />{n}</p>
-              ))}
-              {v.duplicateCode && !v.extractionNotes.some((n) => n.includes('نفس الرمز')) && (
-                <p className="flex gap-2 rounded-lg border border-amber-300/70 bg-amber-50 px-3 py-2 text-[13px] leading-6 text-amber-900 dark:border-amber-700/50 dark:bg-amber-950/30 dark:text-amber-200"><AlertTriangle className="mt-1 size-4 shrink-0" />هذا الرمز مستعمل في الدليل لأكثر من مخالفة واحدة؛ تم الاحتفاظ بكل مخالفة منفصلة كما وردت.</p>
-              )}
-            </div>
-          )}
         </Block>
 
         <div className="mt-1 grid grid-cols-2 gap-2">
           {prev ? (
-            <button onClick={() => navigate(`/v/${prev.id}`, { replace: true })} className="flex items-center gap-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 text-right text-[13px]"><ChevronRight className="size-5 shrink-0" /><span className="min-w-0"><span className="block text-[11.5px] text-[var(--muted)]">السابقة</span><span className="ltr-nums font-bold">{prev.code}</span></span></button>
+            <button onClick={() => navigate(`/v/${prev.id}`, { replace: true })} className="flex items-center gap-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 text-right text-[14px]"><ChevronRight className="size-5 shrink-0" /><span className="min-w-0"><span className="block text-[13px] text-[var(--muted)]">السابقة</span><span className="ltr-nums font-bold">{prev.code}</span></span></button>
           ) : <span />}
           {next ? (
-            <button onClick={() => navigate(`/v/${next.id}`, { replace: true })} className="flex items-center justify-end gap-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 text-left text-[13px]"><span className="min-w-0 text-right"><span className="block text-[11.5px] text-[var(--muted)]">التالية</span><span className="ltr-nums font-bold">{next.code}</span></span><ChevronLeft className="size-5 shrink-0" /></button>
+            <button onClick={() => navigate(`/v/${next.id}`, { replace: true })} className="flex items-center justify-end gap-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 text-left text-[14px]"><span className="min-w-0 text-right"><span className="block text-[13px] text-[var(--muted)]">التالية</span><span className="ltr-nums font-bold">{next.code}</span></span><ChevronLeft className="size-5 shrink-0" /></button>
           ) : <span />}
         </div>
-        <button onClick={() => navigate(`/section/${v.section}`)} className="flex items-center justify-center gap-2 rounded-2xl py-3 text-[13.5px] font-semibold text-brand-700 dark:text-brand-100"><BookMarked className="size-4.5" />جميع {sec.short}</button>
+        <button onClick={() => navigate(`/section/${v.section}`)} className="flex items-center justify-center gap-2 rounded-2xl py-3 text-[14.5px] font-semibold text-brand-700 dark:text-brand-100"><BookMarked className="size-4.5" />جميع {sec.short}</button>
       </main>
     </div>
   );

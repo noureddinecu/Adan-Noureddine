@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+<defs>
+<linearGradient id="lgGold" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#a87d12"/><stop offset=".55" stop-color="#e4c25a"/><stop offset="1" stop-color="#c9a227"/></linearGradient>
+<linearGradient id="lgRoad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#062a1f"/><stop offset=".6" stop-color="#0b5e35"/><stop offset="1" stop-color="#1b7a45"/></linearGradient>
+<radialGradient id="lgRed" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#e2443f"/><stop offset="1" stop-color="#a51d23"/></radialGradient>
+</defs>
+<g stroke="url(#lgGold)" stroke-width="2.6" stroke-linecap="round"><path d="M33.4 33.3L26.5 32.1"/><path d="M36.6 24.5L30.6 21.0"/><path d="M42.6 17.3L38.1 12.0"/><path d="M50.8 12.6L48.4 6.1"/><path d="M60.0 11.0L60.0 4.0"/><path d="M69.2 12.6L71.6 6.1"/><path d="M77.4 17.3L81.9 12.0"/><path d="M83.4 24.5L89.4 21.0"/><path d="M86.6 33.3L93.5 32.1"/></g>
+<path d="M8 96C24 74 52 64 104 66C64 70 36 80 18 102Z" fill="url(#lgGold)"/>
+<path d="M2 118C26 96 64 82 118 80L118 96C74 97 46 106 34 118Z" fill="url(#lgRoad)"/>
+<path d="M17 118C38 100 70 89 118 88" fill="none" stroke="#fff" stroke-width="2.8" stroke-dasharray="7 5" stroke-linecap="round"/>
+<circle cx="60" cy="38" r="22" fill="url(#lgRed)" stroke="url(#lgGold)" stroke-width="3.2"/>
+<polygon points="60.00,24.50 67.94,48.92 47.16,33.83 72.84,33.83 52.06,48.92" fill="none" stroke="#006233" stroke-width="2.8" stroke-linejoin="round"/>
+</svg>

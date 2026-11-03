@@ -26,7 +26,7 @@ export const SearchBar = forwardRef<HTMLInputElement, Props>(function SearchBar(
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? 'ابحث باسم المخالفة، الرمز، المادة…'}
         aria-label="البحث في المخالفات"
-        className={`min-w-0 flex-1 bg-transparent text-right outline-none placeholder:text-[var(--muted)] [&::-webkit-search-cancel-button]:hidden ${large ? 'text-[17px]' : 'text-[16px]'}`}
+        className={`min-w-0 flex-1 bg-transparent text-right outline-none placeholder:text-[var(--muted)] [&::-webkit-search-cancel-button]:hidden ${large ? 'text-[18px]' : 'text-[17px]'}`}
       />
       {value && (
         <button type="button" onClick={() => onChange('')} className="grid size-8 shrink-0 place-items-center rounded-full bg-[var(--surface-2)] text-[var(--muted)] hover:text-[var(--text)]" aria-label="مسح البحث">

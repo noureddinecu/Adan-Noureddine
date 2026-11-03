@@ -14,7 +14,7 @@ function Splash() {
   return (
     <div className="splash-zellige fixed inset-0 grid place-items-center overflow-hidden bg-gradient-to-b from-brand-600 via-brand-800 to-brand-900 text-white">
       <div className="relative flex flex-col items-center gap-4 rounded-3xl bg-brand-900/70 px-10 py-8 shadow-2xl ring-1 ring-gold/50 backdrop-blur-sm">
-        <Logo className="size-24 animate-pulse" />
+        <Logo tile className="size-28" />
         <p className="text-xl font-bold">دليل المراقبة الطرقية</p>
         <p className="text-sm text-white/75">جاري تحميل قاعدة البيانات…</p>
         <div className="h-1 w-24 overflow-hidden rounded-full bg-white/15"><div className="h-full w-1/2 animate-pulse rounded-full bg-gold" /></div>

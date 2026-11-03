@@ -22,7 +22,7 @@ export function SectionIcon({ section, className = 'size-5' }: { section: Sectio
 export function CodeBadge({ code, section, small }: { code: string; section: SectionKey; small?: boolean }) {
   const s = SECTION_STYLE[section];
   return (
-    <span className={`${s.bg} ${s.fg} ltr-nums inline-flex items-center rounded-lg font-bold tracking-wide shadow-sm ${small ? 'px-2 py-0.5 text-[12px]' : 'px-2.5 py-1 text-[13px]'}`}>
+    <span className={`${s.bg} ${s.fg} ltr-nums inline-flex items-center rounded-lg font-bold tracking-wide shadow-sm ${small ? 'px-2 py-0.5 text-[13px]' : 'px-2.5 py-1 text-[14px]'}`}>
       {code}
     </span>
   );
@@ -32,20 +32,10 @@ export function Hl({ text, terms }: { text: string; terms?: Set<string> }) {
   return <>{highlight(text, terms).map((s, i) => (s.hit ? <mark key={i}>{s.text}</mark> : <span key={i}>{s.text}</span>))}</>;
 }
 
-export function Logo({ className = 'size-11' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 64 64" className={className} aria-hidden>
-      <defs>
-        <linearGradient id="lg-shield" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ffffff" /><stop offset="1" stopColor="#f8f3e6" /></linearGradient>
-      </defs>
-      <path d="M32 4 9 12v17c0 15 10 26.5 23 31 13-4.5 23-16 23-31V12L32 4Z" fill="url(#lg-shield)" stroke="#c9a227" strokeWidth="2.5" />
-      <path d="M32 9.5 14 15.8v13.4c0 11.6 7.6 20.7 18 24.6 10.4-3.9 18-13 18-24.6V15.8L32 9.5Z" fill="#006233" />
-      <path d="M27 50 30.5 18h3L37 50z" fill="#3a4a40" />
-      <path d="M32 21v4M32 29.5v4.5M32 38.5v5" stroke="#f2df00" strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="44.5" cy="20.5" r="7" fill="#c1272d" stroke="#fff" strokeWidth="1.6" />
-      <path d="M41.3 20.6l2.3 2.3 4.2-4.6" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+export function Logo({ className = 'size-11', tile = false }: { className?: string; tile?: boolean }) {
+  const img = <img src="./icons/logo.svg" alt="" className={tile ? 'size-full' : className} draggable={false} />;
+  if (!tile) return img;
+  return <span className={`${className} inline-grid shrink-0 place-items-center rounded-2xl bg-[#fffdf8] p-1 shadow-md ring-1 ring-gold/40`}>{img}</span>;
 }
 
 export function PageHeader({ title, subtitle, back = true, right, tone }: { title: ReactNode; subtitle?: ReactNode; back?: boolean; right?: ReactNode; tone?: string }) {
@@ -58,8 +48,8 @@ export function PageHeader({ title, subtitle, back = true, right, tone }: { titl
           </button>
         )}
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-[17px] font-bold leading-tight">{title}</h1>
-          {subtitle && <p className="truncate text-[12.5px] opacity-85">{subtitle}</p>}
+          <h1 className="truncate text-[18px] font-bold leading-tight">{title}</h1>
+          {subtitle && <p className="truncate text-[13.5px] opacity-85">{subtitle}</p>}
         </div>
         {right}
       </div>
@@ -75,7 +65,7 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
 export function SectionTitle({ children, action, icon }: { children: ReactNode; action?: ReactNode; icon?: ReactNode }) {
   return (
     <div className="mb-2.5 mt-6 flex items-center justify-between px-1">
-      <h2 className="flex items-center gap-2 text-[15px] font-bold text-[var(--text)]">{icon}{children}</h2>
+      <h2 className="flex items-center gap-2 text-[16px] font-bold text-[var(--text)]">{icon}{children}</h2>
       {action}
     </div>
   );
@@ -85,7 +75,7 @@ export function Empty({ icon, title, text }: { icon?: ReactNode; title: string; 
   return (
     <div className="flex flex-col items-center px-6 py-14 text-center text-[var(--muted)]">
       <div className="mb-3 grid size-16 place-items-center rounded-full bg-[var(--surface-2)] text-brand-600 dark:text-brand-100">{icon ?? <BookOpenText className="size-8" />}</div>
-      <p className="text-[15px] font-semibold text-[var(--text)]">{title}</p>
+      <p className="text-[16px] font-semibold text-[var(--text)]">{title}</p>
       {text && <p className="mt-1 max-w-xs text-sm leading-6">{text}</p>}
     </div>
   );
