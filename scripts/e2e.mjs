@@ -28,6 +28,10 @@ page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
 
 try {
   await page.goto(URL, { waitUntil: 'networkidle' });
+  check(await page.isVisible('[role=status][aria-label="دليل المراقبة الطرقية"]'), 'splash screen shown at launch');
+  await page.screenshot({ path: join(shots, '00-splash.png') });
+  await page.waitForSelector('[role=status][aria-label="دليل المراقبة الطرقية"]', { state: 'detached', timeout: 4000 });
+  check(true, 'splash disappears automatically after ~2 s');
   await page.waitForSelector('text=أقسام المخالفات');
   check((await page.getAttribute('html', 'dir')) === 'rtl', 'document is RTL');
   check(await page.isVisible('input[type=search]'), 'search bar visible on home');
@@ -145,7 +149,7 @@ try {
   await page.screenshot({ path: join(shots, '07-detail-dark.png'), fullPage: true });
   await page.goto(URL + '#/about');
   await page.waitForSelector('text=حول التطبيق');
-  { const t = await page.textContent('main'); check(t.includes('تطوير: نورالدين عربي'), 'developer credit shown'); check(!t.includes('استخراج') && !t.includes('JSON') && !t.includes('تنبيه') && !t.includes('جدول الغرامات'), 'about page is clean (no report, JSON tools, notice)'); }
+  { const t = await page.textContent('main'); check(t.includes('المطوّر: نورالدين عربي') && (await page.locator('img[src*="developer.jpg"]').evaluate((i) => i.complete && i.naturalWidth > 0)), 'developer photo + caption shown'); check(!t.includes('استخراج') && !t.includes('JSON') && !t.includes('تنبيه') && !t.includes('جدول الغرامات'), 'about page is clean (no report, JSON tools, notice)'); }
   await page.screenshot({ path: join(shots, '08-report-dark.png'), fullPage: true });
   await page.click('text=نهاري');
 

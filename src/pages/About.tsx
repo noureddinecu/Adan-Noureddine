@@ -63,10 +63,17 @@ export function About({ theme }: { theme: { pref: ThemePref; setPref: (p: ThemeP
           </>
         )}
 
-        <footer className="mt-8 flex flex-col items-center gap-2 pb-4 text-center">
-          <span className="h-px w-24 bg-gradient-to-l from-transparent via-gold to-transparent" />
-          <p className="text-[15px] text-[var(--muted)]">تطوير: <span className="font-bold text-brand-700 dark:text-brand-100">نورالدين عربي</span></p>
-        </footer>
+        <SectionTitle>المطوّر</SectionTitle>
+        <Card className="zellige-corner flex flex-col items-center px-5 py-6 text-center">
+          <div className="rounded-full bg-gradient-to-b from-gold via-[#e4c25a] to-[#a87d12] p-[3px] shadow-lg">
+            <div className="rounded-full bg-[var(--surface)] p-1">
+              <img src="./developer.jpg" alt="المطوّر: نورالدين عربي" width={128} height={128} loading="lazy" className="size-32 rounded-full object-cover" />
+            </div>
+          </div>
+          <p className="mt-4 text-[17px] font-bold">المطوّر: نورالدين عربي</p>
+          <span className="mt-3 h-px w-24 bg-gradient-to-l from-transparent via-gold to-transparent" />
+        </Card>
+        <div className="h-4" />
       </main>
     </div>
   );
