@@ -9,7 +9,7 @@ export function Favorites() {
   return (
     <div className="safe-bottom">
       <PageHeader back={false} title="المفضلة" subtitle={`${list.length} مخالفة محفوظة`} right={list.length > 0 && (
-        <button onClick={() => confirm('إزالة جميع المخالفات من المفضلة؟') && app.clearFavorites()} className="rounded-full bg-white/10 px-3 py-1.5 text-[13.5px]">مسح الكل</button>
+        <button onClick={() => confirm('إزالة جميع المخالفات من المفضلة؟') && app.clearFavorites()} className="brand-btn !w-auto px-3 text-[13px] font-semibold">مسح الكل</button>
       )} />
       <main className="mx-auto flex max-w-3xl flex-col gap-2.5 px-3 pt-3">
         {list.length ? list.map((v, i) => <ViolationCard key={v!.id} v={v!} index={i} onRemove={() => app.toggleFavorite(v!.id)} />)

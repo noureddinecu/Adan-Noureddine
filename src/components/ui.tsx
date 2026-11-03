@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpenText, CircleAlert, FileText, Footprints, Gavel, Hand, OctagonAlert, TriangleAlert, type LucideIcon } from 'lucide-react';
+import { ArrowRight, BookOpenText, Star, CircleAlert, FileText, Footprints, Gavel, Hand, OctagonAlert, TriangleAlert, type LucideIcon } from 'lucide-react';
 import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import type { SectionKey } from '../data/types';
 import { goBack } from '../lib/router';
@@ -43,47 +43,87 @@ export function Logo({ className = 'size-11', tile = false }: { className?: stri
   );
 }
 
-/** Curved bottom edge shared by every header: green fill + white / red / green hairlines. */
-export function HeroCurve() {
+/** Top corners: green zellige wedges edged with a white + red ribbon (reference design). */
+function Corner({ side }: { side: 'left' | 'right' }) {
   return (
-    <svg className="hero-curve" viewBox="0 0 400 44" preserveAspectRatio="none" aria-hidden>
-      <path d="M0 0H400V14C300 38 110 36 0 8Z" fill="var(--hdr-bottom)" />
-      <path d="M0 8C110 36 300 38 400 14" fill="none" stroke="#fff" strokeWidth="3" vectorEffect="non-scaling-stroke" />
-      <path d="M0 13C110 41 300 43 400 19" fill="none" stroke="#c8202c" strokeWidth="2.4" vectorEffect="non-scaling-stroke" />
+    <svg className={`brand-corner ${side}`} viewBox="0 0 160 80" preserveAspectRatio="none" aria-hidden>
+      <path d="M0 0H140C104 20 58 46 0 72Z" fill="#0b6a41" />
+      <path d="M140 0C104 20 58 46 0 72" fill="none" stroke="#fff" strokeWidth="3.2" vectorEffect="non-scaling-stroke" />
+      <path d="M156 0C118 24 66 52 0 82" fill="none" stroke="#c8202c" strokeWidth="2.4" vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+export function HeaderCorners() {
+  return (
+    <div className="brand-corners" aria-hidden>
+      <Corner side="left" />
+      <span className="brand-corner-z left" />
+      <Corner side="right" />
+      <span className="brand-corner-z right" />
+    </div>
+  );
+}
+
+/** Bottom edge: green wave, white gap, red ribbon. */
+export function HeaderWave() {
+  return (
+    <svg className="brand-wave" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden>
+      <path d="M0 10C90 -2 170 4 230 14C300 26 350 26 400 12V20C350 34 300 34 230 22C170 12 90 6 0 18Z" fill="#0d7a4a" />
+      <path d="M0 22C90 10 170 16 230 26C300 38 350 38 400 24" fill="none" stroke="#c8202c" strokeWidth="2.6" vectorEffect="non-scaling-stroke" />
     </svg>
   );
 }
 
-export function PageHeader({ title, subtitle, back = true, right }: { title: ReactNode; subtitle?: ReactNode; back?: boolean; right?: ReactNode }) {
+export function Divider({ wide = false }: { wide?: boolean }) {
+  return (
+    <div className="flex items-center justify-center gap-2" aria-hidden>
+      <span className={`h-[2.5px] ${wide ? 'w-24' : 'w-14'} rounded-full bg-gradient-to-l from-brand-600 to-brand-600/10`} />
+      <Star className="size-4 text-accent" strokeWidth={2.4} />
+      <span className={`h-[2.5px] ${wide ? 'w-24' : 'w-14'} rounded-full bg-gradient-to-r from-brand-600 to-brand-600/10`} />
+    </div>
+  );
+}
+
+/** Single header used by every page (home = large variant with the logo). */
+export function BrandHeader({ title, subtitle, back = false, right, large = false, sticky = true }: { title: ReactNode; subtitle?: ReactNode; back?: boolean; right?: ReactNode; large?: boolean; sticky?: boolean }) {
   const ref = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
     const el = ref.current;
-    if (!el) return;
-    const set = () => document.documentElement.style.setProperty('--hdr', `${el.offsetHeight - 18}px`);
+    if (!el || !sticky) return;
+    const set = () => document.documentElement.style.setProperty('--hdr', `${el.offsetHeight - 6}px`);
     set();
     const ro = new ResizeObserver(set);
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [sticky]);
   return (
-    <header ref={ref} className="app-header sticky top-0 z-30 text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-      <div className="app-header-body">
-        <div className="relative z-10 mx-auto flex max-w-3xl items-center gap-2 px-3 pb-2 pt-4">
-          {back && (
-            <button onClick={() => goBack()} className="grid size-10 shrink-0 place-items-center rounded-full bg-white/12 hover:bg-white/20" aria-label="رجوع">
-              <ArrowRight className="size-6" />
-            </button>
-          )}
-          <div className={`min-w-0 flex-1 ${back ? '' : 'ps-1'}`}>
-            <h1 className="truncate text-[20px] font-bold leading-tight">{title}</h1>
-            {subtitle && <p className="mt-0.5 truncate text-[14px] text-white/85">{subtitle}</p>}
-          </div>
-          {right}
-        </div>
+    <header ref={ref} className={`brand-header ${sticky ? 'sticky top-0 z-30' : 'relative'} ${large ? 'is-large' : ''}`} style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <HeaderCorners />
+      <div className={`relative z-10 mx-auto max-w-3xl text-center ${large ? 'px-4 pb-3 pt-5' : 'px-16 pb-1 pt-3'}`}>
+        {back && (
+          <button onClick={() => goBack()} className="brand-btn absolute end-3 top-3 z-10" aria-label="رجوع">
+            <ArrowRight className="size-5" />
+          </button>
+        )}
+        {right && <div className="absolute start-3 top-3 z-10">{right}</div>}
+        {large && <Logo tile className="mx-auto mb-2 size-[clamp(84px,24vw,112px)] ring-4 ring-white" />}
+        <h1 className={`brand-title font-bold leading-tight ${large ? 'text-[clamp(26px,7.4vw,34px)]' : 'truncate text-[clamp(20px,5.6vw,24px)]'}`}>{title}</h1>
+        <div className={large ? 'my-2' : 'my-1'}><Divider wide={large} /></div>
+        {subtitle && (
+          <p className={`flex items-center justify-center gap-2 font-medium text-[var(--muted)] ${large ? 'text-[clamp(14px,4vw,16.5px)]' : 'text-[14px]'}`}>
+            {large && <span className="h-[2px] w-5 shrink-0 rounded-full bg-accent/80" aria-hidden />}
+            <span className={large ? '' : 'truncate'}>{subtitle}</span>
+            {large && <span className="h-[2px] w-5 shrink-0 rounded-full bg-accent/80" aria-hidden />}
+          </p>
+        )}
       </div>
-      <HeroCurve />
+      <HeaderWave />
     </header>
   );
+}
+
+export function PageHeader({ title, subtitle, back = true, right }: { title: ReactNode; subtitle?: ReactNode; back?: boolean; right?: ReactNode }) {
+  return <BrandHeader title={title} subtitle={subtitle} back={back} right={right} />;
 }
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {

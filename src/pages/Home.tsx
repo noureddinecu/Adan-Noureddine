@@ -1,7 +1,7 @@
-import { Clock, Download, Flame, History, Moon, SearchX, Star, Sun, X, Zap } from 'lucide-react';
+import { Clock, Download, Flame, History, SearchX, Star, X, Zap } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { SearchBar } from '../components/SearchBar';
-import { Card, Empty, HeroCurve, Logo, OrnamentTitle, SECTION_STYLE, SectionIcon, SectionTitle } from '../components/ui';
+import { BrandHeader, Card, Empty, OrnamentTitle, SECTION_STYLE, SectionIcon, SectionTitle } from '../components/ui';
 import { ViolationCard } from '../components/ViolationCard';
 import type { SectionKey } from '../data/types';
 import { morph, navigate, type Route } from '../lib/router';
@@ -14,7 +14,7 @@ const countWord = (n: number) => (n >= 3 && n <= 10 ? 'مخالفات' : 'مخا
 
 const SHORTCUTS = ['السرعة', 'الوقوف', 'حزام السلامة', 'الهاتف', 'الكحول', 'الطريق السيار', 'رخصة السياقة', 'شهادة التسجيل', 'التأمين', 'المراقبة التقنية', 'الحمولة', 'خوذة', 'المادة 184', 'ceinture'];
 
-export function Home({ route, theme }: { route: Route; theme: { dark: boolean; toggle: () => void } }) {
+export function Home({ route }: { route: Route }) {
   const app = useApp();
   const [q, setQ] = useState(route.query.get('q') ?? '');
   const [filter, setFilter] = useState<SectionKey | 'all'>('all');
@@ -73,26 +73,7 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
 
   return (
     <div className="safe-bottom">
-      <header className="app-header relative text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <div className="app-header-body"><div className="relative z-10 mx-auto flex max-w-3xl items-center gap-3 px-4 pb-5 pt-7">
-          <Logo tile className="size-[72px] ring-4 ring-white/90" />
-          <div className="min-w-0 flex-1 text-center">
-            <h1 className="text-[clamp(21px,6.2vw,27px)] font-bold leading-tight drop-shadow-sm">دليل المراقبة الطرقية</h1>
-            <div className="my-1.5 flex items-center justify-center gap-2" aria-hidden>
-              <span className="h-px w-[18%] bg-gradient-to-l from-white/0 to-white/80" />
-              <span className="h-[3px] w-[10%] rounded-full bg-accent" />
-              <Star className="size-4 text-white" strokeWidth={2.2} />
-              <span className="h-[3px] w-[10%] rounded-full bg-accent" />
-              <span className="h-px w-[18%] bg-gradient-to-r from-white/0 to-white/80" />
-            </div>
-            <p className="text-[clamp(13.5px,3.9vw,15.5px)] font-medium leading-6 text-white/90">الخاص بأعوان الشرطة محرري المحاضر</p>
-          </div>
-          <button onClick={theme.toggle} className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-brand-700 shadow-md" aria-label={theme.dark ? 'الوضع النهاري' : 'الوضع الليلي'}>
-            {theme.dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
-          </button>
-        </div></div>
-        <HeroCurve />
-      </header>
+      <BrandHeader large sticky={false} title="دليل المراقبة الطرقية" subtitle="الخاص بأعوان الشرطة محرري المحاضر" />
       {!online && <p className="mx-4 mt-2 inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] px-3 py-1 text-xs shadow-sm"><span className="size-2 rounded-full bg-gold" /> دون اتصال — جميع البيانات متاحة محليا</p>}
 
       <div className={`sticky top-0 z-30 mt-1 px-3 pb-2 pt-[max(env(safe-area-inset-top),0px)] transition-[transform,opacity] duration-200 ease-out will-change-transform ${hideSearch ? 'pointer-events-none -translate-y-[130%] opacity-0' : 'translate-y-0 opacity-100'}`}>

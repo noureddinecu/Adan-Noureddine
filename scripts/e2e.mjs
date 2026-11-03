@@ -171,10 +171,13 @@ try {
   await page.screenshot({ path: join(shots, '05-section.png') });
 
   // dark mode
-  await page.goto(URL);
-  await page.click('button[aria-label="الوضع الليلي"]');
+  await page.goto(URL + '#/about');
+  await page.waitForTimeout(600);
+  await page.click('main button:has-text("ليلي")');
   await page.waitForTimeout(200);
-  check(await page.evaluate(() => document.documentElement.classList.contains('dark')), 'dark mode toggles');
+  check(await page.evaluate(() => document.documentElement.classList.contains('dark')), 'dark mode toggles (from About › المظهر)');
+  await page.goto(URL);
+  await page.waitForTimeout(600);
   await page.screenshot({ path: join(shots, '06-home-dark.png') });
   await page.goto(URL + '#/v/delit-019');
   await page.waitForSelector('main h2:has-text("الإجراءات")');
