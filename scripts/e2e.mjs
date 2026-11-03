@@ -83,24 +83,16 @@ try {
   await page.screenshot({ path: join(shots, '03-detail.png'), fullPage: true });
 
   // fines + calculator (185361C2 is degree 2 → 300 / 350 / 500)
-  check(await page.isVisible('text=الغرامة وآجال الأداء'), 'detail shows fines block');
+  check(await page.isVisible('text=الغرامة'), 'detail shows fines block');
   const fineText = await page.textContent('main');
   check(fineText.includes('300') && fineText.includes('350') && fineText.includes('500') && fineText.includes('المادة 219'), 'degree-2 amounts 300/350/500 with art. 219 reference');
-  check(fineText.includes('الوقت المتبقي'), 'calculator shows current tier & remaining time');
-  const inputs = page.locator('input[type=datetime-local]');
-  await inputs.nth(0).fill('2026-01-10T09:00');
-  await inputs.nth(1).fill('2026-01-20T10:00');
-  await page.waitForTimeout(150);
-  check((await page.locator('text=المبلغ الواجب أداؤه').locator('..').textContent()).includes('350'), 'calculator: day 10 → 350 DH');
-  await inputs.nth(1).fill('2026-03-01T10:00');
-  await page.waitForTimeout(150);
-  check(await page.isVisible('text=انتهاء أجل الأداء') && (await page.textContent('main')).includes('المادة 227'), 'calculator: after 30 days → art. 227 referral notice');
-  await page.screenshot({ path: join(shots, '09-fines-calculator.png'), fullPage: true });
+  check(!fineText.includes('حاسبة') && !fineText.includes('غير مطابق'), 'no calculator and no unverified warning');
+  await page.screenshot({ path: join(shots, '09-fines.png'), fullPage: true });
   await page.goto(URL + '#/v/delit-019');
-  await page.waitForSelector('text=الغرامة وآجال الأداء');
+  await page.waitForSelector('text=الغرامة');
   check((await page.textContent('main')).includes('جنحة — لا تطبق أسعار الغرامات التصالحية'), 'délit: no degree prices applied');
   await page.goBack();
-  await page.waitForSelector('text=الغرامة وآجال الأداء');
+  await page.waitForSelector('text=الغرامة');
 
   // favorite
   await page.click('button[aria-label="إضافة إلى المفضلة"]');

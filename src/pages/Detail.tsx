@@ -156,7 +156,7 @@ export function Detail({ id, q }: { id: string; q: string }) {
           </dl>
         </Block>
 
-        <Block n="رابعا" icon={<Banknote className="size-4.5" />} title="الغرامة وآجال الأداء">
+        <Block n="رابعا" icon={<Banknote className="size-4.5" />} title="الغرامة">
           <FineCard v={v} />
         </Block>
 
