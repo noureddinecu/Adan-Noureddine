@@ -254,9 +254,9 @@ srcp = eq(srcp, ('hp', 32), ('peak', 260, 0.9, -1.8), ('peak', 1600, 1.0, 0.8),
           ('hs', 4500, 0.7, 3.0))
 srcp = reverb(srcp, ir, 0.10)
 
-# level: guitar sits ~9 dB below the saxophone/backing (RMS)
+# level: guitar sits ~6 dB below the saxophone/backing (RMS)
 rms = lambda z: np.sqrt(np.mean(z ** 2))
-guitar *= (rms(srcp) / rms(guitar)) * 10 ** (-9 / 20)
+guitar *= (rms(srcp) / rms(guitar)) * 10 ** (-6 / 20)
 
 mix = srcp + guitar
 fade = int(1.5 * SR); mix[:, -fade:] *= np.linspace(1, 0, fade) ** 2
