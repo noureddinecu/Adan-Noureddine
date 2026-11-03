@@ -1,8 +1,9 @@
-import { Banknote, ClipboardList, Copy, Info, Link2, Scale, Share2, Star } from 'lucide-react';
+import { Banknote, ClipboardList, Copy, Scale, Share2, Star } from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { FineCard } from '../components/FineCard';
 import { LawLinks } from '../components/LawLinks';
 import { codeArticles } from '../data/law';
+import { fineFor } from '../data/fines';
 import { Card, CodeBadge, Empty, Hl, PageHeader, SECTION_STYLE, SectionIcon } from '../components/ui';
 import { androidBridge } from '../lib/pwa';
 import { navigate } from '../lib/router';
@@ -49,6 +50,14 @@ export function Detail({ id, q }: { id: string; q: string }) {
   const sec = app.sections.get(v.section)!;
   const st = SECTION_STYLE[v.section];
   const fav = app.isFavorite(v.id);
+  const fine = fineFor(app.fines, v);
+  const seen = new Set<string>();
+  const legalLines = v.legalRefs.filter((r) => { const k = r.replace(/^[-\s]+/, '').replace(/\s+/g, ' ').trim(); if (seen.has(k)) return false; seen.add(k); return true; });
+  const codeArts = codeArticles(v);
+  const fineArts = fine?.type === 'transactional' ? (fine.ref.match(/\d{1,3}/g) ?? []) : [];
+  const extraFine = fineArts.filter((a) => !codeArts.includes(a));
+  if (extraFine.length) legalLines.push(`- ${fine!.ref} (الغرامات التصالحية والجزافية)`);
+  const lawArticles = [...new Set([...codeArts, ...extraFine])];
 
   const plain = [
     `الرمز: ${v.codeRaw}`, `التصنيف: ${sec.title}`, `توصيف المخالفة: ${v.description}`,
@@ -101,11 +110,7 @@ export function Detail({ id, q }: { id: string; q: string }) {
           </div>
         </Card>
 
-        <Block icon={<Banknote className="size-4.5" />} title="العقوبات والغرامات">
-          <FineCard v={v} />
-        </Block>
-
-        <Block icon={<ClipboardList className="size-4.5" />} title="الإجراءات الواجب اتخاذها">
+        <Block icon={<ClipboardList className="size-4.5" />} title="الإجراءات">
           <dl>
             <Row label="المسطرة الواجب اتباعها">
               <ol className="legal space-y-2.5">
@@ -123,44 +128,22 @@ export function Detail({ id, q }: { id: string; q: string }) {
                 )}
               </ol>
             </Row>
-            <Row label="السند القانوني للمخالفة">
-              <p className="legal text-[15px] text-[var(--muted)]">{v.legalRefs.map((r) => r.replace(/^-\s*/, '')).join(' · ')}</p>
-            </Row>
           </dl>
         </Block>
 
-        <Block icon={<Scale className="size-4.5" />} title="النصوص القانونية">
-          <dl>
-            <Row label="المرجع القانوني">
-              <ul className="space-y-1">{v.legalRefs.map((r, i) => <li key={i} className="legal rounded-lg bg-[var(--surface-2)] px-3 py-2"><Hl text={r} terms={terms} /></li>)}</ul>
-            </Row>
-            {codeArticles(v).length > 0 && (
-              <Row label="النص الرسمي لمدونة السير">
-                <LawLinks articles={codeArticles(v)} />
-              </Row>
-            )}
-            {v.articles.length > 0 && (
-              <Row label="المواد المرتبطة">
-                <div className="flex flex-wrap gap-1.5">
-                  {v.articles.filter((a) => a.includes('(')).concat(v.articles.filter((a) => !a.includes('(') && !v.articles.some((b) => b.startsWith(`${a}(`)))).map((a) => (
-                    <button key={a} onClick={() => navigate(`/?q=${encodeURIComponent(`المادة ${a}`)}`)} className="ltr-nums inline-flex items-center gap-1 rounded-full border border-brand-500/40 px-2.5 py-0.5 text-[14px] font-semibold text-brand-700 dark:text-brand-100">
-                      <Link2 className="size-3.5" />{a}
-                    </button>
-                  ))}
-                </div>
-              </Row>
-            )}
-          </dl>
+        <Block icon={<Banknote className="size-4.5" />} title="العقوبات">
+          <FineCard v={v} />
         </Block>
 
-        <Block icon={<Info className="size-4.5" />} title="معلومات المخالفة">
-          <dl>
-            <Row label="رمز المخالفة"><span className="ltr-nums font-bold">{v.codeRaw}</span></Row>
-            <Row label="توصيف المخالفة"><span className="legal whitespace-pre-line"><Hl text={v.description} terms={terms} /></span></Row>
-            <Row label="الدرجة / التصنيف">
-              <button onClick={() => navigate(`/section/${v.section}`)} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[14.5px] font-semibold ${st.soft}`}><SectionIcon section={v.section} className="size-4" />{sec.title}</button>
-            </Row>
-          </dl>
+        <Block icon={<Scale className="size-4.5" />} title="النصوص المنظمة">
+          <ul className="space-y-1.5">
+            {legalLines.map((r, i) => <li key={i} className="legal rounded-lg bg-[var(--surface-2)] px-3 py-2"><Hl text={r} terms={terms} /></li>)}
+          </ul>
+          {lawArticles.length > 0 && (
+            <div className="mt-4 border-t border-dashed border-[var(--line)] pt-3">
+              <LawLinks articles={lawArticles} />
+            </div>
+          )}
         </Block>
 
 

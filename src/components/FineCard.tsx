@@ -1,5 +1,4 @@
 import { AlertOctagon, Info, ShieldAlert } from 'lucide-react';
-import { LawLinks } from './LawLinks';
 import { fineFor } from '../data/fines';
 import type { Violation } from '../data/types';
 import { useApp } from '../store';
@@ -20,7 +19,6 @@ export function FineCard({ v }: { v: Violation }) {
           <div className="text-[15px] leading-7">
             <p className="font-bold">{cat.type === 'penal' ? 'جنحة — لا تطبق أسعار الغرامات التصالحية' : cat.type === 'administrative' ? 'مخالفة إدارية — لا تطبق أسعار الدرجات' : 'لا يوجد مبلغ معتمد'}</p>
             <p className="text-[var(--muted)]">{cat.note}</p>
-            <p className="mt-1.5 text-[14px]"><b>المرجع:</b> {cat.ref}</p>
           </div>
         </div>
         {cat.extraNote && <p className="mt-2 rounded-lg border-r-4 border-gold bg-amber-50 px-3 py-2 text-[15px] leading-7 dark:bg-amber-950/30">{cat.extraNote}</p>}
@@ -55,9 +53,8 @@ export function FineCard({ v }: { v: Violation }) {
           </li>
         ))}
       </ol>
-      <p className="mt-2 text-[13.5px] text-[var(--muted)]">{cat.label} · المرجع: <b className="text-[var(--text)]">{cat.ref}</b></p>
+      <p className="mt-2 text-[13.5px] text-[var(--muted)]">{cat.label}</p>
       {cat.extraNote && <p className="mt-3 rounded-lg border-r-4 border-gold bg-amber-50 px-3 py-2 text-[15px] leading-7 dark:bg-amber-950/30">{cat.extraNote}</p>}
-      <div className="mt-3"><LawLinks articles={(cat.ref.match(/\d{1,3}/g) ?? []).filter((n, i, arr) => arr.indexOf(n) === i)} title="فتح النص الرسمي عند مادة الغرامة" /></div>
     </div>
   );
 }
