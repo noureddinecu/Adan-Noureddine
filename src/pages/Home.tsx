@@ -74,10 +74,10 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
   return (
     <div className="safe-bottom">
       <header className="app-header relative text-white" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-        <div className="app-header-body"><div className="relative z-10 mx-auto flex max-w-3xl items-center gap-3 px-4 pb-5 pt-7">
-          <Logo tile className="size-[72px] ring-4 ring-white/90" />
-          <div className="min-w-0 flex-1 text-center">
-            <h1 className="text-[clamp(21px,6.2vw,27px)] font-bold leading-tight drop-shadow-sm">دليل المراقبة الطرقية</h1>
+        <div className="app-header-body"><div className="relative z-10 mx-auto grid max-w-3xl grid-cols-[clamp(54px,17.5vw,72px)_minmax(0,1fr)_clamp(54px,17.5vw,72px)] items-center gap-2.5 px-3.5 pb-5 pt-7">
+          <Logo tile className="size-[clamp(54px,17.5vw,72px)] ring-4 ring-white/90" />
+          <div className="min-w-0 text-center">
+            <h1 className="text-balance text-[clamp(19px,5.6vw,27px)] font-bold leading-tight drop-shadow-sm">دليل المراقبة الطرقية</h1>
             <div className="my-1.5 flex items-center justify-center gap-2" aria-hidden>
               <span className="h-px w-[18%] bg-gradient-to-l from-white/0 to-white/80" />
               <span className="h-[3px] w-[10%] rounded-full bg-accent" />
@@ -85,9 +85,9 @@ export function Home({ route, theme }: { route: Route; theme: { dark: boolean; t
               <span className="h-[3px] w-[10%] rounded-full bg-accent" />
               <span className="h-px w-[18%] bg-gradient-to-r from-white/0 to-white/80" />
             </div>
-            <p className="text-[clamp(13.5px,3.9vw,15.5px)] font-medium leading-6 text-white/90">الخاص بأعوان الشرطة محرري المحاضر</p>
+            <p className="text-balance text-[clamp(13px,3.6vw,15.5px)] font-medium leading-6 text-white/90">الخاص بأعوان الشرطة محرري المحاضر</p>
           </div>
-          <button onClick={theme.toggle} className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-brand-700 shadow-md" aria-label={theme.dark ? 'الوضع النهاري' : 'الوضع الليلي'}>
+          <button onClick={theme.toggle} className="grid size-11 shrink-0 place-items-center justify-self-end rounded-full bg-white text-brand-700 shadow-md" aria-label={theme.dark ? 'الوضع النهاري' : 'الوضع الليلي'}>
             {theme.dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
           </button>
         </div></div>

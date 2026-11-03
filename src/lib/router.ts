@@ -69,7 +69,7 @@ export function useRoute(): Route {
   return route;
 }
 
-export function navigate(to: string, opts: { replace?: boolean; tab?: boolean; back?: boolean } = {}) {
+export function navigate(to: string, opts: { replace?: boolean; tab?: boolean; back?: boolean; dir?: 'forward' | 'back' } = {}) {
   const url = `#${to}`;
   if (opts.replace) {
     const samePage = (window.location.hash.replace(/^#/, '') || '/').split('?')[0] === to.split('?')[0];
@@ -79,7 +79,7 @@ export function navigate(to: string, opts: { replace?: boolean; tab?: boolean; b
     remember();
     history.pushState(history.state, '', url);
     depth++;
-    commit(opts.tab ? 'tab' : 'forward');
+    commit(opts.dir ?? (opts.tab ? 'tab' : 'forward'));
   }
 }
 

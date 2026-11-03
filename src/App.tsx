@@ -1,5 +1,6 @@
 import { BottomNav } from './components/BottomNav';
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useRef } from 'react';
+import { useSwipeTabs } from './lib/useSwipeTabs';
 import { savedScroll, useRoute } from './lib/router';
 import { useTheme } from './lib/theme';
 import { About } from './pages/About';
@@ -29,10 +30,12 @@ export function App({ theme }: { theme: ReturnType<typeof useTheme> }) {
   }, [route.key]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useLayoutEffect(() => { document.documentElement.dataset.page = head ?? 'home'; }, [head]);
+  const pageRef = useRef<HTMLDivElement>(null);
+  useSwipeTabs(route.path, pageRef);
   const anim = route.dir === 'back' ? 'page-back' : route.dir === 'forward' ? 'page-forward' : route.dir === 'tab' ? 'page-fade' : '';
   return (
     <>
-      <div key={route.path} className={anim}>{page}</div>
+      <div key={route.path} ref={pageRef} className={anim}>{page}</div>
       <BottomNav path={route.path} />
     </>
   );

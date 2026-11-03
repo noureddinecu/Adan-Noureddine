@@ -170,6 +170,27 @@ try {
   check((await page.locator('main > div > button').count()) === 39, 'degree-2 section lists 39 violations');
   await page.screenshot({ path: join(shots, '05-section.png') });
 
+  // swipe navigation between tab pages (synthetic touch events)
+  const swipe = (fromX, toX, y = 500) => page.evaluate(async ([a, b, yy]) => {
+    const el = document.elementFromPoint(a, yy) || document.body;
+    const mk = (x) => new Touch({ identifier: 1, target: el, clientX: x, clientY: yy });
+    el.dispatchEvent(new TouchEvent('touchstart', { touches: [mk(a)], changedTouches: [mk(a)], bubbles: true }));
+    for (let i = 1; i <= 8; i++) { const x = a + ((b - a) * i) / 8; el.dispatchEvent(new TouchEvent('touchmove', { touches: [mk(x)], changedTouches: [mk(x)], bubbles: true })); await new Promise((r) => setTimeout(r, 16)); }
+    el.dispatchEvent(new TouchEvent('touchend', { touches: [], changedTouches: [mk(b)], bubbles: true }));
+  }, [fromX, toX, y]);
+  await page.goto(URL); await page.waitForTimeout(800);
+  await swipe(320, 80); await page.waitForTimeout(700);
+  check(page.url().endsWith('#/favorites'), 'swipe right→left: home → favorites');
+  await swipe(320, 80); await page.waitForTimeout(700);
+  check(page.url().endsWith('#/history'), 'swipe right→left: favorites → history');
+  await swipe(80, 320); await page.waitForTimeout(700);
+  check(page.url().endsWith('#/favorites'), 'swipe left→right: history → favorites');
+  await page.goto(URL); await page.waitForTimeout(800);
+  await swipe(80, 320); await page.waitForTimeout(700);
+  check(!page.url().includes('#/') || page.url().endsWith('#/') , 'no page before home (rubber band)');
+  { const y0 = await page.evaluate(() => window.scrollY); await page.mouse.wheel(0, 400); await page.waitForTimeout(300);
+    check(page.url().match(/#\/?$/) !== null || !page.url().includes('favorites'), 'vertical scroll does not change page'); }
+
   // dark mode
   await page.goto(URL);
   await page.click('button[aria-label="الوضع الليلي"]');
