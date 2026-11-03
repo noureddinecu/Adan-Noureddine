@@ -1,5 +1,6 @@
 import { History, House, Info, Star } from 'lucide-react';
 import { navigate } from '../lib/router';
+import { slideToTab, TAB_ORDER } from '../lib/useSwipeTabs';
 
 const items = [
   { to: '/', label: 'الرئيسية', icon: House, match: (p: string) => p === '/' || p.startsWith('/section') },
@@ -20,7 +21,7 @@ export function BottomNav({ path }: { path: string }) {
         {items.map(({ to, label, icon: Icon, match }) => {
           const active = match(path);
           return (
-            <button key={to} onClick={() => { if (!active) navigate(to, { tab: true }); }} className={`flex flex-col items-center gap-0.5 py-2 text-[13.5px] font-semibold transition ${active ? 'text-brand-700 dark:text-brand-100' : 'text-[var(--muted)]'}`} aria-current={active ? 'page' : undefined}>
+            <button key={to} onClick={() => { if (!active) { if (TAB_ORDER.includes(path)) slideToTab(to, path); else navigate(to, { tab: true }); } }} className={`flex flex-col items-center gap-0.5 py-2 text-[13.5px] font-semibold transition ${active ? 'text-brand-700 dark:text-brand-100' : 'text-[var(--muted)]'}`} aria-current={active ? 'page' : undefined}>
               <span className={`grid h-8 w-14 place-items-center rounded-full transition-all duration-300 ${active ? 'bg-brand-100 shadow-[inset_0_0_0_1.5px_rgba(10,92,57,.25)] dark:bg-brand-800' : ''}`} style={active ? { viewTransitionName: 'vt-nav-pill' } : undefined}>
                 <Icon className={`size-5 ${active && to === '/favorites' ? 'fill-current' : ''}`} />
               </span>

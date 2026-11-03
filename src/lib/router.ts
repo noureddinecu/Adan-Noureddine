@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 
-export type NavDir = 'forward' | 'back' | 'tab' | 'none';
+export type NavDir = 'forward' | 'back' | 'tab' | 'next' | 'prev' | 'none';
 export interface Route { path: string; parts: string[]; query: URLSearchParams; dir: NavDir; key: number }
 
 let navKey = 0;
@@ -38,7 +38,8 @@ function commit(dir: NavDir) {
   const next = parse(dir);
   const apply = () => flushSync(() => setter?.(next));
   const doc = document as VTDoc;
-  if (dir !== 'none' && supportsViewTransitions()) {
+  // next/prev (tab pager) use their own slide animation: no view transition
+  if (dir !== 'none' && dir !== 'next' && dir !== 'prev' && supportsViewTransitions()) {
     document.documentElement.dataset.navDir = dir;
     running?.skipTransition(); // a quick second tap finishes the previous animation instantly
     const t = doc.startViewTransition!(apply);
@@ -69,7 +70,7 @@ export function useRoute(): Route {
   return route;
 }
 
-export function navigate(to: string, opts: { replace?: boolean; tab?: boolean; back?: boolean; dir?: 'forward' | 'back' } = {}) {
+export function navigate(to: string, opts: { replace?: boolean; tab?: boolean; back?: boolean; dir?: 'forward' | 'back' | 'next' | 'prev' } = {}) {
   const url = `#${to}`;
   if (opts.replace) {
     const samePage = (window.location.hash.replace(/^#/, '') || '/').split('?')[0] === to.split('?')[0];

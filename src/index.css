@@ -237,3 +237,12 @@ html[data-nav-dir='tab']::view-transition-new(root) { animation-name: vt-in-tab;
 /* when View Transitions run, the page-level CSS animation would double up: keep only the inner stagger */
 .vt .page-forward, .vt .page-back, .vt .page-fade { animation: none; }
 @media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }
+
+/* tab pager: the new page slides in from the side opposite to where the old one left */
+@keyframes page-next { from { transform: translate3d(-42%, 0, 0); opacity: .35; } to { transform: none; opacity: 1; } }
+@keyframes page-prev { from { transform: translate3d(42%, 0, 0); opacity: .35; } to { transform: none; opacity: 1; } }
+.page-next { animation: page-next .3s cubic-bezier(.2,.8,.2,1) both; }
+.page-prev { animation: page-prev .3s cubic-bezier(.2,.8,.2,1) both; }
+:is(.page-next, .page-prev) .anim-in { animation: none; }
+html, body { overflow-x: clip; }
+@media (prefers-reduced-motion: reduce) { .page-next, .page-prev { animation: none; } }

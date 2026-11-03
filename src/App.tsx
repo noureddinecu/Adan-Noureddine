@@ -32,7 +32,7 @@ export function App({ theme }: { theme: ReturnType<typeof useTheme> }) {
   useLayoutEffect(() => { document.documentElement.dataset.page = head ?? 'home'; }, [head]);
   const pageRef = useRef<HTMLDivElement>(null);
   useSwipeTabs(route.path, pageRef);
-  const anim = route.dir === 'back' ? 'page-back' : route.dir === 'forward' ? 'page-forward' : route.dir === 'tab' ? 'page-fade' : '';
+  const anim = route.dir === 'back' ? 'page-back' : route.dir === 'forward' ? 'page-forward' : route.dir === 'tab' ? 'page-fade' : route.dir === 'next' ? 'page-next' : route.dir === 'prev' ? 'page-prev' : '';
   return (
     <>
       <div key={route.path} ref={pageRef} className={anim}>{page}</div>

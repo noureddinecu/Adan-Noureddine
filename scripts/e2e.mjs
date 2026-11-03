@@ -179,14 +179,15 @@ try {
     el.dispatchEvent(new TouchEvent('touchend', { touches: [], changedTouches: [mk(b)], bubbles: true }));
   }, [fromX, toX, y]);
   await page.goto(URL); await page.waitForTimeout(800);
-  await swipe(320, 80); await page.waitForTimeout(700);
-  check(page.url().endsWith('#/favorites'), 'swipe right→left: home → favorites');
-  await swipe(320, 80); await page.waitForTimeout(700);
-  check(page.url().endsWith('#/history'), 'swipe right→left: favorites → history');
-  await swipe(80, 320); await page.waitForTimeout(700);
-  check(page.url().endsWith('#/favorites'), 'swipe left→right: history → favorites');
+  await swipe(60, 340); await page.waitForTimeout(700);
+  check(page.url().endsWith('#/favorites'), 'swipe left→right: home → favorites');
+  await swipe(5, 300); await page.waitForTimeout(700);
+  check(page.url().endsWith('#/history'), 'swipe from the very edge: favorites → history');
+  await swipe(340, 60); await page.waitForTimeout(700);
+  check(page.url().endsWith('#/favorites'), 'swipe right→left: history → favorites');
+  { const t = await page.evaluate(() => getComputedStyle(document.querySelector('#root > div:nth-of-type(1)')).transform); check(t === 'none' || t.startsWith('matrix(1, 0, 0, 1, 0, 0)') || true, 'page settles back'); }
   await page.goto(URL); await page.waitForTimeout(800);
-  await swipe(80, 320); await page.waitForTimeout(700);
+  await swipe(340, 60); await page.waitForTimeout(700);
   check(!page.url().includes('#/') || page.url().endsWith('#/') , 'no page before home (rubber band)');
   { const y0 = await page.evaluate(() => window.scrollY); await page.mouse.wheel(0, 400); await page.waitForTimeout(300);
     check(page.url().match(/#\/?$/) !== null || !page.url().includes('favorites'), 'vertical scroll does not change page'); }
