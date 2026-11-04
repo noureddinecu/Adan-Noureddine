@@ -1,0 +1,39 @@
+plugins {
+    id 'com.android.application'
+}
+
+def runNumber = (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
+
+android {
+    namespace 'com.livequizgame.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.livequizgame.app'
+        minSdk 24
+        targetSdk 34
+        versionCode runNumber
+        versionName "1.0.${runNumber}"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(System.getenv('LQG_KEYSTORE') ?: 'release.jks')
+            storePassword System.getenv('LQG_STORE_PASSWORD') ?: project.property('lqgStorePassword')
+            keyAlias System.getenv('LQG_KEY_ALIAS') ?: 'lqg'
+            keyPassword System.getenv('LQG_KEY_PASSWORD') ?: project.property('lqgKeyPassword')
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

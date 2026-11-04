@@ -63,6 +63,7 @@ const ar = {
   install: 'تثبيت التطبيق على الهاتف', installHint: 'على iPhone: زر المشاركة ← «إضافة إلى الشاشة الرئيسية». على Android: القائمة ← «تثبيت التطبيق».', credits: 'حقوق',
   ty_mcq: 'أربعة اختيارات', ty_open: 'إجابة مباشرة', ty_complete: 'أكمل العبارة', ty_country: 'خمّن الدولة', ty_capital: 'خمّن العاصمة', ty_flag: 'علم دولة', ty_map: 'خريطة دولة',
   ty_image_person: 'شخصية من صورة', ty_image_player: 'لاعب من صورته', ty_logo: 'شعار نادٍ', ty_landmark: 'معلم سياحي',
+  appHome: 'شاشة التطبيق الرئيسية (تغيير الخادم / شاشة اللعبة)',
   savedAuto: 'يُحفظ تلقائياً', language: 'اللغة',
 };
 type Key = keyof typeof ar;
@@ -119,6 +120,7 @@ const en: Record<Key, string> = {
   install: 'Install the app on your phone', installHint: 'iPhone: Share → "Add to Home Screen". Android: menu → "Install app".', credits: 'Credits',
   ty_mcq: 'Multiple choice', ty_open: 'Typed answer', ty_complete: 'Complete the phrase', ty_country: 'Guess the country', ty_capital: 'Guess the capital', ty_flag: 'Flag', ty_map: 'Map',
   ty_image_person: 'Person photo', ty_image_player: 'Player photo', ty_logo: 'Club crest', ty_landmark: 'Landmark',
+  appHome: 'App home (change server / game screen)',
   savedAuto: 'Saved automatically', language: 'Language',
 };
 

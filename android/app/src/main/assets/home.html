@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LIVE QUIZ GAME</title>
+<style>
+  :root { --ink:#0B0720; --ink2:#130C2E; --violet:#7C3AED; --pink:#EC4899; --amber:#F59E0B; --cyan:#22D3EE; --ok:#34D399; --bad:#FB7185; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; min-height:100%; background: radial-gradient(120% 80% at 50% 0%, #1C1340 0%, var(--ink) 60%); color:#fff;
+    font-family: "Cairo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { padding: 28px 18px 40px; }
+  .wrap { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+  .brand { display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; margin-top: 8px; }
+  .brand svg { width: 92px; height: 92px; filter: drop-shadow(0 10px 30px rgba(236,72,153,.5)); }
+  .name { font-weight: 900; font-size: 26px; letter-spacing: .5px; direction:ltr; }
+  .name b { background: linear-gradient(90deg, var(--amber), var(--pink), var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { color: rgba(255,255,255,.65); font-size: 14px; }
+  .card { background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius: 24px; padding: 16px; display:flex; flex-direction:column; gap:12px; }
+  label { font-weight: 700; font-size: 14px; color: rgba(255,255,255,.85); }
+  input { width:100%; border-radius: 16px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.07); color:#fff; padding: 13px 14px; font-size: 16px; direction: ltr; outline: none; }
+  input:focus { border-color: var(--cyan); }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.05); color: rgba(255,255,255,.8); border-radius: 999px; padding: 7px 12px; font-size: 13px; font-weight: 700; }
+  button { font: inherit; cursor: pointer; border: 0; }
+  .btn { width:100%; border-radius: 22px; padding: 16px; font-size: 18px; font-weight: 800; color: #fff; display:flex; align-items:center; justify-content:center; gap: 8px; }
+  .primary { background: linear-gradient(135deg, var(--violet), var(--pink) 60%, var(--amber)); box-shadow: 0 10px 40px -10px rgba(124,58,237,.7); }
+  .soft { background: rgba(255,255,255,.1); }
+  .small { padding: 10px; font-size: 15px; border-radius: 16px; }
+  .status { font-size: 14px; font-weight: 700; min-height: 1em; }
+  .ok { color: var(--ok); } .bad { color: var(--bad); }
+  details { color: rgba(255,255,255,.75); font-size: 14px; line-height: 1.7; }
+  summary { font-weight: 800; color:#fff; cursor:pointer; }
+  code { background: rgba(0,0,0,.35); padding: 2px 6px; border-radius: 6px; direction:ltr; unicode-bidi: embed; font-size: 12.5px; }
+  .foot { text-align:center; color: rgba(255,255,255,.4); font-size: 12px; }
+  .lang { position: fixed; top: 14px; inset-inline-end: 14px; }
+</style>
+</head>
+<body>
+<button class="chip lang" id="lang">EN</button>
+<div class="wrap">
+  <div class="brand">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">   <defs>     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">       <stop offset="0" stop-color="#7C3AED"/><stop offset=".55" stop-color="#EC4899"/><stop offset="1" stop-color="#F59E0B"/>     </linearGradient>     <linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#FDE7F3"/></linearGradient>   </defs>   <rect width="512" height="512" rx="120" fill="url(#g)"/>   <circle cx="420" cy="92" r="34" fill="#22D3EE"/><circle cx="420" cy="92" r="16" fill="#fff"/>   <path d="M256 104c-92 0-160 58-160 134 0 44 23 82 60 107l-14 63 66-38c15 3 31 5 48 5 92 0 160-58 160-137S348 104 256 104z" fill="url(#b)"/>   <path d="M220 206c3-30 25-48 57-48 33 0 56 19 56 47 0 22-12 35-32 46-14 8-18 14-18 28v6h-38v-9c0-24 9-37 30-49 14-8 19-14 19-23 0-11-8-18-21-18-14 0-22 8-24 20z" fill="#7C3AED"/>   <circle cx="264" cy="333" r="22" fill="#EC4899"/> </svg> 
+    <div class="name">LIVE <b>QUIZ</b> GAME</div>
+    <div class="sub" data-t="tagline"></div>
+  </div>
+
+  <div class="card">
+    <label for="server" data-t="server"></label>
+    <input id="server" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="https://your-quiz.onrender.com">
+    <div class="chips">
+      <button class="chip" data-fill="http://127.0.0.1:3000" data-t="thisPhone"></button>
+      <button class="chip" data-fill="http://192.168.1.10:3000" data-t="wifi"></button>
+    </div>
+    <button class="btn soft small" id="check" data-t="check"></button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <button class="btn primary" id="dash">🎮 <span data-t="dashboard"></span></button>
+  <button class="btn soft" id="screen">📺 <span data-t="screen"></span></button>
+
+  <div class="card">
+    <details>
+      <summary data-t="howTitle"></summary>
+      <div data-t="how"></div>
+    </details>
+  </div>
+  <div class="foot" id="ver"></div>
+</div>
+<script>
+  var T = {
+    ar: {
+      tagline: 'منصة المسابقات المباشرة — تحكم من هاتفك', server: 'رابط خادم اللعبة', thisPhone: '📱 هذا الهاتف (Termux)', wifi: '📶 جهاز على نفس الشبكة',
+      check: 'فحص الاتصال', dashboard: 'لوحة التحكم', screen: 'شاشة اللعبة (لمشاركة الشاشة / شاشة ثانية)', checking: 'جارٍ الفحص…',
+      okMsg: '✅ الخادم يعمل', badMsg: '❌ تعذر الوصول إلى الخادم: ', needUrl: 'أدخل رابط الخادم أولاً', howTitle: '❔ ما هو خادم اللعبة وكيف أحصل عليه؟',
+      how: 'التطبيق هو واجهة اللعبة على هاتفك، أما احتساب الأجوبة واستقبال تعليقات TikTok فيتم في <b>خادم اللعبة</b> الذي يجب أن يعمل باستمرار:<br>' +
+           '<b>1) خادم على الإنترنت (الأسهل):</b> انشر المشروع مرة واحدة على Render أو Railway ثم ضع رابطه هنا (مثل <code>https://…onrender.com</code>).<br>' +
+           '<b>2) على هذا الهاتف عبر Termux:</b> ثبّت Termux من F-Droid ثم نفّذ مرة واحدة:<br><code>pkg install nodejs git</code><br><code>git clone &lt;رابط المستودع&gt; quiz &amp;&amp; cd quiz</code><br><code>npm install &amp;&amp; npm run build</code><br>ثم في كل مرة: <code>cd quiz &amp;&amp; npm start</code> واختر «هذا الهاتف».<br>' +
+           '<b>3) جهاز على نفس الشبكة:</b> شغّل الخادم عليه وضع عنوانه الظاهر في الطرفية.<br>' +
+           '«شاشة اللعبة» تعرض المسابقة بملء الشاشة لمشاركتها في البث أو عرضها على جهاز ثانٍ. لا تفتح لوحة التحكم على نفس الهاتف أثناء مشاركة الشاشة حتى لا يظهر الجواب.',
+      version: 'الإصدار'
+    },
+    en: {
+      tagline: 'Live quiz platform — controlled from your phone', server: 'Game server URL', thisPhone: '📱 This phone (Termux)', wifi: '📶 Device on same Wi-Fi',
+      check: 'Test connection', dashboard: 'Control panel', screen: 'Game screen (screen share / second device)', checking: 'Checking…',
+      okMsg: '✅ Server is running', badMsg: '❌ Cannot reach the server: ', needUrl: 'Enter the server URL first', howTitle: '❔ What is the game server and how do I get one?',
+      how: 'This app is the game interface on your phone; answers and TikTok comments are processed by the <b>game server</b>, which must keep running:<br>' +
+           '<b>1) Online server (easiest):</b> deploy the project once on Render or Railway and paste its URL here.<br>' +
+           '<b>2) On this phone with Termux:</b> install Termux from F-Droid, then once:<br><code>pkg install nodejs git</code><br><code>git clone &lt;repo URL&gt; quiz &amp;&amp; cd quiz</code><br><code>npm install &amp;&amp; npm run build</code><br>then each time: <code>cd quiz &amp;&amp; npm start</code> and choose "This phone".<br>' +
+           '<b>3) A device on the same network:</b> run the server there and use the address it prints.<br>' +
+           '"Game screen" shows the quiz full screen to share in the LIVE or show on a second device. Do not open the control panel on the same phone while sharing the screen, or viewers will see the answer.',
+      version: 'Version'
+    }
+  };
+  var A = window.LQGAndroid;
+  var lang = (function () { try { return localStorage.getItem('lqg.lang') || 'ar'; } catch (e) { return 'ar'; } })();
+  var $ = function (id) { return document.getElementById(id); };
+  function apply() {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    $('lang').textContent = lang === 'ar' ? 'EN' : 'عربي';
+    document.querySelectorAll('[data-t]').forEach(function (el) { el.innerHTML = T[lang][el.getAttribute('data-t')]; });
+    $('ver').textContent = 'LIVE QUIZ GAME · ' + T[lang].version + ' ' + (A ? A.version() : '');
+  }
+  $('lang').onclick = function () { lang = lang === 'ar' ? 'en' : 'ar'; try { localStorage.setItem('lqg.lang', lang); } catch (e) {} apply(); };
+  apply();
+
+  $('server').value = A ? A.getServer() : '';
+  var hash = decodeURIComponent((location.hash.match(/err=([^&]*)/) || [])[1] || '');
+  if (hash) { $('status').className = 'status bad'; $('status').textContent = T[lang].badMsg + hash; }
+
+  document.querySelectorAll('[data-fill]').forEach(function (b) { b.onclick = function () { $('server').value = b.getAttribute('data-fill'); $('server').focus(); }; });
+
+  function url() { return $('server').value.trim(); }
+  window.onCheck = function (ok, msg) {
+    $('status').className = 'status ' + (ok ? 'ok' : 'bad');
+    $('status').textContent = ok ? T[lang].okMsg : T[lang].badMsg + msg;
+  };
+  $('check').onclick = function () {
+    if (!url()) { window.onCheck(false, T[lang].needUrl); return; }
+    $('status').className = 'status'; $('status').textContent = T[lang].checking;
+    A && A.checkServer(url(), 'onCheck');
+  };
+  function go(mode) {
+    if (!url()) { window.onCheck(false, T[lang].needUrl); $('server').focus(); return; }
+    if (A) { A.setServer(url()); A.open(mode); }
+  }
+  $('dash').onclick = function () { go('dashboard'); };
+  $('screen').onclick = function () { go('screen'); };
+</script>
+</body>
+</html>

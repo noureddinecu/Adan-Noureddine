@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { fileToDataUrl, post } from '../../shared/api';
+import { androidApp, fileToDataUrl, post } from '../../shared/api';
 import { setUiLang, useI18n } from '../../shared/i18n';
 import { playSound, unlockAudio } from '../../shared/sound';
 import { Section, Segmented, Stepper, Toggle, toast } from '../../shared/ui';
@@ -125,10 +125,17 @@ export default function SettingsPage() {
             </div>
           ))}
         </div>
-        <div className="mt-4 rounded-2xl bg-white/[.04] p-3 grid gap-2">
-          <div className="font-bold text-sm">📲 {t('install')}</div>
-          {installEvt ? <button className="btn-primary" onClick={() => installEvt.prompt()}>{t('install')}</button> : <p className="text-xs muted">{t('installHint')}</p>}
-        </div>
+        {androidApp ? (
+          <div className="mt-4 rounded-2xl bg-white/[.04] p-3 grid gap-2">
+            <div className="font-bold text-sm">📱 Android {androidApp.version()}</div>
+            <button className="btn-soft" onClick={() => androidApp!.home()}>🏠 {t('appHome')}</button>
+          </div>
+        ) : (
+          <div className="mt-4 rounded-2xl bg-white/[.04] p-3 grid gap-2">
+            <div className="font-bold text-sm">📲 {t('install')}</div>
+            {installEvt ? <button className="btn-primary" onClick={() => installEvt.prompt()}>{t('install')}</button> : <p className="text-xs muted">{t('installHint')}</p>}
+          </div>
+        )}
       </Section>
 
       <Section title={t('security')} icon="🔐">

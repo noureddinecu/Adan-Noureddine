@@ -31,9 +31,20 @@ export function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
+/** Native bridge exposed by the Android app (window.LQGAndroid), if running inside it. */
+export const androidApp = (window as any).LQGAndroid as undefined | {
+  saveFile(name: string, mime: string, base64: string): string; home(): void; version(): string;
+};
+
 export async function download(path: string, filename: string) {
   const res = await fetch(path, { credentials: 'same-origin' });
   const blob = await res.blob();
+  if (androidApp) {
+    // Android WebView cannot download blob: URLs — hand the file to the app, which saves it to Downloads.
+    const dataUrl = await fileToDataUrl(new File([blob], filename, { type: blob.type }));
+    androidApp.saveFile(filename, blob.type, dataUrl.slice(dataUrl.indexOf(',') + 1));
+    return;
+  }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = filename;
