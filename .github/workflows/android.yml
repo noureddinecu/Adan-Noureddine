@@ -1,0 +1,57 @@
+name: Android CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Unit tests
+        run: ./gradlew --no-daemon --stacktrace testDebugUnitTest
+
+      - name: Build debug APKs
+        run: ./gradlew --no-daemon --stacktrace assembleDebug
+
+      - name: Lint
+        run: ./gradlew --no-daemon lintDebug
+
+      - name: Build release (R8 minified) bundle + APKs
+        run: ./gradlew --no-daemon --stacktrace assembleRelease bundleRelease
+
+      - name: Upload debug APK (arm64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-downloader-debug-arm64
+          path: app/build/outputs/apk/debug/*arm64-v8a*.apk
+
+      - name: Upload release bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-downloader-release-aab
+          path: app/build/outputs/bundle/release/*.aab
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            app/build/reports/
+            app/build/test-results/

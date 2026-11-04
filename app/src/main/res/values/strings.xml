@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Video Downloader</string>
+    <string name="home_subtitle">Save public videos from your favorite platforms</string>
+
+    <string name="nav_home">Download</string>
+    <string name="nav_library">Library</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="paste_link_hint">Paste video link here</string>
+    <string name="action_paste">Paste</string>
+    <string name="action_analyze">Analyze link</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_download">Download</string>
+    <string name="action_download_again">Download again</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save">Save</string>
+    <string name="action_share">Share</string>
+    <string name="action_share_link">Share link</string>
+    <string name="action_copy_link">Copy link</string>
+    <string name="action_rename">Rename</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_play">Play</string>
+    <string name="action_open_source">Open original</string>
+    <string name="action_open_official">Open in official app</string>
+    <string name="action_remove_record">Remove from history</string>
+    <string name="more">More options</string>
+    <string name="back">Back</string>
+
+    <string name="analyzing">Analyzing link…</string>
+    <string name="analyzing_hint">Fetching video details and available qualities</string>
+    <string name="choose_quality">Choose quality</string>
+    <string name="quality_best">Best available</string>
+    <string name="quality_audio">Audio only</string>
+    <string name="quality_original">Original</string>
+    <string name="active_downloads">Active downloads</string>
+    <string name="download_started">Download started</string>
+    <string name="download_failed_to_start">Could not start the download</string>
+    <string name="link_copied">Link copied</string>
+    <string name="platform_direct">Direct link</string>
+    <string name="platform_other">Web</string>
+
+    <string name="how_title">How it works</string>
+    <string name="how_step1">Copy the link of a public video</string>
+    <string name="how_step2">Paste it here and tap Analyze</string>
+    <string name="how_step3">Choose a quality and download</string>
+    <string name="legal_short">Download only content you own or have permission to save. Private, paid or DRM-protected content is not supported.</string>
+
+    <string name="policy_title">Download not available</string>
+    <string name="policy_youtube">YouTube\'s Terms of Service only allow offline viewing through YouTube\'s own features (such as YouTube Premium). To respect these terms, this app does not download YouTube videos.</string>
+
+    <string name="status_queued">Waiting…</string>
+    <string name="status_downloading">Downloading</string>
+    <string name="status_paused">Paused</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_canceled">Canceled</string>
+    <string name="eta">%1$s left</string>
+
+    <string name="err_invalid_url">Please enter a valid link (https://…)</string>
+    <string name="err_unsupported">This link is not supported</string>
+    <string name="err_policy">Downloading from this platform is not permitted</string>
+    <string name="err_login">This video is private or requires login. Only public videos are supported.</string>
+    <string name="err_not_found">Video not found or has been removed</string>
+    <string name="err_drm">This video is DRM-protected and cannot be downloaded</string>
+    <string name="err_network">Network error. Check your connection and try again.</string>
+    <string name="err_no_formats">No downloadable formats were found</string>
+    <string name="err_storage">Could not save the file. Check available storage.</string>
+    <string name="err_engine">Download engine failed to start. Restart the app and try again.</string>
+    <string name="err_unknown">Something went wrong. %1$s</string>
+    <string name="err_file_missing">File not found. It may have been moved or deleted.</string>
+
+    <string name="library_empty_title">No videos yet</string>
+    <string name="library_empty_msg">Your downloaded videos will appear here</string>
+    <string name="filter_all">All</string>
+    <string name="sort">Sort</string>
+    <string name="sort_newest">Newest first</string>
+    <string name="sort_oldest">Oldest first</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_size">Size</string>
+    <string name="date_today">Today</string>
+    <string name="date_yesterday">Yesterday</string>
+    <string name="date_week">This week</string>
+    <string name="date_month">This month</string>
+    <string name="date_older">Older</string>
+    <string name="file_name">File name</string>
+    <string name="delete_title">Delete video?</string>
+    <string name="delete_msg">“%1$s” will be permanently deleted from your device.</string>
+    <string name="msg_renamed">Renamed</string>
+    <string name="msg_rename_failed">Could not rename the file</string>
+    <string name="msg_deleted">Deleted</string>
+    <string name="msg_delete_failed">Record removed, but the file could not be deleted</string>
+
+    <string name="history_empty_title">No history</string>
+    <string name="history_empty_msg">Links you download will be listed here</string>
+    <string name="search_history">Search history</string>
+    <string name="clear_history">Clear history</string>
+    <string name="clear_history_msg">Failed and canceled entries will be removed. Downloaded videos stay in your library.</string>
+
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_language">Language</string>
+    <string name="language_system">System default</string>
+    <string name="settings_dynamic">Dynamic colors</string>
+    <string name="settings_dynamic_desc">Use colors from your wallpaper</string>
+    <string name="settings_downloads">Downloads</string>
+    <string name="settings_storage">Save location</string>
+    <string name="storage_downloads">Downloads/VideoDownloader</string>
+    <string name="storage_app">App folder (private)</string>
+    <string name="settings_quality">Default quality</string>
+    <string name="settings_wifi">Wi-Fi only</string>
+    <string name="settings_wifi_desc">Wait for Wi-Fi before downloading</string>
+    <string name="settings_engine">Download engine</string>
+    <string name="settings_engine_update">Update engine</string>
+    <string name="engine_version">Version %1$s · tap to check for updates</string>
+    <string name="engine_updating">Updating…</string>
+    <string name="engine_updated">Updated to %1$s</string>
+    <string name="engine_up_to_date">Already up to date (%1$s)</string>
+    <string name="engine_update_failed">Update failed. Try again later.</string>
+    <string name="settings_about">About</string>
+    <string name="settings_privacy">Ad privacy options</string>
+    <string name="settings_legal">Terms &amp; copyright</string>
+    <string name="version">Version %1$s</string>
+    <string name="legal_full">Video Downloader is a tool for saving publicly available videos for personal, offline use.\n\n• Only download content you own, that is in the public domain, or that you have permission to download.\n• Respect copyright and each platform\'s Terms of Service.\n• The app does not bypass logins, paywalls, private accounts or DRM protection.\n• YouTube downloads are disabled in accordance with YouTube\'s Terms of Service.\n• Downloads are processed entirely on your device using the open-source yt-dlp engine; no third-party download websites are used.\n\nYou are solely responsible for how you use downloaded content.</string>
+
+    <string name="channel_progress">Download progress</string>
+    <string name="channel_done">Completed downloads</string>
+    <string name="notif_done">Download complete</string>
+    <string name="notif_failed">Download failed</string>
+</resources>

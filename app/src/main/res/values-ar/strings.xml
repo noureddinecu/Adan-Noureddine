@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Video Downloader</string>
+    <string name="home_subtitle">احفظ الفيديوهات العامة من منصاتك المفضلة</string>
+
+    <string name="nav_home">تنزيل</string>
+    <string name="nav_library">المكتبة</string>
+    <string name="nav_history">السجل</string>
+    <string name="nav_settings">الإعدادات</string>
+
+    <string name="paste_link_hint">الصق رابط الفيديو هنا</string>
+    <string name="action_paste">لصق</string>
+    <string name="action_analyze">تحليل الرابط</string>
+    <string name="action_clear">مسح</string>
+    <string name="action_download">تنزيل</string>
+    <string name="action_download_again">تنزيل مجدداً</string>
+    <string name="action_pause">إيقاف مؤقت</string>
+    <string name="action_resume">استئناف</string>
+    <string name="action_retry">إعادة المحاولة</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_ok">حسناً</string>
+    <string name="action_save">حفظ</string>
+    <string name="action_share">مشاركة</string>
+    <string name="action_share_link">مشاركة الرابط</string>
+    <string name="action_copy_link">نسخ الرابط</string>
+    <string name="action_rename">إعادة التسمية</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_play">تشغيل</string>
+    <string name="action_open_source">فتح المصدر الأصلي</string>
+    <string name="action_open_official">فتح في التطبيق الرسمي</string>
+    <string name="action_remove_record">إزالة من السجل</string>
+    <string name="more">خيارات إضافية</string>
+    <string name="back">رجوع</string>
+
+    <string name="analyzing">جارٍ تحليل الرابط…</string>
+    <string name="analyzing_hint">جلب معلومات الفيديو والجودات المتاحة</string>
+    <string name="choose_quality">اختر الجودة</string>
+    <string name="quality_best">أفضل جودة متاحة</string>
+    <string name="quality_audio">صوت فقط</string>
+    <string name="quality_original">الأصلي</string>
+    <string name="active_downloads">التنزيلات الجارية</string>
+    <string name="download_started">بدأ التنزيل</string>
+    <string name="download_failed_to_start">تعذّر بدء التنزيل</string>
+    <string name="link_copied">تم نسخ الرابط</string>
+    <string name="platform_direct">رابط مباشر</string>
+    <string name="platform_other">ويب</string>
+
+    <string name="how_title">طريقة الاستخدام</string>
+    <string name="how_step1">انسخ رابط فيديو عام</string>
+    <string name="how_step2">الصقه هنا واضغط «تحليل الرابط»</string>
+    <string name="how_step3">اختر الجودة ثم نزّل الفيديو</string>
+    <string name="legal_short">نزّل فقط المحتوى الذي تملكه أو لديك إذن بحفظه. المحتوى الخاص أو المدفوع أو المحمي بـ DRM غير مدعوم.</string>
+
+    <string name="policy_title">التنزيل غير متاح</string>
+    <string name="policy_youtube">تسمح شروط خدمة YouTube بالمشاهدة دون اتصال فقط عبر ميزات YouTube الرسمية (مثل YouTube Premium). احتراماً لهذه الشروط، لا يقوم هذا التطبيق بتنزيل فيديوهات YouTube.</string>
+
+    <string name="status_queued">في الانتظار…</string>
+    <string name="status_downloading">جارٍ التنزيل</string>
+    <string name="status_paused">متوقف مؤقتاً</string>
+    <string name="status_completed">مكتمل</string>
+    <string name="status_canceled">ملغى</string>
+    <string name="eta">متبقٍ %1$s</string>
+
+    <string name="err_invalid_url">يرجى إدخال رابط صحيح (https://…)</string>
+    <string name="err_unsupported">هذا الرابط غير مدعوم</string>
+    <string name="err_policy">التنزيل من هذه المنصة غير مسموح</string>
+    <string name="err_login">هذا الفيديو خاص أو يتطلب تسجيل الدخول. الفيديوهات العامة فقط مدعومة.</string>
+    <string name="err_not_found">الفيديو غير موجود أو تم حذفه</string>
+    <string name="err_drm">هذا الفيديو محمي بتقنية DRM ولا يمكن تنزيله</string>
+    <string name="err_network">خطأ في الشبكة. تحقق من اتصالك وحاول مجدداً.</string>
+    <string name="err_no_formats">لم يتم العثور على صيغ قابلة للتنزيل</string>
+    <string name="err_storage">تعذّر حفظ الملف. تحقق من المساحة المتاحة.</string>
+    <string name="err_engine">تعذّر تشغيل محرك التنزيل. أعد تشغيل التطبيق وحاول مجدداً.</string>
+    <string name="err_unknown">حدث خطأ ما. %1$s</string>
+    <string name="err_file_missing">الملف غير موجود. ربما تم نقله أو حذفه.</string>
+
+    <string name="library_empty_title">لا توجد فيديوهات بعد</string>
+    <string name="library_empty_msg">ستظهر هنا الفيديوهات التي تقوم بتنزيلها</string>
+    <string name="filter_all">الكل</string>
+    <string name="sort">ترتيب</string>
+    <string name="sort_newest">الأحدث أولاً</string>
+    <string name="sort_oldest">الأقدم أولاً</string>
+    <string name="sort_name">الاسم</string>
+    <string name="sort_size">الحجم</string>
+    <string name="date_today">اليوم</string>
+    <string name="date_yesterday">أمس</string>
+    <string name="date_week">هذا الأسبوع</string>
+    <string name="date_month">هذا الشهر</string>
+    <string name="date_older">أقدم</string>
+    <string name="file_name">اسم الملف</string>
+    <string name="delete_title">حذف الفيديو؟</string>
+    <string name="delete_msg">سيتم حذف «%1$s» نهائياً من جهازك.</string>
+    <string name="msg_renamed">تمت إعادة التسمية</string>
+    <string name="msg_rename_failed">تعذّرت إعادة تسمية الملف</string>
+    <string name="msg_deleted">تم الحذف</string>
+    <string name="msg_delete_failed">أُزيل السجل، لكن تعذّر حذف الملف</string>
+
+    <string name="history_empty_title">السجل فارغ</string>
+    <string name="history_empty_msg">ستظهر هنا الروابط التي تقوم بتنزيلها</string>
+    <string name="search_history">البحث في السجل</string>
+    <string name="clear_history">مسح السجل</string>
+    <string name="clear_history_msg">ستتم إزالة العناصر الفاشلة والملغاة. تبقى الفيديوهات المنزّلة في مكتبتك.</string>
+
+    <string name="settings_appearance">المظهر</string>
+    <string name="settings_theme">السمة</string>
+    <string name="theme_system">حسب النظام</string>
+    <string name="theme_light">نهاري</string>
+    <string name="theme_dark">ليلي</string>
+    <string name="settings_language">اللغة</string>
+    <string name="language_system">حسب النظام</string>
+    <string name="settings_dynamic">ألوان ديناميكية</string>
+    <string name="settings_dynamic_desc">استخدام ألوان خلفية الشاشة</string>
+    <string name="settings_downloads">التنزيلات</string>
+    <string name="settings_storage">مكان الحفظ</string>
+    <string name="storage_downloads">التنزيلات/VideoDownloader</string>
+    <string name="storage_app">مجلد التطبيق (خاص)</string>
+    <string name="settings_quality">الجودة الافتراضية</string>
+    <string name="settings_wifi">عبر Wi-Fi فقط</string>
+    <string name="settings_wifi_desc">انتظار شبكة Wi-Fi قبل التنزيل</string>
+    <string name="settings_engine">محرك التنزيل</string>
+    <string name="settings_engine_update">تحديث المحرك</string>
+    <string name="engine_version">الإصدار %1$s · اضغط للتحقق من التحديثات</string>
+    <string name="engine_updating">جارٍ التحديث…</string>
+    <string name="engine_updated">تم التحديث إلى %1$s</string>
+    <string name="engine_up_to_date">المحرك محدّث (%1$s)</string>
+    <string name="engine_update_failed">فشل التحديث. حاول لاحقاً.</string>
+    <string name="settings_about">حول التطبيق</string>
+    <string name="settings_privacy">خيارات خصوصية الإعلانات</string>
+    <string name="settings_legal">الشروط وحقوق النشر</string>
+    <string name="version">الإصدار %1$s</string>
+    <string name="legal_full">Video Downloader أداة لحفظ الفيديوهات المتاحة للعموم للاستخدام الشخصي دون اتصال.\n\n• نزّل فقط المحتوى الذي تملكه أو الذي يقع في الملك العام أو لديك إذن بتنزيله.\n• احترم حقوق النشر وشروط استخدام كل منصة.\n• لا يتجاوز التطبيق تسجيل الدخول أو الاشتراكات المدفوعة أو الحسابات الخاصة أو حماية DRM.\n• تنزيلات YouTube معطّلة التزاماً بشروط خدمة YouTube.\n• تتم معالجة التنزيلات بالكامل على جهازك باستخدام محرك yt-dlp مفتوح المصدر، دون أي مواقع تنزيل خارجية.\n\nأنت وحدك المسؤول عن طريقة استخدامك للمحتوى المنزّل.</string>
+
+    <string name="channel_progress">تقدّم التنزيل</string>
+    <string name="channel_done">التنزيلات المكتملة</string>
+    <string name="notif_done">اكتمل التنزيل</string>
+    <string name="notif_failed">فشل التنزيل</string>
+</resources>

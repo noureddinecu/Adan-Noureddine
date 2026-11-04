@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Video Downloader</string>
+    <string name="home_subtitle">Enregistrez les vidéos publiques de vos plateformes préférées</string>
+
+    <string name="nav_home">Télécharger</string>
+    <string name="nav_library">Bibliothèque</string>
+    <string name="nav_history">Historique</string>
+    <string name="nav_settings">Réglages</string>
+
+    <string name="paste_link_hint">Collez le lien de la vidéo ici</string>
+    <string name="action_paste">Coller</string>
+    <string name="action_analyze">Analyser le lien</string>
+    <string name="action_clear">Effacer</string>
+    <string name="action_download">Télécharger</string>
+    <string name="action_download_again">Télécharger à nouveau</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Reprendre</string>
+    <string name="action_retry">Réessayer</string>
+    <string name="action_cancel">Annuler</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save">Enregistrer</string>
+    <string name="action_share">Partager</string>
+    <string name="action_share_link">Partager le lien</string>
+    <string name="action_copy_link">Copier le lien</string>
+    <string name="action_rename">Renommer</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="action_play">Lire</string>
+    <string name="action_open_source">Ouvrir l\'original</string>
+    <string name="action_open_official">Ouvrir dans l\'application officielle</string>
+    <string name="action_remove_record">Retirer de l\'historique</string>
+    <string name="more">Plus d\'options</string>
+    <string name="back">Retour</string>
+
+    <string name="analyzing">Analyse du lien…</string>
+    <string name="analyzing_hint">Récupération des détails et des qualités disponibles</string>
+    <string name="choose_quality">Choisir la qualité</string>
+    <string name="quality_best">Meilleure qualité</string>
+    <string name="quality_audio">Audio seul</string>
+    <string name="quality_original">Original</string>
+    <string name="active_downloads">Téléchargements en cours</string>
+    <string name="download_started">Téléchargement démarré</string>
+    <string name="download_failed_to_start">Impossible de démarrer le téléchargement</string>
+    <string name="link_copied">Lien copié</string>
+    <string name="platform_direct">Lien direct</string>
+    <string name="platform_other">Web</string>
+
+    <string name="how_title">Comment ça marche</string>
+    <string name="how_step1">Copiez le lien d\'une vidéo publique</string>
+    <string name="how_step2">Collez-le ici et appuyez sur Analyser</string>
+    <string name="how_step3">Choisissez une qualité et téléchargez</string>
+    <string name="legal_short">Téléchargez uniquement du contenu qui vous appartient ou que vous êtes autorisé à enregistrer. Le contenu privé, payant ou protégé par DRM n\'est pas pris en charge.</string>
+
+    <string name="policy_title">Téléchargement indisponible</string>
+    <string name="policy_youtube">Les conditions d\'utilisation de YouTube n\'autorisent la lecture hors ligne que via les fonctionnalités de YouTube (comme YouTube Premium). Pour les respecter, cette application ne télécharge pas les vidéos YouTube.</string>
+
+    <string name="status_queued">En attente…</string>
+    <string name="status_downloading">Téléchargement</string>
+    <string name="status_paused">En pause</string>
+    <string name="status_completed">Terminé</string>
+    <string name="status_canceled">Annulé</string>
+    <string name="eta">%1$s restant</string>
+
+    <string name="err_invalid_url">Veuillez saisir un lien valide (https://…)</string>
+    <string name="err_unsupported">Ce lien n\'est pas pris en charge</string>
+    <string name="err_policy">Le téléchargement depuis cette plateforme n\'est pas autorisé</string>
+    <string name="err_login">Cette vidéo est privée ou nécessite une connexion. Seules les vidéos publiques sont prises en charge.</string>
+    <string name="err_not_found">Vidéo introuvable ou supprimée</string>
+    <string name="err_drm">Cette vidéo est protégée par DRM et ne peut pas être téléchargée</string>
+    <string name="err_network">Erreur réseau. Vérifiez votre connexion et réessayez.</string>
+    <string name="err_no_formats">Aucun format téléchargeable trouvé</string>
+    <string name="err_storage">Impossible d\'enregistrer le fichier. Vérifiez l\'espace disponible.</string>
+    <string name="err_engine">Le moteur de téléchargement n\'a pas démarré. Redémarrez l\'application.</string>
+    <string name="err_unknown">Une erreur est survenue. %1$s</string>
+    <string name="err_file_missing">Fichier introuvable. Il a peut-être été déplacé ou supprimé.</string>
+
+    <string name="library_empty_title">Aucune vidéo</string>
+    <string name="library_empty_msg">Vos vidéos téléchargées apparaîtront ici</string>
+    <string name="filter_all">Toutes</string>
+    <string name="sort">Trier</string>
+    <string name="sort_newest">Plus récentes</string>
+    <string name="sort_oldest">Plus anciennes</string>
+    <string name="sort_name">Nom</string>
+    <string name="sort_size">Taille</string>
+    <string name="date_today">Aujourd\'hui</string>
+    <string name="date_yesterday">Hier</string>
+    <string name="date_week">Cette semaine</string>
+    <string name="date_month">Ce mois-ci</string>
+    <string name="date_older">Plus ancien</string>
+    <string name="file_name">Nom du fichier</string>
+    <string name="delete_title">Supprimer la vidéo ?</string>
+    <string name="delete_msg">« %1$s » sera définitivement supprimé de votre appareil.</string>
+    <string name="msg_renamed">Renommé</string>
+    <string name="msg_rename_failed">Impossible de renommer le fichier</string>
+    <string name="msg_deleted">Supprimé</string>
+    <string name="msg_delete_failed">Entrée retirée, mais le fichier n\'a pas pu être supprimé</string>
+
+    <string name="history_empty_title">Aucun historique</string>
+    <string name="history_empty_msg">Les liens que vous téléchargez apparaîtront ici</string>
+    <string name="search_history">Rechercher dans l\'historique</string>
+    <string name="clear_history">Effacer l\'historique</string>
+    <string name="clear_history_msg">Les entrées échouées et annulées seront supprimées. Les vidéos téléchargées restent dans votre bibliothèque.</string>
+
+    <string name="settings_appearance">Apparence</string>
+    <string name="settings_theme">Thème</string>
+    <string name="theme_system">Par défaut du système</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="settings_language">Langue</string>
+    <string name="language_system">Par défaut du système</string>
+    <string name="settings_dynamic">Couleurs dynamiques</string>
+    <string name="settings_dynamic_desc">Utiliser les couleurs du fond d\'écran</string>
+    <string name="settings_downloads">Téléchargements</string>
+    <string name="settings_storage">Emplacement</string>
+    <string name="storage_downloads">Téléchargements/VideoDownloader</string>
+    <string name="storage_app">Dossier de l\'application (privé)</string>
+    <string name="settings_quality">Qualité par défaut</string>
+    <string name="settings_wifi">Wi-Fi uniquement</string>
+    <string name="settings_wifi_desc">Attendre le Wi-Fi avant de télécharger</string>
+    <string name="settings_engine">Moteur de téléchargement</string>
+    <string name="settings_engine_update">Mettre à jour le moteur</string>
+    <string name="engine_version">Version %1$s · appuyez pour vérifier les mises à jour</string>
+    <string name="engine_updating">Mise à jour…</string>
+    <string name="engine_updated">Mis à jour vers %1$s</string>
+    <string name="engine_up_to_date">Déjà à jour (%1$s)</string>
+    <string name="engine_update_failed">Échec de la mise à jour. Réessayez plus tard.</string>
+    <string name="settings_about">À propos</string>
+    <string name="settings_privacy">Confidentialité des annonces</string>
+    <string name="settings_legal">Conditions et droits d\'auteur</string>
+    <string name="version">Version %1$s</string>
+    <string name="legal_full">Video Downloader est un outil permettant d\'enregistrer des vidéos publiques pour un usage personnel hors ligne.\n\n• Téléchargez uniquement du contenu qui vous appartient, du domaine public, ou que vous êtes autorisé à télécharger.\n• Respectez le droit d\'auteur et les conditions d\'utilisation de chaque plateforme.\n• L\'application ne contourne ni les connexions, ni les accès payants, ni les comptes privés, ni les protections DRM.\n• Les téléchargements YouTube sont désactivés conformément aux conditions d\'utilisation de YouTube.\n• Les téléchargements sont traités entièrement sur votre appareil avec le moteur open source yt-dlp, sans aucun site de téléchargement tiers.\n\nVous êtes seul responsable de l\'usage que vous faites du contenu téléchargé.</string>
+
+    <string name="channel_progress">Progression des téléchargements</string>
+    <string name="channel_done">Téléchargements terminés</string>
+    <string name="notif_done">Téléchargement terminé</string>
+    <string name="notif_failed">Échec du téléchargement</string>
+</resources>

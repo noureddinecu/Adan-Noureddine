@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- rounded play tile -->
+    <path android:fillColor="#33FFFFFF"
+        android:pathData="M38,32h32a8,8 0,0 1,8 8v20a8,8 0,0 1,-8 8h-32a8,8 0,0 1,-8 -8v-20a8,8 0,0 1,8 -8z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M49,41.5L61,50L49,58.5Z" />
+    <!-- download arrow + tray -->
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M52,66h4v8.2l3.6,-3.6l2.8,2.8l-8.4,8.4l-8.4,-8.4l2.8,-2.8l3.6,3.6z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M40,80h28v3h-28z" />
+</vector>
