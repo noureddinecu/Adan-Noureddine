@@ -9,6 +9,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -46,6 +49,26 @@ jobs:
         with:
           name: video-downloader-release-aab
           path: app/build/outputs/bundle/release/*.aab
+
+      - name: Collect APKs for release
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-arm64-v8a-debug.apk dist/VideoDownloader-arm64-v8a.apk
+          cp app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk dist/VideoDownloader-armeabi-v7a.apk
+          cp app/build/outputs/apk/debug/app-x86_64-debug.apk dist/VideoDownloader-x86_64.apk
+
+      - name: Publish test build as GitHub Release
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: test-build-${{ github.run_number }}
+          name: Video Downloader test build ${{ github.run_number }}
+          prerelease: true
+          body: |
+            Test build (debug-signed) from commit ${{ github.sha }}.
+            Most phones: download **VideoDownloader-arm64-v8a.apk**. Older 32-bit phones: armeabi-v7a.
+          files: dist/*.apk
 
       - name: Upload reports
         if: always()
