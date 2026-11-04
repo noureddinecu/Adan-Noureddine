@@ -14,6 +14,32 @@ android {
         targetSdk 34
         versionCode runNumber
         versionName "1.0.${runNumber}"
+
+        // nodejs-mobile ships 64-bit ARM (virtually every phone sold since 2017)
+        ndk { abiFilters 'arm64-v8a' }
+        externalNativeBuild {
+            cmake { arguments '-DANDROID_STL=c++_shared' }
+        }
+    }
+
+    externalNativeBuild {
+        cmake { path 'src/main/cpp/CMakeLists.txt' }
+    }
+
+    sourceSets {
+        main { jniLibs.srcDirs = ['libnode/bin'] }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging true
+            pickFirsts += ['**/libnode.so', '**/libc++_shared.so']
+        }
+    }
+
+    androidResources {
+        // the server bundle is already compressed
+        noCompress 'zip'
     }
 
     signingConfigs {

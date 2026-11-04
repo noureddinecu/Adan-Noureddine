@@ -41,7 +41,7 @@ function Splash() {
 function Login({ configured, onDone }: { configured: boolean; onDone: () => void }) {
   const { t, lang } = useI18n();
   const [password, setPassword] = useState('');
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(() => new URLSearchParams(location.search).get('setup')?.replace(/\D/g, '').slice(0, 6) || '');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   const submit = async (e: React.FormEvent) => {

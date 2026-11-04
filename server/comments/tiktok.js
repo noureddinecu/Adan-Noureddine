@@ -35,6 +35,20 @@ export function explainTikTokError(e) {
   return { code: 'unknown', retry: true, ar: `خطأ في الاتصال: ${msg.slice(0, 160)}`, en: `Connection error: ${msg.slice(0, 160)}` };
 }
 
+/**
+ * tiktok-live-connector v2 needs Node ≥ 20. On older runtimes (the Node 18 embedded in the Android app)
+ * fall back to the last v1 release, installed as "tiktok-live-connector-legacy". Both emit the same events.
+ */
+async function loadConnector() {
+  try {
+    const mod = await import('tiktok-live-connector');
+    const C = mod.TikTokLiveConnection || mod.WebcastPushConnection || mod.default?.TikTokLiveConnection;
+    if (C) return C;
+  } catch { /* fall through to v1 */ }
+  const legacy = await import('tiktok-live-connector-legacy');
+  return legacy.WebcastPushConnection || legacy.default?.WebcastPushConnection;
+}
+
 export class TikTokProvider extends EventEmitter {
   constructor({ signApiKey = '' } = {}) {
     super();
@@ -43,8 +57,7 @@ export class TikTokProvider extends EventEmitter {
   }
 
   async connect(username) {
-    const mod = await import('tiktok-live-connector');
-    const Conn = mod.TikTokLiveConnection || mod.WebcastPushConnection;
+    const Conn = await loadConnector();
     const opts = { processInitialData: false, enableExtendedGiftInfo: false, fetchRoomInfoOnConnect: true };
     if (this.signApiKey) opts.signApiKey = this.signApiKey;
     const conn = new Conn(username, opts);

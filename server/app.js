@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { openDb, KV } from './db.js';
+import { openDb, KV, DB_ENGINE } from './db.js';
 import { QuestionStore } from './questions/store.js';
 import { PlayerRepo, GameHistory } from './players.js';
 import { SettingsStore } from './settings.js';
@@ -58,7 +58,7 @@ export function createApp(config, { providerFactory } = {}) {
   // ---------- public ----------
   pub('GET', '/api/meta', () => meta());
   pub('GET', '/api/public/state', () => engine.publicState());
-  pub('GET', '/api/health', () => ({ ok: true, uptime: process.uptime(), questions: store.all().length, provider: hub.status.state }));
+  pub('GET', '/api/health', () => ({ ok: true, uptime: process.uptime(), questions: store.all().length, provider: hub.status.state, node: process.version, db: DB_ENGINE, configured: auth.configured }));
   pub('POST', '/api/ingest/comment', async (req, url) => {
     const key = req.headers['x-ingest-key'] || url.searchParams.get('key') || '';
     const expected = settings.get().provider.ingestKey;
@@ -308,7 +308,10 @@ function timingEq(a, b) {
 
 export function networkUrls(port) {
   const out = [];
-  for (const list of Object.values(os.networkInterfaces())) {
+  let ifaces = {};
+  try { ifaces = os.networkInterfaces(); } catch { /* Android 11+ restricts interface listing — the app shows the address itself */ }
+  if (process.env.LQG_LAN_URLS) out.push(...process.env.LQG_LAN_URLS.split(',').filter(Boolean));
+  for (const list of Object.values(ifaces)) {
     for (const a of list || []) if (a.family === 'IPv4' && !a.internal) out.push(`http://${a.address}:${port}`);
   }
   return out;

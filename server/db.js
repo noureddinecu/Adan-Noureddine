@@ -2,7 +2,17 @@
 // SQLite database through the built-in node:sqlite module — no native build step.
 import fs from 'node:fs';
 import path from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
+
+// Built-in SQLite on Node ≥ 22.13; WebAssembly SQLite (sql.js) on older runtimes such as the
+// Node 18 embedded in the Android app.
+let DatabaseSync;
+export let DB_ENGINE = 'node:sqlite';
+try {
+  ({ DatabaseSync } = await import('node:sqlite'));
+} catch {
+  ({ SqlJsDatabase: DatabaseSync } = await import('./sqljs-db.js'));
+  DB_ENGINE = 'sql.js';
+}
 
 const MIGRATIONS = [
   `CREATE TABLE kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);

@@ -18,7 +18,7 @@ export class Auth {
     this.envPassword = envPassword;
     this.attempts = new Map(); // ip -> [timestamps]
     this.setupCode = null;
-    if (!envPassword && !kv.get('auth')) this.setupCode = crypto.randomInt(100000, 999999).toString();
+    if (!envPassword && !kv.get('auth')) this.setupCode = /^\d{6}$/.test(process.env.LQG_SETUP_CODE || '') ? process.env.LQG_SETUP_CODE : crypto.randomInt(100000, 999999).toString();
     db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(Date.now());
   }
 

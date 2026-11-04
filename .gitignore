@@ -5,3 +5,10 @@ storage/
 *.db-wal
 *.db-shm
 .env
+build/
+android/app/src/main/assets/nodejs-project.zip
+android/app/libnode/
+android/app/.cxx/
+android/app/build/
+android/.gradle/
+android/build/

@@ -25,6 +25,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -76,14 +77,25 @@ public class MainActivity extends Activity {
         web.setWebViewClient(new Client());
         web.setWebChromeClient(new Chrome());
 
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS") != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] { "android.permission.POST_NOTIFICATIONS" }, 7);
+        }
+        if (embedded()) NodeService.start(this); // the built-in server starts with the app
+
         if (savedInstanceState != null) web.restoreState(savedInstanceState);
         else showHome(null);
     }
 
+    private boolean embedded() {
+        return "embedded".equals(prefs.getString("mode", "embedded"));
+    }
+
+    private static final String LOCAL = "http://127.0.0.1:" + NodeService.PORT;
+
     // ---------------------------------------------------------------- navigation
 
     private String server() {
-        return prefs.getString("server", "");
+        return embedded() ? LOCAL : prefs.getString("server", "");
     }
 
     private void showHome(String error) {
@@ -98,7 +110,9 @@ public class MainActivity extends Activity {
         if (base.isEmpty()) { showHome(null); return; }
         boolean game = "screen".equals(mode);
         setGameMode(game);
-        web.loadUrl(base + (game ? "/screen" : "/"));
+        String path = game ? "/screen" : "/";
+        if (!game && embedded()) path += "?setup=" + NodeService.setupCode(this); // pre-fills the first-time setup code
+        web.loadUrl(base + path);
     }
 
     @SuppressWarnings("deprecation")
@@ -214,6 +228,44 @@ public class MainActivity extends Activity {
         public void open(final String mode) { runOnUiThread(() -> openMode(mode)); }
 
         @JavascriptInterface
+        public String getMode() { return embedded() ? "embedded" : "remote"; }
+
+        @JavascriptInterface
+        public void setMode(String mode) {
+            prefs.edit().putString("mode", "remote".equals(mode) ? "remote" : "embedded").apply();
+            if (embedded()) NodeService.start(MainActivity.this);
+        }
+
+        /** Built-in server status for the home screen. */
+        @JavascriptInterface
+        public String embeddedInfo() {
+            try {
+                JSONObject o = new JSONObject();
+                o.put("started", NodeService.started);
+                o.put("error", NodeService.startError == null ? "" : NodeService.startError);
+                o.put("local", LOCAL);
+                o.put("setupCode", NodeService.setupCode(MainActivity.this));
+                o.put("lan", new JSONArray(NodeService.lanUrls(MainActivity.this)));
+                o.put("log", NodeService.logTail(MainActivity.this, 15));
+                return o.toString();
+            } catch (Exception e) {
+                return "{}";
+            }
+        }
+
+        @JavascriptInterface
+        public void stopServer() {
+            Intent i = new Intent(MainActivity.this, NodeService.class).setAction(NodeService.ACTION_STOP);
+            startService(i);
+        }
+
+        @JavascriptInterface
+        public void share(String text) {
+            Intent i = new Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text);
+            runOnUiThread(() -> startActivity(Intent.createChooser(i, "LIVE QUIZ GAME")));
+        }
+
+        @JavascriptInterface
         public void home() { runOnUiThread(() -> showHome(null)); }
 
         @JavascriptInterface
@@ -235,7 +287,15 @@ public class MainActivity extends Activity {
                     c.setReadTimeout(6000);
                     int code = c.getResponseCode();
                     ok = code == 200;
-                    msg = ok ? "OK" : ("HTTP " + code);
+                    msg = "HTTP " + code;
+                    if (ok) {
+                        StringBuilder sb = new StringBuilder();
+                        try (java.io.BufferedReader r = new java.io.BufferedReader(new java.io.InputStreamReader(c.getInputStream(), "UTF-8"))) {
+                            String line;
+                            while ((line = r.readLine()) != null && sb.length() < 4000) sb.append(line);
+                        }
+                        msg = sb.toString(); // /api/health JSON
+                    }
                 } catch (Exception e) {
                     msg = e.getClass().getSimpleName() + ": " + e.getMessage();
                 } finally {

@@ -5,35 +5,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LIVE QUIZ GAME</title>
 <style>
-  :root { --ink:#0B0720; --ink2:#130C2E; --violet:#7C3AED; --pink:#EC4899; --amber:#F59E0B; --cyan:#22D3EE; --ok:#34D399; --bad:#FB7185; }
+  :root { --ink:#0B0720; --violet:#7C3AED; --pink:#EC4899; --amber:#F59E0B; --cyan:#22D3EE; --ok:#34D399; --bad:#FB7185; --gold:#FBBF24; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin:0; min-height:100%; background: radial-gradient(120% 80% at 50% 0%, #1C1340 0%, var(--ink) 60%); color:#fff;
     font-family: "Cairo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  body { padding: 28px 18px 40px; }
-  .wrap { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
-  .brand { display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; margin-top: 8px; }
-  .brand svg { width: 92px; height: 92px; filter: drop-shadow(0 10px 30px rgba(236,72,153,.5)); }
-  .name { font-weight: 900; font-size: 26px; letter-spacing: .5px; direction:ltr; }
+  body { padding: 24px 16px 40px; }
+  .wrap { max-width: 460px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+  .brand { display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; }
+  .brand svg { width: 80px; height: 80px; filter: drop-shadow(0 10px 30px rgba(236,72,153,.5)); }
+  .name { font-weight: 900; font-size: 24px; direction:ltr; }
   .name b { background: linear-gradient(90deg, var(--amber), var(--pink), var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .sub { color: rgba(255,255,255,.65); font-size: 14px; }
+  .seg { display:grid; grid-template-columns: 1fr 1fr; gap:4px; padding:4px; border-radius: 18px; background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); }
+  .seg button { border-radius: 14px; padding: 10px 6px; font-weight: 800; font-size: 14px; color: rgba(255,255,255,.6); background: transparent; }
+  .seg button.on { color:#fff; background: linear-gradient(135deg, var(--violet), var(--pink) 60%, var(--amber)); }
   .card { background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius: 24px; padding: 16px; display:flex; flex-direction:column; gap:12px; }
   label { font-weight: 700; font-size: 14px; color: rgba(255,255,255,.85); }
   input { width:100%; border-radius: 16px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.07); color:#fff; padding: 13px 14px; font-size: 16px; direction: ltr; outline: none; }
   input:focus { border-color: var(--cyan); }
   .chips { display:flex; flex-wrap:wrap; gap:8px; }
-  .chip { border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.05); color: rgba(255,255,255,.8); border-radius: 999px; padding: 7px 12px; font-size: 13px; font-weight: 700; }
+  .chip { border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.05); color: rgba(255,255,255,.85); border-radius: 999px; padding: 7px 12px; font-size: 13px; font-weight: 700; }
   button { font: inherit; cursor: pointer; border: 0; }
   .btn { width:100%; border-radius: 22px; padding: 16px; font-size: 18px; font-weight: 800; color: #fff; display:flex; align-items:center; justify-content:center; gap: 8px; }
+  .btn:disabled { opacity: .4; }
   .primary { background: linear-gradient(135deg, var(--violet), var(--pink) 60%, var(--amber)); box-shadow: 0 10px 40px -10px rgba(124,58,237,.7); }
   .soft { background: rgba(255,255,255,.1); }
+  .danger { background: rgba(251,113,133,.15); color: var(--bad); }
   .small { padding: 10px; font-size: 15px; border-radius: 16px; }
-  .status { font-size: 14px; font-weight: 700; min-height: 1em; }
+  .status { font-size: 15px; font-weight: 800; display:flex; align-items:center; gap:8px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--gold); animation: p 1s infinite alternate; }
+  .ok .dot { background: var(--ok); } .bad .dot { background: var(--bad); animation: none; }
   .ok { color: var(--ok); } .bad { color: var(--bad); }
+  @keyframes p { to { opacity: .3; } }
+  .code { font-size: 28px; font-weight: 900; letter-spacing: 6px; direction:ltr; text-align:center; color: var(--gold); }
+  .url { display:flex; gap:8px; align-items:center; }
+  .url code { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   details { color: rgba(255,255,255,.75); font-size: 14px; line-height: 1.7; }
   summary { font-weight: 800; color:#fff; cursor:pointer; }
-  code { background: rgba(0,0,0,.35); padding: 2px 6px; border-radius: 6px; direction:ltr; unicode-bidi: embed; font-size: 12.5px; }
+  code { background: rgba(0,0,0,.35); padding: 4px 8px; border-radius: 8px; direction:ltr; unicode-bidi: embed; font-size: 12.5px; }
+  pre { white-space: pre-wrap; direction: ltr; text-align:left; font-size: 11px; background: rgba(0,0,0,.4); padding: 8px; border-radius: 10px; max-height: 220px; overflow:auto; margin:0; }
+  .muted { color: rgba(255,255,255,.6); font-size: 13px; line-height: 1.6; }
   .foot { text-align:center; color: rgba(255,255,255,.4); font-size: 12px; }
-  .lang { position: fixed; top: 14px; inset-inline-end: 14px; }
+  .lang { position: fixed; top: 12px; inset-inline-end: 12px; }
+  [hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -45,15 +59,33 @@
     <div class="sub" data-t="tagline"></div>
   </div>
 
-  <div class="card">
+  <div class="seg">
+    <button id="mEmb" data-t="modeEmb"></button>
+    <button id="mRem" data-t="modeRem"></button>
+  </div>
+
+  <!-- Built-in server -->
+  <div id="emb" class="card">
+    <div class="status" id="eStatus"><span class="dot"></span><span id="eText"></span></div>
+    <div id="eSetup" hidden>
+      <div class="muted" data-t="setupHint"></div>
+      <div class="code" id="eCode"></div>
+    </div>
+    <div id="eLan" hidden>
+      <div class="muted" data-t="lanHint"></div>
+      <div id="eUrls" style="display:flex;flex-direction:column;gap:8px;margin-top:8px"></div>
+    </div>
+    <details id="eLogBox" hidden><summary data-t="log"></summary><pre id="eLog"></pre></details>
+    <button class="btn danger small" id="stop" data-t="stop"></button>
+  </div>
+
+  <!-- External server -->
+  <div id="rem" class="card" hidden>
     <label for="server" data-t="server"></label>
     <input id="server" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="https://your-quiz.onrender.com">
-    <div class="chips">
-      <button class="chip" data-fill="http://127.0.0.1:3000" data-t="thisPhone"></button>
-      <button class="chip" data-fill="http://192.168.1.10:3000" data-t="wifi"></button>
-    </div>
+    <div class="chips"><button class="chip" data-fill="http://192.168.1.10:3000" data-t="wifi"></button></div>
     <button class="btn soft small" id="check" data-t="check"></button>
-    <div class="status" id="status"></div>
+    <div class="status" id="rStatus"></div>
   </div>
 
   <button class="btn primary" id="dash">🎮 <span data-t="dashboard"></span></button>
@@ -70,63 +102,127 @@
 <script>
   var T = {
     ar: {
-      tagline: 'منصة المسابقات المباشرة — تحكم من هاتفك', server: 'رابط خادم اللعبة', thisPhone: '📱 هذا الهاتف (Termux)', wifi: '📶 جهاز على نفس الشبكة',
-      check: 'فحص الاتصال', dashboard: 'لوحة التحكم', screen: 'شاشة اللعبة (لمشاركة الشاشة / شاشة ثانية)', checking: 'جارٍ الفحص…',
-      okMsg: '✅ الخادم يعمل', badMsg: '❌ تعذر الوصول إلى الخادم: ', needUrl: 'أدخل رابط الخادم أولاً', howTitle: '❔ ما هو خادم اللعبة وكيف أحصل عليه؟',
-      how: 'التطبيق هو واجهة اللعبة على هاتفك، أما احتساب الأجوبة واستقبال تعليقات TikTok فيتم في <b>خادم اللعبة</b> الذي يجب أن يعمل باستمرار:<br>' +
-           '<b>1) خادم على الإنترنت (الأسهل):</b> انشر المشروع مرة واحدة على Render أو Railway ثم ضع رابطه هنا (مثل <code>https://…onrender.com</code>).<br>' +
-           '<b>2) على هذا الهاتف عبر Termux:</b> ثبّت Termux من F-Droid ثم نفّذ مرة واحدة:<br><code>pkg install nodejs git</code><br><code>git clone &lt;رابط المستودع&gt; quiz &amp;&amp; cd quiz</code><br><code>npm install &amp;&amp; npm run build</code><br>ثم في كل مرة: <code>cd quiz &amp;&amp; npm start</code> واختر «هذا الهاتف».<br>' +
-           '<b>3) جهاز على نفس الشبكة:</b> شغّل الخادم عليه وضع عنوانه الظاهر في الطرفية.<br>' +
-           '«شاشة اللعبة» تعرض المسابقة بملء الشاشة لمشاركتها في البث أو عرضها على جهاز ثانٍ. لا تفتح لوحة التحكم على نفس الهاتف أثناء مشاركة الشاشة حتى لا يظهر الجواب.',
+      tagline: 'منصة المسابقات المباشرة — تحكم من هاتفك', modeEmb: '📱 الخادم داخل التطبيق', modeRem: '🌐 خادم خارجي',
+      starting: 'جارٍ تشغيل الخادم داخل التطبيق… (قد يستغرق بضع ثوانٍ في أول مرة)', ready: 'الخادم يعمل داخل التطبيق ✓', failed: 'تعذر تشغيل الخادم',
+      setupHint: 'رمز الإعداد الأول — يُملأ تلقائياً عند فتح لوحة التحكم لإنشاء كلمة المرور:', lanHint: 'لعرض اللعبة على جهاز آخر في نفس شبكة الواي فاي (OBS، جهاز لوحي، تلفاز…) افتح:',
+      log: 'سجل الخادم', stop: '⏹ إيقاف الخادم وإغلاق التطبيق', share: 'مشاركة', copy: 'نسخ', copied: 'تم النسخ',
+      server: 'رابط خادم اللعبة', wifi: '📶 جهاز على نفس الشبكة', check: 'فحص الاتصال', checking: 'جارٍ الفحص…', okMsg: '✅ الخادم يعمل', badMsg: '❌ تعذر الوصول إلى الخادم: ', needUrl: 'أدخل رابط الخادم أولاً',
+      dashboard: 'لوحة التحكم', screen: 'شاشة اللعبة (لمشاركة الشاشة)',
+      howTitle: '❔ كيف أستعمل التطبيق أثناء البث؟',
+      how: '<b>الخادم داخل التطبيق</b> يعمل على هذا الهاتف مباشرة ويستقبل تعليقات TikTok ويحسب النقاط — لا حاجة لكمبيوتر أو Termux. يبقى يعمل في الخلفية (إشعار «الخادم يعمل») حتى عند الانتقال إلى تطبيق TikTok.<br>' +
+           '1) افتح <b>لوحة التحكم</b>، أنشئ كلمة المرور، ثم من «استقبال التعليقات» اكتب اسم حسابك على TikTok واضغط اتصال.<br>' +
+           '2) لعرض اللعبة للجمهور: ابدأ بث TikTok بمشاركة الشاشة وافتح <b>شاشة اللعبة</b>، أو اعرضها على جهاز آخر عبر الرابط أعلاه.<br>' +
+           '⚠️ لا تفتح لوحة التحكم أثناء مشاركة الشاشة حتى لا يظهر الجواب. فعّل «الانتقال التلقائي» ليعمل كل شيء وحده.<br>' +
+           '<b>الخادم الخارجي</b>: إذا نشرت المشروع على الإنترنت (Render…) أو شغّلته على جهاز آخر.',
       version: 'الإصدار'
     },
     en: {
-      tagline: 'Live quiz platform — controlled from your phone', server: 'Game server URL', thisPhone: '📱 This phone (Termux)', wifi: '📶 Device on same Wi-Fi',
-      check: 'Test connection', dashboard: 'Control panel', screen: 'Game screen (screen share / second device)', checking: 'Checking…',
-      okMsg: '✅ Server is running', badMsg: '❌ Cannot reach the server: ', needUrl: 'Enter the server URL first', howTitle: '❔ What is the game server and how do I get one?',
-      how: 'This app is the game interface on your phone; answers and TikTok comments are processed by the <b>game server</b>, which must keep running:<br>' +
-           '<b>1) Online server (easiest):</b> deploy the project once on Render or Railway and paste its URL here.<br>' +
-           '<b>2) On this phone with Termux:</b> install Termux from F-Droid, then once:<br><code>pkg install nodejs git</code><br><code>git clone &lt;repo URL&gt; quiz &amp;&amp; cd quiz</code><br><code>npm install &amp;&amp; npm run build</code><br>then each time: <code>cd quiz &amp;&amp; npm start</code> and choose "This phone".<br>' +
-           '<b>3) A device on the same network:</b> run the server there and use the address it prints.<br>' +
-           '"Game screen" shows the quiz full screen to share in the LIVE or show on a second device. Do not open the control panel on the same phone while sharing the screen, or viewers will see the answer.',
+      tagline: 'Live quiz platform — controlled from your phone', modeEmb: '📱 Built-in server', modeRem: '🌐 External server',
+      starting: 'Starting the built-in server… (first start can take a few seconds)', ready: 'Built-in server running ✓', failed: 'Could not start the server',
+      setupHint: 'First-time setup code — filled in automatically when you open the control panel:', lanHint: 'To show the game on another device on the same Wi-Fi (OBS, tablet, TV…), open:',
+      log: 'Server log', stop: '⏹ Stop server and close the app', share: 'Share', copy: 'Copy', copied: 'Copied',
+      server: 'Game server URL', wifi: '📶 Device on same Wi-Fi', check: 'Test connection', checking: 'Checking…', okMsg: '✅ Server is running', badMsg: '❌ Cannot reach the server: ', needUrl: 'Enter the server URL first',
+      dashboard: 'Control panel', screen: 'Game screen (screen share)',
+      howTitle: '❔ How do I use it during a LIVE?',
+      how: 'The <b>built-in server</b> runs on this phone, receives TikTok comments and scores answers — no computer or Termux needed. It keeps running in the background (a "server running" notification) when you switch to the TikTok app.<br>' +
+           '1) Open the <b>control panel</b>, create your password, then in "Comment source" enter your TikTok username and connect.<br>' +
+           '2) To show the game to viewers: start a TikTok LIVE with screen sharing and open the <b>game screen</b>, or show it on another device with the link above.<br>' +
+           '⚠️ Do not open the control panel while sharing the screen, or viewers will see the answer. Turn on auto-advance so the game runs by itself.<br>' +
+           '<b>External server</b>: if you deployed the project online (Render…) or run it on another device.',
       version: 'Version'
     }
   };
   var A = window.LQGAndroid;
   var lang = (function () { try { return localStorage.getItem('lqg.lang') || 'ar'; } catch (e) { return 'ar'; } })();
   var $ = function (id) { return document.getElementById(id); };
+  var mode = A ? A.getMode() : 'embedded';
+  var embReady = false, polls = 0, timer = null;
+
   function apply() {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     $('lang').textContent = lang === 'ar' ? 'EN' : 'عربي';
     document.querySelectorAll('[data-t]').forEach(function (el) { el.innerHTML = T[lang][el.getAttribute('data-t')]; });
     $('ver').textContent = 'LIVE QUIZ GAME · ' + T[lang].version + ' ' + (A ? A.version() : '');
+    render();
   }
   $('lang').onclick = function () { lang = lang === 'ar' ? 'en' : 'ar'; try { localStorage.setItem('lqg.lang', lang); } catch (e) {} apply(); };
-  apply();
 
+  function setMode(m) { mode = m; if (A) A.setMode(m); render(); if (m === 'embedded') poll(); }
+  $('mEmb').onclick = function () { setMode('embedded'); };
+  $('mRem').onclick = function () { setMode('remote'); };
+
+  function render() {
+    $('mEmb').className = mode === 'embedded' ? 'on' : '';
+    $('mRem').className = mode === 'remote' ? 'on' : '';
+    $('emb').hidden = mode !== 'embedded';
+    $('rem').hidden = mode !== 'remote';
+    var canGo = mode === 'remote' || embReady;
+    $('dash').disabled = !canGo; $('screen').disabled = !canGo;
+  }
+
+  // ---- built-in server status
+  window.onEmb = function (ok, body) {
+    var info = {}; try { info = JSON.parse(A.embeddedInfo()); } catch (e) {}
+    if (ok) { try { configured = !!JSON.parse(body).configured; } catch (e) {} }
+    embReady = ok;
+    var failed = !ok && (info.error || polls > 60);
+    $('eStatus').className = 'status ' + (ok ? 'ok' : failed ? 'bad' : '');
+    $('eText').textContent = ok ? T[lang].ready : failed ? T[lang].failed + (info.error ? ': ' + info.error : '') : T[lang].starting;
+    $('eSetup').hidden = !ok || !info.setupCode || configured === true;
+    $('eCode').textContent = info.setupCode || '';
+    var lan = info.lan || [];
+    $('eLan').hidden = !ok || !lan.length;
+    $('eUrls').innerHTML = '';
+    lan.forEach(function (u) {
+      var row = document.createElement('div'); row.className = 'url';
+      var c = document.createElement('code'); c.textContent = u + '/overlay';
+      var b = document.createElement('button'); b.className = 'chip'; b.textContent = T[lang].share;
+      b.onclick = function () { A.share(u + '/overlay'); };
+      row.appendChild(c); row.appendChild(b); $('eUrls').appendChild(row);
+    });
+    $('eLogBox').hidden = !info.log;
+    $('eLog').textContent = info.log || '';
+    render();
+    if (!ok && !failed) { clearTimeout(timer); timer = setTimeout(poll, 1000); }
+  };
+  var configured = null;
+  function poll() {
+    if (!A || mode !== 'embedded') return;
+    polls++;
+    A.checkServer('http://127.0.0.1:3000', 'onEmb');
+  }
+  $('stop').onclick = function () { if (A) A.stopServer(); };
+
+  // ---- external server
   $('server').value = A ? A.getServer() : '';
-  var hash = decodeURIComponent((location.hash.match(/err=([^&]*)/) || [])[1] || '');
-  if (hash) { $('status').className = 'status bad'; $('status').textContent = T[lang].badMsg + hash; }
-
   document.querySelectorAll('[data-fill]').forEach(function (b) { b.onclick = function () { $('server').value = b.getAttribute('data-fill'); $('server').focus(); }; });
-
   function url() { return $('server').value.trim(); }
   window.onCheck = function (ok, msg) {
-    $('status').className = 'status ' + (ok ? 'ok' : 'bad');
-    $('status').textContent = ok ? T[lang].okMsg : T[lang].badMsg + msg;
+    $('rStatus').className = 'status ' + (ok ? 'ok' : 'bad');
+    $('rStatus').textContent = ok ? T[lang].okMsg : T[lang].badMsg + msg;
   };
   $('check').onclick = function () {
     if (!url()) { window.onCheck(false, T[lang].needUrl); return; }
-    $('status').className = 'status'; $('status').textContent = T[lang].checking;
+    $('rStatus').className = 'status'; $('rStatus').textContent = T[lang].checking;
     A && A.checkServer(url(), 'onCheck');
   };
-  function go(mode) {
-    if (!url()) { window.onCheck(false, T[lang].needUrl); $('server').focus(); return; }
-    if (A) { A.setServer(url()); A.open(mode); }
+
+  function go(m) {
+    if (!A) return;
+    if (mode === 'remote') {
+      if (!url()) { window.onCheck(false, T[lang].needUrl); $('server').focus(); return; }
+      A.setServer(url());
+    }
+    A.open(m);
   }
   $('dash').onclick = function () { go('dashboard'); };
   $('screen').onclick = function () { go('screen'); };
+
+  var hash = decodeURIComponent((location.hash.match(/err=([^&]*)/) || [])[1] || '');
+  if (hash && mode === 'remote') window.onCheck(false, hash);
+  apply();
+  poll();
 </script>
 </body>
 </html>

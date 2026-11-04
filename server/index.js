@@ -21,7 +21,9 @@ app.server.listen(config.port, config.host, () => {
   else console.log('');
 });
 
-const shutdown = () => { try { app.engine.persist(); app.close(); } finally { process.exit(0); } };
+// Inside the Android app, Node shares the app process: never call process.exit there.
+const EMBEDDED = process.env.LQG_EMBEDDED === '1';
+const shutdown = () => { try { app.engine.persist(); app.close(); } finally { if (!EMBEDDED) process.exit(0); } };
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 process.on('uncaughtException', (e) => console.error('uncaught', e)); // keep the game running

@@ -4,17 +4,53 @@ on:
   push:
     paths:
       - 'android/**'
+      - 'server/**'
+      - 'web/**'
+      - 'data/**'
+      - 'scripts/build-mobile.mjs'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/android.yml'
   workflow_dispatch:
 
 permissions:
   contents: write
 
+env:
+  NODEJS_MOBILE_VERSION: v18.20.4
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Build web UI and the embedded server bundle
+        run: |
+          npm ci
+          npm run build
+          npm run build:mobile
+
+      - name: Download nodejs-mobile (Node.js for Android)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$NODEJS_MOBILE_VERSION" --repo nodejs-mobile/nodejs-mobile --pattern '*android*' --dir nm-dl
+          ls -la nm-dl
+          mkdir -p nm-x && for z in nm-dl/*.zip; do unzip -q -o "$z" -d nm-x; done
+          HEADER_DIR="$(dirname "$(find nm-x -name node.h | head -1)")"
+          LIB="$(find nm-x -path '*arm64-v8a*' -name libnode.so | head -1)"
+          echo "headers: $HEADER_DIR"; echo "lib: $LIB"
+          test -n "$HEADER_DIR" && test -n "$LIB"
+          mkdir -p android/app/libnode/include/node android/app/libnode/bin/arm64-v8a
+          cp -r "$HEADER_DIR"/. android/app/libnode/include/node/
+          cp "$LIB" android/app/libnode/bin/arm64-v8a/libnode.so
+          ls -la android/app/libnode/bin/arm64-v8a
 
       - uses: actions/setup-java@v4
         with:
@@ -35,7 +71,10 @@ jobs:
           [ -z "$LQG_STORE_PASSWORD" ] && unset LQG_STORE_PASSWORD
           [ -z "$LQG_KEY_PASSWORD" ] && unset LQG_KEY_PASSWORD
           gradle --no-daemon assembleRelease
-          cp app/build/outputs/apk/release/app-release.apk "../LIVE-QUIZ-GAME-v1.0.${GITHUB_RUN_NUMBER}.apk"
+          APK=app/build/outputs/apk/release/app-release.apk
+          ls -la "$APK"
+          unzip -l "$APK" | grep -E 'libnode|native-lib|c\+\+_shared|nodejs-project' || true
+          cp "$APK" "../LIVE-QUIZ-GAME-v1.0.${GITHUB_RUN_NUMBER}.apk"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -51,6 +90,6 @@ jobs:
           make_latest: true
           files: LIVE-QUIZ-GAME-*.apk
           body: |
-            تطبيق LIVE QUIZ GAME لأندرويد (Android 7.0 فما فوق).
-            حمّل ملف APK أدناه على هاتفك، ثم افتحه واسمح بالتثبيت من مصادر غير معروفة إذا طلب الهاتف ذلك.
-            يحتاج التطبيق إلى رابط خادم اللعبة (على الإنترنت، أو Termux على نفس الهاتف، أو جهاز على نفس الشبكة).
+            تطبيق LIVE QUIZ GAME لأندرويد (Android 7.0 فما فوق، هواتف 64-bit).
+            **الخادم يعمل داخل التطبيق** (Node.js مدمج) — لا حاجة لكمبيوتر أو Termux.
+            حمّل ملف APK أدناه، ثم افتحه واسمح بالتثبيت من مصادر غير معروفة إذا طلب الهاتف ذلك.
