@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalize, matchesAnswer, parseChoice, compactKey } from '../src/normalize.js';
+import { normalize, matchesAnswer, parseChoice, compactKey } from '../server/questions/normalize.js';
 
 test('normalizes Arabic letter variants, diacritics, digits and emojis', () => {
   assert.equal(normalize('أَلْمَغْرِبُ 🔥'), 'المغرب');

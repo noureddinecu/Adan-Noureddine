@@ -472,6 +472,114 @@
       "updatedAt": "2026-11-04T00:00:00.000Z"
     },
     {
+      "id": "for-machu-picchu",
+      "category": "foreign_culture",
+      "subcategory": "landmarks",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي دولة توجد مدينة ماتشو بيتشو الأثرية؟",
+        "fr": "Dans quel pays se trouve le site de Machu Picchu ?",
+        "en": "In which country is Machu Picchu?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "المكسيك",
+          "fr": "Mexique",
+          "en": "Mexico"
+        },
+        {
+          "ar": "تشيلي",
+          "fr": "Chili",
+          "en": "Chile"
+        },
+        {
+          "ar": "بوليفيا",
+          "fr": "Bolivie",
+          "en": "Bolivia"
+        },
+        {
+          "ar": "البيرو",
+          "fr": "Pérou",
+          "en": "Peru"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Machu Picchu",
+        "url": "https://en.wikipedia.org/wiki/Machu_Picchu"
+      },
+      "factKey": "for-machu-picchu",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-maya",
+      "category": "foreign_culture",
+      "subcategory": "civilizations",
+      "region": "world",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "أي حضارة قديمة بنت مدينة \"تشيتشن إيتزا\" في المكسيك؟",
+        "fr": "Quelle civilisation a bâti Chichén Itzá au Mexique ?",
+        "en": "Which civilization built Chichén Itzá in Mexico?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "المايا",
+          "fr": "Les Mayas",
+          "en": "The Maya"
+        },
+        {
+          "ar": "الإنكا",
+          "fr": "Les Incas",
+          "en": "The Inca"
+        },
+        {
+          "ar": "الأزتيك",
+          "fr": "Les Aztèques",
+          "en": "The Aztecs"
+        },
+        {
+          "ar": "الأولمك",
+          "fr": "Les Olmèques",
+          "en": "The Olmecs"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Chichen Itza",
+        "url": "https://en.wikipedia.org/wiki/Chichen_Itza"
+      },
+      "factKey": "for-maya",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
       "id": "for-mercury",
       "category": "foreign_culture",
       "subcategory": "science",
@@ -979,6 +1087,60 @@
         "url": "https://en.wikipedia.org/wiki/Taj_Mahal"
       },
       "factKey": "for-taj-mahal",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-telescope-galileo",
+      "category": "foreign_culture",
+      "subcategory": "science",
+      "region": "foreign",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو العالم الإيطالي الذي رصد أقمار المشتري بالتلسكوب سنة 1610؟",
+        "fr": "Quel savant italien a observé les lunes de Jupiter au télescope en 1610 ?",
+        "en": "Which Italian scientist observed Jupiter's moons with a telescope in 1610?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "غاليليو غاليلي",
+          "fr": "Galilée",
+          "en": "Galileo Galilei"
+        },
+        {
+          "ar": "كوبرنيكوس",
+          "fr": "Copernic",
+          "en": "Copernicus"
+        },
+        {
+          "ar": "كبلر",
+          "fr": "Kepler",
+          "en": "Kepler"
+        },
+        {
+          "ar": "نيوتن",
+          "fr": "Newton",
+          "en": "Newton"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Galilean moons",
+        "url": "https://en.wikipedia.org/wiki/Galilean_moons"
+      },
+      "factKey": "for-telescope-galileo",
       "volatile": false,
       "verifiedAt": "",
       "tags": [],

@@ -183,7 +183,7 @@
     {
       "id": "per-darwish",
       "category": "personalities",
-      "subcategory": "arab_moroccan",
+      "subcategory": "arab",
       "region": "arab",
       "difficulty": "medium",
       "type": "mcq",
@@ -291,7 +291,7 @@
     {
       "id": "per-doukkali",
       "category": "personalities",
-      "subcategory": "artists",
+      "subcategory": "moroccan",
       "region": "arab",
       "difficulty": "hard",
       "type": "mcq",
@@ -399,7 +399,7 @@
     {
       "id": "per-fatima-fihri",
       "category": "personalities",
-      "subcategory": "arab_moroccan",
+      "subcategory": "moroccan",
       "region": "arab",
       "difficulty": "medium",
       "type": "mcq",
@@ -507,7 +507,7 @@
     {
       "id": "per-ibn-battuta",
       "category": "personalities",
-      "subcategory": "historical",
+      "subcategory": "moroccan",
       "region": "arab",
       "difficulty": "easy",
       "type": "mcq",
@@ -644,7 +644,7 @@
     {
       "id": "per-ibn-tashfin",
       "category": "personalities",
-      "subcategory": "historical",
+      "subcategory": "moroccan",
       "region": "arab",
       "difficulty": "medium",
       "type": "mcq",
@@ -806,7 +806,7 @@
     {
       "id": "per-mahfouz",
       "category": "personalities",
-      "subcategory": "arab_moroccan",
+      "subcategory": "arab",
       "region": "arab",
       "difficulty": "medium",
       "type": "mcq",
@@ -914,7 +914,7 @@
     {
       "id": "per-maradona-hand",
       "category": "personalities",
-      "subcategory": "football_stars",
+      "subcategory": "sports_figures",
       "region": "world",
       "difficulty": "medium",
       "type": "open",

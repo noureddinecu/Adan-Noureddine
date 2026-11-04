@@ -1,74 +1,54 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { QuestionStore } from '../src/store.js';
-import { parseCsv, toCsv, CSV_COLUMNS, questionToRow, rowsToRawQuestions } from '../src/csv.js';
+import { openDb } from '../server/db.js';
+import { QuestionStore } from '../server/questions/store.js';
+import { parseCsv, toCsv, CSV_COLUMNS, questionToRow, rowsToRawQuestions } from '../server/questions/csv.js';
+import { ROOT, seedDir, MCQ } from './helpers.js';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-
-test('shipped question bank: every published question passes quality checks', () => {
-  const store = new QuestionStore(path.join(root, 'data'));
+test('shipped question bank passes every quality check', () => {
+  const store = new QuestionStore(openDb(':memory:'), { seedDir: path.join(ROOT, 'data') });
   const qs = store.all();
-  assert.ok(qs.length >= 100);
+  assert.ok(qs.length >= 150);
   for (const q of qs) {
     const v = store.validate(q);
     assert.deepEqual(v.structural, [], `${q.id}: ${v.structural}`);
     if (q.status === 'published') assert.deepEqual(v.quality, [], `${q.id}: ${v.quality}`);
   }
   const pub = qs.filter((q) => q.status === 'published');
-  const arab = pub.filter((q) => q.region === 'arab').length / pub.length;
-  assert.ok(arab >= 0.6, `arab share ${arab}`);
-  assert.ok(qs.filter((q) => q.volatile).every((q) => q.verifiedAt), 'volatile questions need verifiedAt');
+  assert.ok(pub.filter((q) => q.region === 'arab').length / pub.length >= 0.6);
+  assert.ok(qs.filter((q) => q.volatile).every((q) => q.verifiedAt));
+  for (const t of ['mcq', 'open', 'complete', 'flag', 'map', 'capital', 'country']) assert.ok(pub.some((q) => q.type === t), `type ${t}`);
 });
 
-function tempStore() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'quiz-'));
-  fs.copyFileSync(path.join(root, 'data/categories.json'), path.join(dir, 'categories.json'));
-  fs.mkdirSync(path.join(dir, 'questions'));
-  return { dir, store: new QuestionStore(dir) };
-}
-
-const sample = {
-  category: 'geography', subcategory: 'capitals', region: 'arab', difficulty: 'easy', type: 'mcq',
-  text: { ar: 'ما عاصمة ليبيا؟', fr: 'Capitale de la Libye ?', en: 'Capital of Libya?' },
-  choices: [{ ar: 'طرابلس', fr: 'Tripoli', en: 'Tripoli' }, { ar: 'بنغازي', fr: 'Benghazi', en: 'Benghazi' }, { ar: 'مصراتة', fr: 'Misrata', en: 'Misrata' }, { ar: 'سبها', fr: 'Sebha', en: 'Sabha' }],
-  correct: 0, source: { title: 'Wikipedia', url: 'https://en.wikipedia.org/wiki/Tripoli,_Libya' }, status: 'published',
-};
-
-test('store: create, block duplicates, block publishing incomplete questions, delete', () => {
-  const { dir, store } = tempStore();
-  const r = store.save(sample, { isNew: true });
-  assert.ok(r.ok, JSON.stringify(r));
-  assert.ok(fs.existsSync(path.join(dir, 'questions/geography.json')));
-  assert.equal(store.save(sample, { isNew: true }).ok, false); // same wording → duplicate
-  const noSource = store.save({ ...sample, text: { ar: 'سؤال آخر؟' }, source: {} }, { isNew: true });
-  assert.equal(noSource.ok, false);
-  const draft = store.save({ ...sample, text: { ar: 'سؤال آخر؟' }, source: {}, status: 'draft' }, { isNew: true });
-  assert.ok(draft.ok);
-  assert.ok(store.remove(r.question.id));
-  assert.equal(new QuestionStore(dir).all().length, 1); // persisted
+test('seed merge does not re-add deleted questions or overwrite edits', () => {
+  const dir = seedDir([MCQ]);
+  const db = openDb(':memory:');
+  let store = new QuestionStore(db, { seedDir: dir });
+  store.save({ ...store.get('t-mcq'), notes: 'edited' });
+  store = new QuestionStore(db, { seedDir: dir });
+  assert.equal(store.get('t-mcq').notes, 'edited');
+  store.remove('t-mcq');
+  store = new QuestionStore(db, { seedDir: dir });
+  assert.equal(store.get('t-mcq'), undefined);
 });
 
-test('volatile questions are stored in their own file', () => {
-  const { dir, store } = tempStore();
-  store.save({ ...sample, volatile: true, verifiedAt: '2026-01-01' }, { isNew: true });
-  assert.ok(fs.existsSync(path.join(dir, 'questions/volatile.json')));
+test('duplicates are rejected and incomplete questions cannot be published', () => {
+  const store = new QuestionStore(openDb(':memory:'), { seedDir: seedDir([MCQ]) });
+  const { id, ...rest } = store.get('t-mcq');
+  assert.equal(store.save(rest, { isNew: true }).ok, false);
+  assert.equal(store.save({ ...rest, text: { ar: 'سؤال آخر؟' }, source: {} }, { isNew: true }).ok, false);
+  assert.equal(store.save({ ...rest, text: { ar: 'سؤال آخر؟' }, source: {}, status: 'draft' }, { isNew: true }).ok, true);
 });
 
-test('CSV round trip and import into review', () => {
-  const { store } = tempStore();
-  const r = store.save(sample, { isNew: true });
-  const csv = toCsv([CSV_COLUMNS, questionToRow(r.question)]);
-  const raws = rowsToRawQuestions(parseCsv(csv));
-  assert.equal(raws[0].text.ar, sample.text.ar);
-  assert.equal(raws[0].correct, 0);
-  const { store: other } = tempStore();
-  const res = other.importMany(raws.map((x) => ({ ...x, id: '' })));
+test('CSV round trip imports into review', () => {
+  const a = new QuestionStore(openDb(':memory:'), { seedDir: seedDir([MCQ]) });
+  const csv = toCsv([CSV_COLUMNS, questionToRow(a.get('t-mcq'))]);
+  const b = new QuestionStore(openDb(':memory:'), { seedDir: seedDir([]) });
+  const res = b.importMany(rowsToRawQuestions(parseCsv(csv)).map((x) => ({ ...x, id: '' })));
   assert.equal(res.imported, 1);
-  assert.equal(other.all()[0].status, 'review');
+  assert.equal(b.all()[0].status, 'review');
+  assert.equal(b.all()[0].correct, 0);
 });
 
 test('CSV parser handles quotes, commas, newlines and semicolons', () => {

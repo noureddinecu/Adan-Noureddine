@@ -3,68 +3,435 @@
     {
       "id": "geography",
       "icon": "🌍",
-      "name": { "ar": "الجغرافيا والدول", "fr": "Géographie et pays", "en": "Geography & Countries" },
+      "name": {
+        "ar": "الجغرافيا والدول",
+        "fr": "Géographie et pays",
+        "en": "Geography & Countries"
+      },
       "subcategories": [
-        { "id": "maps", "name": { "ar": "تخمين الدول من الخرائط", "fr": "Pays sur la carte", "en": "Countries from maps" } },
-        { "id": "flags", "name": { "ar": "أعلام الدول", "fr": "Drapeaux", "en": "Flags" } },
-        { "id": "capitals", "name": { "ar": "عواصم الدول", "fr": "Capitales", "en": "Capitals" } },
-        { "id": "facts", "name": { "ar": "معلومات جغرافية", "fr": "Faits géographiques", "en": "Geography facts" } }
+        {
+          "id": "countries",
+          "name": {
+            "ar": "خمّن الدولة",
+            "fr": "Devine le pays",
+            "en": "Guess the Country"
+          }
+        },
+        {
+          "id": "flags",
+          "name": {
+            "ar": "أعلام الدول",
+            "fr": "Drapeaux",
+            "en": "Flags"
+          }
+        },
+        {
+          "id": "maps",
+          "name": {
+            "ar": "خمّن الخريطة",
+            "fr": "Devine la carte",
+            "en": "Guess the Map"
+          }
+        },
+        {
+          "id": "capitals",
+          "name": {
+            "ar": "العواصم",
+            "fr": "Capitales",
+            "en": "Capitals"
+          }
+        },
+        {
+          "id": "cities_landmarks",
+          "name": {
+            "ar": "المدن والمعالم",
+            "fr": "Villes et monuments",
+            "en": "Cities & Landmarks"
+          }
+        },
+        {
+          "id": "facts",
+          "name": {
+            "ar": "معلومات جغرافية",
+            "fr": "Faits géographiques",
+            "en": "Geography facts"
+          }
+        }
       ]
     },
     {
       "id": "sports",
       "icon": "⚽",
-      "name": { "ar": "الرياضة", "fr": "Sport", "en": "Sports" },
+      "name": {
+        "ar": "الرياضة وكرة القدم",
+        "fr": "Sport et football",
+        "en": "Sports & Football"
+      },
       "subcategories": [
-        { "id": "arab_football", "name": { "ar": "كرة القدم العربية", "fr": "Football arabe", "en": "Arab football" } },
-        { "id": "world_football", "name": { "ar": "كرة القدم العالمية", "fr": "Football mondial", "en": "World football" } },
-        { "id": "players", "name": { "ar": "أسماء اللاعبين", "fr": "Joueurs", "en": "Players" } },
-        { "id": "clubs", "name": { "ar": "الأندية والمنتخبات", "fr": "Clubs et sélections", "en": "Clubs & national teams" } },
-        { "id": "tournaments", "name": { "ar": "البطولات والكؤوس", "fr": "Compétitions et coupes", "en": "Tournaments & cups" } },
-        { "id": "history", "name": { "ar": "تاريخ كرة القدم", "fr": "Histoire du football", "en": "Football history" } },
-        { "id": "world_cup", "name": { "ar": "كأس العالم", "fr": "Coupe du monde", "en": "World Cup" } },
-        { "id": "other_sports", "name": { "ar": "رياضات أخرى", "fr": "Autres sports", "en": "Other sports" } }
+        {
+          "id": "players",
+          "name": {
+            "ar": "اللاعبون",
+            "fr": "Joueurs",
+            "en": "Players"
+          }
+        },
+        {
+          "id": "clubs",
+          "name": {
+            "ar": "الأندية والشعارات",
+            "fr": "Clubs et logos",
+            "en": "Clubs & Crests"
+          }
+        },
+        {
+          "id": "national_teams",
+          "name": {
+            "ar": "المنتخبات",
+            "fr": "Sélections",
+            "en": "National teams"
+          }
+        },
+        {
+          "id": "tournaments",
+          "name": {
+            "ar": "البطولات",
+            "fr": "Compétitions",
+            "en": "Tournaments"
+          }
+        },
+        {
+          "id": "world_cup",
+          "name": {
+            "ar": "كأس العالم",
+            "fr": "Coupe du monde",
+            "en": "World Cup"
+          }
+        },
+        {
+          "id": "moroccan_football",
+          "name": {
+            "ar": "الكرة المغربية",
+            "fr": "Football marocain",
+            "en": "Moroccan football"
+          }
+        },
+        {
+          "id": "arab_football",
+          "name": {
+            "ar": "الكرة العربية",
+            "fr": "Football arabe",
+            "en": "Arab football"
+          }
+        },
+        {
+          "id": "world_football",
+          "name": {
+            "ar": "الكرة العالمية",
+            "fr": "Football mondial",
+            "en": "World football"
+          }
+        },
+        {
+          "id": "history",
+          "name": {
+            "ar": "تاريخ كرة القدم",
+            "fr": "Histoire du football",
+            "en": "Football history"
+          }
+        },
+        {
+          "id": "other_sports",
+          "name": {
+            "ar": "رياضات أخرى",
+            "fr": "Autres sports",
+            "en": "Other sports"
+          }
+        }
       ]
     },
     {
       "id": "personalities",
       "icon": "👤",
-      "name": { "ar": "الشخصيات", "fr": "Personnalités", "en": "Personalities" },
+      "name": {
+        "ar": "الشخصيات",
+        "fr": "Personnalités",
+        "en": "Personalities"
+      },
       "subcategories": [
-        { "id": "historical", "name": { "ar": "شخصيات تاريخية", "fr": "Personnages historiques", "en": "Historical figures" } },
-        { "id": "arab_moroccan", "name": { "ar": "شخصيات عربية ومغربية", "fr": "Personnalités arabes et marocaines", "en": "Arab & Moroccan figures" } },
-        { "id": "football_stars", "name": { "ar": "مشاهير كرة القدم", "fr": "Stars du football", "en": "Football stars" } },
-        { "id": "artists", "name": { "ar": "فنانون وممثلون", "fr": "Artistes et acteurs", "en": "Artists & actors" } },
-        { "id": "scientists", "name": { "ar": "علماء ومخترعون", "fr": "Scientifiques et inventeurs", "en": "Scientists & inventors" } },
-        { "id": "world_figures", "name": { "ar": "شخصيات عالمية", "fr": "Personnalités mondiales", "en": "World figures" } },
-        { "id": "guess_photo", "name": { "ar": "التعرف على الشخصية من الصورة", "fr": "Qui est-ce ? (photo)", "en": "Guess from photo" } }
+        {
+          "id": "moroccan",
+          "name": {
+            "ar": "شخصيات مغربية",
+            "fr": "Personnalités marocaines",
+            "en": "Moroccan figures"
+          }
+        },
+        {
+          "id": "arab",
+          "name": {
+            "ar": "شخصيات عربية",
+            "fr": "Personnalités arabes",
+            "en": "Arab figures"
+          }
+        },
+        {
+          "id": "world_figures",
+          "name": {
+            "ar": "شخصيات عالمية",
+            "fr": "Personnalités mondiales",
+            "en": "World figures"
+          }
+        },
+        {
+          "id": "historical",
+          "name": {
+            "ar": "شخصيات تاريخية",
+            "fr": "Personnages historiques",
+            "en": "Historical figures"
+          }
+        },
+        {
+          "id": "artists",
+          "name": {
+            "ar": "مشاهير وفنانون",
+            "fr": "Célébrités et artistes",
+            "en": "Celebrities & Artists"
+          }
+        },
+        {
+          "id": "scientists",
+          "name": {
+            "ar": "علماء ومخترعون",
+            "fr": "Scientifiques et inventeurs",
+            "en": "Scientists & Inventors"
+          }
+        },
+        {
+          "id": "sports_figures",
+          "name": {
+            "ar": "شخصيات رياضية",
+            "fr": "Sportifs",
+            "en": "Sports figures"
+          }
+        },
+        {
+          "id": "guess_photo",
+          "name": {
+            "ar": "خمّن من الصورة",
+            "fr": "Qui est-ce ? (photo)",
+            "en": "Guess from photo"
+          }
+        }
       ]
     },
     {
       "id": "arab_culture",
       "icon": "🧠",
-      "name": { "ar": "الثقافة العامة العربية", "fr": "Culture générale arabe", "en": "Arab general knowledge" },
+      "name": {
+        "ar": "الثقافة العامة العربية",
+        "fr": "Culture générale arabe",
+        "en": "Arab General Knowledge"
+      },
       "subcategories": [
-        { "id": "history", "name": { "ar": "التاريخ العربي والإسلامي", "fr": "Histoire arabe et islamique", "en": "Arab & Islamic history" } },
-        { "id": "cities", "name": { "ar": "الدول والمدن العربية", "fr": "Pays et villes arabes", "en": "Arab countries & cities" } },
-        { "id": "heritage", "name": { "ar": "التراث والعادات", "fr": "Patrimoine et traditions", "en": "Heritage & customs" } },
-        { "id": "literature", "name": { "ar": "الأدب والشعر", "fr": "Littérature et poésie", "en": "Literature & poetry" } },
-        { "id": "science", "name": { "ar": "معلومات علمية", "fr": "Sciences", "en": "Science" } },
-        { "id": "religion", "name": { "ar": "معلومات دينية عامة", "fr": "Culture religieuse générale", "en": "General religious knowledge" } },
-        { "id": "maghreb", "name": { "ar": "ثقافة المغرب والمغرب العربي", "fr": "Culture du Maroc et du Maghreb", "en": "Morocco & Maghreb culture" } }
+        {
+          "id": "history",
+          "name": {
+            "ar": "التاريخ العربي والإسلامي",
+            "fr": "Histoire arabe et islamique",
+            "en": "Arab & Islamic history"
+          }
+        },
+        {
+          "id": "literature",
+          "name": {
+            "ar": "الأدب والشعر",
+            "fr": "Littérature et poésie",
+            "en": "Literature & Poetry"
+          }
+        },
+        {
+          "id": "geography",
+          "name": {
+            "ar": "الجغرافيا العربية",
+            "fr": "Géographie arabe",
+            "en": "Arab geography"
+          }
+        },
+        {
+          "id": "cities",
+          "name": {
+            "ar": "الدول والمدن العربية",
+            "fr": "Pays et villes arabes",
+            "en": "Arab countries & cities"
+          }
+        },
+        {
+          "id": "heritage",
+          "name": {
+            "ar": "التراث والعادات",
+            "fr": "Patrimoine et traditions",
+            "en": "Heritage & Customs"
+          }
+        },
+        {
+          "id": "religion",
+          "name": {
+            "ar": "معلومات دينية عامة",
+            "fr": "Culture religieuse",
+            "en": "General religious knowledge"
+          }
+        },
+        {
+          "id": "science",
+          "name": {
+            "ar": "معلومات علمية",
+            "fr": "Sciences",
+            "en": "Science"
+          }
+        },
+        {
+          "id": "maghreb",
+          "name": {
+            "ar": "المغرب العربي",
+            "fr": "Maghreb",
+            "en": "Maghreb"
+          }
+        }
+      ]
+    },
+    {
+      "id": "moroccan_culture",
+      "icon": "🇲🇦",
+      "name": {
+        "ar": "الثقافة المغربية",
+        "fr": "Culture marocaine",
+        "en": "Moroccan Culture"
+      },
+      "subcategories": [
+        {
+          "id": "cities",
+          "name": {
+            "ar": "المدن المغربية",
+            "fr": "Villes marocaines",
+            "en": "Moroccan cities"
+          }
+        },
+        {
+          "id": "history",
+          "name": {
+            "ar": "التاريخ المغربي",
+            "fr": "Histoire du Maroc",
+            "en": "Moroccan history"
+          }
+        },
+        {
+          "id": "landmarks",
+          "name": {
+            "ar": "المعالم السياحية",
+            "fr": "Monuments",
+            "en": "Landmarks"
+          }
+        },
+        {
+          "id": "food",
+          "name": {
+            "ar": "الأكلات المغربية",
+            "fr": "Cuisine marocaine",
+            "en": "Moroccan food"
+          }
+        },
+        {
+          "id": "traditions",
+          "name": {
+            "ar": "العادات والتقاليد",
+            "fr": "Traditions",
+            "en": "Customs & Traditions"
+          }
+        },
+        {
+          "id": "figures",
+          "name": {
+            "ar": "شخصيات مغربية",
+            "fr": "Personnalités marocaines",
+            "en": "Moroccan figures"
+          }
+        },
+        {
+          "id": "football",
+          "name": {
+            "ar": "المنتخب والأندية المغربية",
+            "fr": "Sélection et clubs marocains",
+            "en": "National team & clubs"
+          }
+        }
       ]
     },
     {
       "id": "foreign_culture",
       "icon": "🌐",
-      "name": { "ar": "الثقافة العامة الأجنبية", "fr": "Culture générale internationale", "en": "World general knowledge" },
+      "name": {
+        "ar": "الثقافة العالمية",
+        "fr": "Culture générale mondiale",
+        "en": "World Culture"
+      },
       "subcategories": [
-        { "id": "science", "name": { "ar": "العلوم والاكتشافات", "fr": "Sciences et découvertes", "en": "Science & discoveries" } },
-        { "id": "history", "name": { "ar": "التاريخ العالمي", "fr": "Histoire mondiale", "en": "World history" } },
-        { "id": "inventions", "name": { "ar": "الاختراعات", "fr": "Inventions", "en": "Inventions" } },
-        { "id": "cinema_arts", "name": { "ar": "السينما والفنون", "fr": "Cinéma et arts", "en": "Cinema & arts" } },
-        { "id": "landmarks", "name": { "ar": "المعالم العالمية", "fr": "Monuments du monde", "en": "World landmarks" } },
-        { "id": "misc", "name": { "ar": "معلومات عامة متنوعة", "fr": "Divers", "en": "Miscellaneous" } }
+        {
+          "id": "science",
+          "name": {
+            "ar": "العلوم والاكتشافات",
+            "fr": "Sciences et découvertes",
+            "en": "Science & Discoveries"
+          }
+        },
+        {
+          "id": "inventions",
+          "name": {
+            "ar": "الاختراعات",
+            "fr": "Inventions",
+            "en": "Inventions"
+          }
+        },
+        {
+          "id": "history",
+          "name": {
+            "ar": "التاريخ العالمي",
+            "fr": "Histoire mondiale",
+            "en": "World history"
+          }
+        },
+        {
+          "id": "civilizations",
+          "name": {
+            "ar": "الحضارات",
+            "fr": "Civilisations",
+            "en": "Civilizations"
+          }
+        },
+        {
+          "id": "cinema_arts",
+          "name": {
+            "ar": "السينما والفنون",
+            "fr": "Cinéma et arts",
+            "en": "Cinema & Arts"
+          }
+        },
+        {
+          "id": "landmarks",
+          "name": {
+            "ar": "المعالم العالمية",
+            "fr": "Monuments du monde",
+            "en": "World landmarks"
+          }
+        },
+        {
+          "id": "misc",
+          "name": {
+            "ar": "معلومات عامة متنوعة",
+            "fr": "Divers",
+            "en": "Miscellaneous"
+          }
+        }
       ]
     }
   ]

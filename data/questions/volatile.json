@@ -1,5 +1,5 @@
 {
-  "description": "معلومات رياضية متغيرة — يجب إعادة التحقق منها دورياً (verifiedAt). Changing sports facts, re-verify regularly.",
+  "description": "معلومات رياضية متغيرة — منفصلة عن الأسئلة التاريخية، يجب إعادة التحقق منها دورياً (verifiedAt). Changing sports facts — kept separate, re-verify regularly.",
   "questions": [
     {
       "id": "spo-vol-afcon-most",

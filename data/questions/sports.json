@@ -208,7 +208,7 @@
     {
       "id": "spo-casa-derby",
       "category": "sports",
-      "subcategory": "clubs",
+      "subcategory": "moroccan_football",
       "region": "arab",
       "difficulty": "easy",
       "type": "open",
@@ -296,6 +296,60 @@
         "url": "https://en.wikipedia.org/wiki/Hicham_El_Guerrouj"
       },
       "factKey": "spo-elguerrouj-2004",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-football-11",
+      "category": "sports",
+      "subcategory": "world_football",
+      "region": "foreign",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد لاعبي الفريق الواحد داخل ملعب كرة القدم؟",
+        "fr": "Combien de joueurs par équipe sont sur un terrain de football ?",
+        "en": "How many players per team are on a football pitch?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "10",
+          "fr": "10",
+          "en": "10"
+        },
+        {
+          "ar": "11",
+          "fr": "11",
+          "en": "11"
+        },
+        {
+          "ar": "9",
+          "fr": "9",
+          "en": "9"
+        },
+        {
+          "ar": "12",
+          "fr": "12",
+          "en": "12"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Association football",
+        "url": "https://en.wikipedia.org/wiki/Association_football"
+      },
+      "factKey": "spo-football-11",
       "volatile": false,
       "verifiedAt": "",
       "tags": [],
@@ -457,7 +511,7 @@
     {
       "id": "spo-ksa-arg",
       "category": "sports",
-      "subcategory": "world_cup",
+      "subcategory": "arab_football",
       "region": "arab",
       "difficulty": "medium",
       "type": "mcq",
@@ -511,7 +565,7 @@
     {
       "id": "spo-ma-coach-2022",
       "category": "sports",
-      "subcategory": "world_cup",
+      "subcategory": "moroccan_football",
       "region": "arab",
       "difficulty": "medium",
       "type": "open",
@@ -553,7 +607,7 @@
     {
       "id": "spo-ma-por-goal",
       "category": "sports",
-      "subcategory": "world_cup",
+      "subcategory": "moroccan_football",
       "region": "arab",
       "difficulty": "medium",
       "type": "mcq",
@@ -607,7 +661,7 @@
     {
       "id": "spo-ma-wc22-sf",
       "category": "sports",
-      "subcategory": "world_cup",
+      "subcategory": "moroccan_football",
       "region": "arab",
       "difficulty": "easy",
       "type": "mcq",
@@ -661,7 +715,7 @@
     {
       "id": "spo-madjer-1987",
       "category": "sports",
-      "subcategory": "history",
+      "subcategory": "arab_football",
       "region": "arab",
       "difficulty": "hard",
       "type": "mcq",
@@ -1039,7 +1093,7 @@
     {
       "id": "spo-timoumi-1985",
       "category": "sports",
-      "subcategory": "players",
+      "subcategory": "moroccan_football",
       "region": "arab",
       "difficulty": "hard",
       "type": "mcq",
@@ -1093,7 +1147,7 @@
     {
       "id": "spo-tn-1978",
       "category": "sports",
-      "subcategory": "world_cup",
+      "subcategory": "arab_football",
       "region": "arab",
       "difficulty": "hard",
       "type": "mcq",

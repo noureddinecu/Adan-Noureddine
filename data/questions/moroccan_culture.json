@@ -1,0 +1,1689 @@
+{
+  "questions": [
+    {
+      "id": "ara-alaouite",
+      "category": "moroccan_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما اسم الأسرة الحاكمة الحالية في المغرب؟",
+        "fr": "Quel est le nom de la dynastie régnante actuelle au Maroc ?",
+        "en": "What is the name of the current ruling dynasty of Morocco?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "السعديون",
+          "fr": "Les Saadiens",
+          "en": "The Saadians"
+        },
+        {
+          "ar": "المرينيون",
+          "fr": "Les Mérinides",
+          "en": "The Marinids"
+        },
+        {
+          "ar": "الموحدون",
+          "fr": "Les Almohades",
+          "en": "The Almohads"
+        },
+        {
+          "ar": "العلويون",
+          "fr": "Les Alaouites",
+          "en": "The Alaouites"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Alaouite dynasty",
+        "url": "https://en.wikipedia.org/wiki/Alaouite_dynasty"
+      },
+      "factKey": "ara-alaouite",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-choukri",
+      "category": "moroccan_culture",
+      "subcategory": "figures",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الكاتب المغربي صاحب السيرة الذاتية \"الخبز الحافي\"؟",
+        "fr": "Quel écrivain marocain est l’auteur du récit autobiographique « Le Pain nu » ?",
+        "en": "Which Moroccan writer wrote the autobiography \"For Bread Alone\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الطاهر بن جلون",
+          "fr": "Tahar Ben Jelloun",
+          "en": "Tahar Ben Jelloun"
+        },
+        {
+          "ar": "عبد الكريم غلاب",
+          "fr": "Abdelkrim Ghallab",
+          "en": "Abdelkrim Ghallab"
+        },
+        {
+          "ar": "محمد شكري",
+          "fr": "Mohamed Choukri",
+          "en": "Mohamed Choukri"
+        },
+        {
+          "ar": "محمد برادة",
+          "fr": "Mohamed Berrada",
+          "en": "Mohamed Berrada"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Mohamed Choukri",
+        "url": "https://en.wikipedia.org/wiki/Mohamed_Choukri"
+      },
+      "factKey": "ara-choukri",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-fes-scientific",
+      "category": "moroccan_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي المدينة الملقبة بـ\"العاصمة العلمية\" للمغرب؟",
+        "fr": "Quelle ville est surnommée la « capitale spirituelle et scientifique » du Maroc ?",
+        "en": "Which city is known as the \"scientific capital\" of Morocco?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        },
+        {
+          "ar": "مكناس",
+          "fr": "Meknès",
+          "en": "Meknes"
+        },
+        {
+          "ar": "تطوان",
+          "fr": "Tétouan",
+          "en": "Tetouan"
+        },
+        {
+          "ar": "فاس",
+          "fr": "Fès",
+          "en": "Fez"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Fez, Morocco",
+        "url": "https://en.wikipedia.org/wiki/Fez,_Morocco"
+      },
+      "factKey": "ara-fes-scientific",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-gnawa",
+      "category": "moroccan_culture",
+      "subcategory": "traditions",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هو الفن الموسيقي الروحي الذي يحتفي به مهرجان سنوي شهير في مدينة الصويرة؟",
+        "fr": "Quel art musical spirituel est célébré par un festival annuel à Essaouira ?",
+        "en": "Which spiritual music tradition is celebrated by a famous annual festival in Essaouira?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الملحون",
+          "fr": "Melhoun",
+          "en": "Malhun"
+        },
+        {
+          "ar": "العيطة",
+          "fr": "Aïta",
+          "en": "Aita"
+        },
+        {
+          "ar": "أحيدوس",
+          "fr": "Ahidous",
+          "en": "Ahidus"
+        },
+        {
+          "ar": "كناوة",
+          "fr": "Gnaoua",
+          "en": "Gnawa"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Gnaoua World Music Festival",
+        "url": "https://en.wikipedia.org/wiki/Gnaoua_World_Music_Festival"
+      },
+      "factKey": "ara-gnawa",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-green-march",
+      "category": "moroccan_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة انطلقت المسيرة الخضراء؟",
+        "fr": "En quelle année a eu lieu la Marche verte ?",
+        "en": "In which year did the Green March take place?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "1975",
+          "fr": "1975",
+          "en": "1975"
+        },
+        {
+          "ar": "1973",
+          "fr": "1973",
+          "en": "1973"
+        },
+        {
+          "ar": "1979",
+          "fr": "1979",
+          "en": "1979"
+        },
+        {
+          "ar": "1969",
+          "fr": "1969",
+          "en": "1969"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Green March",
+        "url": "https://en.wikipedia.org/wiki/Green_March"
+      },
+      "factKey": "ara-green-march",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-hassan-tower",
+      "category": "moroccan_culture",
+      "subcategory": "landmarks",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي مدينة توجد صومعة حسان؟",
+        "fr": "Dans quelle ville se trouve la tour Hassan ?",
+        "en": "In which city is the Hassan Tower?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "مراكش",
+          "fr": "Marrakech",
+          "en": "Marrakesh"
+        },
+        {
+          "ar": "سلا",
+          "fr": "Salé",
+          "en": "Salé"
+        },
+        {
+          "ar": "مكناس",
+          "fr": "Meknès",
+          "en": "Meknes"
+        },
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Hassan Tower",
+        "url": "https://en.wikipedia.org/wiki/Hassan_Tower"
+      },
+      "factKey": "ara-hassan-tower",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-hassan2-mosque",
+      "category": "moroccan_culture",
+      "subcategory": "landmarks",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي مدينة يوجد مسجد الحسن الثاني؟",
+        "fr": "Dans quelle ville se trouve la mosquée Hassan II ?",
+        "en": "In which city is the Hassan II Mosque?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        },
+        {
+          "ar": "طنجة",
+          "fr": "Tanger",
+          "en": "Tangier"
+        },
+        {
+          "ar": "الدار البيضاء",
+          "fr": "Casablanca",
+          "en": "Casablanca"
+        },
+        {
+          "ar": "أكادير",
+          "fr": "Agadir",
+          "en": "Agadir"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Hassan II Mosque",
+        "url": "https://en.wikipedia.org/wiki/Hassan_II_Mosque"
+      },
+      "factKey": "ara-hassan2-mosque",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-koutoubia",
+      "category": "moroccan_culture",
+      "subcategory": "landmarks",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي مدينة يوجد جامع الكتبية؟",
+        "fr": "Dans quelle ville se trouve la mosquée Koutoubia ?",
+        "en": "In which city is the Koutoubia Mosque?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "مراكش",
+          "fr": "Marrakech",
+          "en": "Marrakesh"
+        },
+        {
+          "ar": "فاس",
+          "fr": "Fès",
+          "en": "Fez"
+        },
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        },
+        {
+          "ar": "تارودانت",
+          "fr": "Taroudant",
+          "en": "Taroudant"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Koutoubia Mosque",
+        "url": "https://en.wikipedia.org/wiki/Koutoubia_Mosque"
+      },
+      "factKey": "ara-koutoubia",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-ma-currency",
+      "category": "moroccan_culture",
+      "subcategory": "traditions",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي العملة الرسمية للمغرب؟",
+        "fr": "Quelle est la monnaie officielle du Maroc ?",
+        "en": "What is the official currency of Morocco?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الدينار",
+          "fr": "Dinar",
+          "en": "Dinar"
+        },
+        {
+          "ar": "الدرهم",
+          "fr": "Dirham",
+          "en": "Dirham"
+        },
+        {
+          "ar": "الريال",
+          "fr": "Riyal",
+          "en": "Riyal"
+        },
+        {
+          "ar": "الليرة",
+          "fr": "Livre",
+          "en": "Lira"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Moroccan dirham",
+        "url": "https://en.wikipedia.org/wiki/Moroccan_dirham"
+      },
+      "factKey": "ara-ma-currency",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-ma-independence",
+      "category": "moroccan_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة حصل المغرب على استقلاله؟",
+        "fr": "En quelle année le Maroc a-t-il obtenu son indépendance ?",
+        "en": "In which year did Morocco gain independence?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "1956",
+          "fr": "1956",
+          "en": "1956"
+        },
+        {
+          "ar": "1962",
+          "fr": "1962",
+          "en": "1962"
+        },
+        {
+          "ar": "1952",
+          "fr": "1952",
+          "en": "1952"
+        },
+        {
+          "ar": "1960",
+          "fr": "1960",
+          "en": "1960"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Morocco",
+        "url": "https://en.wikipedia.org/wiki/Morocco"
+      },
+      "factKey": "ara-ma-independence",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-marrakech-red",
+      "category": "moroccan_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هي المدينة المغربية الملقبة بـ\"المدينة الحمراء\"؟",
+        "fr": "Quelle ville marocaine est surnommée « la ville rouge » ?",
+        "en": "Which Moroccan city is nicknamed \"the Red City\"?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "مراكش"
+        ],
+        "fr": [
+          "Marrakech"
+        ],
+        "en": [
+          "Marrakesh",
+          "Marrakech"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Marrakesh",
+        "url": "https://en.wikipedia.org/wiki/Marrakesh"
+      },
+      "factKey": "ara-marrakech-red",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-mint-tea",
+      "category": "moroccan_culture",
+      "subcategory": "food",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هو المشروب التقليدي المغربي الذي يُحضَّر بالنعناع ويُقدَّم للضيوف؟",
+        "fr": "Quelle boisson traditionnelle marocaine préparée à la menthe est servie aux invités ?",
+        "en": "Which traditional Moroccan drink made with mint is served to guests?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "الشاي",
+          "أتاي",
+          "الشاي بالنعناع",
+          "اتاي"
+        ],
+        "fr": [
+          "Thé à la menthe",
+          "Thé",
+          "Atay"
+        ],
+        "en": [
+          "Mint tea",
+          "Tea",
+          "Atay"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Maghrebi mint tea",
+        "url": "https://en.wikipedia.org/wiki/Maghrebi_mint_tea"
+      },
+      "factKey": "ara-mint-tea",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-oued-makhazin",
+      "category": "moroccan_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة وقعت معركة وادي المخازن (معركة الملوك الثلاثة)؟",
+        "fr": "En quelle année a eu lieu la bataille d’Oued el-Makhazin (des Trois Rois) ?",
+        "en": "In which year was the Battle of Alcácer Quibir (Three Kings) fought?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "1492",
+          "fr": "1492",
+          "en": "1492"
+        },
+        {
+          "ar": "1609",
+          "fr": "1609",
+          "en": "1609"
+        },
+        {
+          "ar": "1578",
+          "fr": "1578",
+          "en": "1578"
+        },
+        {
+          "ar": "1666",
+          "fr": "1666",
+          "en": "1666"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Battle of Alcácer Quibir",
+        "url": "https://en.wikipedia.org/wiki/Battle_of_Alc%C3%A1cer_Quibir"
+      },
+      "factKey": "ara-oued-makhazin",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-tajine",
+      "category": "moroccan_culture",
+      "subcategory": "food",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما اسم الطبق المغربي الذي يُطهى في إناء فخاري بغطاء مخروطي ويحمل اسم الإناء نفسه؟",
+        "fr": "Quel plat marocain cuit dans un récipient en terre au couvercle conique porte le nom de ce récipient ?",
+        "en": "Which Moroccan dish, cooked in a clay pot with a conical lid, shares its name with the pot?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "الطاجين",
+          "طاجين",
+          "طجين"
+        ],
+        "fr": [
+          "Tajine",
+          "Tagine"
+        ],
+        "en": [
+          "Tagine",
+          "Tajine"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Tajine",
+        "url": "https://en.wikipedia.org/wiki/Tajine"
+      },
+      "factKey": "ara-tajine",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-tifinagh",
+      "category": "moroccan_culture",
+      "subcategory": "traditions",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "ما اسم الحروف التي تُكتب بها اللغة الأمازيغية رسمياً في المغرب؟",
+        "fr": "Comment s’appelle l’alphabet officiel de la langue amazighe au Maroc ?",
+        "en": "What is the name of the script used officially for Amazigh in Morocco?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "تيفيناغ",
+          "تفيناغ"
+        ],
+        "fr": [
+          "Tifinagh"
+        ],
+        "en": [
+          "Tifinagh"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Tifinagh",
+        "url": "https://en.wikipedia.org/wiki/Tifinagh"
+      },
+      "factKey": "ara-tifinagh",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-yennayer",
+      "category": "moroccan_culture",
+      "subcategory": "traditions",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "ما اسم رأس السنة الأمازيغية؟",
+        "fr": "Comment s’appelle le Nouvel An amazigh ?",
+        "en": "What is the Amazigh New Year called?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "يناير",
+          "إيض يناير",
+          "ايض ن يناير"
+        ],
+        "fr": [
+          "Yennayer",
+          "Id Yennayer"
+        ],
+        "en": [
+          "Yennayer",
+          "Id Yennayer"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Yennayer",
+        "url": "https://en.wikipedia.org/wiki/Yennayer"
+      },
+      "factKey": "ara-yennayer",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-afcon-1976",
+      "category": "moroccan_culture",
+      "subcategory": "football",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة فاز المنتخب المغربي بكأس أمم أفريقيا لأول مرة؟",
+        "fr": "En quelle année le Maroc a-t-il remporté sa première Coupe d'Afrique des nations ?",
+        "en": "In which year did Morocco win its first Africa Cup of Nations?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "1986",
+          "fr": "1986",
+          "en": "1986"
+        },
+        {
+          "ar": "2004",
+          "fr": "2004",
+          "en": "2004"
+        },
+        {
+          "ar": "1976",
+          "fr": "1976",
+          "en": "1976"
+        },
+        {
+          "ar": "1998",
+          "fr": "1998",
+          "en": "1998"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — 1976 African Cup of Nations",
+        "url": "https://en.wikipedia.org/wiki/1976_African_Cup_of_Nations"
+      },
+      "factKey": "mar-afcon-1976",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-atlas-lions",
+      "category": "moroccan_culture",
+      "subcategory": "football",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هو لقب المنتخب المغربي لكرة القدم؟",
+        "fr": "Quel est le surnom de l’équipe du Maroc de football ?",
+        "en": "What is the nickname of Morocco's national football team?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "أسود الأطلس",
+          "الأسود"
+        ],
+        "fr": [
+          "Lions de l’Atlas",
+          "Lions de l'Atlas"
+        ],
+        "en": [
+          "Atlas Lions"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Morocco national football team",
+        "url": "https://en.wikipedia.org/wiki/Morocco_national_football_team"
+      },
+      "factKey": "mar-atlas-lions",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-benjelloun",
+      "category": "moroccan_culture",
+      "subcategory": "figures",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الكاتب المغربي الحائز على جائزة غونكور الفرنسية سنة 1987 عن رواية \"ليلة القدر\"؟",
+        "fr": "Quel écrivain marocain a reçu le prix Goncourt 1987 pour « La Nuit sacrée » ?",
+        "en": "Which Moroccan writer won the 1987 Prix Goncourt for \"The Sacred Night\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "إدريس الشرايبي",
+          "fr": "Driss Chraïbi",
+          "en": "Driss Chraïbi"
+        },
+        {
+          "ar": "الطاهر بن جلون",
+          "fr": "Tahar Ben Jelloun",
+          "en": "Tahar Ben Jelloun"
+        },
+        {
+          "ar": "عبد اللطيف اللعبي",
+          "fr": "Abdellatif Laâbi",
+          "en": "Abdellatif Laabi"
+        },
+        {
+          "ar": "محمد خير الدين",
+          "fr": "Mohammed Khaïr-Eddine",
+          "en": "Mohammed Khair-Eddine"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Tahar Ben Jelloun",
+        "url": "https://en.wikipedia.org/wiki/Tahar_Ben_Jelloun"
+      },
+      "factKey": "mar-benjelloun",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-casa-largest",
+      "category": "moroccan_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي أكبر مدينة مغربية من حيث عدد السكان؟",
+        "fr": "Quelle est la plus grande ville du Maroc par sa population ?",
+        "en": "What is the largest city in Morocco by population?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        },
+        {
+          "ar": "فاس",
+          "fr": "Fès",
+          "en": "Fez"
+        },
+        {
+          "ar": "الدار البيضاء",
+          "fr": "Casablanca",
+          "en": "Casablanca"
+        },
+        {
+          "ar": "طنجة",
+          "fr": "Tanger",
+          "en": "Tangier"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Casablanca",
+        "url": "https://en.wikipedia.org/wiki/Casablanca"
+      },
+      "factKey": "mar-casa-largest",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-couscous",
+      "category": "moroccan_culture",
+      "subcategory": "food",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هو الطبق المغربي الذي يُحضَّر تقليدياً يوم الجمعة؟",
+        "fr": "Quel plat marocain est traditionnellement préparé le vendredi ?",
+        "en": "Which Moroccan dish is traditionally prepared on Fridays?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "الكسكس",
+          "كسكس",
+          "الكسكسو",
+          "سكسو"
+        ],
+        "fr": [
+          "Couscous"
+        ],
+        "en": [
+          "Couscous"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Couscous",
+        "url": "https://en.wikipedia.org/wiki/Couscous"
+      },
+      "factKey": "mar-couscous",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-djellaba",
+      "category": "moroccan_culture",
+      "subcategory": "traditions",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما اسم اللباس التقليدي المغربي الطويل ذي القُبّ (غطاء الرأس) الذي يرتديه الرجال والنساء؟",
+        "fr": "Comment s’appelle la longue tenue traditionnelle marocaine à capuche portée par hommes et femmes ?",
+        "en": "What is the long hooded traditional Moroccan robe worn by men and women called?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الجلابة",
+          "fr": "Djellaba",
+          "en": "Djellaba"
+        },
+        {
+          "ar": "القفطان",
+          "fr": "Caftan",
+          "en": "Kaftan"
+        },
+        {
+          "ar": "التكشيطة",
+          "fr": "Takchita",
+          "en": "Takchita"
+        },
+        {
+          "ar": "الحايك",
+          "fr": "Haïk",
+          "en": "Haik"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Djellaba",
+        "url": "https://en.wikipedia.org/wiki/Djellaba"
+      },
+      "factKey": "mar-djellaba",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-harira",
+      "category": "moroccan_culture",
+      "subcategory": "food",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هو الحساء المغربي الشهير الذي يُقدَّم عادة على مائدة الإفطار في رمضان؟",
+        "fr": "Quelle soupe marocaine est servie traditionnellement à la rupture du jeûne pendant le Ramadan ?",
+        "en": "Which famous Moroccan soup is traditionally served to break the fast in Ramadan?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "الحريرة",
+          "حريرة"
+        ],
+        "fr": [
+          "Harira"
+        ],
+        "en": [
+          "Harira"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Harira",
+        "url": "https://en.wikipedia.org/wiki/Harira"
+      },
+      "factKey": "mar-harira",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-idrisid",
+      "category": "moroccan_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما اسم الدولة التي أسسها إدريس الأول في المغرب سنة 788م؟",
+        "fr": "Quelle dynastie Idris Ier a-t-il fondée au Maroc en 788 ?",
+        "en": "Which dynasty did Idris I found in Morocco in 788?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "المرابطون",
+          "fr": "Les Almoravides",
+          "en": "The Almoravids"
+        },
+        {
+          "ar": "الأدارسة",
+          "fr": "Les Idrissides",
+          "en": "The Idrisids"
+        },
+        {
+          "ar": "الموحدون",
+          "fr": "Les Almohades",
+          "en": "The Almohads"
+        },
+        {
+          "ar": "السعديون",
+          "fr": "Les Saadiens",
+          "en": "The Saadians"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Idrisid dynasty",
+        "url": "https://en.wikipedia.org/wiki/Idrisid_dynasty"
+      },
+      "factKey": "mar-idrisid",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-jemaa-fna",
+      "category": "moroccan_culture",
+      "subcategory": "landmarks",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي مدينة توجد ساحة جامع الفنا؟",
+        "fr": "Dans quelle ville se trouve la place Jemaa el-Fna ?",
+        "en": "In which city is Jemaa el-Fnaa square?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "فاس",
+          "fr": "Fès",
+          "en": "Fez"
+        },
+        {
+          "ar": "الصويرة",
+          "fr": "Essaouira",
+          "en": "Essaouira"
+        },
+        {
+          "ar": "أكادير",
+          "fr": "Agadir",
+          "en": "Agadir"
+        },
+        {
+          "ar": "مراكش",
+          "fr": "Marrakech",
+          "en": "Marrakesh"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Jemaa el-Fnaa",
+        "url": "https://en.wikipedia.org/wiki/Jemaa_el-Fnaa"
+      },
+      "factKey": "mar-jemaa-fna",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-khattabi",
+      "category": "moroccan_culture",
+      "subcategory": "figures",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو قائد المقاومة الريفية المنتصر في معركة أنوال سنة 1921؟",
+        "fr": "Qui a mené la résistance rifaine victorieuse à la bataille d’Anoual en 1921 ?",
+        "en": "Who led the Rif resistance to victory at the Battle of Annual in 1921?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "علال الفاسي",
+          "fr": "Allal El Fassi",
+          "en": "Allal al-Fassi"
+        },
+        {
+          "ar": "موحى أوحمو الزياني",
+          "fr": "Mouha ou Hammou Zayani",
+          "en": "Mouha ou Hammou Zayani"
+        },
+        {
+          "ar": "الشريف محمد أمزيان",
+          "fr": "Mohamed Amezian",
+          "en": "Mohammed Ameziane"
+        },
+        {
+          "ar": "محمد بن عبد الكريم الخطابي",
+          "fr": "Abdelkrim el-Khattabi",
+          "en": "Abd el-Krim"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Battle of Annual",
+        "url": "https://en.wikipedia.org/wiki/Battle_of_Annual"
+      },
+      "factKey": "mar-khattabi",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-mogador",
+      "category": "moroccan_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "بأي اسم كانت تُعرف مدينة الصويرة قديماً؟",
+        "fr": "Sous quel nom Essaouira était-elle connue autrefois ?",
+        "en": "By what name was Essaouira formerly known?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "موغادور",
+          "fr": "Mogador",
+          "en": "Mogador"
+        },
+        {
+          "ar": "طنجيس",
+          "fr": "Tingis",
+          "en": "Tingis"
+        },
+        {
+          "ar": "وليلي",
+          "fr": "Volubilis",
+          "en": "Volubilis"
+        },
+        {
+          "ar": "ليكسوس",
+          "fr": "Lixus",
+          "en": "Lixus"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Essaouira",
+        "url": "https://en.wikipedia.org/wiki/Essaouira"
+      },
+      "factKey": "mar-mogador",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-moulay-ismail",
+      "category": "moroccan_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو السلطان العلوي الذي اتخذ مكناس عاصمة له في القرن السابع عشر؟",
+        "fr": "Quel sultan alaouite a fait de Meknès sa capitale au XVIIe siècle ?",
+        "en": "Which Alaouite sultan made Meknes his capital in the 17th century?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "المولى رشيد",
+          "fr": "Moulay Rachid",
+          "en": "Moulay Rashid"
+        },
+        {
+          "ar": "محمد الثالث",
+          "fr": "Mohammed III",
+          "en": "Mohammed III"
+        },
+        {
+          "ar": "المولى إسماعيل",
+          "fr": "Moulay Ismaïl",
+          "en": "Moulay Ismail"
+        },
+        {
+          "ar": "أحمد المنصور",
+          "fr": "Ahmad al-Mansur",
+          "en": "Ahmad al-Mansur"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Ismail Ibn Sharif",
+        "url": "https://en.wikipedia.org/wiki/Ismail_Ibn_Sharif"
+      },
+      "factKey": "mar-moulay-ismail",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-pastilla",
+      "category": "moroccan_culture",
+      "subcategory": "food",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما اسم الفطيرة المغربية من رقائق العجين التي تُحشى تقليدياً بالحمام أو الدجاج واللوز؟",
+        "fr": "Quelle tourte marocaine en feuilles de pâte est farcie au pigeon ou au poulet et aux amandes ?",
+        "en": "Which Moroccan pie of thin pastry is filled with pigeon or chicken and almonds?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الرفيسة",
+          "fr": "Rfissa",
+          "en": "Rfissa"
+        },
+        {
+          "ar": "البسطيلة",
+          "fr": "Pastilla",
+          "en": "Pastilla"
+        },
+        {
+          "ar": "المسمن",
+          "fr": "Msemen",
+          "en": "Msemen"
+        },
+        {
+          "ar": "البغرير",
+          "fr": "Baghrir",
+          "en": "Baghrir"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Pastilla",
+        "url": "https://en.wikipedia.org/wiki/Pastilla"
+      },
+      "factKey": "mar-pastilla",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-rfissa",
+      "category": "moroccan_culture",
+      "subcategory": "food",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "ما اسم الطبق المغربي المحضَّر من المسمن أو الرغايف المفتتة مع الدجاج والعدس والحلبة؟",
+        "fr": "Quel plat marocain associe msemen émietté, poulet, lentilles et fenugrec ?",
+        "en": "Which Moroccan dish combines shredded msemen, chicken, lentils and fenugreek?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الطنجية",
+          "fr": "Tanjia",
+          "en": "Tanjia"
+        },
+        {
+          "ar": "البسطيلة",
+          "fr": "Pastilla",
+          "en": "Pastilla"
+        },
+        {
+          "ar": "المروزية",
+          "fr": "Mrouzia",
+          "en": "Mrouzia"
+        },
+        {
+          "ar": "الرفيسة",
+          "fr": "Rfissa",
+          "en": "Rfissa"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Rfissa",
+        "url": "https://en.wikipedia.org/wiki/Rfissa"
+      },
+      "factKey": "mar-rfissa",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-tetouan",
+      "category": "moroccan_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي المدينة المغربية الملقبة بـ\"الحمامة البيضاء\"؟",
+        "fr": "Quelle ville marocaine est surnommée « la colombe blanche » ?",
+        "en": "Which Moroccan city is nicknamed \"the White Dove\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "أصيلة",
+          "fr": "Asilah",
+          "en": "Asilah"
+        },
+        {
+          "ar": "الجديدة",
+          "fr": "El Jadida",
+          "en": "El Jadida"
+        },
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        },
+        {
+          "ar": "تطوان",
+          "fr": "Tétouan",
+          "en": "Tetouan"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Tétouan",
+        "url": "https://en.wikipedia.org/wiki/T%C3%A9touan"
+      },
+      "factKey": "mar-tetouan",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-volubilis",
+      "category": "moroccan_culture",
+      "subcategory": "landmarks",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "قرب أي مدينة يقع الموقع الأثري الروماني \"وليلي\"؟",
+        "fr": "Près de quelle ville se trouve le site romain de Volubilis ?",
+        "en": "Near which city is the Roman site of Volubilis?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "طنجة",
+          "fr": "Tanger",
+          "en": "Tangier"
+        },
+        {
+          "ar": "العرائش",
+          "fr": "Larache",
+          "en": "Larache"
+        },
+        {
+          "ar": "مكناس",
+          "fr": "Meknès",
+          "en": "Meknes"
+        },
+        {
+          "ar": "وجدة",
+          "fr": "Oujda",
+          "en": "Oujda"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Volubilis",
+        "url": "https://en.wikipedia.org/wiki/Volubilis"
+      },
+      "factKey": "mar-volubilis",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "mar-wydad-1937",
+      "category": "moroccan_culture",
+      "subcategory": "football",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "أي نادٍ مغربي من الدار البيضاء تأسس سنة 1937؟",
+        "fr": "Quel club de Casablanca a été fondé en 1937 ?",
+        "en": "Which Casablanca club was founded in 1937?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الرجاء الرياضي",
+          "fr": "Raja CA",
+          "en": "Raja CA"
+        },
+        {
+          "ar": "الجيش الملكي",
+          "fr": "AS FAR",
+          "en": "AS FAR"
+        },
+        {
+          "ar": "الكوكب المراكشي",
+          "fr": "Kawkab Marrakech",
+          "en": "Kawkab Marrakech"
+        },
+        {
+          "ar": "الوداد الرياضي",
+          "fr": "Wydad AC",
+          "en": "Wydad AC"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Wydad AC",
+        "url": "https://en.wikipedia.org/wiki/Wydad_AC"
+      },
+      "factKey": "mar-wydad-1937",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    }
+  ]
+}

@@ -60,7 +60,7 @@
       "subcategory": "capitals",
       "region": "arab",
       "difficulty": "medium",
-      "type": "open",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة دولة الإمارات العربية المتحدة؟",
         "fr": "Quelle est la capitale des Émirats arabes unis ?",
@@ -101,7 +101,7 @@
       "subcategory": "capitals",
       "region": "world",
       "difficulty": "medium",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة أستراليا؟",
         "fr": "Quelle est la capitale de l'Australie ?",
@@ -155,7 +155,7 @@
       "subcategory": "capitals",
       "region": "world",
       "difficulty": "medium",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة البرازيل؟",
         "fr": "Quelle est la capitale du Brésil ?",
@@ -209,7 +209,7 @@
       "subcategory": "capitals",
       "region": "world",
       "difficulty": "medium",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة كندا؟",
         "fr": "Quelle est la capitale du Canada ?",
@@ -263,7 +263,7 @@
       "subcategory": "capitals",
       "region": "arab",
       "difficulty": "hard",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة جيبوتي؟",
         "fr": "Quelle est la capitale de Djibouti ?",
@@ -317,7 +317,7 @@
       "subcategory": "capitals",
       "region": "arab",
       "difficulty": "easy",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة الجزائر؟",
         "fr": "Quelle est la capitale de l'Algérie ?",
@@ -371,7 +371,7 @@
       "subcategory": "capitals",
       "region": "arab",
       "difficulty": "easy",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة مصر؟",
         "fr": "Quelle est la capitale de l'Égypte ?",
@@ -425,7 +425,7 @@
       "subcategory": "capitals",
       "region": "world",
       "difficulty": "easy",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة فرنسا؟",
         "fr": "Quelle est la capitale de la France ?",
@@ -479,7 +479,7 @@
       "subcategory": "capitals",
       "region": "arab",
       "difficulty": "easy",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة الأردن؟",
         "fr": "Quelle est la capitale de la Jordanie ?",
@@ -533,7 +533,7 @@
       "subcategory": "capitals",
       "region": "world",
       "difficulty": "easy",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة اليابان؟",
         "fr": "Quelle est la capitale du Japon ?",
@@ -587,7 +587,7 @@
       "subcategory": "capitals",
       "region": "arab",
       "difficulty": "hard",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة جزر القمر؟",
         "fr": "Quelle est la capitale des Comores ?",
@@ -641,7 +641,7 @@
       "subcategory": "capitals",
       "region": "arab",
       "difficulty": "easy",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة المغرب؟",
         "fr": "Quelle est la capitale du Maroc ?",
@@ -695,7 +695,7 @@
       "subcategory": "capitals",
       "region": "arab",
       "difficulty": "medium",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة موريتانيا؟",
         "fr": "Quelle est la capitale de la Mauritanie ?",
@@ -749,7 +749,7 @@
       "subcategory": "capitals",
       "region": "arab",
       "difficulty": "medium",
-      "type": "mcq",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة سلطنة عُمان؟",
         "fr": "Quelle est la capitale du sultanat d'Oman ?",
@@ -803,7 +803,7 @@
       "subcategory": "capitals",
       "region": "arab",
       "difficulty": "easy",
-      "type": "open",
+      "type": "capital",
       "text": {
         "ar": "ما هي عاصمة تونس؟",
         "fr": "Quelle est la capitale de la Tunisie ?",
@@ -840,7 +840,7 @@
     {
       "id": "geo-chefchaouen",
       "category": "geography",
-      "subcategory": "facts",
+      "subcategory": "cities_landmarks",
       "region": "arab",
       "difficulty": "easy",
       "type": "mcq",
@@ -883,6 +883,281 @@
         "url": "https://en.wikipedia.org/wiki/Chefchaouen"
       },
       "factKey": "geo-chefchaouen",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-country-bh",
+      "category": "geography",
+      "subcategory": "countries",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "country",
+      "text": {
+        "ar": "خمّن الدولة: دولة عربية تتكون من أرخبيل جزر في الخليج، وعاصمتها المنامة",
+        "fr": "Devine le pays : un archipel arabe du Golfe dont la capitale est Manama",
+        "en": "Guess the country: an Arab archipelago in the Gulf whose capital is Manama"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "البحرين"
+        ],
+        "fr": [
+          "Bahreïn",
+          "Bahrein"
+        ],
+        "en": [
+          "Bahrain"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Bahrain",
+        "url": "https://en.wikipedia.org/wiki/Bahrain"
+      },
+      "factKey": "geo-country-bh",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-country-br",
+      "category": "geography",
+      "subcategory": "countries",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "country",
+      "text": {
+        "ar": "خمّن الدولة: أكبر دولة في أمريكا الجنوبية مساحةً، ولغتها الرسمية البرتغالية",
+        "fr": "Devine le pays : le plus grand pays d’Amérique du Sud, langue officielle le portugais",
+        "en": "Guess the country: the largest country in South America, official language Portuguese"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "البرازيل"
+        ],
+        "fr": [
+          "Brésil"
+        ],
+        "en": [
+          "Brazil"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Brazil",
+        "url": "https://en.wikipedia.org/wiki/Brazil"
+      },
+      "factKey": "geo-country-br",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-country-it",
+      "category": "geography",
+      "subcategory": "countries",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "country",
+      "text": {
+        "ar": "خمّن الدولة: دولة أوروبية على شكل حذاء طويل، وعاصمتها روما",
+        "fr": "Devine le pays : un pays européen en forme de botte, capitale Rome",
+        "en": "Guess the country: a boot-shaped European country whose capital is Rome"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "إيطاليا",
+          "ايطاليا"
+        ],
+        "fr": [
+          "Italie"
+        ],
+        "en": [
+          "Italy"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Italy",
+        "url": "https://en.wikipedia.org/wiki/Italy"
+      },
+      "factKey": "geo-country-it",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-country-jp",
+      "category": "geography",
+      "subcategory": "countries",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "country",
+      "text": {
+        "ar": "خمّن الدولة: تُلقب بـ\"بلاد الشمس المشرقة\"",
+        "fr": "Devine le pays : surnommé « le pays du Soleil levant »",
+        "en": "Guess the country: known as \"the Land of the Rising Sun\""
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "اليابان"
+        ],
+        "fr": [
+          "Japon"
+        ],
+        "en": [
+          "Japan"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Japan",
+        "url": "https://en.wikipedia.org/wiki/Japan"
+      },
+      "factKey": "geo-country-jp",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-country-lb",
+      "category": "geography",
+      "subcategory": "countries",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "country",
+      "text": {
+        "ar": "خمّن الدولة: دولة عربية مشرقية تتوسط شجرة الأرز علمها",
+        "fr": "Devine le pays : un pays arabe du Levant dont le drapeau porte un cèdre",
+        "en": "Guess the country: a Levantine Arab country with a cedar tree on its flag"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "لبنان"
+        ],
+        "fr": [
+          "Liban"
+        ],
+        "en": [
+          "Lebanon"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Lebanon",
+        "url": "https://en.wikipedia.org/wiki/Lebanon"
+      },
+      "factKey": "geo-country-lb",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-country-ly",
+      "category": "geography",
+      "subcategory": "countries",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "country",
+      "text": {
+        "ar": "خمّن الدولة: دولة مغاربية تطل على البحر الأبيض المتوسط وعاصمتها طرابلس",
+        "fr": "Devine le pays : un pays du Maghreb sur la Méditerranée dont la capitale est Tripoli",
+        "en": "Guess the country: a Maghreb country on the Mediterranean whose capital is Tripoli"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "ليبيا"
+        ],
+        "fr": [
+          "Libye"
+        ],
+        "en": [
+          "Libya"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Libya",
+        "url": "https://en.wikipedia.org/wiki/Libya"
+      },
+      "factKey": "geo-country-ly",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-country-so",
+      "category": "geography",
+      "subcategory": "countries",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "country",
+      "text": {
+        "ar": "خمّن الدولة: دولة عربية في القرن الأفريقي عاصمتها مقديشو",
+        "fr": "Devine le pays : un pays arabe de la Corne de l’Afrique dont la capitale est Mogadiscio",
+        "en": "Guess the country: an Arab country in the Horn of Africa whose capital is Mogadishu"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "الصومال"
+        ],
+        "fr": [
+          "Somalie"
+        ],
+        "en": [
+          "Somalia"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Somalia",
+        "url": "https://en.wikipedia.org/wiki/Somalia"
+      },
+      "factKey": "geo-country-so",
       "volatile": false,
       "verifiedAt": "",
       "tags": [],
@@ -947,7 +1222,7 @@
         "fr": "De quel pays est ce drapeau ?",
         "en": "Which country's flag is this?"
       },
-      "image": "https://flagcdn.com/w640/br.png",
+      "image": "/media/flags/br.svg",
       "choices": [
         {
           "ar": "البرتغال",
@@ -990,6 +1265,99 @@
       "updatedAt": "2026-11-04T00:00:00.000Z"
     },
     {
+      "id": "geo-flag-ca",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟ اكتب اسمها",
+        "fr": "De quel pays est ce drapeau ? Écris son nom",
+        "en": "Which country's flag is this? Type its name"
+      },
+      "image": "/media/flags/ca.svg",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "كندا"
+        ],
+        "fr": [
+          "Canada"
+        ],
+        "en": [
+          "Canada"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Canada",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Canada"
+      },
+      "factKey": "geo-flag-ca",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-de",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟",
+        "fr": "De quel pays est ce drapeau ?",
+        "en": "Which country's flag is this?"
+      },
+      "image": "/media/flags/de.svg",
+      "choices": [
+        {
+          "ar": "بلجيكا",
+          "fr": "Belgique",
+          "en": "Belgium"
+        },
+        {
+          "ar": "إسبانيا",
+          "fr": "Espagne",
+          "en": "Spain"
+        },
+        {
+          "ar": "ألمانيا",
+          "fr": "Allemagne",
+          "en": "Germany"
+        },
+        {
+          "ar": "البرتغال",
+          "fr": "Portugal",
+          "en": "Portugal"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Germany",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Germany"
+      },
+      "factKey": "geo-flag-de",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
       "id": "geo-flag-dz",
       "category": "geography",
       "subcategory": "flags",
@@ -1001,7 +1369,7 @@
         "fr": "De quel pays est ce drapeau ?",
         "en": "Which country's flag is this?"
       },
-      "image": "https://flagcdn.com/w640/dz.png",
+      "image": "/media/flags/dz.svg",
       "choices": [
         {
           "ar": "المغرب",
@@ -1044,6 +1412,100 @@
       "updatedAt": "2026-11-04T00:00:00.000Z"
     },
     {
+      "id": "geo-flag-eg",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟ اكتب اسمها",
+        "fr": "De quel pays est ce drapeau ? Écris son nom",
+        "en": "Which country's flag is this? Type its name"
+      },
+      "image": "/media/flags/eg.svg",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "مصر"
+        ],
+        "fr": [
+          "Égypte",
+          "Egypte"
+        ],
+        "en": [
+          "Egypt"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Egypt",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Egypt"
+      },
+      "factKey": "geo-flag-eg",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-jo",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟",
+        "fr": "De quel pays est ce drapeau ?",
+        "en": "Which country's flag is this?"
+      },
+      "image": "/media/flags/jo.svg",
+      "choices": [
+        {
+          "ar": "فلسطين",
+          "fr": "Palestine",
+          "en": "Palestine"
+        },
+        {
+          "ar": "السودان",
+          "fr": "Soudan",
+          "en": "Sudan"
+        },
+        {
+          "ar": "الأردن",
+          "fr": "Jordanie",
+          "en": "Jordan"
+        },
+        {
+          "ar": "الكويت",
+          "fr": "Koweït",
+          "en": "Kuwait"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Jordan",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Jordan"
+      },
+      "factKey": "geo-flag-jo",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
       "id": "geo-flag-jp",
       "category": "geography",
       "subcategory": "flags",
@@ -1055,7 +1517,7 @@
         "fr": "De quel pays est ce drapeau ? Écris son nom",
         "en": "Which country's flag is this? Type its name"
       },
-      "image": "https://flagcdn.com/w640/jp.png",
+      "image": "/media/flags/jp.svg",
       "choices": [],
       "correct": null,
       "answers": {
@@ -1083,6 +1545,102 @@
       "updatedAt": "2026-11-04T00:00:00.000Z"
     },
     {
+      "id": "geo-flag-kr",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟ اكتب اسمها",
+        "fr": "De quel pays est ce drapeau ? Écris son nom",
+        "en": "Which country's flag is this? Type its name"
+      },
+      "image": "/media/flags/kr.svg",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "كوريا الجنوبية",
+          "كوريا"
+        ],
+        "fr": [
+          "Corée du Sud",
+          "Corée"
+        ],
+        "en": [
+          "South Korea",
+          "Korea"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Flag of South Korea",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_South_Korea"
+      },
+      "factKey": "geo-flag-kr",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-kw",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟",
+        "fr": "De quel pays est ce drapeau ?",
+        "en": "Which country's flag is this?"
+      },
+      "image": "/media/flags/kw.svg",
+      "choices": [
+        {
+          "ar": "الإمارات",
+          "fr": "Émirats arabes unis",
+          "en": "UAE"
+        },
+        {
+          "ar": "الكويت",
+          "fr": "Koweït",
+          "en": "Kuwait"
+        },
+        {
+          "ar": "الأردن",
+          "fr": "Jordanie",
+          "en": "Jordan"
+        },
+        {
+          "ar": "فلسطين",
+          "fr": "Palestine",
+          "en": "Palestine"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Kuwait",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Kuwait"
+      },
+      "factKey": "geo-flag-kw",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
       "id": "geo-flag-lb",
       "category": "geography",
       "subcategory": "flags",
@@ -1094,7 +1652,7 @@
         "fr": "De quel pays est ce drapeau ? Écris son nom",
         "en": "Which country's flag is this? Type its name"
       },
-      "image": "https://flagcdn.com/w640/lb.png",
+      "image": "/media/flags/lb.svg",
       "choices": [],
       "correct": null,
       "answers": {
@@ -1122,6 +1680,45 @@
       "updatedAt": "2026-11-04T00:00:00.000Z"
     },
     {
+      "id": "geo-flag-ly",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟ اكتب اسمها",
+        "fr": "De quel pays est ce drapeau ? Écris son nom",
+        "en": "Which country's flag is this? Type its name"
+      },
+      "image": "/media/flags/ly.svg",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "ليبيا"
+        ],
+        "fr": [
+          "Libye"
+        ],
+        "en": [
+          "Libya"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Libya",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Libya"
+      },
+      "factKey": "geo-flag-ly",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
       "id": "geo-flag-ma",
       "category": "geography",
       "subcategory": "flags",
@@ -1133,7 +1730,7 @@
         "fr": "De quel pays est ce drapeau ?",
         "en": "Which country's flag is this?"
       },
-      "image": "https://flagcdn.com/w640/ma.png",
+      "image": "/media/flags/ma.svg",
       "choices": [
         {
           "ar": "تونس",
@@ -1187,7 +1784,7 @@
         "fr": "De quel pays est ce drapeau ? Écris son nom",
         "en": "Which country's flag is this? Type its name"
       },
-      "image": "https://flagcdn.com/w640/mr.png",
+      "image": "/media/flags/mr.svg",
       "choices": [],
       "correct": null,
       "answers": {
@@ -1226,7 +1823,7 @@
         "fr": "De quel pays est ce drapeau ? (le seul non rectangulaire)",
         "en": "Which country's flag is this? (the only non-rectangular one)"
       },
-      "image": "https://flagcdn.com/w640/np.png",
+      "image": "/media/flags/np.svg",
       "choices": [],
       "correct": null,
       "answers": {
@@ -1266,7 +1863,7 @@
         "fr": "De quel pays est ce drapeau ? (attention aux détails !)",
         "en": "Which country's flag is this? (watch the details!)"
       },
-      "image": "https://flagcdn.com/w640/qa.png",
+      "image": "/media/flags/qa.svg",
       "choices": [
         {
           "ar": "البحرين",
@@ -1320,7 +1917,7 @@
         "fr": "De quel pays est ce drapeau ?",
         "en": "Which country's flag is this?"
       },
-      "image": "https://flagcdn.com/w640/sa.png",
+      "image": "/media/flags/sa.svg",
       "choices": [
         {
           "ar": "العراق",
@@ -1354,6 +1951,60 @@
         "url": "https://en.wikipedia.org/wiki/Flag_of_Saudi_Arabia"
       },
       "factKey": "geo-flag-sa",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-tn",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟",
+        "fr": "De quel pays est ce drapeau ?",
+        "en": "Which country's flag is this?"
+      },
+      "image": "/media/flags/tn.svg",
+      "choices": [
+        {
+          "ar": "تركيا",
+          "fr": "Turquie",
+          "en": "Turkey"
+        },
+        {
+          "ar": "المغرب",
+          "fr": "Maroc",
+          "en": "Morocco"
+        },
+        {
+          "ar": "الجزائر",
+          "fr": "Algérie",
+          "en": "Algeria"
+        },
+        {
+          "ar": "تونس",
+          "fr": "Tunisie",
+          "en": "Tunisia"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Tunisia",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Tunisia"
+      },
+      "factKey": "geo-flag-tn",
       "volatile": false,
       "verifiedAt": "",
       "tags": [],
@@ -1504,6 +2155,558 @@
         "url": "https://en.wikipedia.org/wiki/Regions_of_Morocco"
       },
       "factKey": "geo-ma-regions",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-au",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها",
+        "fr": "Devine le pays à partir de sa carte",
+        "en": "Guess the country from its map"
+      },
+      "image": "/media/maps/au.svg",
+      "choices": [
+        {
+          "ar": "جنوب أفريقيا",
+          "fr": "Afrique du Sud",
+          "en": "South Africa"
+        },
+        {
+          "ar": "أستراليا",
+          "fr": "Australie",
+          "en": "Australia"
+        },
+        {
+          "ar": "الأرجنتين",
+          "fr": "Argentine",
+          "en": "Argentina"
+        },
+        {
+          "ar": "مدغشقر",
+          "fr": "Madagascar",
+          "en": "Madagascar"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Australia",
+        "url": "https://en.wikipedia.org/wiki/Australia"
+      },
+      "factKey": "geo-map-au",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-br",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها — اكتب اسمها",
+        "fr": "Devine le pays à partir de sa carte — écris son nom",
+        "en": "Guess the country from its map — type its name"
+      },
+      "image": "/media/maps/br.svg",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "البرازيل"
+        ],
+        "fr": [
+          "Brésil"
+        ],
+        "en": [
+          "Brazil"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Brazil",
+        "url": "https://en.wikipedia.org/wiki/Brazil"
+      },
+      "factKey": "geo-map-br",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-cl",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "world",
+      "difficulty": "hard",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها — اكتب اسمها",
+        "fr": "Devine le pays à partir de sa carte — écris son nom",
+        "en": "Guess the country from its map — type its name"
+      },
+      "image": "/media/maps/cl.svg",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "تشيلي",
+          "الشيلي",
+          "شيلي"
+        ],
+        "fr": [
+          "Chili"
+        ],
+        "en": [
+          "Chile"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Chile",
+        "url": "https://en.wikipedia.org/wiki/Chile"
+      },
+      "factKey": "geo-map-cl",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-eg",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها",
+        "fr": "Devine le pays à partir de sa carte",
+        "en": "Guess the country from its map"
+      },
+      "image": "/media/maps/eg.svg",
+      "choices": [
+        {
+          "ar": "ليبيا",
+          "fr": "Libye",
+          "en": "Libya"
+        },
+        {
+          "ar": "السودان",
+          "fr": "Soudan",
+          "en": "Sudan"
+        },
+        {
+          "ar": "الأردن",
+          "fr": "Jordanie",
+          "en": "Jordan"
+        },
+        {
+          "ar": "مصر",
+          "fr": "Égypte",
+          "en": "Egypt"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Egypt",
+        "url": "https://en.wikipedia.org/wiki/Egypt"
+      },
+      "factKey": "geo-map-eg",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-gb",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها",
+        "fr": "Devine le pays à partir de sa carte",
+        "en": "Guess the country from its map"
+      },
+      "image": "/media/maps/gb.svg",
+      "choices": [
+        {
+          "ar": "المملكة المتحدة",
+          "fr": "Royaume-Uni",
+          "en": "United Kingdom"
+        },
+        {
+          "ar": "أيرلندا",
+          "fr": "Irlande",
+          "en": "Ireland"
+        },
+        {
+          "ar": "آيسلندا",
+          "fr": "Islande",
+          "en": "Iceland"
+        },
+        {
+          "ar": "الدنمارك",
+          "fr": "Danemark",
+          "en": "Denmark"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — United Kingdom",
+        "url": "https://en.wikipedia.org/wiki/United_Kingdom"
+      },
+      "factKey": "geo-map-gb",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-in",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها",
+        "fr": "Devine le pays à partir de sa carte",
+        "en": "Guess the country from its map"
+      },
+      "image": "/media/maps/in.svg",
+      "choices": [
+        {
+          "ar": "باكستان",
+          "fr": "Pakistan",
+          "en": "Pakistan"
+        },
+        {
+          "ar": "بنغلاديش",
+          "fr": "Bangladesh",
+          "en": "Bangladesh"
+        },
+        {
+          "ar": "الهند",
+          "fr": "Inde",
+          "en": "India"
+        },
+        {
+          "ar": "تايلاند",
+          "fr": "Thaïlande",
+          "en": "Thailand"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — India",
+        "url": "https://en.wikipedia.org/wiki/India"
+      },
+      "factKey": "geo-map-in",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-it",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها — اكتب اسمها",
+        "fr": "Devine le pays à partir de sa carte — écris son nom",
+        "en": "Guess the country from its map — type its name"
+      },
+      "image": "/media/maps/it.svg",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "إيطاليا",
+          "ايطاليا"
+        ],
+        "fr": [
+          "Italie"
+        ],
+        "en": [
+          "Italy"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Italy",
+        "url": "https://en.wikipedia.org/wiki/Italy"
+      },
+      "factKey": "geo-map-it",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-jp",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها",
+        "fr": "Devine le pays à partir de sa carte",
+        "en": "Guess the country from its map"
+      },
+      "image": "/media/maps/jp.svg",
+      "choices": [
+        {
+          "ar": "الفلبين",
+          "fr": "Philippines",
+          "en": "Philippines"
+        },
+        {
+          "ar": "نيوزيلندا",
+          "fr": "Nouvelle-Zélande",
+          "en": "New Zealand"
+        },
+        {
+          "ar": "إندونيسيا",
+          "fr": "Indonésie",
+          "en": "Indonesia"
+        },
+        {
+          "ar": "اليابان",
+          "fr": "Japon",
+          "en": "Japan"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Japan",
+        "url": "https://en.wikipedia.org/wiki/Japan"
+      },
+      "factKey": "geo-map-jp",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-ly",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها",
+        "fr": "Devine le pays à partir de sa carte",
+        "en": "Guess the country from its map"
+      },
+      "image": "/media/maps/ly.svg",
+      "choices": [
+        {
+          "ar": "الجزائر",
+          "fr": "Algérie",
+          "en": "Algeria"
+        },
+        {
+          "ar": "مصر",
+          "fr": "Égypte",
+          "en": "Egypt"
+        },
+        {
+          "ar": "ليبيا",
+          "fr": "Libye",
+          "en": "Libya"
+        },
+        {
+          "ar": "النيجر",
+          "fr": "Niger",
+          "en": "Niger"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Libya",
+        "url": "https://en.wikipedia.org/wiki/Libya"
+      },
+      "factKey": "geo-map-ly",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-sa",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها",
+        "fr": "Devine le pays à partir de sa carte",
+        "en": "Guess the country from its map"
+      },
+      "image": "/media/maps/sa.svg",
+      "choices": [
+        {
+          "ar": "اليمن",
+          "fr": "Yémen",
+          "en": "Yemen"
+        },
+        {
+          "ar": "عُمان",
+          "fr": "Oman",
+          "en": "Oman"
+        },
+        {
+          "ar": "العراق",
+          "fr": "Irak",
+          "en": "Iraq"
+        },
+        {
+          "ar": "السعودية",
+          "fr": "Arabie saoudite",
+          "en": "Saudi Arabia"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Saudi Arabia",
+        "url": "https://en.wikipedia.org/wiki/Saudi_Arabia"
+      },
+      "factKey": "geo-map-sa",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-map-tn",
+      "category": "geography",
+      "subcategory": "maps",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "map",
+      "text": {
+        "ar": "خمّن الدولة من خريطتها",
+        "fr": "Devine le pays à partir de sa carte",
+        "en": "Guess the country from its map"
+      },
+      "image": "/media/maps/tn.svg",
+      "choices": [
+        {
+          "ar": "لبنان",
+          "fr": "Liban",
+          "en": "Lebanon"
+        },
+        {
+          "ar": "الأردن",
+          "fr": "Jordanie",
+          "en": "Jordan"
+        },
+        {
+          "ar": "الكويت",
+          "fr": "Koweït",
+          "en": "Kuwait"
+        },
+        {
+          "ar": "تونس",
+          "fr": "Tunisie",
+          "en": "Tunisia"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Tunisia",
+        "url": "https://en.wikipedia.org/wiki/Tunisia"
+      },
+      "factKey": "geo-map-tn",
       "volatile": false,
       "verifiedAt": "",
       "tags": [],

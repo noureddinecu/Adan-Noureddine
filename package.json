@@ -1,19 +1,38 @@
 {
-  "name": "tiktok-live-quiz",
+  "name": "live-quiz-game",
   "version": "1.0.0",
-  "description": "منصة مسابقات مباشرة متعددة التصنيفات على TikTok LIVE — Live multi-category quiz platform for TikTok LIVE",
+  "description": "LIVE QUIZ GAME — منصة مسابقات تفاعلية مباشرة لـ TikTok LIVE، تُدار من الهاتف",
   "type": "module",
-  "main": "src/server.js",
+  "main": "server/index.js",
   "scripts": {
-    "start": "node src/server.js",
-    "test": "node --test test/*.test.js",
-    "validate": "node scripts/validate-bank.js"
+    "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
+    "dev:web": "vite",
+    "build": "tsc --noEmit -p web && vite build",
+    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js",
+    "validate": "node --disable-warning=ExperimentalWarning scripts/validate-bank.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22.13"
   },
-  "optionalDependencies": {
-    "tiktok-live-connector": "^2.0.0"
+  "license": "MIT",
+  "dependencies": {
+    "@fontsource/baloo-bhaijaan-2": "^5.3.0",
+    "@fontsource/cairo": "^5.3.0",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tiktok-live-connector": "^2.5.0"
   },
-  "license": "MIT"
+  "devDependencies": {
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
 }

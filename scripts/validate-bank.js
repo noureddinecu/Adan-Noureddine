@@ -2,10 +2,11 @@
 // Usage: npm run validate
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { QuestionStore } from '../src/store.js';
+import { openDb } from '../server/db.js';
+import { QuestionStore } from '../server/questions/store.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const store = new QuestionStore(path.join(root, 'data'));
+const store = new QuestionStore(openDb(':memory:'), { seedDir: path.join(root, 'data') });
 let errors = 0;
 let warnings = 0;
 for (const q of store.all()) {

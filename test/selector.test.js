@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { allocate, selectQuestions } from '../src/selector.js';
+import { allocate, selectQuestions } from '../server/questions/selector.js';
 
 let seed = 42;
 const rng = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
