@@ -21,6 +21,7 @@ test('explains connection failures', () => {
   assert.equal(explainTikTokError(new UserOfflineError('x')).code, 'offline');
   assert.equal(explainTikTokError(new Error('getaddrinfo ENOTFOUND www.tiktok.com')).code, 'network');
   assert.equal(explainTikTokError(new Error('Rate Limit exceeded 429')).code, 'ratelimit');
+  assert.equal(explainTikTokError(new Error('Failed to retrieve Room ID from all sources.')).code, 'room');
 });
 
 test('tiktok provider: comments flow into the game; drops trigger auto-reconnect', async () => {

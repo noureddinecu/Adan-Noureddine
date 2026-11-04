@@ -5,10 +5,10 @@
   "type": "module",
   "main": "server/index.js",
   "scripts": {
-    "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
+    "dev": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning --watch server/index.js",
     "dev:web": "vite",
     "build": "tsc --noEmit -p web && vite build",
-    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "start": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning server/index.js",
     "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js",
     "validate": "node --disable-warning=ExperimentalWarning scripts/validate-bank.js"
   },

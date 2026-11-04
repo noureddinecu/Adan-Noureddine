@@ -28,6 +28,7 @@ export function explainTikTokError(e) {
   if (has(/InvalidUniqueId|user_not_found|not found|19881007/i)) return { code: 'user', retry: false, ar: 'اسم المستخدم غير صحيح أو غير موجود.', en: 'Invalid or unknown username.' };
   if (has(/RateLimit|429|Too Many/i)) return { code: 'ratelimit', retry: true, ar: 'تم تجاوز حد خادم التوقيع (Euler Stream). أضف مفتاح TIKTOK_SIGN_API_KEY أو انتظر قليلاً.', en: 'Sign server rate limit (Euler Stream). Add TIKTOK_SIGN_API_KEY or wait.' };
   if (has(/SignAPI|Sign server|signature|Premium/i)) return { code: 'sign', retry: true, ar: 'فشل خادم التوقيع الخارجي (Euler Stream) الذي تحتاجه المكتبة للاتصال.', en: 'The external sign server (Euler Stream) required by the library failed.' };
+  if (has(/Room ID|roomId|InvalidResponseComposite/i)) return { code: 'room', retry: true, ar: 'تعذر العثور على البث: إما أن الحساب ليس في بث مباشر الآن، أو أن هذا الخادم لا يستطيع الوصول إلى TikTok (شبكة/حظر IP).', en: 'Could not find the LIVE room: the account is not live, or this server cannot reach TikTok (network / IP block).' };
   if (has(/ENOTFOUND|ECONNREFUSED|ECONNRESET|ETIMEDOUT|EAI_AGAIN|network|socket hang up|tunnel|403/i)) return { code: 'network', retry: true, ar: 'تعذر الوصول إلى خوادم TikTok من هذا الخادم (شبكة أو جدار ناري أو حظر لعنوان IP).', en: 'Cannot reach TikTok servers from this host (network, firewall or IP block).' };
   if (has(/ConnectTimeout|timeout/i)) return { code: 'timeout', retry: true, ar: 'انتهت مهلة الاتصال. أعد المحاولة.', en: 'Connection timed out. Retry.' };
   if (has(/Cannot find (module|package)|ERR_MODULE_NOT_FOUND/i)) return { code: 'missing', retry: false, ar: 'مكتبة tiktok-live-connector غير مثبتة. نفّذ npm install.', en: 'tiktok-live-connector is not installed. Run npm install.' };
@@ -53,8 +54,14 @@ export class TikTokProvider extends EventEmitter {
     conn.on('streamEnd', () => this.emit('ended'));
     conn.on('disconnected', () => { if (this.conn === conn) this.emit('dropped'); });
     conn.on('error', (e) => this.emit('warn', e));
-    const state = await conn.connect();
-    return { roomId: state?.roomId || '' };
+    let timer;
+    const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('ConnectTimeout: no answer from TikTok after 25 s')), 25000); });
+    try {
+      const state = await Promise.race([conn.connect(), timeout]);
+      return { roomId: state?.roomId || '' };
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   async disconnect() {

@@ -1,0 +1,19 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# A persistent disk keeps the database (players, scores, history, your questions) across restarts.
+services:
+  - type: web
+    name: live-quiz-game
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: TIKTOK_SIGN_API_KEY
+        sync: false
+      - key: DATA_DIR
+        value: /data
+    disk:
+      name: quiz-data
+      mountPath: /data
+      sizeGB: 1
