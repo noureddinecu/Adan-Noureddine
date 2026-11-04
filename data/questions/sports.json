@@ -1,0 +1,1295 @@
+{
+  "questions": [
+    {
+      "id": "spo-afcon-1957",
+      "category": "sports",
+      "subcategory": "tournaments",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "أي منتخب فاز بأول نسخة من كأس أمم أفريقيا سنة 1957؟",
+        "fr": "Quelle sélection a remporté la première Coupe d'Afrique des nations en 1957 ?",
+        "en": "Which team won the first Africa Cup of Nations in 1957?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "السودان",
+          "fr": "Soudan",
+          "en": "Sudan"
+        },
+        {
+          "ar": "مصر",
+          "fr": "Égypte",
+          "en": "Egypt"
+        },
+        {
+          "ar": "إثيوبيا",
+          "fr": "Éthiopie",
+          "en": "Ethiopia"
+        },
+        {
+          "ar": "المغرب",
+          "fr": "Maroc",
+          "en": "Morocco"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — 1957 African Cup of Nations",
+        "url": "https://en.wikipedia.org/wiki/1957_African_Cup_of_Nations"
+      },
+      "factKey": "spo-afcon-1957",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-aouita-1984",
+      "category": "sports",
+      "subcategory": "other_sports",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو العداء المغربي الفائز بذهبية سباق 5000 م في أولمبياد لوس أنجلوس 1984؟",
+        "fr": "Quel coureur marocain a gagné le 5 000 m aux JO de Los Angeles 1984 ?",
+        "en": "Which Moroccan runner won the 5000 m at the 1984 Los Angeles Olympics?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "هشام الكروج",
+          "fr": "Hicham El Guerrouj",
+          "en": "Hicham El Guerrouj"
+        },
+        {
+          "ar": "خالد السكاح",
+          "fr": "Khalid Skah",
+          "en": "Khalid Skah"
+        },
+        {
+          "ar": "إبراهيم بولامي",
+          "fr": "Brahim Boulami",
+          "en": "Brahim Boulami"
+        },
+        {
+          "ar": "سعيد عويطة",
+          "fr": "Saïd Aouita",
+          "en": "Saïd Aouita"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Saïd Aouita",
+        "url": "https://en.wikipedia.org/wiki/Sa%C3%AFd_Aouita"
+      },
+      "factKey": "spo-aouita-1984",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-basket-5",
+      "category": "sports",
+      "subcategory": "other_sports",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد لاعبي الفريق الواحد داخل ملعب كرة السلة؟",
+        "fr": "Combien de joueurs par équipe sont sur le terrain au basket ?",
+        "en": "How many players per team are on the court in basketball?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "6",
+          "fr": "6",
+          "en": "6"
+        },
+        {
+          "ar": "5",
+          "fr": "5",
+          "en": "5"
+        },
+        {
+          "ar": "7",
+          "fr": "7",
+          "en": "7"
+        },
+        {
+          "ar": "11",
+          "fr": "11",
+          "en": "11"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Basketball",
+        "url": "https://en.wikipedia.org/wiki/Basketball"
+      },
+      "factKey": "spo-basket-5",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-bolt-958",
+      "category": "sports",
+      "subcategory": "other_sports",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "من هو العداء الذي سجل 9.58 ثانية في سباق 100 م ببرلين سنة 2009؟",
+        "fr": "Quel sprinteur a couru le 100 m en 9 s 58 à Berlin en 2009 ?",
+        "en": "Which sprinter ran the 100 m in 9.58 seconds in Berlin in 2009?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "يوسين بولت",
+          "بولت",
+          "أوسين بولت"
+        ],
+        "fr": [
+          "Usain Bolt",
+          "Bolt"
+        ],
+        "en": [
+          "Usain Bolt",
+          "Bolt"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Usain Bolt",
+        "url": "https://en.wikipedia.org/wiki/Usain_Bolt"
+      },
+      "factKey": "spo-bolt-958",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-casa-derby",
+      "category": "sports",
+      "subcategory": "clubs",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ديربي الدار البيضاء يجمع نادي الوداد بأي نادٍ؟",
+        "fr": "Le derby de Casablanca oppose le Wydad à quel club ?",
+        "en": "The Casablanca derby is between Wydad and which club?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "الرجاء",
+          "الرجاء الرياضي",
+          "الرجاء البيضاوي"
+        ],
+        "fr": [
+          "Raja",
+          "Raja Casablanca",
+          "Raja Club Athletic"
+        ],
+        "en": [
+          "Raja",
+          "Raja Casablanca",
+          "Raja CA"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Casablanca derby",
+        "url": "https://en.wikipedia.org/wiki/Casablanca_derby"
+      },
+      "factKey": "spo-casa-derby",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-elguerrouj-2004",
+      "category": "sports",
+      "subcategory": "other_sports",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أولمبياد أثينا 2004 فاز هشام الكروج بذهبية 1500 م وذهبية أخرى في سباق؟",
+        "fr": "Aux JO d'Athènes 2004, Hicham El Guerrouj a gagné le 1500 m et quelle autre course ?",
+        "en": "At Athens 2004, Hicham El Guerrouj won the 1500 m and which other race?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "5000 م",
+          "fr": "5 000 m",
+          "en": "5000 m"
+        },
+        {
+          "ar": "10000 م",
+          "fr": "10 000 m",
+          "en": "10,000 m"
+        },
+        {
+          "ar": "800 م",
+          "fr": "800 m",
+          "en": "800 m"
+        },
+        {
+          "ar": "3000 م موانع",
+          "fr": "3 000 m steeple",
+          "en": "3000 m steeplechase"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Hicham El Guerrouj",
+        "url": "https://en.wikipedia.org/wiki/Hicham_El_Guerrouj"
+      },
+      "factKey": "spo-elguerrouj-2004",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-half-45",
+      "category": "sports",
+      "subcategory": "world_football",
+      "region": "foreign",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "كم دقيقة يدوم الشوط الواحد في مباراة كرة القدم الرسمية؟",
+        "fr": "Combien de minutes dure une mi-temps d’un match de football officiel ?",
+        "en": "How many minutes does one half of an official football match last?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "45",
+          "fr": "45",
+          "en": "45"
+        },
+        {
+          "ar": "40",
+          "fr": "40",
+          "en": "40"
+        },
+        {
+          "ar": "30",
+          "fr": "30",
+          "en": "30"
+        },
+        {
+          "ar": "50",
+          "fr": "50",
+          "en": "50"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Association football",
+        "url": "https://en.wikipedia.org/wiki/Association_football"
+      },
+      "factKey": "spo-half-45",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-jabeur-wimbledon",
+      "category": "sports",
+      "subcategory": "other_sports",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "من هي لاعبة التنس التونسية التي بلغت نهائي بطولة ويمبلدون سنة 2022؟",
+        "fr": "Quelle joueuse de tennis tunisienne a atteint la finale de Wimbledon en 2022 ?",
+        "en": "Which Tunisian tennis player reached the 2022 Wimbledon final?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "أنس جابر",
+          "جابر"
+        ],
+        "fr": [
+          "Ons Jabeur",
+          "Jabeur"
+        ],
+        "en": [
+          "Ons Jabeur",
+          "Jabeur"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Ons Jabeur",
+        "url": "https://en.wikipedia.org/wiki/Ons_Jabeur"
+      },
+      "factKey": "spo-jabeur-wimbledon",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-jordan-bulls",
+      "category": "sports",
+      "subcategory": "other_sports",
+      "region": "foreign",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "مع أي فريق فاز مايكل جوردن بستة ألقاب في دوري NBA؟",
+        "fr": "Avec quelle équipe Michael Jordan a-t-il gagné six titres NBA ?",
+        "en": "With which team did Michael Jordan win six NBA titles?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "لوس أنجلوس ليكرز",
+          "fr": "Los Angeles Lakers",
+          "en": "Los Angeles Lakers"
+        },
+        {
+          "ar": "بوسطن سلتيكس",
+          "fr": "Boston Celtics",
+          "en": "Boston Celtics"
+        },
+        {
+          "ar": "شيكاغو بولز",
+          "fr": "Chicago Bulls",
+          "en": "Chicago Bulls"
+        },
+        {
+          "ar": "واشنطن ويزاردز",
+          "fr": "Washington Wizards",
+          "en": "Washington Wizards"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Michael Jordan",
+        "url": "https://en.wikipedia.org/wiki/Michael_Jordan"
+      },
+      "factKey": "spo-jordan-bulls",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-ksa-arg",
+      "category": "sports",
+      "subcategory": "world_cup",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "أي منتخب عربي فاز على الأرجنتين في مونديال قطر 2022؟",
+        "fr": "Quelle sélection arabe a battu l'Argentine lors du Mondial 2022 ?",
+        "en": "Which Arab team beat Argentina at the 2022 World Cup?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "تونس",
+          "fr": "Tunisie",
+          "en": "Tunisia"
+        },
+        {
+          "ar": "المغرب",
+          "fr": "Maroc",
+          "en": "Morocco"
+        },
+        {
+          "ar": "قطر",
+          "fr": "Qatar",
+          "en": "Qatar"
+        },
+        {
+          "ar": "السعودية",
+          "fr": "Arabie saoudite",
+          "en": "Saudi Arabia"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Argentina v Saudi Arabia (2022 FIFA World Cup)",
+        "url": "https://en.wikipedia.org/wiki/Argentina_v_Saudi_Arabia_(2022_FIFA_World_Cup)"
+      },
+      "factKey": "spo-ksa-arg",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-ma-coach-2022",
+      "category": "sports",
+      "subcategory": "world_cup",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "من كان مدرب المنتخب المغربي في كأس العالم 2022؟",
+        "fr": "Qui était le sélectionneur du Maroc lors de la Coupe du monde 2022 ?",
+        "en": "Who coached Morocco at the 2022 World Cup?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "وليد الركراكي",
+          "الركراكي"
+        ],
+        "fr": [
+          "Walid Regragui",
+          "Regragui"
+        ],
+        "en": [
+          "Walid Regragui",
+          "Regragui"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Walid Regragui",
+        "url": "https://en.wikipedia.org/wiki/Walid_Regragui"
+      },
+      "factKey": "spo-ma-coach-2022",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-ma-por-goal",
+      "category": "sports",
+      "subcategory": "world_cup",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من سجّل هدف المغرب في مرمى البرتغال في ربع نهائي مونديال 2022؟",
+        "fr": "Qui a marqué le but du Maroc contre le Portugal en quart de finale du Mondial 2022 ?",
+        "en": "Who scored Morocco's goal against Portugal in the 2022 World Cup quarter-final?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "حكيم زياش",
+          "fr": "Hakim Ziyech",
+          "en": "Hakim Ziyech"
+        },
+        {
+          "ar": "سفيان بوفال",
+          "fr": "Sofiane Boufal",
+          "en": "Sofiane Boufal"
+        },
+        {
+          "ar": "عز الدين أوناحي",
+          "fr": "Azzedine Ounahi",
+          "en": "Azzedine Ounahi"
+        },
+        {
+          "ar": "يوسف النصيري",
+          "fr": "Youssef En-Nesyri",
+          "en": "Youssef En-Nesyri"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Morocco v Portugal (2022 FIFA World Cup)",
+        "url": "https://en.wikipedia.org/wiki/Morocco_v_Portugal_(2022_FIFA_World_Cup)"
+      },
+      "factKey": "spo-ma-por-goal",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-ma-wc22-sf",
+      "category": "sports",
+      "subcategory": "world_cup",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي نسخة من كأس العالم بلغ المنتخب المغربي نصف النهائي؟",
+        "fr": "Lors de quelle Coupe du monde le Maroc a-t-il atteint les demi-finales ?",
+        "en": "At which World Cup did Morocco reach the semi-finals?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "روسيا 2018",
+          "fr": "Russie 2018",
+          "en": "Russia 2018"
+        },
+        {
+          "ar": "المكسيك 1986",
+          "fr": "Mexique 1986",
+          "en": "Mexico 1986"
+        },
+        {
+          "ar": "قطر 2022",
+          "fr": "Qatar 2022",
+          "en": "Qatar 2022"
+        },
+        {
+          "ar": "فرنسا 1998",
+          "fr": "France 1998",
+          "en": "France 1998"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Morocco at the 2022 FIFA World Cup",
+        "url": "https://en.wikipedia.org/wiki/Morocco_at_the_2022_FIFA_World_Cup"
+      },
+      "factKey": "wc22_morocco_semifinal",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-madjer-1987",
+      "category": "sports",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو اللاعب الجزائري الذي سجل بالكعب مع بورتو في نهائي كأس أوروبا للأندية البطلة سنة 1987؟",
+        "fr": "Quel joueur algérien a marqué d'une talonnade avec Porto en finale de la Coupe des clubs champions 1987 ?",
+        "en": "Which Algerian player scored a backheel for Porto in the 1987 European Cup final?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "لخضر بلومي",
+          "fr": "Lakhdar Belloumi",
+          "en": "Lakhdar Belloumi"
+        },
+        {
+          "ar": "صالح عصاد",
+          "fr": "Salah Assad",
+          "en": "Salah Assad"
+        },
+        {
+          "ar": "رابح ماجر",
+          "fr": "Rabah Madjer",
+          "en": "Rabah Madjer"
+        },
+        {
+          "ar": "رياض محرز",
+          "fr": "Riyad Mahrez",
+          "en": "Riyad Mahrez"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — 1987 European Cup final",
+        "url": "https://en.wikipedia.org/wiki/1987_European_Cup_final"
+      },
+      "factKey": "spo-madjer-1987",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-moutawakel-1984",
+      "category": "sports",
+      "subcategory": "other_sports",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سباق فازت المغربية نوال المتوكل بذهبية أولمبياد لوس أنجلوس 1984؟",
+        "fr": "Dans quelle épreuve Nawal El Moutawakel a-t-elle gagné l’or aux JO de Los Angeles 1984 ?",
+        "en": "In which event did Nawal El Moutawakel win gold at the 1984 Los Angeles Olympics?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "100 م",
+          "fr": "100 m",
+          "en": "100 m"
+        },
+        {
+          "ar": "الماراثون",
+          "fr": "Marathon",
+          "en": "Marathon"
+        },
+        {
+          "ar": "400 م حواجز",
+          "fr": "400 m haies",
+          "en": "400 m hurdles"
+        },
+        {
+          "ar": "800 م",
+          "fr": "800 m",
+          "en": "800 m"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Nawal El Moutawakel",
+        "url": "https://en.wikipedia.org/wiki/Nawal_El_Moutawakel"
+      },
+      "factKey": "spo-moutawakel-1984",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-oly-1896",
+      "category": "sports",
+      "subcategory": "other_sports",
+      "region": "world",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "أي دولة استضافت أول دورة ألعاب أولمبية حديثة سنة 1896؟",
+        "fr": "Quel pays a accueilli les premiers Jeux olympiques modernes en 1896 ?",
+        "en": "Which country hosted the first modern Olympic Games in 1896?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "اليونان",
+          "fr": "Grèce",
+          "en": "Greece"
+        },
+        {
+          "ar": "فرنسا",
+          "fr": "France",
+          "en": "France"
+        },
+        {
+          "ar": "بريطانيا",
+          "fr": "Royaume-Uni",
+          "en": "United Kingdom"
+        },
+        {
+          "ar": "الولايات المتحدة",
+          "fr": "États-Unis",
+          "en": "United States"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — 1896 Summer Olympics",
+        "url": "https://en.wikipedia.org/wiki/1896_Summer_Olympics"
+      },
+      "factKey": "spo-oly-1896",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-olympic-rings",
+      "category": "sports",
+      "subcategory": "other_sports",
+      "region": "foreign",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد الحلقات في شعار الألعاب الأولمبية؟",
+        "fr": "Combien d’anneaux compte le symbole olympique ?",
+        "en": "How many rings are in the Olympic symbol?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "5",
+          "fr": "5",
+          "en": "5"
+        },
+        {
+          "ar": "4",
+          "fr": "4",
+          "en": "4"
+        },
+        {
+          "ar": "6",
+          "fr": "6",
+          "en": "6"
+        },
+        {
+          "ar": "7",
+          "fr": "7",
+          "en": "7"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Olympic symbols",
+        "url": "https://en.wikipedia.org/wiki/Olympic_symbols"
+      },
+      "factKey": "spo-olympic-rings",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-pele-3wc",
+      "category": "sports",
+      "subcategory": "history",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو اللاعب الوحيد الذي فاز بكأس العالم ثلاث مرات؟",
+        "fr": "Quel est le seul joueur à avoir gagné trois fois la Coupe du monde ?",
+        "en": "Who is the only player to have won the World Cup three times?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "دييغو مارادونا",
+          "fr": "Diego Maradona",
+          "en": "Diego Maradona"
+        },
+        {
+          "ar": "رونالدو نازاريو",
+          "fr": "Ronaldo Nazário",
+          "en": "Ronaldo Nazário"
+        },
+        {
+          "ar": "ليونيل ميسي",
+          "fr": "Lionel Messi",
+          "en": "Lionel Messi"
+        },
+        {
+          "ar": "بيليه",
+          "fr": "Pelé",
+          "en": "Pelé"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Pelé",
+        "url": "https://en.wikipedia.org/wiki/Pel%C3%A9"
+      },
+      "factKey": "spo-pele-3wc",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-rg-clay",
+      "category": "sports",
+      "subcategory": "other_sports",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "أي بطولة كبرى في التنس تُلعب على الملاعب الترابية؟",
+        "fr": "Quel tournoi du Grand Chelem se joue sur terre battue ?",
+        "en": "Which Grand Slam tennis tournament is played on clay?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "ويمبلدون",
+          "fr": "Wimbledon",
+          "en": "Wimbledon"
+        },
+        {
+          "ar": "أمريكا المفتوحة",
+          "fr": "US Open",
+          "en": "US Open"
+        },
+        {
+          "ar": "رولان غاروس",
+          "fr": "Roland-Garros",
+          "en": "French Open (Roland Garros)"
+        },
+        {
+          "ar": "أستراليا المفتوحة",
+          "fr": "Open d’Australie",
+          "en": "Australian Open"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — French Open",
+        "url": "https://en.wikipedia.org/wiki/French_Open"
+      },
+      "factKey": "spo-rg-clay",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-salah-pl",
+      "category": "sports",
+      "subcategory": "players",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "مع أي نادٍ فاز محمد صلاح بلقب الدوري الإنجليزي الممتاز موسم 2019-2020؟",
+        "fr": "Avec quel club Mohamed Salah a-t-il remporté la Premier League 2019-2020 ?",
+        "en": "With which club did Mohamed Salah win the 2019–20 Premier League?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "تشيلسي",
+          "fr": "Chelsea",
+          "en": "Chelsea"
+        },
+        {
+          "ar": "أرسنال",
+          "fr": "Arsenal",
+          "en": "Arsenal"
+        },
+        {
+          "ar": "مانشستر سيتي",
+          "fr": "Manchester City",
+          "en": "Manchester City"
+        },
+        {
+          "ar": "ليفربول",
+          "fr": "Liverpool",
+          "en": "Liverpool"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — 2019–20 Premier League",
+        "url": "https://en.wikipedia.org/wiki/2019%E2%80%9320_Premier_League"
+      },
+      "factKey": "spo-salah-pl",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-timoumi-1985",
+      "category": "sports",
+      "subcategory": "players",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو اللاعب المغربي المتوج بالكرة الذهبية الأفريقية سنة 1985؟",
+        "fr": "Quel joueur marocain a remporté le Ballon d'or africain en 1985 ?",
+        "en": "Which Moroccan player won the African Ballon d'Or in 1985?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "عزيز بودربالة",
+          "fr": "Aziz Bouderbala",
+          "en": "Aziz Bouderbala"
+        },
+        {
+          "ar": "مصطفى حجي",
+          "fr": "Mustapha Hadji",
+          "en": "Mustapha Hadji"
+        },
+        {
+          "ar": "نور الدين النيبت",
+          "fr": "Noureddine Naybet",
+          "en": "Noureddine Naybet"
+        },
+        {
+          "ar": "محمد التيمومي",
+          "fr": "Mohamed Timoumi",
+          "en": "Mohamed Timoumi"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — African Footballer of the Year",
+        "url": "https://en.wikipedia.org/wiki/African_Footballer_of_the_Year"
+      },
+      "factKey": "spo-timoumi-1985",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-tn-1978",
+      "category": "sports",
+      "subcategory": "world_cup",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "أي منتخب كان أول منتخب عربي وأفريقي يفوز بمباراة في نهائيات كأس العالم (سنة 1978)؟",
+        "fr": "Quelle sélection fut la première équipe arabe et africaine à gagner un match en Coupe du monde (1978) ?",
+        "en": "Which team became the first Arab and African side to win a World Cup match (1978)?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "المغرب",
+          "fr": "Maroc",
+          "en": "Morocco"
+        },
+        {
+          "ar": "تونس",
+          "fr": "Tunisie",
+          "en": "Tunisia"
+        },
+        {
+          "ar": "الجزائر",
+          "fr": "Algérie",
+          "en": "Algeria"
+        },
+        {
+          "ar": "مصر",
+          "fr": "Égypte",
+          "en": "Egypt"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Tunisia at the 1978 FIFA World Cup",
+        "url": "https://en.wikipedia.org/wiki/Tunisia_at_the_1978_FIFA_World_Cup"
+      },
+      "factKey": "spo-tn-1978",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "فوز تونس على المكسيك 3-1",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-wc1930-host",
+      "category": "sports",
+      "subcategory": "world_cup",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "أي دولة استضافت أول بطولة لكأس العالم سنة 1930؟",
+        "fr": "Quel pays a accueilli la première Coupe du monde en 1930 ?",
+        "en": "Which country hosted the first World Cup in 1930?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "البرازيل",
+          "fr": "Brésil",
+          "en": "Brazil"
+        },
+        {
+          "ar": "الأوروغواي",
+          "fr": "Uruguay",
+          "en": "Uruguay"
+        },
+        {
+          "ar": "إيطاليا",
+          "fr": "Italie",
+          "en": "Italy"
+        },
+        {
+          "ar": "فرنسا",
+          "fr": "France",
+          "en": "France"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — 1930 FIFA World Cup",
+        "url": "https://en.wikipedia.org/wiki/1930_FIFA_World_Cup"
+      },
+      "factKey": "spo-wc1930-host",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-wc22-host",
+      "category": "sports",
+      "subcategory": "world_cup",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "في أي دولة أقيمت بطولة كأس العالم 2022؟",
+        "fr": "Dans quel pays s’est déroulée la Coupe du monde 2022 ?",
+        "en": "Which country hosted the 2022 World Cup?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "قطر"
+        ],
+        "fr": [
+          "Qatar"
+        ],
+        "en": [
+          "Qatar"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — 2022 FIFA World Cup",
+        "url": "https://en.wikipedia.org/wiki/2022_FIFA_World_Cup"
+      },
+      "factKey": "spo-wc22-host",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-wc22-winner",
+      "category": "sports",
+      "subcategory": "world_cup",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "أي منتخب فاز بكأس العالم 2022؟",
+        "fr": "Quelle sélection a remporté la Coupe du monde 2022 ?",
+        "en": "Which team won the 2022 World Cup?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "فرنسا",
+          "fr": "France",
+          "en": "France"
+        },
+        {
+          "ar": "الأرجنتين",
+          "fr": "Argentine",
+          "en": "Argentina"
+        },
+        {
+          "ar": "كرواتيا",
+          "fr": "Croatie",
+          "en": "Croatia"
+        },
+        {
+          "ar": "المغرب",
+          "fr": "Maroc",
+          "en": "Morocco"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — 2022 FIFA World Cup final",
+        "url": "https://en.wikipedia.org/wiki/2022_FIFA_World_Cup_final"
+      },
+      "factKey": "spo-wc22-winner",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    }
+  ]
+}

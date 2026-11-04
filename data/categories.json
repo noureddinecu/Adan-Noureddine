@@ -1,0 +1,71 @@
+{
+  "categories": [
+    {
+      "id": "geography",
+      "icon": "🌍",
+      "name": { "ar": "الجغرافيا والدول", "fr": "Géographie et pays", "en": "Geography & Countries" },
+      "subcategories": [
+        { "id": "maps", "name": { "ar": "تخمين الدول من الخرائط", "fr": "Pays sur la carte", "en": "Countries from maps" } },
+        { "id": "flags", "name": { "ar": "أعلام الدول", "fr": "Drapeaux", "en": "Flags" } },
+        { "id": "capitals", "name": { "ar": "عواصم الدول", "fr": "Capitales", "en": "Capitals" } },
+        { "id": "facts", "name": { "ar": "معلومات جغرافية", "fr": "Faits géographiques", "en": "Geography facts" } }
+      ]
+    },
+    {
+      "id": "sports",
+      "icon": "⚽",
+      "name": { "ar": "الرياضة", "fr": "Sport", "en": "Sports" },
+      "subcategories": [
+        { "id": "arab_football", "name": { "ar": "كرة القدم العربية", "fr": "Football arabe", "en": "Arab football" } },
+        { "id": "world_football", "name": { "ar": "كرة القدم العالمية", "fr": "Football mondial", "en": "World football" } },
+        { "id": "players", "name": { "ar": "أسماء اللاعبين", "fr": "Joueurs", "en": "Players" } },
+        { "id": "clubs", "name": { "ar": "الأندية والمنتخبات", "fr": "Clubs et sélections", "en": "Clubs & national teams" } },
+        { "id": "tournaments", "name": { "ar": "البطولات والكؤوس", "fr": "Compétitions et coupes", "en": "Tournaments & cups" } },
+        { "id": "history", "name": { "ar": "تاريخ كرة القدم", "fr": "Histoire du football", "en": "Football history" } },
+        { "id": "world_cup", "name": { "ar": "كأس العالم", "fr": "Coupe du monde", "en": "World Cup" } },
+        { "id": "other_sports", "name": { "ar": "رياضات أخرى", "fr": "Autres sports", "en": "Other sports" } }
+      ]
+    },
+    {
+      "id": "personalities",
+      "icon": "👤",
+      "name": { "ar": "الشخصيات", "fr": "Personnalités", "en": "Personalities" },
+      "subcategories": [
+        { "id": "historical", "name": { "ar": "شخصيات تاريخية", "fr": "Personnages historiques", "en": "Historical figures" } },
+        { "id": "arab_moroccan", "name": { "ar": "شخصيات عربية ومغربية", "fr": "Personnalités arabes et marocaines", "en": "Arab & Moroccan figures" } },
+        { "id": "football_stars", "name": { "ar": "مشاهير كرة القدم", "fr": "Stars du football", "en": "Football stars" } },
+        { "id": "artists", "name": { "ar": "فنانون وممثلون", "fr": "Artistes et acteurs", "en": "Artists & actors" } },
+        { "id": "scientists", "name": { "ar": "علماء ومخترعون", "fr": "Scientifiques et inventeurs", "en": "Scientists & inventors" } },
+        { "id": "world_figures", "name": { "ar": "شخصيات عالمية", "fr": "Personnalités mondiales", "en": "World figures" } },
+        { "id": "guess_photo", "name": { "ar": "التعرف على الشخصية من الصورة", "fr": "Qui est-ce ? (photo)", "en": "Guess from photo" } }
+      ]
+    },
+    {
+      "id": "arab_culture",
+      "icon": "🧠",
+      "name": { "ar": "الثقافة العامة العربية", "fr": "Culture générale arabe", "en": "Arab general knowledge" },
+      "subcategories": [
+        { "id": "history", "name": { "ar": "التاريخ العربي والإسلامي", "fr": "Histoire arabe et islamique", "en": "Arab & Islamic history" } },
+        { "id": "cities", "name": { "ar": "الدول والمدن العربية", "fr": "Pays et villes arabes", "en": "Arab countries & cities" } },
+        { "id": "heritage", "name": { "ar": "التراث والعادات", "fr": "Patrimoine et traditions", "en": "Heritage & customs" } },
+        { "id": "literature", "name": { "ar": "الأدب والشعر", "fr": "Littérature et poésie", "en": "Literature & poetry" } },
+        { "id": "science", "name": { "ar": "معلومات علمية", "fr": "Sciences", "en": "Science" } },
+        { "id": "religion", "name": { "ar": "معلومات دينية عامة", "fr": "Culture religieuse générale", "en": "General religious knowledge" } },
+        { "id": "maghreb", "name": { "ar": "ثقافة المغرب والمغرب العربي", "fr": "Culture du Maroc et du Maghreb", "en": "Morocco & Maghreb culture" } }
+      ]
+    },
+    {
+      "id": "foreign_culture",
+      "icon": "🌐",
+      "name": { "ar": "الثقافة العامة الأجنبية", "fr": "Culture générale internationale", "en": "World general knowledge" },
+      "subcategories": [
+        { "id": "science", "name": { "ar": "العلوم والاكتشافات", "fr": "Sciences et découvertes", "en": "Science & discoveries" } },
+        { "id": "history", "name": { "ar": "التاريخ العالمي", "fr": "Histoire mondiale", "en": "World history" } },
+        { "id": "inventions", "name": { "ar": "الاختراعات", "fr": "Inventions", "en": "Inventions" } },
+        { "id": "cinema_arts", "name": { "ar": "السينما والفنون", "fr": "Cinéma et arts", "en": "Cinema & arts" } },
+        { "id": "landmarks", "name": { "ar": "المعالم العالمية", "fr": "Monuments du monde", "en": "World landmarks" } },
+        { "id": "misc", "name": { "ar": "معلومات عامة متنوعة", "fr": "Divers", "en": "Miscellaneous" } }
+      ]
+    }
+  ]
+}

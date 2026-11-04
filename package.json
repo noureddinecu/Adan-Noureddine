@@ -1,0 +1,19 @@
+{
+  "name": "tiktok-live-quiz",
+  "version": "1.0.0",
+  "description": "منصة مسابقات مباشرة متعددة التصنيفات على TikTok LIVE — Live multi-category quiz platform for TikTok LIVE",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js",
+    "validate": "node scripts/validate-bank.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "optionalDependencies": {
+    "tiktok-live-connector": "^2.0.0"
+  },
+  "license": "MIT"
+}

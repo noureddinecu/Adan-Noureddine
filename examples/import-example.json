@@ -1,0 +1,35 @@
+{
+  "questions": [
+    {
+      "category": "personalities",
+      "subcategory": "guess_photo",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "image_person",
+      "text": { "ar": "من هي هذه الشخصية؟", "fr": "Qui est cette personnalité ?", "en": "Who is this person?" },
+      "image": "/uploads/REPLACE-WITH-YOUR-IMAGE.jpg",
+      "answers": { "ar": ["ابن بطوطة"], "fr": ["Ibn Battuta"], "en": ["Ibn Battuta"] },
+      "source": { "title": "Wikipedia — Ibn Battuta", "url": "https://en.wikipedia.org/wiki/Ibn_Battuta" },
+      "factKey": "photo_ibn_battuta",
+      "notes": "مثال: ارفع صورة تملك حق استعمالها ثم انشر السؤال"
+    },
+    {
+      "category": "sports",
+      "subcategory": "clubs",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "logo",
+      "text": { "ar": "شعار أي نادٍ هذا؟", "fr": "De quel club est ce logo ?", "en": "Which club's crest is this?" },
+      "image": "/uploads/REPLACE-WITH-YOUR-LOGO.png",
+      "choices": [
+        { "ar": "الوداد الرياضي", "fr": "Wydad AC", "en": "Wydad AC" },
+        { "ar": "الرجاء الرياضي", "fr": "Raja CA", "en": "Raja CA" },
+        { "ar": "الجيش الملكي", "fr": "AS FAR", "en": "AS FAR" },
+        { "ar": "نهضة بركان", "fr": "RS Berkane", "en": "RS Berkane" }
+      ],
+      "correct": 0,
+      "source": { "title": "الموقع الرسمي للنادي", "url": "" },
+      "factKey": "logo_wydad"
+    }
+  ]
+}

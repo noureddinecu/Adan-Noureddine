@@ -1,0 +1,1840 @@
+{
+  "questions": [
+    {
+      "id": "geo-arab-league",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد الدول الأعضاء في جامعة الدول العربية؟",
+        "fr": "Combien de pays sont membres de la Ligue arabe ?",
+        "en": "How many member states does the Arab League have?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "20",
+          "fr": "20",
+          "en": "20"
+        },
+        {
+          "ar": "21",
+          "fr": "21",
+          "en": "21"
+        },
+        {
+          "ar": "22",
+          "fr": "22",
+          "en": "22"
+        },
+        {
+          "ar": "24",
+          "fr": "24",
+          "en": "24"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Arab League",
+        "url": "https://en.wikipedia.org/wiki/Arab_League"
+      },
+      "factKey": "geo-arab-league",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-ae",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "ما هي عاصمة دولة الإمارات العربية المتحدة؟",
+        "fr": "Quelle est la capitale des Émirats arabes unis ?",
+        "en": "What is the capital of the United Arab Emirates?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "أبوظبي",
+          "ابو ظبي"
+        ],
+        "fr": [
+          "Abou Dabi",
+          "Abu Dhabi"
+        ],
+        "en": [
+          "Abu Dhabi"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Abu Dhabi",
+        "url": "https://en.wikipedia.org/wiki/Abu_Dhabi"
+      },
+      "factKey": "geo-cap-ae",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-au",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة أستراليا؟",
+        "fr": "Quelle est la capitale de l'Australie ?",
+        "en": "What is the capital of Australia?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "سيدني",
+          "fr": "Sydney",
+          "en": "Sydney"
+        },
+        {
+          "ar": "ملبورن",
+          "fr": "Melbourne",
+          "en": "Melbourne"
+        },
+        {
+          "ar": "بيرث",
+          "fr": "Perth",
+          "en": "Perth"
+        },
+        {
+          "ar": "كانبرا",
+          "fr": "Canberra",
+          "en": "Canberra"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Canberra",
+        "url": "https://en.wikipedia.org/wiki/Canberra"
+      },
+      "factKey": "geo-cap-au",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-br",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة البرازيل؟",
+        "fr": "Quelle est la capitale du Brésil ?",
+        "en": "What is the capital of Brazil?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "ريو دي جانيرو",
+          "fr": "Rio de Janeiro",
+          "en": "Rio de Janeiro"
+        },
+        {
+          "ar": "ساو باولو",
+          "fr": "São Paulo",
+          "en": "São Paulo"
+        },
+        {
+          "ar": "سلفادور",
+          "fr": "Salvador",
+          "en": "Salvador"
+        },
+        {
+          "ar": "برازيليا",
+          "fr": "Brasília",
+          "en": "Brasília"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Brasília",
+        "url": "https://en.wikipedia.org/wiki/Bras%C3%ADlia"
+      },
+      "factKey": "geo-cap-br",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-ca",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة كندا؟",
+        "fr": "Quelle est la capitale du Canada ?",
+        "en": "What is the capital of Canada?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "تورونتو",
+          "fr": "Toronto",
+          "en": "Toronto"
+        },
+        {
+          "ar": "أوتاوا",
+          "fr": "Ottawa",
+          "en": "Ottawa"
+        },
+        {
+          "ar": "مونتريال",
+          "fr": "Montréal",
+          "en": "Montreal"
+        },
+        {
+          "ar": "فانكوفر",
+          "fr": "Vancouver",
+          "en": "Vancouver"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Ottawa",
+        "url": "https://en.wikipedia.org/wiki/Ottawa"
+      },
+      "factKey": "geo-cap-ca",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-dj",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة جيبوتي؟",
+        "fr": "Quelle est la capitale de Djibouti ?",
+        "en": "What is the capital of Djibouti?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "تاجورة",
+          "fr": "Tadjourah",
+          "en": "Tadjoura"
+        },
+        {
+          "ar": "مدينة جيبوتي",
+          "fr": "Djibouti (ville)",
+          "en": "Djibouti City"
+        },
+        {
+          "ar": "علي صبيح",
+          "fr": "Ali Sabieh",
+          "en": "Ali Sabieh"
+        },
+        {
+          "ar": "دخيل",
+          "fr": "Dikhil",
+          "en": "Dikhil"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Djibouti (city)",
+        "url": "https://en.wikipedia.org/wiki/Djibouti_(city)"
+      },
+      "factKey": "geo-cap-dj",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-dz",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة الجزائر؟",
+        "fr": "Quelle est la capitale de l'Algérie ?",
+        "en": "What is the capital of Algeria?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "وهران",
+          "fr": "Oran",
+          "en": "Oran"
+        },
+        {
+          "ar": "الجزائر العاصمة",
+          "fr": "Alger",
+          "en": "Algiers"
+        },
+        {
+          "ar": "قسنطينة",
+          "fr": "Constantine",
+          "en": "Constantine"
+        },
+        {
+          "ar": "عنابة",
+          "fr": "Annaba",
+          "en": "Annaba"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Algiers",
+        "url": "https://en.wikipedia.org/wiki/Algiers"
+      },
+      "factKey": "geo-cap-dz",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-eg",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة مصر؟",
+        "fr": "Quelle est la capitale de l'Égypte ?",
+        "en": "What is the capital of Egypt?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الإسكندرية",
+          "fr": "Alexandrie",
+          "en": "Alexandria"
+        },
+        {
+          "ar": "القاهرة",
+          "fr": "Le Caire",
+          "en": "Cairo"
+        },
+        {
+          "ar": "الجيزة",
+          "fr": "Gizeh",
+          "en": "Giza"
+        },
+        {
+          "ar": "الأقصر",
+          "fr": "Louxor",
+          "en": "Luxor"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Cairo",
+        "url": "https://en.wikipedia.org/wiki/Cairo"
+      },
+      "factKey": "geo-cap-eg",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-fr",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة فرنسا؟",
+        "fr": "Quelle est la capitale de la France ?",
+        "en": "What is the capital of France?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "ليون",
+          "fr": "Lyon",
+          "en": "Lyon"
+        },
+        {
+          "ar": "مرسيليا",
+          "fr": "Marseille",
+          "en": "Marseille"
+        },
+        {
+          "ar": "نيس",
+          "fr": "Nice",
+          "en": "Nice"
+        },
+        {
+          "ar": "باريس",
+          "fr": "Paris",
+          "en": "Paris"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Paris",
+        "url": "https://en.wikipedia.org/wiki/Paris"
+      },
+      "factKey": "geo-cap-fr",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-jo",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة الأردن؟",
+        "fr": "Quelle est la capitale de la Jordanie ?",
+        "en": "What is the capital of Jordan?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "عمّان",
+          "fr": "Amman",
+          "en": "Amman"
+        },
+        {
+          "ar": "إربد",
+          "fr": "Irbid",
+          "en": "Irbid"
+        },
+        {
+          "ar": "الزرقاء",
+          "fr": "Zarka",
+          "en": "Zarqa"
+        },
+        {
+          "ar": "العقبة",
+          "fr": "Aqaba",
+          "en": "Aqaba"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Amman",
+        "url": "https://en.wikipedia.org/wiki/Amman"
+      },
+      "factKey": "geo-cap-jo",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-jp",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة اليابان؟",
+        "fr": "Quelle est la capitale du Japon ?",
+        "en": "What is the capital of Japan?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "أوساكا",
+          "fr": "Osaka",
+          "en": "Osaka"
+        },
+        {
+          "ar": "طوكيو",
+          "fr": "Tokyo",
+          "en": "Tokyo"
+        },
+        {
+          "ar": "كيوتو",
+          "fr": "Kyoto",
+          "en": "Kyoto"
+        },
+        {
+          "ar": "هيروشيما",
+          "fr": "Hiroshima",
+          "en": "Hiroshima"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Tokyo",
+        "url": "https://en.wikipedia.org/wiki/Tokyo"
+      },
+      "factKey": "geo-cap-jp",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-km",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة جزر القمر؟",
+        "fr": "Quelle est la capitale des Comores ?",
+        "en": "What is the capital of the Comoros?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "موتسامودو",
+          "fr": "Mutsamudu",
+          "en": "Mutsamudu"
+        },
+        {
+          "ar": "موروني",
+          "fr": "Moroni",
+          "en": "Moroni"
+        },
+        {
+          "ar": "فومبوني",
+          "fr": "Fomboni",
+          "en": "Fomboni"
+        },
+        {
+          "ar": "دوموني",
+          "fr": "Domoni",
+          "en": "Domoni"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Moroni, Comoros",
+        "url": "https://en.wikipedia.org/wiki/Moroni,_Comoros"
+      },
+      "factKey": "geo-cap-km",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-ma",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة المغرب؟",
+        "fr": "Quelle est la capitale du Maroc ?",
+        "en": "What is the capital of Morocco?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الدار البيضاء",
+          "fr": "Casablanca",
+          "en": "Casablanca"
+        },
+        {
+          "ar": "فاس",
+          "fr": "Fès",
+          "en": "Fez"
+        },
+        {
+          "ar": "مراكش",
+          "fr": "Marrakech",
+          "en": "Marrakesh"
+        },
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Rabat",
+        "url": "https://en.wikipedia.org/wiki/Rabat"
+      },
+      "factKey": "geo-cap-ma",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-mr",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة موريتانيا؟",
+        "fr": "Quelle est la capitale de la Mauritanie ?",
+        "en": "What is the capital of Mauritania?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "نواكشوط",
+          "fr": "Nouakchott",
+          "en": "Nouakchott"
+        },
+        {
+          "ar": "نواذيبو",
+          "fr": "Nouadhibou",
+          "en": "Nouadhibou"
+        },
+        {
+          "ar": "أطار",
+          "fr": "Atar",
+          "en": "Atar"
+        },
+        {
+          "ar": "كيفة",
+          "fr": "Kiffa",
+          "en": "Kiffa"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Nouakchott",
+        "url": "https://en.wikipedia.org/wiki/Nouakchott"
+      },
+      "factKey": "geo-cap-mr",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-om",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة سلطنة عُمان؟",
+        "fr": "Quelle est la capitale du sultanat d'Oman ?",
+        "en": "What is the capital of Oman?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "صلالة",
+          "fr": "Salalah",
+          "en": "Salalah"
+        },
+        {
+          "ar": "مسقط",
+          "fr": "Mascate",
+          "en": "Muscat"
+        },
+        {
+          "ar": "نزوى",
+          "fr": "Nizwa",
+          "en": "Nizwa"
+        },
+        {
+          "ar": "صحار",
+          "fr": "Sohar",
+          "en": "Sohar"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Muscat",
+        "url": "https://en.wikipedia.org/wiki/Muscat"
+      },
+      "factKey": "geo-cap-om",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-cap-tn",
+      "category": "geography",
+      "subcategory": "capitals",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هي عاصمة تونس؟",
+        "fr": "Quelle est la capitale de la Tunisie ?",
+        "en": "What is the capital of Tunisia?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "تونس",
+          "تونس العاصمة"
+        ],
+        "fr": [
+          "Tunis"
+        ],
+        "en": [
+          "Tunis"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Tunis",
+        "url": "https://en.wikipedia.org/wiki/Tunis"
+      },
+      "factKey": "geo-cap-tn",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-chefchaouen",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي المدينة المغربية المشهورة بـ\"الجوهرة الزرقاء\" لطلاء أزقتها باللون الأزرق؟",
+        "fr": "Quelle ville marocaine est surnommée « la perle bleue » ?",
+        "en": "Which Moroccan city is known as the \"Blue Pearl\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "تطوان",
+          "fr": "Tétouan",
+          "en": "Tetouan"
+        },
+        {
+          "ar": "شفشاون",
+          "fr": "Chefchaouen",
+          "en": "Chefchaouen"
+        },
+        {
+          "ar": "أصيلة",
+          "fr": "Asilah",
+          "en": "Asilah"
+        },
+        {
+          "ar": "الحسيمة",
+          "fr": "Al Hoceïma",
+          "en": "Al Hoceima"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Chefchaouen",
+        "url": "https://en.wikipedia.org/wiki/Chefchaouen"
+      },
+      "factKey": "geo-chefchaouen",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-everest",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هي أعلى قمة جبلية في العالم فوق مستوى سطح البحر؟",
+        "fr": "Quel est le plus haut sommet du monde au-dessus du niveau de la mer ?",
+        "en": "What is the world's highest mountain above sea level?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "إفرست",
+          "ايفرست",
+          "افرست",
+          "جبل إفرست"
+        ],
+        "fr": [
+          "Everest",
+          "Mont Everest"
+        ],
+        "en": [
+          "Everest",
+          "Mount Everest"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Mount Everest",
+        "url": "https://en.wikipedia.org/wiki/Mount_Everest"
+      },
+      "factKey": "geo-everest",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-br",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟",
+        "fr": "De quel pays est ce drapeau ?",
+        "en": "Which country's flag is this?"
+      },
+      "image": "https://flagcdn.com/w640/br.png",
+      "choices": [
+        {
+          "ar": "البرتغال",
+          "fr": "Portugal",
+          "en": "Portugal"
+        },
+        {
+          "ar": "البرازيل",
+          "fr": "Brésil",
+          "en": "Brazil"
+        },
+        {
+          "ar": "الأرجنتين",
+          "fr": "Argentine",
+          "en": "Argentina"
+        },
+        {
+          "ar": "كولومبيا",
+          "fr": "Colombie",
+          "en": "Colombia"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Brazil",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Brazil"
+      },
+      "factKey": "geo-flag-br",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-dz",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟",
+        "fr": "De quel pays est ce drapeau ?",
+        "en": "Which country's flag is this?"
+      },
+      "image": "https://flagcdn.com/w640/dz.png",
+      "choices": [
+        {
+          "ar": "المغرب",
+          "fr": "Maroc",
+          "en": "Morocco"
+        },
+        {
+          "ar": "ليبيا",
+          "fr": "Libye",
+          "en": "Libya"
+        },
+        {
+          "ar": "موريتانيا",
+          "fr": "Mauritanie",
+          "en": "Mauritania"
+        },
+        {
+          "ar": "الجزائر",
+          "fr": "Algérie",
+          "en": "Algeria"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Algeria",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Algeria"
+      },
+      "factKey": "geo-flag-dz",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-jp",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟ اكتب اسمها",
+        "fr": "De quel pays est ce drapeau ? Écris son nom",
+        "en": "Which country's flag is this? Type its name"
+      },
+      "image": "https://flagcdn.com/w640/jp.png",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "اليابان"
+        ],
+        "fr": [
+          "Japon"
+        ],
+        "en": [
+          "Japan"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Japan",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Japan"
+      },
+      "factKey": "geo-flag-jp",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-lb",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟ اكتب اسمها",
+        "fr": "De quel pays est ce drapeau ? Écris son nom",
+        "en": "Which country's flag is this? Type its name"
+      },
+      "image": "https://flagcdn.com/w640/lb.png",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "لبنان"
+        ],
+        "fr": [
+          "Liban"
+        ],
+        "en": [
+          "Lebanon"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Lebanon",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Lebanon"
+      },
+      "factKey": "geo-flag-lb",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-ma",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟",
+        "fr": "De quel pays est ce drapeau ?",
+        "en": "Which country's flag is this?"
+      },
+      "image": "https://flagcdn.com/w640/ma.png",
+      "choices": [
+        {
+          "ar": "تونس",
+          "fr": "Tunisie",
+          "en": "Tunisia"
+        },
+        {
+          "ar": "المغرب",
+          "fr": "Maroc",
+          "en": "Morocco"
+        },
+        {
+          "ar": "تركيا",
+          "fr": "Turquie",
+          "en": "Turkey"
+        },
+        {
+          "ar": "الجزائر",
+          "fr": "Algérie",
+          "en": "Algeria"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Morocco",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Morocco"
+      },
+      "factKey": "geo-flag-ma",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-mr",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟ اكتب اسمها",
+        "fr": "De quel pays est ce drapeau ? Écris son nom",
+        "en": "Which country's flag is this? Type its name"
+      },
+      "image": "https://flagcdn.com/w640/mr.png",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "موريتانيا"
+        ],
+        "fr": [
+          "Mauritanie"
+        ],
+        "en": [
+          "Mauritania"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Mauritania",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Mauritania"
+      },
+      "factKey": "geo-flag-mr",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-np",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "world",
+      "difficulty": "hard",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟ (العلم الوحيد غير المستطيل)",
+        "fr": "De quel pays est ce drapeau ? (le seul non rectangulaire)",
+        "en": "Which country's flag is this? (the only non-rectangular one)"
+      },
+      "image": "https://flagcdn.com/w640/np.png",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "نيبال",
+          "النيبال"
+        ],
+        "fr": [
+          "Népal"
+        ],
+        "en": [
+          "Nepal"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Nepal",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Nepal"
+      },
+      "factKey": "geo-flag-np",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-qa",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟ (انتبه للتفاصيل!)",
+        "fr": "De quel pays est ce drapeau ? (attention aux détails !)",
+        "en": "Which country's flag is this? (watch the details!)"
+      },
+      "image": "https://flagcdn.com/w640/qa.png",
+      "choices": [
+        {
+          "ar": "البحرين",
+          "fr": "Bahreïn",
+          "en": "Bahrain"
+        },
+        {
+          "ar": "قطر",
+          "fr": "Qatar",
+          "en": "Qatar"
+        },
+        {
+          "ar": "الإمارات",
+          "fr": "Émirats arabes unis",
+          "en": "UAE"
+        },
+        {
+          "ar": "عُمان",
+          "fr": "Oman",
+          "en": "Oman"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Qatar",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Qatar"
+      },
+      "factKey": "geo-flag-qa",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-flag-sa",
+      "category": "geography",
+      "subcategory": "flags",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "flag",
+      "text": {
+        "ar": "علم أي دولة هذا؟",
+        "fr": "De quel pays est ce drapeau ?",
+        "en": "Which country's flag is this?"
+      },
+      "image": "https://flagcdn.com/w640/sa.png",
+      "choices": [
+        {
+          "ar": "العراق",
+          "fr": "Irak",
+          "en": "Iraq"
+        },
+        {
+          "ar": "الكويت",
+          "fr": "Koweït",
+          "en": "Kuwait"
+        },
+        {
+          "ar": "قطر",
+          "fr": "Qatar",
+          "en": "Qatar"
+        },
+        {
+          "ar": "السعودية",
+          "fr": "Arabie saoudite",
+          "en": "Saudi Arabia"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Flag of Saudi Arabia",
+        "url": "https://en.wikipedia.org/wiki/Flag_of_Saudi_Arabia"
+      },
+      "factKey": "geo-flag-sa",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-gibraltar",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "ما اسم المضيق الذي يفصل المغرب عن إسبانيا؟",
+        "fr": "Quel détroit sépare le Maroc de l'Espagne ?",
+        "en": "Which strait separates Morocco from Spain?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "مضيق جبل طارق",
+          "جبل طارق"
+        ],
+        "fr": [
+          "Détroit de Gibraltar",
+          "Gibraltar"
+        ],
+        "en": [
+          "Strait of Gibraltar",
+          "Gibraltar"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Strait of Gibraltar",
+        "url": "https://en.wikipedia.org/wiki/Strait_of_Gibraltar"
+      },
+      "factKey": "geo-gibraltar",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-largest-arab",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي أكبر دولة عربية من حيث المساحة؟",
+        "fr": "Quel est le plus grand pays arabe par sa superficie ?",
+        "en": "Which is the largest Arab country by area?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "السعودية",
+          "fr": "Arabie saoudite",
+          "en": "Saudi Arabia"
+        },
+        {
+          "ar": "السودان",
+          "fr": "Soudan",
+          "en": "Sudan"
+        },
+        {
+          "ar": "ليبيا",
+          "fr": "Libye",
+          "en": "Libya"
+        },
+        {
+          "ar": "الجزائر",
+          "fr": "Algérie",
+          "en": "Algeria"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Algeria",
+        "url": "https://en.wikipedia.org/wiki/Algeria"
+      },
+      "factKey": "geo-largest-arab",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "منذ انفصال جنوب السودان سنة 2011",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-ma-regions",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد جهات المغرب حسب التقسيم الإداري المعتمد سنة 2015؟",
+        "fr": "Combien de régions compte le Maroc selon le découpage de 2015 ?",
+        "en": "How many regions does Morocco have under the 2015 division?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "16",
+          "fr": "16",
+          "en": "16"
+        },
+        {
+          "ar": "10",
+          "fr": "10",
+          "en": "10"
+        },
+        {
+          "ar": "12",
+          "fr": "12",
+          "en": "12"
+        },
+        {
+          "ar": "14",
+          "fr": "14",
+          "en": "14"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Regions of Morocco",
+        "url": "https://en.wikipedia.org/wiki/Regions_of_Morocco"
+      },
+      "factKey": "geo-ma-regions",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-nile",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هو أطول نهر في قارة أفريقيا؟",
+        "fr": "Quel est le plus long fleuve d'Afrique ?",
+        "en": "What is the longest river in Africa?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "النيل",
+          "fr": "Le Nil",
+          "en": "The Nile"
+        },
+        {
+          "ar": "الكونغو",
+          "fr": "Le Congo",
+          "en": "The Congo"
+        },
+        {
+          "ar": "النيجر",
+          "fr": "Le Niger",
+          "en": "The Niger"
+        },
+        {
+          "ar": "الزمبيزي",
+          "fr": "Le Zambèze",
+          "en": "The Zambezi"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Nile",
+        "url": "https://en.wikipedia.org/wiki/Nile"
+      },
+      "factKey": "geo-nile",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-pacific",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هو أكبر محيط في العالم؟",
+        "fr": "Quel est le plus grand océan du monde ?",
+        "en": "What is the world's largest ocean?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "المحيط الأطلسي",
+          "fr": "Océan Atlantique",
+          "en": "Atlantic Ocean"
+        },
+        {
+          "ar": "المحيط الهادئ",
+          "fr": "Océan Pacifique",
+          "en": "Pacific Ocean"
+        },
+        {
+          "ar": "المحيط الهندي",
+          "fr": "Océan Indien",
+          "en": "Indian Ocean"
+        },
+        {
+          "ar": "المحيط المتجمد الشمالي",
+          "fr": "Océan Arctique",
+          "en": "Arctic Ocean"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Pacific Ocean",
+        "url": "https://en.wikipedia.org/wiki/Pacific_Ocean"
+      },
+      "factKey": "geo-pacific",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-russia",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي أكبر دولة في العالم من حيث المساحة؟",
+        "fr": "Quel est le plus grand pays du monde par sa superficie ?",
+        "en": "Which is the largest country in the world by area?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "كندا",
+          "fr": "Canada",
+          "en": "Canada"
+        },
+        {
+          "ar": "الصين",
+          "fr": "Chine",
+          "en": "China"
+        },
+        {
+          "ar": "الولايات المتحدة",
+          "fr": "États-Unis",
+          "en": "United States"
+        },
+        {
+          "ar": "روسيا",
+          "fr": "Russie",
+          "en": "Russia"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Russia",
+        "url": "https://en.wikipedia.org/wiki/Russia"
+      },
+      "factKey": "geo-russia",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-sahara",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي أكبر صحراء حارة في العالم؟",
+        "fr": "Quel est le plus grand désert chaud du monde ?",
+        "en": "What is the world's largest hot desert?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الربع الخالي",
+          "fr": "Le Rub al-Khali",
+          "en": "Rub al Khali"
+        },
+        {
+          "ar": "صحراء كالاهاري",
+          "fr": "Le Kalahari",
+          "en": "The Kalahari"
+        },
+        {
+          "ar": "الصحراء الكبرى",
+          "fr": "Le Sahara",
+          "en": "The Sahara"
+        },
+        {
+          "ar": "صحراء غوبي",
+          "fr": "Le désert de Gobi",
+          "en": "The Gobi"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Sahara",
+        "url": "https://en.wikipedia.org/wiki/Sahara"
+      },
+      "factKey": "geo-sahara",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-toubkal",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي أعلى قمة جبلية في المغرب؟",
+        "fr": "Quel est le plus haut sommet du Maroc ?",
+        "en": "What is the highest peak in Morocco?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "جبل العياشي",
+          "fr": "Le Jbel Ayachi",
+          "en": "Jbel Ayachi"
+        },
+        {
+          "ar": "جبل بويبلان",
+          "fr": "Le Bou Iblane",
+          "en": "Bou Iblane"
+        },
+        {
+          "ar": "جبل توبقال",
+          "fr": "Le Toubkal",
+          "en": "Toubkal"
+        },
+        {
+          "ar": "جبل تيدغين",
+          "fr": "Le Tidghine",
+          "en": "Tidirhine"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Toubkal",
+        "url": "https://en.wikipedia.org/wiki/Toubkal"
+      },
+      "factKey": "geo-toubkal",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "geo-vatican",
+      "category": "geography",
+      "subcategory": "facts",
+      "region": "foreign",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي أصغر دولة في العالم من حيث المساحة؟",
+        "fr": "Quel est le plus petit pays du monde par sa superficie ?",
+        "en": "What is the smallest country in the world by area?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الفاتيكان",
+          "fr": "Vatican",
+          "en": "Vatican City"
+        },
+        {
+          "ar": "موناكو",
+          "fr": "Monaco",
+          "en": "Monaco"
+        },
+        {
+          "ar": "سان مارينو",
+          "fr": "Saint-Marin",
+          "en": "San Marino"
+        },
+        {
+          "ar": "مالطا",
+          "fr": "Malte",
+          "en": "Malta"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Vatican City",
+        "url": "https://en.wikipedia.org/wiki/Vatican_City"
+      },
+      "factKey": "geo-vatican",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    }
+  ]
+}

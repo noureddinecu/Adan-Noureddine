@@ -1,0 +1,1153 @@
+{
+  "questions": [
+    {
+      "id": "for-beethoven9",
+      "category": "foreign_culture",
+      "subcategory": "cinema_arts",
+      "region": "foreign",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو مؤلف السيمفونية التاسعة التي تتضمن \"نشيد الفرح\"؟",
+        "fr": "Qui a composé la Neuvième Symphonie et son « Hymne à la joie » ?",
+        "en": "Who composed the Ninth Symphony with the \"Ode to Joy\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "موزارت",
+          "fr": "Mozart",
+          "en": "Mozart"
+        },
+        {
+          "ar": "باخ",
+          "fr": "Bach",
+          "en": "Bach"
+        },
+        {
+          "ar": "شوبان",
+          "fr": "Chopin",
+          "en": "Chopin"
+        },
+        {
+          "ar": "بيتهوفن",
+          "fr": "Beethoven",
+          "en": "Beethoven"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Symphony No. 9 (Beethoven)",
+        "url": "https://en.wikipedia.org/wiki/Symphony_No._9_(Beethoven)"
+      },
+      "factKey": "for-beethoven9",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-berlin-wall",
+      "category": "foreign_culture",
+      "subcategory": "history",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة سقط جدار برلين؟",
+        "fr": "En quelle année le mur de Berlin est-il tombé ?",
+        "en": "In which year did the Berlin Wall fall?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "1991",
+          "fr": "1991",
+          "en": "1991"
+        },
+        {
+          "ar": "1989",
+          "fr": "1989",
+          "en": "1989"
+        },
+        {
+          "ar": "1985",
+          "fr": "1985",
+          "en": "1985"
+        },
+        {
+          "ar": "1990",
+          "fr": "1990",
+          "en": "1990"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Fall of the Berlin Wall",
+        "url": "https://en.wikipedia.org/wiki/Fall_of_the_Berlin_Wall"
+      },
+      "factKey": "for-berlin-wall",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-bones",
+      "category": "foreign_culture",
+      "subcategory": "science",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد عظام جسم الإنسان البالغ؟",
+        "fr": "Combien d'os compte le squelette d'un adulte ?",
+        "en": "How many bones are in the adult human body?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "201",
+          "fr": "201",
+          "en": "201"
+        },
+        {
+          "ar": "212",
+          "fr": "212",
+          "en": "212"
+        },
+        {
+          "ar": "300",
+          "fr": "300",
+          "en": "300"
+        },
+        {
+          "ar": "206",
+          "fr": "206",
+          "en": "206"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Human skeleton",
+        "url": "https://en.wikipedia.org/wiki/Human_skeleton"
+      },
+      "factKey": "for-bones",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-chess-squares",
+      "category": "foreign_culture",
+      "subcategory": "misc",
+      "region": "foreign",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد مربعات رقعة الشطرنج؟",
+        "fr": "Combien de cases compte un échiquier ?",
+        "en": "How many squares are on a chessboard?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "81",
+          "fr": "81",
+          "en": "81"
+        },
+        {
+          "ar": "64",
+          "fr": "64",
+          "en": "64"
+        },
+        {
+          "ar": "49",
+          "fr": "49",
+          "en": "49"
+        },
+        {
+          "ar": "100",
+          "fr": "100",
+          "en": "100"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Chessboard",
+        "url": "https://en.wikipedia.org/wiki/Chessboard"
+      },
+      "factKey": "for-chess-squares",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-eiffel",
+      "category": "foreign_culture",
+      "subcategory": "landmarks",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "في أي مدينة يوجد برج إيفل؟",
+        "fr": "Dans quelle ville se trouve la tour Eiffel ?",
+        "en": "In which city is the Eiffel Tower?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "باريس"
+        ],
+        "fr": [
+          "Paris"
+        ],
+        "en": [
+          "Paris"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Eiffel Tower",
+        "url": "https://en.wikipedia.org/wiki/Eiffel_Tower"
+      },
+      "factKey": "for-eiffel",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-gold-au",
+      "category": "foreign_culture",
+      "subcategory": "science",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هو الرمز الكيميائي للذهب؟",
+        "fr": "Quel est le symbole chimique de l'or ?",
+        "en": "What is the chemical symbol for gold?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "Ag",
+          "fr": "Ag",
+          "en": "Ag"
+        },
+        {
+          "ar": "Au",
+          "fr": "Au",
+          "en": "Au"
+        },
+        {
+          "ar": "Gd",
+          "fr": "Gd",
+          "en": "Gd"
+        },
+        {
+          "ar": "Go",
+          "fr": "Go",
+          "en": "Go"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Gold",
+        "url": "https://en.wikipedia.org/wiki/Gold"
+      },
+      "factKey": "for-gold-au",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-gutenberg",
+      "category": "foreign_culture",
+      "subcategory": "inventions",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو مخترع الطباعة بالحروف المتحركة في أوروبا (القرن 15)؟",
+        "fr": "Qui a inventé l'imprimerie à caractères mobiles en Europe (XVe siècle) ?",
+        "en": "Who invented movable-type printing in Europe (15th century)?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "توماس إديسون",
+          "fr": "Thomas Edison",
+          "en": "Thomas Edison"
+        },
+        {
+          "ar": "جيمس واط",
+          "fr": "James Watt",
+          "en": "James Watt"
+        },
+        {
+          "ar": "ألفريد نوبل",
+          "fr": "Alfred Nobel",
+          "en": "Alfred Nobel"
+        },
+        {
+          "ar": "يوهان غوتنبرغ",
+          "fr": "Johannes Gutenberg",
+          "en": "Johannes Gutenberg"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Johannes Gutenberg",
+        "url": "https://en.wikipedia.org/wiki/Johannes_Gutenberg"
+      },
+      "factKey": "for-gutenberg",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-liberty",
+      "category": "foreign_culture",
+      "subcategory": "landmarks",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "أي دولة أهدت تمثال الحرية إلى الولايات المتحدة؟",
+        "fr": "Quel pays a offert la statue de la Liberté aux États-Unis ?",
+        "en": "Which country gave the Statue of Liberty to the United States?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "بريطانيا",
+          "fr": "Royaume-Uni",
+          "en": "United Kingdom"
+        },
+        {
+          "ar": "إسبانيا",
+          "fr": "Espagne",
+          "en": "Spain"
+        },
+        {
+          "ar": "إيطاليا",
+          "fr": "Italie",
+          "en": "Italy"
+        },
+        {
+          "ar": "فرنسا",
+          "fr": "France",
+          "en": "France"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Statue of Liberty",
+        "url": "https://en.wikipedia.org/wiki/Statue_of_Liberty"
+      },
+      "factKey": "for-liberty",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-light-speed",
+      "category": "foreign_culture",
+      "subcategory": "science",
+      "region": "world",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "كم تبلغ سرعة الضوء في الفراغ تقريباً؟",
+        "fr": "Quelle est approximativement la vitesse de la lumière dans le vide ?",
+        "en": "What is the approximate speed of light in a vacuum?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "300 ألف كم/ث",
+          "fr": "300 000 km/s",
+          "en": "300,000 km/s"
+        },
+        {
+          "ar": "150 ألف كم/ث",
+          "fr": "150 000 km/s",
+          "en": "150,000 km/s"
+        },
+        {
+          "ar": "30 ألف كم/ث",
+          "fr": "30 000 km/s",
+          "en": "30,000 km/s"
+        },
+        {
+          "ar": "3 آلاف كم/ث",
+          "fr": "3 000 km/s",
+          "en": "3,000 km/s"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Speed of light",
+        "url": "https://en.wikipedia.org/wiki/Speed_of_light"
+      },
+      "factKey": "for-light-speed",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-mercury",
+      "category": "foreign_culture",
+      "subcategory": "science",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هو أقرب كوكب إلى الشمس؟",
+        "fr": "Quelle est la planète la plus proche du Soleil ?",
+        "en": "Which planet is closest to the Sun?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الزهرة",
+          "fr": "Vénus",
+          "en": "Venus"
+        },
+        {
+          "ar": "المريخ",
+          "fr": "Mars",
+          "en": "Mars"
+        },
+        {
+          "ar": "الأرض",
+          "fr": "La Terre",
+          "en": "Earth"
+        },
+        {
+          "ar": "عطارد",
+          "fr": "Mercure",
+          "en": "Mercury"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Mercury (planet)",
+        "url": "https://en.wikipedia.org/wiki/Mercury_(planet)"
+      },
+      "factKey": "for-mercury",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-nobel",
+      "category": "foreign_culture",
+      "subcategory": "inventions",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو مخترع الديناميت الذي تحمل أشهر الجوائز العالمية اسمه؟",
+        "fr": "Qui a inventé la dynamite et a donné son nom à un célèbre prix ?",
+        "en": "Who invented dynamite and gave his name to a famous prize?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "ألفريد نوبل",
+          "fr": "Alfred Nobel",
+          "en": "Alfred Nobel"
+        },
+        {
+          "ar": "توماس إديسون",
+          "fr": "Thomas Edison",
+          "en": "Thomas Edison"
+        },
+        {
+          "ar": "نيكولا تسلا",
+          "fr": "Nikola Tesla",
+          "en": "Nikola Tesla"
+        },
+        {
+          "ar": "مايكل فاراداي",
+          "fr": "Michael Faraday",
+          "en": "Michael Faraday"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Alfred Nobel",
+        "url": "https://en.wikipedia.org/wiki/Alfred_Nobel"
+      },
+      "factKey": "for-nobel",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-palme-dor",
+      "category": "foreign_culture",
+      "subcategory": "cinema_arts",
+      "region": "foreign",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "أي مهرجان سينمائي يمنح جائزة \"السعفة الذهبية\"؟",
+        "fr": "Quel festival de cinéma décerne la Palme d’or ?",
+        "en": "Which film festival awards the Palme d'Or?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "مهرجان البندقية",
+          "fr": "Mostra de Venise",
+          "en": "Venice Film Festival"
+        },
+        {
+          "ar": "مهرجان كان",
+          "fr": "Festival de Cannes",
+          "en": "Cannes Film Festival"
+        },
+        {
+          "ar": "مهرجان برلين",
+          "fr": "Berlinale",
+          "en": "Berlin Film Festival"
+        },
+        {
+          "ar": "مهرجان مراكش",
+          "fr": "Festival de Marrakech",
+          "en": "Marrakech Film Festival"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Palme d'Or",
+        "url": "https://en.wikipedia.org/wiki/Palme_d%27Or"
+      },
+      "factKey": "for-palme-dor",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-penicillin",
+      "category": "foreign_culture",
+      "subcategory": "science",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو مكتشف البنسلين سنة 1928؟",
+        "fr": "Qui a découvert la pénicilline en 1928 ?",
+        "en": "Who discovered penicillin in 1928?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "لويس باستور",
+          "fr": "Louis Pasteur",
+          "en": "Louis Pasteur"
+        },
+        {
+          "ar": "روبرت كوخ",
+          "fr": "Robert Koch",
+          "en": "Robert Koch"
+        },
+        {
+          "ar": "إدوارد جينر",
+          "fr": "Edward Jenner",
+          "en": "Edward Jenner"
+        },
+        {
+          "ar": "ألكسندر فليمنغ",
+          "fr": "Alexander Fleming",
+          "en": "Alexander Fleming"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Penicillin",
+        "url": "https://en.wikipedia.org/wiki/Penicillin"
+      },
+      "factKey": "for-penicillin",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-planets",
+      "category": "foreign_culture",
+      "subcategory": "science",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد كواكب المجموعة الشمسية؟",
+        "fr": "Combien de planètes compte le système solaire ?",
+        "en": "How many planets are in the Solar System?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "9",
+          "fr": "9",
+          "en": "9"
+        },
+        {
+          "ar": "7",
+          "fr": "7",
+          "en": "7"
+        },
+        {
+          "ar": "10",
+          "fr": "10",
+          "en": "10"
+        },
+        {
+          "ar": "8",
+          "fr": "8",
+          "en": "8"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Solar System",
+        "url": "https://en.wikipedia.org/wiki/Solar_System"
+      },
+      "factKey": "for-planets",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "منذ إعادة تصنيف بلوتو سنة 2006",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-rainbow",
+      "category": "foreign_culture",
+      "subcategory": "misc",
+      "region": "foreign",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد ألوان قوس قزح في التقسيم التقليدي؟",
+        "fr": "Combien de couleurs compte traditionnellement l'arc-en-ciel ?",
+        "en": "How many colours are traditionally counted in a rainbow?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "5",
+          "fr": "5",
+          "en": "5"
+        },
+        {
+          "ar": "6",
+          "fr": "6",
+          "en": "6"
+        },
+        {
+          "ar": "7",
+          "fr": "7",
+          "en": "7"
+        },
+        {
+          "ar": "9",
+          "fr": "9",
+          "en": "9"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Rainbow",
+        "url": "https://en.wikipedia.org/wiki/Rainbow"
+      },
+      "factKey": "for-rainbow",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-skin",
+      "category": "foreign_culture",
+      "subcategory": "science",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "ما هو أكبر عضو في جسم الإنسان؟",
+        "fr": "Quel est le plus grand organe du corps humain ?",
+        "en": "What is the largest organ of the human body?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "الجلد"
+        ],
+        "fr": [
+          "La peau",
+          "Peau"
+        ],
+        "en": [
+          "Skin",
+          "The skin"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Skin",
+        "url": "https://en.wikipedia.org/wiki/Skin"
+      },
+      "factKey": "for-skin",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-sputnik",
+      "category": "foreign_culture",
+      "subcategory": "science",
+      "region": "world",
+      "difficulty": "hard",
+      "type": "open",
+      "text": {
+        "ar": "ما اسم أول قمر صناعي أُطلق إلى الفضاء سنة 1957؟",
+        "fr": "Quel est le nom du premier satellite artificiel lancé en 1957 ?",
+        "en": "What was the name of the first artificial satellite, launched in 1957?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "سبوتنيك",
+          "سبوتنيك 1"
+        ],
+        "fr": [
+          "Spoutnik",
+          "Spoutnik 1",
+          "Sputnik"
+        ],
+        "en": [
+          "Sputnik",
+          "Sputnik 1"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Sputnik 1",
+        "url": "https://en.wikipedia.org/wiki/Sputnik_1"
+      },
+      "factKey": "for-sputnik",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-starry-night",
+      "category": "foreign_culture",
+      "subcategory": "cinema_arts",
+      "region": "foreign",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الرسام صاحب لوحة \"ليلة النجوم\"؟",
+        "fr": "Quel peintre a réalisé « La Nuit étoilée » ?",
+        "en": "Which painter created \"The Starry Night\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "فنسنت فان غوخ",
+          "fr": "Vincent van Gogh",
+          "en": "Vincent van Gogh"
+        },
+        {
+          "ar": "كلود مونيه",
+          "fr": "Claude Monet",
+          "en": "Claude Monet"
+        },
+        {
+          "ar": "سلفادور دالي",
+          "fr": "Salvador Dalí",
+          "en": "Salvador Dalí"
+        },
+        {
+          "ar": "رامبرانت",
+          "fr": "Rembrandt",
+          "en": "Rembrandt"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — The Starry Night",
+        "url": "https://en.wikipedia.org/wiki/The_Starry_Night"
+      },
+      "factKey": "for-starry-night",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-taj-mahal",
+      "category": "foreign_culture",
+      "subcategory": "landmarks",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي دولة يوجد ضريح تاج محل؟",
+        "fr": "Dans quel pays se trouve le Taj Mahal ?",
+        "en": "In which country is the Taj Mahal?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "باكستان",
+          "fr": "Pakistan",
+          "en": "Pakistan"
+        },
+        {
+          "ar": "إيران",
+          "fr": "Iran",
+          "en": "Iran"
+        },
+        {
+          "ar": "تركيا",
+          "fr": "Turquie",
+          "en": "Turkey"
+        },
+        {
+          "ar": "الهند",
+          "fr": "Inde",
+          "en": "India"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Taj Mahal",
+        "url": "https://en.wikipedia.org/wiki/Taj_Mahal"
+      },
+      "factKey": "for-taj-mahal",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-titanic",
+      "category": "foreign_culture",
+      "subcategory": "cinema_arts",
+      "region": "foreign",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو مخرج فيلم \"تيتانيك\" (1997)؟",
+        "fr": "Qui a réalisé le film « Titanic » (1997) ?",
+        "en": "Who directed the film \"Titanic\" (1997)?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "ستيفن سبيلبرغ",
+          "fr": "Steven Spielberg",
+          "en": "Steven Spielberg"
+        },
+        {
+          "ar": "كريستوفر نولان",
+          "fr": "Christopher Nolan",
+          "en": "Christopher Nolan"
+        },
+        {
+          "ar": "جيمس كاميرون",
+          "fr": "James Cameron",
+          "en": "James Cameron"
+        },
+        {
+          "ar": "مارتن سكورسيزي",
+          "fr": "Martin Scorsese",
+          "en": "Martin Scorsese"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Titanic (1997 film)",
+        "url": "https://en.wikipedia.org/wiki/Titanic_(1997_film)"
+      },
+      "factKey": "for-titanic",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-ww2-start",
+      "category": "foreign_culture",
+      "subcategory": "history",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة بدأت الحرب العالمية الثانية؟",
+        "fr": "En quelle année a commencé la Seconde Guerre mondiale ?",
+        "en": "In which year did World War II begin?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "1914",
+          "fr": "1914",
+          "en": "1914"
+        },
+        {
+          "ar": "1945",
+          "fr": "1945",
+          "en": "1945"
+        },
+        {
+          "ar": "1941",
+          "fr": "1941",
+          "en": "1941"
+        },
+        {
+          "ar": "1939",
+          "fr": "1939",
+          "en": "1939"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — World War II",
+        "url": "https://en.wikipedia.org/wiki/World_War_II"
+      },
+      "factKey": "for-ww2-start",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "for-yen",
+      "category": "foreign_culture",
+      "subcategory": "misc",
+      "region": "foreign",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي العملة الرسمية لليابان؟",
+        "fr": "Quelle est la monnaie officielle du Japon ?",
+        "en": "What is the official currency of Japan?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "اليوان",
+          "fr": "Yuan",
+          "en": "Yuan"
+        },
+        {
+          "ar": "الوون",
+          "fr": "Won",
+          "en": "Won"
+        },
+        {
+          "ar": "الين",
+          "fr": "Yen",
+          "en": "Yen"
+        },
+        {
+          "ar": "الروبية",
+          "fr": "Roupie",
+          "en": "Rupee"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Japanese yen",
+        "url": "https://en.wikipedia.org/wiki/Japanese_yen"
+      },
+      "factKey": "for-yen",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    }
+  ]
+}

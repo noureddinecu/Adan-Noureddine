@@ -1,0 +1,1137 @@
+{
+  "questions": [
+    {
+      "id": "per-armstrong",
+      "category": "personalities",
+      "subcategory": "world_figures",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "من هو أول إنسان مشى على سطح القمر سنة 1969؟",
+        "fr": "Qui fut le premier homme à marcher sur la Lune en 1969 ?",
+        "en": "Who was the first person to walk on the Moon in 1969?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "نيل أرمسترونغ",
+          "أرمسترونغ",
+          "ارمسترونج"
+        ],
+        "fr": [
+          "Neil Armstrong",
+          "Armstrong"
+        ],
+        "en": [
+          "Neil Armstrong",
+          "Armstrong"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Neil Armstrong",
+        "url": "https://en.wikipedia.org/wiki/Neil_Armstrong"
+      },
+      "factKey": "per-armstrong",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-averroes",
+      "category": "personalities",
+      "subcategory": "scientists",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الفيلسوف والطبيب الأندلسي المعروف في الغرب باسم Averroes؟",
+        "fr": "Quel philosophe et médecin andalou est connu en Occident sous le nom d’Averroès ?",
+        "en": "Which Andalusian philosopher and physician is known in the West as Averroes?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "ابن طفيل",
+          "fr": "Ibn Tufayl",
+          "en": "Ibn Tufayl"
+        },
+        {
+          "ar": "ابن رشد",
+          "fr": "Ibn Rochd",
+          "en": "Ibn Rushd"
+        },
+        {
+          "ar": "ابن باجة",
+          "fr": "Ibn Bajja",
+          "en": "Ibn Bajja"
+        },
+        {
+          "ar": "ابن زهر",
+          "fr": "Ibn Zuhr",
+          "en": "Ibn Zuhr"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Averroes",
+        "url": "https://en.wikipedia.org/wiki/Averroes"
+      },
+      "factKey": "per-averroes",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-avicenna",
+      "category": "personalities",
+      "subcategory": "scientists",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "من هو العالم صاحب كتاب \"القانون في الطب\"؟",
+        "fr": "Quel savant est l’auteur du « Canon de la médecine » ?",
+        "en": "Which scholar wrote \"The Canon of Medicine\"?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "ابن سينا"
+        ],
+        "fr": [
+          "Avicenne",
+          "Ibn Sina"
+        ],
+        "en": [
+          "Avicenna",
+          "Ibn Sina"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Avicenna",
+        "url": "https://en.wikipedia.org/wiki/Avicenna"
+      },
+      "factKey": "per-avicenna",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-curie",
+      "category": "personalities",
+      "subcategory": "scientists",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "من هي أول امرأة تفوز بجائزة نوبل؟",
+        "fr": "Qui est la première femme à avoir reçu un prix Nobel ?",
+        "en": "Who was the first woman to win a Nobel Prize?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "ماري كوري",
+          "كوري"
+        ],
+        "fr": [
+          "Marie Curie",
+          "Curie"
+        ],
+        "en": [
+          "Marie Curie",
+          "Curie"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Marie Curie",
+        "url": "https://en.wikipedia.org/wiki/Marie_Curie"
+      },
+      "factKey": "per-curie",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-darwish",
+      "category": "personalities",
+      "subcategory": "arab_moroccan",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الشاعر صاحب قصيدة \"بطاقة هوية\" (سجّل أنا عربي)؟",
+        "fr": "Quel poète a écrit « Carte d’identité » (Inscris : je suis arabe) ?",
+        "en": "Which poet wrote \"Identity Card\" (\"Record! I am an Arab\")?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "محمود درويش",
+          "fr": "Mahmoud Darwich",
+          "en": "Mahmoud Darwish"
+        },
+        {
+          "ar": "نزار قباني",
+          "fr": "Nizar Qabbani",
+          "en": "Nizar Qabbani"
+        },
+        {
+          "ar": "سميح القاسم",
+          "fr": "Samih al-Qasim",
+          "en": "Samih al-Qasim"
+        },
+        {
+          "ar": "توفيق زياد",
+          "fr": "Tawfiq Zayyad",
+          "en": "Tawfiq Zayyad"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Mahmoud Darwish",
+        "url": "https://en.wikipedia.org/wiki/Mahmoud_Darwish"
+      },
+      "factKey": "per-darwish",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-davinci",
+      "category": "personalities",
+      "subcategory": "artists",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الرسام صاحب لوحة \"الموناليزا\"؟",
+        "fr": "Quel peintre a réalisé « La Joconde » ?",
+        "en": "Which artist painted the \"Mona Lisa\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "ليوناردو دافنشي",
+          "fr": "Léonard de Vinci",
+          "en": "Leonardo da Vinci"
+        },
+        {
+          "ar": "مايكل أنجلو",
+          "fr": "Michel-Ange",
+          "en": "Michelangelo"
+        },
+        {
+          "ar": "رافائيل",
+          "fr": "Raphaël",
+          "en": "Raphael"
+        },
+        {
+          "ar": "بابلو بيكاسو",
+          "fr": "Pablo Picasso",
+          "en": "Pablo Picasso"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Mona Lisa",
+        "url": "https://en.wikipedia.org/wiki/Mona_Lisa"
+      },
+      "factKey": "per-davinci",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-doukkali",
+      "category": "personalities",
+      "subcategory": "artists",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الفنان المغربي صاحب أغنية \"مرسول الحب\"؟",
+        "fr": "Quel artiste marocain chante « Marsoul el Hob » ?",
+        "en": "Which Moroccan artist sang \"Marsoul El Hob\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "عبد الوهاب الدكالي",
+          "fr": "Abdelwahab Doukkali",
+          "en": "Abdelwahab Doukkali"
+        },
+        {
+          "ar": "عبد الهادي بلخياط",
+          "fr": "Abdelhadi Belkhayat",
+          "en": "Abdelhadi Belkhayat"
+        },
+        {
+          "ar": "نعيمة سميح",
+          "fr": "Naima Samih",
+          "en": "Naima Samih"
+        },
+        {
+          "ar": "محمد الحياني",
+          "fr": "Mohamed El Hayani",
+          "en": "Mohamed El Hayani"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Abdelwahab Doukkali",
+        "url": "https://en.wikipedia.org/wiki/Abdelwahab_Doukkali"
+      },
+      "factKey": "per-doukkali",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-einstein",
+      "category": "personalities",
+      "subcategory": "scientists",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو العالم صاحب النظرية النسبية؟",
+        "fr": "Quel scientifique est l’auteur de la théorie de la relativité ?",
+        "en": "Which scientist developed the theory of relativity?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "إسحاق نيوتن",
+          "fr": "Isaac Newton",
+          "en": "Isaac Newton"
+        },
+        {
+          "ar": "غاليليو غاليلي",
+          "fr": "Galilée",
+          "en": "Galileo Galilei"
+        },
+        {
+          "ar": "نيكولا تسلا",
+          "fr": "Nikola Tesla",
+          "en": "Nikola Tesla"
+        },
+        {
+          "ar": "ألبرت أينشتاين",
+          "fr": "Albert Einstein",
+          "en": "Albert Einstein"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Theory of relativity",
+        "url": "https://en.wikipedia.org/wiki/Theory_of_relativity"
+      },
+      "factKey": "per-einstein",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-fatima-fihri",
+      "category": "personalities",
+      "subcategory": "arab_moroccan",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هي مؤسسة جامع القرويين بمدينة فاس سنة 859م؟",
+        "fr": "Qui a fondé la mosquée al-Qarawiyyin de Fès en 859 ?",
+        "en": "Who founded the al-Qarawiyyin mosque in Fez in 859?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "مريم الفهرية",
+          "fr": "Maryam al-Fihriya",
+          "en": "Maryam al-Fihri"
+        },
+        {
+          "ar": "زينب النفزاوية",
+          "fr": "Zaynab an-Nafzawiyya",
+          "en": "Zaynab al-Nafzawiyya"
+        },
+        {
+          "ar": "خناثة بنت بكار",
+          "fr": "Khnata bent Bakkar",
+          "en": "Khnata bint Bakkar"
+        },
+        {
+          "ar": "فاطمة الفهرية",
+          "fr": "Fatima al-Fihriya",
+          "en": "Fatima al-Fihri"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Fatima al-Fihri",
+        "url": "https://en.wikipedia.org/wiki/Fatima_al-Fihri"
+      },
+      "factKey": "per-fatima-fihri",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "مريم الفهرية أسست جامع الأندلس — خيار مضلل صحيح تاريخياً",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-halim",
+      "category": "personalities",
+      "subcategory": "artists",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو المطرب الملقب بـ\"العندليب الأسمر\"؟",
+        "fr": "Quel chanteur est surnommé « le Rossignol brun » ?",
+        "en": "Which singer is nicknamed \"the Dark-Skinned Nightingale\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "محمد عبد الوهاب",
+          "fr": "Mohammed Abdel Wahab",
+          "en": "Mohammed Abdel Wahab"
+        },
+        {
+          "ar": "فريد الأطرش",
+          "fr": "Farid al-Atrash",
+          "en": "Farid al-Atrash"
+        },
+        {
+          "ar": "محمد عبده",
+          "fr": "Mohammed Abdu",
+          "en": "Mohammed Abdu"
+        },
+        {
+          "ar": "عبد الحليم حافظ",
+          "fr": "Abdel Halim Hafez",
+          "en": "Abdel Halim Hafez"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Abdel Halim Hafez",
+        "url": "https://en.wikipedia.org/wiki/Abdel_Halim_Hafez"
+      },
+      "factKey": "per-halim",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-ibn-battuta",
+      "category": "personalities",
+      "subcategory": "historical",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الرحالة الطنجي صاحب كتاب \"تحفة النظار في غرائب الأمصار وعجائب الأسفار\"؟",
+        "fr": "Quel voyageur né à Tanger est l’auteur de la « Rihla » (Tuhfat an-Nuzzar) ?",
+        "en": "Which Tangier-born traveller wrote the Rihla (Tuhfat al-Nuzzar)?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "ابن خلدون",
+          "fr": "Ibn Khaldoun",
+          "en": "Ibn Khaldun"
+        },
+        {
+          "ar": "الإدريسي",
+          "fr": "Al-Idrissi",
+          "en": "Al-Idrisi"
+        },
+        {
+          "ar": "ابن جبير",
+          "fr": "Ibn Jubayr",
+          "en": "Ibn Jubayr"
+        },
+        {
+          "ar": "ابن بطوطة",
+          "fr": "Ibn Battuta",
+          "en": "Ibn Battuta"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Ibn Battuta",
+        "url": "https://en.wikipedia.org/wiki/Ibn_Battuta"
+      },
+      "factKey": "per-ibn-battuta",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-ibn-firnas",
+      "category": "personalities",
+      "subcategory": "scientists",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "open",
+      "text": {
+        "ar": "من هو العالم الأندلسي الذي يُعد من أوائل من حاولوا الطيران في القرن التاسع؟",
+        "fr": "Quel savant andalou est considéré comme l’un des premiers à tenter de voler au IXe siècle ?",
+        "en": "Which Andalusian scholar is considered one of the first to attempt flight in the 9th century?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "عباس بن فرناس",
+          "ابن فرناس"
+        ],
+        "fr": [
+          "Abbas Ibn Firnas",
+          "Ibn Firnas"
+        ],
+        "en": [
+          "Abbas ibn Firnas",
+          "Ibn Firnas"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Abbas ibn Firnas",
+        "url": "https://en.wikipedia.org/wiki/Abbas_ibn_Firnas"
+      },
+      "factKey": "per-ibn-firnas",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-ibn-khaldun",
+      "category": "personalities",
+      "subcategory": "historical",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "من هو المؤرخ صاحب \"المقدمة\" الذي يُعد من مؤسسي علم الاجتماع؟",
+        "fr": "Quel historien, auteur de la « Muqaddima », est considéré comme un fondateur de la sociologie ?",
+        "en": "Which historian, author of the \"Muqaddimah\", is considered a founder of sociology?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "ابن خلدون",
+          "عبد الرحمن بن خلدون"
+        ],
+        "fr": [
+          "Ibn Khaldoun",
+          "Ibn Khaldun"
+        ],
+        "en": [
+          "Ibn Khaldun"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Ibn Khaldun",
+        "url": "https://en.wikipedia.org/wiki/Ibn_Khaldun"
+      },
+      "factKey": "per-ibn-khaldun",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-ibn-tashfin",
+      "category": "personalities",
+      "subcategory": "historical",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو القائد المرابطي المنتصر في معركة الزلاقة سنة 1086م؟",
+        "fr": "Quel souverain almoravide a remporté la bataille de Zallaqa en 1086 ?",
+        "en": "Which Almoravid ruler won the Battle of Sagrajas (Zallaqa) in 1086?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "عبد المؤمن بن علي",
+          "fr": "Abd al-Mumin",
+          "en": "Abd al-Mumin"
+        },
+        {
+          "ar": "يوسف بن تاشفين",
+          "fr": "Youssef Ibn Tachfine",
+          "en": "Yusuf ibn Tashfin"
+        },
+        {
+          "ar": "يعقوب المنصور",
+          "fr": "Yacoub al-Mansour",
+          "en": "Yaqub al-Mansur"
+        },
+        {
+          "ar": "المولى إسماعيل",
+          "fr": "Moulay Ismaïl",
+          "en": "Moulay Ismail"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Battle of Sagrajas",
+        "url": "https://en.wikipedia.org/wiki/Battle_of_Sagrajas"
+      },
+      "factKey": "per-ibn-tashfin",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-idrisi",
+      "category": "personalities",
+      "subcategory": "scientists",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الجغرافي السبتي الذي رسم خريطة العالم للملك روجر الثاني ملك صقلية؟",
+        "fr": "Quel géographe né à Ceuta a dessiné une carte du monde pour le roi Roger II de Sicile ?",
+        "en": "Which Ceuta-born geographer drew a world map for King Roger II of Sicily?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الشريف الإدريسي",
+          "fr": "Al-Idrissi",
+          "en": "Al-Idrisi"
+        },
+        {
+          "ar": "ابن حوقل",
+          "fr": "Ibn Hawqal",
+          "en": "Ibn Hawqal"
+        },
+        {
+          "ar": "المسعودي",
+          "fr": "Al-Masudi",
+          "en": "Al-Masudi"
+        },
+        {
+          "ar": "ياقوت الحموي",
+          "fr": "Yaqut al-Hamawi",
+          "en": "Yaqut al-Hamawi"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Muhammad al-Idrisi",
+        "url": "https://en.wikipedia.org/wiki/Muhammad_al-Idrisi"
+      },
+      "factKey": "per-idrisi",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-khwarizmi",
+      "category": "personalities",
+      "subcategory": "scientists",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو العالم الذي اشتُق من اسمه مصطلح \"الخوارزمية\" (Algorithme)؟",
+        "fr": "De quel savant vient le mot « algorithme » ?",
+        "en": "Which scholar gave his name to the word \"algorithm\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الخوارزمي",
+          "fr": "Al-Khwarizmi",
+          "en": "Al-Khwarizmi"
+        },
+        {
+          "ar": "ابن سينا",
+          "fr": "Avicenne",
+          "en": "Avicenna"
+        },
+        {
+          "ar": "البيروني",
+          "fr": "Al-Biruni",
+          "en": "Al-Biruni"
+        },
+        {
+          "ar": "الرازي",
+          "fr": "Al-Razi",
+          "en": "Al-Razi"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Muhammad ibn Musa al-Khwarizmi",
+        "url": "https://en.wikipedia.org/wiki/Muhammad_ibn_Musa_al-Khwarizmi"
+      },
+      "factKey": "per-khwarizmi",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-mahfouz",
+      "category": "personalities",
+      "subcategory": "arab_moroccan",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو أول أديب عربي يفوز بجائزة نوبل للآداب (1988)؟",
+        "fr": "Quel est le premier écrivain arabe à recevoir le prix Nobel de littérature (1988) ?",
+        "en": "Who was the first Arab writer to win the Nobel Prize in Literature (1988)?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "طه حسين",
+          "fr": "Taha Hussein",
+          "en": "Taha Hussein"
+        },
+        {
+          "ar": "توفيق الحكيم",
+          "fr": "Tawfiq al-Hakim",
+          "en": "Tawfiq al-Hakim"
+        },
+        {
+          "ar": "نجيب محفوظ",
+          "fr": "Naguib Mahfouz",
+          "en": "Naguib Mahfouz"
+        },
+        {
+          "ar": "عباس محمود العقاد",
+          "fr": "Abbas al-Aqqad",
+          "en": "Abbas al-Aqqad"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Naguib Mahfouz",
+        "url": "https://en.wikipedia.org/wiki/Naguib_Mahfouz"
+      },
+      "factKey": "per-mahfouz",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-mandela",
+      "category": "personalities",
+      "subcategory": "world_figures",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الزعيم الجنوب أفريقي الذي قضى 27 سنة في السجن ثم أصبح رئيساً لبلاده؟",
+        "fr": "Quel dirigeant sud-africain a passé 27 ans en prison avant de devenir président ?",
+        "en": "Which South African leader spent 27 years in prison before becoming president?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "نيلسون مانديلا",
+          "fr": "Nelson Mandela",
+          "en": "Nelson Mandela"
+        },
+        {
+          "ar": "ديزموند توتو",
+          "fr": "Desmond Tutu",
+          "en": "Desmond Tutu"
+        },
+        {
+          "ar": "ثابو مبيكي",
+          "fr": "Thabo Mbeki",
+          "en": "Thabo Mbeki"
+        },
+        {
+          "ar": "جاكوب زوما",
+          "fr": "Jacob Zuma",
+          "en": "Jacob Zuma"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Nelson Mandela",
+        "url": "https://en.wikipedia.org/wiki/Nelson_Mandela"
+      },
+      "factKey": "per-mandela",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-maradona-hand",
+      "category": "personalities",
+      "subcategory": "football_stars",
+      "region": "world",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "من هو اللاعب الأرجنتيني صاحب هدف \"يد الله\" في مونديال 1986؟",
+        "fr": "Quel joueur argentin a marqué la « main de Dieu » au Mondial 1986 ?",
+        "en": "Which Argentine player scored the \"Hand of God\" goal at the 1986 World Cup?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "مارادونا",
+          "دييغو مارادونا"
+        ],
+        "fr": [
+          "Maradona",
+          "Diego Maradona"
+        ],
+        "en": [
+          "Maradona",
+          "Diego Maradona"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Hand of God goal",
+        "url": "https://en.wikipedia.org/wiki/Hand_of_God_goal"
+      },
+      "factKey": "per-maradona-hand",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-shakespeare",
+      "category": "personalities",
+      "subcategory": "artists",
+      "region": "foreign",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو كاتب مسرحية \"روميو وجولييت\"؟",
+        "fr": "Qui a écrit la pièce « Roméo et Juliette » ?",
+        "en": "Who wrote the play \"Romeo and Juliet\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "موليير",
+          "fr": "Molière",
+          "en": "Molière"
+        },
+        {
+          "ar": "فيكتور هوغو",
+          "fr": "Victor Hugo",
+          "en": "Victor Hugo"
+        },
+        {
+          "ar": "ويليام شكسبير",
+          "fr": "William Shakespeare",
+          "en": "William Shakespeare"
+        },
+        {
+          "ar": "تشارلز ديكنز",
+          "fr": "Charles Dickens",
+          "en": "Charles Dickens"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Romeo and Juliet",
+        "url": "https://en.wikipedia.org/wiki/Romeo_and_Juliet"
+      },
+      "factKey": "per-shakespeare",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-tariq",
+      "category": "personalities",
+      "subcategory": "historical",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "من هو القائد الذي عبر المضيق إلى الأندلس سنة 711م وسُمّي باسمه جبل شهير؟",
+        "fr": "Quel chef a traversé le détroit vers al-Andalus en 711 et a donné son nom à un célèbre rocher ?",
+        "en": "Which commander crossed into al-Andalus in 711 and gave his name to a famous rock?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "طارق بن زياد",
+          "طارق"
+        ],
+        "fr": [
+          "Tariq ibn Ziyad",
+          "Tariq"
+        ],
+        "en": [
+          "Tariq ibn Ziyad",
+          "Tariq"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Tariq ibn Ziyad",
+        "url": "https://en.wikipedia.org/wiki/Tariq_ibn_Ziyad"
+      },
+      "factKey": "per-tariq",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-umm-kulthum",
+      "category": "personalities",
+      "subcategory": "artists",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "من هي المطربة الملقبة بـ\"كوكب الشرق\"؟",
+        "fr": "Quelle chanteuse est surnommée « l’Astre de l’Orient » ?",
+        "en": "Which singer is nicknamed \"the Star of the East\"?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "أم كلثوم",
+          "ام كلثوم"
+        ],
+        "fr": [
+          "Oum Kalthoum",
+          "Oum Kalsoum"
+        ],
+        "en": [
+          "Umm Kulthum",
+          "Oum Kalthoum"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Umm Kulthum",
+        "url": "https://en.wikipedia.org/wiki/Umm_Kulthum"
+      },
+      "factKey": "per-umm-kulthum",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "per-zewail",
+      "category": "personalities",
+      "subcategory": "scientists",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "open",
+      "text": {
+        "ar": "من هو العالم المصري الحائز على جائزة نوبل في الكيمياء سنة 1999؟",
+        "fr": "Quel scientifique égyptien a reçu le prix Nobel de chimie en 1999 ?",
+        "en": "Which Egyptian scientist won the 1999 Nobel Prize in Chemistry?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "أحمد زويل",
+          "زويل"
+        ],
+        "fr": [
+          "Ahmed Zewail",
+          "Zewail"
+        ],
+        "en": [
+          "Ahmed Zewail",
+          "Zewail"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Ahmed Zewail",
+        "url": "https://en.wikipedia.org/wiki/Ahmed_Zewail"
+      },
+      "factKey": "per-zewail",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    }
+  ]
+}

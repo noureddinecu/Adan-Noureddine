@@ -1,0 +1,2235 @@
+{
+  "questions": [
+    {
+      "id": "ara-ain-jalut",
+      "category": "arab_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في معركة عين جالوت سنة 1260م انتصر المسلمون على؟",
+        "fr": "Lors de la bataille d’Aïn Djalout en 1260, les musulmans ont vaincu :",
+        "en": "At the Battle of Ain Jalut in 1260, the Muslims defeated:"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "المغول",
+          "fr": "Les Mongols",
+          "en": "The Mongols"
+        },
+        {
+          "ar": "الصليبيين",
+          "fr": "Les Croisés",
+          "en": "The Crusaders"
+        },
+        {
+          "ar": "البيزنطيين",
+          "fr": "Les Byzantins",
+          "en": "The Byzantines"
+        },
+        {
+          "ar": "الفرس",
+          "fr": "Les Perses",
+          "en": "The Persians"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Battle of Ain Jalut",
+        "url": "https://en.wikipedia.org/wiki/Battle_of_Ain_Jalut"
+      },
+      "factKey": "ara-ain-jalut",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-alaouite",
+      "category": "arab_culture",
+      "subcategory": "maghreb",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما اسم الأسرة الحاكمة الحالية في المغرب؟",
+        "fr": "Quel est le nom de la dynastie régnante actuelle au Maroc ?",
+        "en": "What is the name of the current ruling dynasty of Morocco?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "السعديون",
+          "fr": "Les Saadiens",
+          "en": "The Saadians"
+        },
+        {
+          "ar": "المرينيون",
+          "fr": "Les Mérinides",
+          "en": "The Marinids"
+        },
+        {
+          "ar": "الموحدون",
+          "fr": "Les Almohades",
+          "en": "The Almohads"
+        },
+        {
+          "ar": "العلويون",
+          "fr": "Les Alaouites",
+          "en": "The Alaouites"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Alaouite dynasty",
+        "url": "https://en.wikipedia.org/wiki/Alaouite_dynasty"
+      },
+      "factKey": "ara-alaouite",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-aqsa",
+      "category": "arab_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "في أي مدينة يوجد المسجد الأقصى؟",
+        "fr": "Dans quelle ville se trouve la mosquée al-Aqsa ?",
+        "en": "In which city is Al-Aqsa Mosque located?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "القدس",
+          "القدس الشريف"
+        ],
+        "fr": [
+          "Jérusalem",
+          "Al-Qods"
+        ],
+        "en": [
+          "Jerusalem",
+          "Al-Quds"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Al-Aqsa Mosque",
+        "url": "https://en.wikipedia.org/wiki/Al-Aqsa_Mosque"
+      },
+      "factKey": "ara-aqsa",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-baghdad",
+      "category": "arab_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "ما هي المدينة التي أسسها العباسيون سنة 762م لتكون عاصمة لهم؟",
+        "fr": "Quelle ville les Abbassides ont-ils fondée en 762 comme capitale ?",
+        "en": "Which city did the Abbasids found in 762 as their capital?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "بغداد"
+        ],
+        "fr": [
+          "Bagdad"
+        ],
+        "en": [
+          "Baghdad"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Baghdad",
+        "url": "https://en.wikipedia.org/wiki/Baghdad"
+      },
+      "factKey": "ara-baghdad",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-carthage",
+      "category": "arab_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "open",
+      "text": {
+        "ar": "ما اسم المدينة الفينيقية القديمة في تونس التي كان منها القائد حنبعل؟",
+        "fr": "Quelle cité phénicienne antique de Tunisie était la patrie d’Hannibal ?",
+        "en": "Which ancient Phoenician city in Tunisia was the home of Hannibal?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "قرطاج",
+          "قرطاجة"
+        ],
+        "fr": [
+          "Carthage"
+        ],
+        "en": [
+          "Carthage"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Carthage",
+        "url": "https://en.wikipedia.org/wiki/Carthage"
+      },
+      "factKey": "ara-carthage",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-choukri",
+      "category": "arab_culture",
+      "subcategory": "literature",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الكاتب المغربي صاحب السيرة الذاتية \"الخبز الحافي\"؟",
+        "fr": "Quel écrivain marocain est l’auteur du récit autobiographique « Le Pain nu » ?",
+        "en": "Which Moroccan writer wrote the autobiography \"For Bread Alone\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الطاهر بن جلون",
+          "fr": "Tahar Ben Jelloun",
+          "en": "Tahar Ben Jelloun"
+        },
+        {
+          "ar": "عبد الكريم غلاب",
+          "fr": "Abdelkrim Ghallab",
+          "en": "Abdelkrim Ghallab"
+        },
+        {
+          "ar": "محمد شكري",
+          "fr": "Mohamed Choukri",
+          "en": "Mohamed Choukri"
+        },
+        {
+          "ar": "محمد برادة",
+          "fr": "Mohamed Berrada",
+          "en": "Mohamed Berrada"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Mohamed Choukri",
+        "url": "https://en.wikipedia.org/wiki/Mohamed_Choukri"
+      },
+      "factKey": "ara-choukri",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-dz-independence",
+      "category": "arab_culture",
+      "subcategory": "maghreb",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة استقلت الجزائر؟",
+        "fr": "En quelle année l'Algérie est-elle devenue indépendante ?",
+        "en": "In which year did Algeria become independent?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "1956",
+          "fr": "1956",
+          "en": "1956"
+        },
+        {
+          "ar": "1954",
+          "fr": "1954",
+          "en": "1954"
+        },
+        {
+          "ar": "1962",
+          "fr": "1962",
+          "en": "1962"
+        },
+        {
+          "ar": "1958",
+          "fr": "1958",
+          "en": "1958"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Algerian War",
+        "url": "https://en.wikipedia.org/wiki/Algerian_War"
+      },
+      "factKey": "ara-dz-independence",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-fes-scientific",
+      "category": "arab_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي المدينة الملقبة بـ\"العاصمة العلمية\" للمغرب؟",
+        "fr": "Quelle ville est surnommée la « capitale spirituelle et scientifique » du Maroc ?",
+        "en": "Which city is known as the \"scientific capital\" of Morocco?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        },
+        {
+          "ar": "مكناس",
+          "fr": "Meknès",
+          "en": "Meknes"
+        },
+        {
+          "ar": "تطوان",
+          "fr": "Tétouan",
+          "en": "Tetouan"
+        },
+        {
+          "ar": "فاس",
+          "fr": "Fès",
+          "en": "Fez"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Fez, Morocco",
+        "url": "https://en.wikipedia.org/wiki/Fez,_Morocco"
+      },
+      "factKey": "ara-fes-scientific",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-giza",
+      "category": "arab_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "أي حضارة بنت أهرامات الجيزة؟",
+        "fr": "Quelle civilisation a construit les pyramides de Gizeh ?",
+        "en": "Which civilization built the pyramids of Giza?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الرومان",
+          "fr": "Les Romains",
+          "en": "The Romans"
+        },
+        {
+          "ar": "الفينيقيون",
+          "fr": "Les Phéniciens",
+          "en": "The Phoenicians"
+        },
+        {
+          "ar": "المصريون القدماء",
+          "fr": "Les anciens Égyptiens",
+          "en": "The ancient Egyptians"
+        },
+        {
+          "ar": "الإغريق",
+          "fr": "Les Grecs",
+          "en": "The Greeks"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Giza pyramid complex",
+        "url": "https://en.wikipedia.org/wiki/Giza_pyramid_complex"
+      },
+      "factKey": "ara-giza",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-gnawa",
+      "category": "arab_culture",
+      "subcategory": "heritage",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هو الفن الموسيقي الروحي الذي يحتفي به مهرجان سنوي شهير في مدينة الصويرة؟",
+        "fr": "Quel art musical spirituel est célébré par un festival annuel à Essaouira ?",
+        "en": "Which spiritual music tradition is celebrated by a famous annual festival in Essaouira?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الملحون",
+          "fr": "Melhoun",
+          "en": "Malhun"
+        },
+        {
+          "ar": "العيطة",
+          "fr": "Aïta",
+          "en": "Aita"
+        },
+        {
+          "ar": "أحيدوس",
+          "fr": "Ahidous",
+          "en": "Ahidus"
+        },
+        {
+          "ar": "كناوة",
+          "fr": "Gnaoua",
+          "en": "Gnawa"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Gnaoua World Music Festival",
+        "url": "https://en.wikipedia.org/wiki/Gnaoua_World_Music_Festival"
+      },
+      "factKey": "ara-gnawa",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-green-march",
+      "category": "arab_culture",
+      "subcategory": "maghreb",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة انطلقت المسيرة الخضراء؟",
+        "fr": "En quelle année a eu lieu la Marche verte ?",
+        "en": "In which year did the Green March take place?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "1975",
+          "fr": "1975",
+          "en": "1975"
+        },
+        {
+          "ar": "1973",
+          "fr": "1973",
+          "en": "1973"
+        },
+        {
+          "ar": "1979",
+          "fr": "1979",
+          "en": "1979"
+        },
+        {
+          "ar": "1969",
+          "fr": "1969",
+          "en": "1969"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Green March",
+        "url": "https://en.wikipedia.org/wiki/Green_March"
+      },
+      "factKey": "ara-green-march",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-hassan-tower",
+      "category": "arab_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي مدينة توجد صومعة حسان؟",
+        "fr": "Dans quelle ville se trouve la tour Hassan ?",
+        "en": "In which city is the Hassan Tower?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "مراكش",
+          "fr": "Marrakech",
+          "en": "Marrakesh"
+        },
+        {
+          "ar": "سلا",
+          "fr": "Salé",
+          "en": "Salé"
+        },
+        {
+          "ar": "مكناس",
+          "fr": "Meknès",
+          "en": "Meknes"
+        },
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Hassan Tower",
+        "url": "https://en.wikipedia.org/wiki/Hassan_Tower"
+      },
+      "factKey": "ara-hassan-tower",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-hassan2-mosque",
+      "category": "arab_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي مدينة يوجد مسجد الحسن الثاني؟",
+        "fr": "Dans quelle ville se trouve la mosquée Hassan II ?",
+        "en": "In which city is the Hassan II Mosque?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        },
+        {
+          "ar": "طنجة",
+          "fr": "Tanger",
+          "en": "Tangier"
+        },
+        {
+          "ar": "الدار البيضاء",
+          "fr": "Casablanca",
+          "en": "Casablanca"
+        },
+        {
+          "ar": "أكادير",
+          "fr": "Agadir",
+          "en": "Agadir"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Hassan II Mosque",
+        "url": "https://en.wikipedia.org/wiki/Hassan_II_Mosque"
+      },
+      "factKey": "ara-hassan2-mosque",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-hattin",
+      "category": "arab_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو القائد المسلم المنتصر في معركة حطين سنة 1187م؟",
+        "fr": "Quel chef musulman a remporté la bataille de Hattin en 1187 ?",
+        "en": "Which Muslim leader won the Battle of Hattin in 1187?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "نور الدين زنكي",
+          "fr": "Nur ad-Din",
+          "en": "Nur ad-Din"
+        },
+        {
+          "ar": "الظاهر بيبرس",
+          "fr": "Baybars",
+          "en": "Baybars"
+        },
+        {
+          "ar": "سيف الدين قطز",
+          "fr": "Qutuz",
+          "en": "Qutuz"
+        },
+        {
+          "ar": "صلاح الدين الأيوبي",
+          "fr": "Saladin",
+          "en": "Saladin"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Battle of Hattin",
+        "url": "https://en.wikipedia.org/wiki/Battle_of_Hattin"
+      },
+      "factKey": "ara-hattin",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-hijra-medina",
+      "category": "arab_culture",
+      "subcategory": "religion",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "إلى أي مدينة هاجر النبي محمد ﷺ من مكة؟",
+        "fr": "Vers quelle ville le Prophète Muhammad ﷺ a-t-il émigré depuis La Mecque ?",
+        "en": "To which city did Prophet Muhammad ﷺ migrate from Mecca?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الطائف",
+          "fr": "Taëf",
+          "en": "Taif"
+        },
+        {
+          "ar": "القدس",
+          "fr": "Jérusalem",
+          "en": "Jerusalem"
+        },
+        {
+          "ar": "المدينة المنورة (يثرب)",
+          "fr": "Médine (Yathrib)",
+          "en": "Medina (Yathrib)"
+        },
+        {
+          "ar": "دمشق",
+          "fr": "Damas",
+          "en": "Damascus"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Hijrah",
+        "url": "https://en.wikipedia.org/wiki/Hijrah"
+      },
+      "factKey": "ara-hijra-medina",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-hijra-year",
+      "category": "arab_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة ميلادية كانت الهجرة النبوية؟",
+        "fr": "En quelle année a eu lieu l’Hégire ?",
+        "en": "In which year did the Hijra take place?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "610م",
+          "fr": "610",
+          "en": "610 CE"
+        },
+        {
+          "ar": "632م",
+          "fr": "632",
+          "en": "632 CE"
+        },
+        {
+          "ar": "570م",
+          "fr": "570",
+          "en": "570 CE"
+        },
+        {
+          "ar": "622م",
+          "fr": "622",
+          "en": "622 CE"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Hijrah",
+        "url": "https://en.wikipedia.org/wiki/Hijrah"
+      },
+      "factKey": "ara-hijra-year",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-ibn-haytham",
+      "category": "arab_culture",
+      "subcategory": "science",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "من هو العالم صاحب \"كتاب المناظر\" ورائد علم البصريات؟",
+        "fr": "Quel savant, auteur du « Traité d’optique », est un pionnier de l’optique ?",
+        "en": "Which scholar wrote the \"Book of Optics\" and pioneered optics?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "ابن الهيثم",
+          "الحسن بن الهيثم"
+        ],
+        "fr": [
+          "Ibn al-Haytham",
+          "Alhazen"
+        ],
+        "en": [
+          "Ibn al-Haytham",
+          "Alhazen"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Ibn al-Haytham",
+        "url": "https://en.wikipedia.org/wiki/Ibn_al-Haytham"
+      },
+      "factKey": "ara-ibn-haytham",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-jabir",
+      "category": "arab_culture",
+      "subcategory": "science",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو العالم الملقب بـ\"أبي الكيمياء\" عند العرب؟",
+        "fr": "Quel savant est surnommé le « père de la chimie » arabe ?",
+        "en": "Which scholar is called the \"father of chemistry\" in the Arab tradition?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "أبو بكر الرازي",
+          "fr": "Al-Razi",
+          "en": "Al-Razi"
+        },
+        {
+          "ar": "ابن الهيثم",
+          "fr": "Ibn al-Haytham",
+          "en": "Ibn al-Haytham"
+        },
+        {
+          "ar": "الكندي",
+          "fr": "Al-Kindi",
+          "en": "Al-Kindi"
+        },
+        {
+          "ar": "جابر بن حيان",
+          "fr": "Jabir ibn Hayyan",
+          "en": "Jabir ibn Hayyan"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Jabir ibn Hayyan",
+        "url": "https://en.wikipedia.org/wiki/Jabir_ibn_Hayyan"
+      },
+      "factKey": "ara-jabir",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-kairouan",
+      "category": "arab_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي المدينة التونسية التي أسسها عقبة بن نافع سنة 670م؟",
+        "fr": "Quelle ville tunisienne a été fondée par Oqba Ibn Nafi en 670 ?",
+        "en": "Which Tunisian city was founded by Uqba ibn Nafi in 670?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "سوسة",
+          "fr": "Sousse",
+          "en": "Sousse"
+        },
+        {
+          "ar": "صفاقس",
+          "fr": "Sfax",
+          "en": "Sfax"
+        },
+        {
+          "ar": "قرطاج",
+          "fr": "Carthage",
+          "en": "Carthage"
+        },
+        {
+          "ar": "القيروان",
+          "fr": "Kairouan",
+          "en": "Kairouan"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Kairouan",
+        "url": "https://en.wikipedia.org/wiki/Kairouan"
+      },
+      "factKey": "ara-kairouan",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-kalila",
+      "category": "arab_culture",
+      "subcategory": "literature",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "من الذي ترجم كتاب \"كليلة ودمنة\" إلى اللغة العربية؟",
+        "fr": "Qui a traduit « Kalila wa Dimna » en arabe ?",
+        "en": "Who translated \"Kalila and Dimna\" into Arabic?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الجاحظ",
+          "fr": "Al-Jahiz",
+          "en": "Al-Jahiz"
+        },
+        {
+          "ar": "ابن المقفع",
+          "fr": "Ibn al-Muqaffa",
+          "en": "Ibn al-Muqaffa"
+        },
+        {
+          "ar": "ابن قتيبة",
+          "fr": "Ibn Qutayba",
+          "en": "Ibn Qutaybah"
+        },
+        {
+          "ar": "أبو الفرج الأصفهاني",
+          "fr": "Abu al-Faraj al-Isfahani",
+          "en": "Abu al-Faraj al-Isfahani"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Kalila and Dimna",
+        "url": "https://en.wikipedia.org/wiki/Kalila_and_Dimna"
+      },
+      "factKey": "ara-kalila",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-koutoubia",
+      "category": "arab_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي مدينة يوجد جامع الكتبية؟",
+        "fr": "Dans quelle ville se trouve la mosquée Koutoubia ?",
+        "en": "In which city is the Koutoubia Mosque?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "مراكش",
+          "fr": "Marrakech",
+          "en": "Marrakesh"
+        },
+        {
+          "ar": "فاس",
+          "fr": "Fès",
+          "en": "Fez"
+        },
+        {
+          "ar": "الرباط",
+          "fr": "Rabat",
+          "en": "Rabat"
+        },
+        {
+          "ar": "تارودانت",
+          "fr": "Taroudant",
+          "en": "Taroudant"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Koutoubia Mosque",
+        "url": "https://en.wikipedia.org/wiki/Koutoubia_Mosque"
+      },
+      "factKey": "ara-koutoubia",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-longest-surah",
+      "category": "arab_culture",
+      "subcategory": "religion",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هي أطول سورة في القرآن الكريم؟",
+        "fr": "Quelle est la plus longue sourate du Coran ?",
+        "en": "What is the longest surah of the Quran?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "البقرة",
+          "سورة البقرة"
+        ],
+        "fr": [
+          "Al-Baqara",
+          "La Vache"
+        ],
+        "en": [
+          "Al-Baqarah",
+          "The Cow"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Al-Baqarah",
+        "url": "https://en.wikipedia.org/wiki/Al-Baqarah"
+      },
+      "factKey": "ara-longest-surah",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-ma-currency",
+      "category": "arab_culture",
+      "subcategory": "maghreb",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي العملة الرسمية للمغرب؟",
+        "fr": "Quelle est la monnaie officielle du Maroc ?",
+        "en": "What is the official currency of Morocco?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الدينار",
+          "fr": "Dinar",
+          "en": "Dinar"
+        },
+        {
+          "ar": "الدرهم",
+          "fr": "Dirham",
+          "en": "Dirham"
+        },
+        {
+          "ar": "الريال",
+          "fr": "Riyal",
+          "en": "Riyal"
+        },
+        {
+          "ar": "الليرة",
+          "fr": "Livre",
+          "en": "Lira"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Moroccan dirham",
+        "url": "https://en.wikipedia.org/wiki/Moroccan_dirham"
+      },
+      "factKey": "ara-ma-currency",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-ma-independence",
+      "category": "arab_culture",
+      "subcategory": "maghreb",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة حصل المغرب على استقلاله؟",
+        "fr": "En quelle année le Maroc a-t-il obtenu son indépendance ?",
+        "en": "In which year did Morocco gain independence?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "1956",
+          "fr": "1956",
+          "en": "1956"
+        },
+        {
+          "ar": "1962",
+          "fr": "1962",
+          "en": "1962"
+        },
+        {
+          "ar": "1952",
+          "fr": "1952",
+          "en": "1952"
+        },
+        {
+          "ar": "1960",
+          "fr": "1960",
+          "en": "1960"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Morocco",
+        "url": "https://en.wikipedia.org/wiki/Morocco"
+      },
+      "factKey": "ara-ma-independence",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-marrakech-red",
+      "category": "arab_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هي المدينة المغربية الملقبة بـ\"المدينة الحمراء\"؟",
+        "fr": "Quelle ville marocaine est surnommée « la ville rouge » ?",
+        "en": "Which Moroccan city is nicknamed \"the Red City\"?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "مراكش"
+        ],
+        "fr": [
+          "Marrakech"
+        ],
+        "en": [
+          "Marrakesh",
+          "Marrakech"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Marrakesh",
+        "url": "https://en.wikipedia.org/wiki/Marrakesh"
+      },
+      "factKey": "ara-marrakech-red",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-mint-tea",
+      "category": "arab_culture",
+      "subcategory": "heritage",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هو المشروب التقليدي المغربي الذي يُحضَّر بالنعناع ويُقدَّم للضيوف؟",
+        "fr": "Quelle boisson traditionnelle marocaine préparée à la menthe est servie aux invités ?",
+        "en": "Which traditional Moroccan drink made with mint is served to guests?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "الشاي",
+          "أتاي",
+          "الشاي بالنعناع",
+          "اتاي"
+        ],
+        "fr": [
+          "Thé à la menthe",
+          "Thé",
+          "Atay"
+        ],
+        "en": [
+          "Mint tea",
+          "Tea",
+          "Atay"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Maghrebi mint tea",
+        "url": "https://en.wikipedia.org/wiki/Maghrebi_mint_tea"
+      },
+      "factKey": "ara-mint-tea",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-mutanabbi",
+      "category": "arab_culture",
+      "subcategory": "literature",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "من هو صاحب البيت: \"الخيلُ والليلُ والبيداءُ تعرفني ... والسيفُ والرمحُ والقرطاسُ والقلمُ\"؟",
+        "fr": "Qui a écrit le vers : « Les chevaux, la nuit et le désert me connaissent… » ?",
+        "en": "Who wrote the verse \"The horses, the night and the desert know me…\"?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "المتنبي",
+          "أبو الطيب المتنبي"
+        ],
+        "fr": [
+          "Al-Mutanabbi",
+          "Moutanabbi"
+        ],
+        "en": [
+          "Al-Mutanabbi",
+          "Mutanabbi"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Al-Mutanabbi",
+        "url": "https://en.wikipedia.org/wiki/Al-Mutanabbi"
+      },
+      "factKey": "ara-mutanabbi",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-oud",
+      "category": "arab_culture",
+      "subcategory": "heritage",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هي الآلة الموسيقية الوترية العربية الملقبة بـ\"سلطانة الآلات\"؟",
+        "fr": "Quel instrument à cordes arabe est surnommé « le sultan des instruments » ?",
+        "en": "Which Arab string instrument is nicknamed \"the sultan of instruments\"?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "العود",
+          "عود"
+        ],
+        "fr": [
+          "Oud",
+          "Luth"
+        ],
+        "en": [
+          "Oud"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Oud",
+        "url": "https://en.wikipedia.org/wiki/Oud"
+      },
+      "factKey": "ara-oud",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-oued-makhazin",
+      "category": "arab_culture",
+      "subcategory": "maghreb",
+      "region": "arab",
+      "difficulty": "hard",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي سنة وقعت معركة وادي المخازن (معركة الملوك الثلاثة)؟",
+        "fr": "En quelle année a eu lieu la bataille d’Oued el-Makhazin (des Trois Rois) ?",
+        "en": "In which year was the Battle of Alcácer Quibir (Three Kings) fought?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "1492",
+          "fr": "1492",
+          "en": "1492"
+        },
+        {
+          "ar": "1609",
+          "fr": "1609",
+          "en": "1609"
+        },
+        {
+          "ar": "1578",
+          "fr": "1578",
+          "en": "1578"
+        },
+        {
+          "ar": "1666",
+          "fr": "1666",
+          "en": "1666"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Battle of Alcácer Quibir",
+        "url": "https://en.wikipedia.org/wiki/Battle_of_Alc%C3%A1cer_Quibir"
+      },
+      "factKey": "ara-oued-makhazin",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-petra",
+      "category": "arab_culture",
+      "subcategory": "cities",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "في أي دولة توجد مدينة البتراء الأثرية؟",
+        "fr": "Dans quel pays se trouve la cité antique de Pétra ?",
+        "en": "In which country is the ancient city of Petra?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "سوريا",
+          "fr": "Syrie",
+          "en": "Syria"
+        },
+        {
+          "ar": "الأردن",
+          "fr": "Jordanie",
+          "en": "Jordan"
+        },
+        {
+          "ar": "مصر",
+          "fr": "Égypte",
+          "en": "Egypt"
+        },
+        {
+          "ar": "لبنان",
+          "fr": "Liban",
+          "en": "Lebanon"
+        }
+      ],
+      "correct": 1,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Petra",
+        "url": "https://en.wikipedia.org/wiki/Petra"
+      },
+      "factKey": "ara-petra",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-photosynthesis",
+      "category": "arab_culture",
+      "subcategory": "science",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هو الغاز الذي تمتصه النباتات في عملية التمثيل الضوئي؟",
+        "fr": "Quel gaz les plantes absorbent-elles lors de la photosynthèse ?",
+        "en": "Which gas do plants absorb during photosynthesis?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الأكسجين",
+          "fr": "Oxygène",
+          "en": "Oxygen"
+        },
+        {
+          "ar": "النيتروجين",
+          "fr": "Azote",
+          "en": "Nitrogen"
+        },
+        {
+          "ar": "الهيدروجين",
+          "fr": "Hydrogène",
+          "en": "Hydrogen"
+        },
+        {
+          "ar": "ثاني أكسيد الكربون",
+          "fr": "Dioxyde de carbone",
+          "en": "Carbon dioxide"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Photosynthesis",
+        "url": "https://en.wikipedia.org/wiki/Photosynthesis"
+      },
+      "factKey": "ara-photosynthesis",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-pillars",
+      "category": "arab_culture",
+      "subcategory": "religion",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد أركان الإسلام؟",
+        "fr": "Combien de piliers compte l'islam ?",
+        "en": "How many pillars of Islam are there?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "5",
+          "fr": "5",
+          "en": "5"
+        },
+        {
+          "ar": "4",
+          "fr": "4",
+          "en": "4"
+        },
+        {
+          "ar": "6",
+          "fr": "6",
+          "en": "6"
+        },
+        {
+          "ar": "3",
+          "fr": "3",
+          "en": "3"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Five Pillars of Islam",
+        "url": "https://en.wikipedia.org/wiki/Five_Pillars_of_Islam"
+      },
+      "factKey": "ara-pillars",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-prayers",
+      "category": "arab_culture",
+      "subcategory": "religion",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد الصلوات المفروضة على المسلم في اليوم والليلة؟",
+        "fr": "Combien de prières obligatoires un musulman accomplit-il par jour ?",
+        "en": "How many obligatory daily prayers does a Muslim perform?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "3",
+          "fr": "3",
+          "en": "3"
+        },
+        {
+          "ar": "4",
+          "fr": "4",
+          "en": "4"
+        },
+        {
+          "ar": "7",
+          "fr": "7",
+          "en": "7"
+        },
+        {
+          "ar": "5",
+          "fr": "5",
+          "en": "5"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Salah",
+        "url": "https://en.wikipedia.org/wiki/Salah"
+      },
+      "factKey": "ara-prayers",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-proverb-jadda",
+      "category": "arab_culture",
+      "subcategory": "literature",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "complete",
+      "text": {
+        "ar": "أكمل المثل: \"مَن جدَّ ...\"",
+        "fr": "Complète le proverbe arabe : « Qui persévère… »",
+        "en": "Complete the Arabic proverb: \"Whoever strives…\""
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "وجد"
+        ],
+        "fr": [
+          "trouve",
+          "réussit"
+        ],
+        "en": [
+          "finds",
+          "succeeds"
+        ]
+      },
+      "source": {
+        "title": "أمثال عربية شائعة",
+        "url": ""
+      },
+      "factKey": "ara-proverb-jadda",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-proverb-mahd",
+      "category": "arab_culture",
+      "subcategory": "literature",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "complete",
+      "text": {
+        "ar": "أكمل القول المأثور: \"اطلبوا العلم من المهد إلى ...\"",
+        "fr": "Complète le dicton : « Cherchez le savoir du berceau jusqu’à… »",
+        "en": "Complete the saying: \"Seek knowledge from the cradle to the…\""
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "اللحد"
+        ],
+        "fr": [
+          "la tombe",
+          "tombe"
+        ],
+        "en": [
+          "grave",
+          "the grave"
+        ]
+      },
+      "source": {
+        "title": "قول مأثور شائع (ليس حديثاً نبوياً)",
+        "url": ""
+      },
+      "factKey": "ara-proverb-mahd",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "قول مأثور وليس حديثاً صحيحاً — لا تنسبه للنبي ﷺ",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-proverb-time",
+      "category": "arab_culture",
+      "subcategory": "literature",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "complete",
+      "text": {
+        "ar": "أكمل المثل: \"الوقت كالسيف، إن لم تقطعه ...\"",
+        "fr": "Complète le proverbe arabe : « Le temps est comme une épée, si tu ne le coupes pas… »",
+        "en": "Complete the Arabic proverb: \"Time is like a sword, if you do not cut it…\""
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "قطعك"
+        ],
+        "fr": [
+          "il te coupe",
+          "te coupe"
+        ],
+        "en": [
+          "it cuts you",
+          "cuts you"
+        ]
+      },
+      "source": {
+        "title": "أمثال عربية شائعة",
+        "url": ""
+      },
+      "factKey": "ara-proverb-time",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-quba",
+      "category": "arab_culture",
+      "subcategory": "religion",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هو أول مسجد بُني في الإسلام؟",
+        "fr": "Quelle est la première mosquée construite en islam ?",
+        "en": "What was the first mosque built in Islam?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "مسجد قباء",
+          "fr": "Mosquée de Quba",
+          "en": "Quba Mosque"
+        },
+        {
+          "ar": "المسجد النبوي",
+          "fr": "Mosquée du Prophète",
+          "en": "Prophet's Mosque"
+        },
+        {
+          "ar": "المسجد الحرام",
+          "fr": "Masjid al-Haram",
+          "en": "Masjid al-Haram"
+        },
+        {
+          "ar": "المسجد الأقصى",
+          "fr": "Mosquée al-Aqsa",
+          "en": "Al-Aqsa Mosque"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Quba Mosque",
+        "url": "https://en.wikipedia.org/wiki/Quba_Mosque"
+      },
+      "factKey": "ara-quba",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-quran-surahs",
+      "category": "arab_culture",
+      "subcategory": "religion",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "كم عدد سور القرآن الكريم؟",
+        "fr": "Combien de sourates compte le Coran ?",
+        "en": "How many surahs are in the Quran?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "110",
+          "fr": "110",
+          "en": "110"
+        },
+        {
+          "ar": "120",
+          "fr": "120",
+          "en": "120"
+        },
+        {
+          "ar": "112",
+          "fr": "112",
+          "en": "112"
+        },
+        {
+          "ar": "114",
+          "fr": "114",
+          "en": "114"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Surah",
+        "url": "https://en.wikipedia.org/wiki/Surah"
+      },
+      "factKey": "ara-quran-surahs",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-ramadan",
+      "category": "arab_culture",
+      "subcategory": "religion",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما هو الشهر الهجري الذي يصوم فيه المسلمون؟",
+        "fr": "Pendant quel mois de l’hégire les musulmans jeûnent-ils ?",
+        "en": "In which Islamic month do Muslims fast?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "رمضان",
+          "شهر رمضان"
+        ],
+        "fr": [
+          "Ramadan",
+          "Ramadhan"
+        ],
+        "en": [
+          "Ramadan",
+          "Ramadhan"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Ramadan",
+        "url": "https://en.wikipedia.org/wiki/Ramadan"
+      },
+      "factKey": "ara-ramadan",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-shawqi",
+      "category": "arab_culture",
+      "subcategory": "literature",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "من هو الشاعر الملقب بـ\"أمير الشعراء\"؟",
+        "fr": "Quel poète est surnommé « le Prince des poètes » ?",
+        "en": "Which poet is called \"the Prince of Poets\"?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "أحمد شوقي",
+          "fr": "Ahmed Chawqi",
+          "en": "Ahmed Shawqi"
+        },
+        {
+          "ar": "حافظ إبراهيم",
+          "fr": "Hafez Ibrahim",
+          "en": "Hafez Ibrahim"
+        },
+        {
+          "ar": "المتنبي",
+          "fr": "Al-Mutanabbi",
+          "en": "Al-Mutanabbi"
+        },
+        {
+          "ar": "محمود سامي البارودي",
+          "fr": "Mahmoud Sami al-Baroudi",
+          "en": "Mahmoud Sami al-Baroudi"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Ahmed Shawqi",
+        "url": "https://en.wikipedia.org/wiki/Ahmed_Shawqi"
+      },
+      "factKey": "ara-shawqi",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-tajine",
+      "category": "arab_culture",
+      "subcategory": "heritage",
+      "region": "arab",
+      "difficulty": "easy",
+      "type": "open",
+      "text": {
+        "ar": "ما اسم الطبق المغربي الذي يُطهى في إناء فخاري بغطاء مخروطي ويحمل اسم الإناء نفسه؟",
+        "fr": "Quel plat marocain cuit dans un récipient en terre au couvercle conique porte le nom de ce récipient ?",
+        "en": "Which Moroccan dish, cooked in a clay pot with a conical lid, shares its name with the pot?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "الطاجين",
+          "طاجين",
+          "طجين"
+        ],
+        "fr": [
+          "Tajine",
+          "Tagine"
+        ],
+        "en": [
+          "Tagine",
+          "Tajine"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Tajine",
+        "url": "https://en.wikipedia.org/wiki/Tajine"
+      },
+      "factKey": "ara-tajine",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-tifinagh",
+      "category": "arab_culture",
+      "subcategory": "maghreb",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "ما اسم الحروف التي تُكتب بها اللغة الأمازيغية رسمياً في المغرب؟",
+        "fr": "Comment s’appelle l’alphabet officiel de la langue amazighe au Maroc ?",
+        "en": "What is the name of the script used officially for Amazigh in Morocco?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "تيفيناغ",
+          "تفيناغ"
+        ],
+        "fr": [
+          "Tifinagh"
+        ],
+        "en": [
+          "Tifinagh"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Tifinagh",
+        "url": "https://en.wikipedia.org/wiki/Tifinagh"
+      },
+      "factKey": "ara-tifinagh",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-tn-currency",
+      "category": "arab_culture",
+      "subcategory": "maghreb",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي العملة الرسمية لتونس؟",
+        "fr": "Quelle est la monnaie officielle de la Tunisie ?",
+        "en": "What is the official currency of Tunisia?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "الدرهم",
+          "fr": "Dirham",
+          "en": "Dirham"
+        },
+        {
+          "ar": "الريال",
+          "fr": "Riyal",
+          "en": "Riyal"
+        },
+        {
+          "ar": "الجنيه",
+          "fr": "Livre",
+          "en": "Pound"
+        },
+        {
+          "ar": "الدينار",
+          "fr": "Dinar",
+          "en": "Dinar"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Tunisian dinar",
+        "url": "https://en.wikipedia.org/wiki/Tunisian_dinar"
+      },
+      "factKey": "ara-tn-currency",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-umayyad-capital",
+      "category": "arab_culture",
+      "subcategory": "history",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هي عاصمة الدولة الأموية في المشرق؟",
+        "fr": "Quelle était la capitale du califat omeyyade en Orient ?",
+        "en": "What was the capital of the Umayyad Caliphate in the East?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "بغداد",
+          "fr": "Bagdad",
+          "en": "Baghdad"
+        },
+        {
+          "ar": "القاهرة",
+          "fr": "Le Caire",
+          "en": "Cairo"
+        },
+        {
+          "ar": "دمشق",
+          "fr": "Damas",
+          "en": "Damascus"
+        },
+        {
+          "ar": "الكوفة",
+          "fr": "Koufa",
+          "en": "Kufa"
+        }
+      ],
+      "correct": 2,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Umayyad Caliphate",
+        "url": "https://en.wikipedia.org/wiki/Umayyad_Caliphate"
+      },
+      "factKey": "ara-umayyad-capital",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "ara-yennayer",
+      "category": "arab_culture",
+      "subcategory": "maghreb",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "open",
+      "text": {
+        "ar": "ما اسم رأس السنة الأمازيغية؟",
+        "fr": "Comment s’appelle le Nouvel An amazigh ?",
+        "en": "What is the Amazigh New Year called?"
+      },
+      "image": "",
+      "choices": [],
+      "correct": null,
+      "answers": {
+        "ar": [
+          "يناير",
+          "إيض يناير",
+          "ايض ن يناير"
+        ],
+        "fr": [
+          "Yennayer",
+          "Id Yennayer"
+        ],
+        "en": [
+          "Yennayer",
+          "Id Yennayer"
+        ]
+      },
+      "source": {
+        "title": "Wikipedia — Yennayer",
+        "url": "https://en.wikipedia.org/wiki/Yennayer"
+      },
+      "factKey": "ara-yennayer",
+      "volatile": false,
+      "verifiedAt": "",
+      "tags": [],
+      "notes": "",
+      "status": "published",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    }
+  ]
+}

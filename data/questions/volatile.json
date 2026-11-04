@@ -1,0 +1,113 @@
+{
+  "description": "معلومات رياضية متغيرة — يجب إعادة التحقق منها دورياً (verifiedAt). Changing sports facts, re-verify regularly.",
+  "questions": [
+    {
+      "id": "spo-vol-afcon-most",
+      "category": "sports",
+      "subcategory": "tournaments",
+      "region": "arab",
+      "difficulty": "medium",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هو المنتخب الأكثر تتويجاً بكأس أمم أفريقيا؟",
+        "fr": "Quelle sélection a remporté le plus de Coupes d'Afrique des nations ?",
+        "en": "Which team has won the most Africa Cup of Nations titles?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "مصر",
+          "fr": "Égypte",
+          "en": "Egypt"
+        },
+        {
+          "ar": "الكاميرون",
+          "fr": "Cameroun",
+          "en": "Cameroon"
+        },
+        {
+          "ar": "غانا",
+          "fr": "Ghana",
+          "en": "Ghana"
+        },
+        {
+          "ar": "نيجيريا",
+          "fr": "Nigeria",
+          "en": "Nigeria"
+        }
+      ],
+      "correct": 0,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — Africa Cup of Nations",
+        "url": "https://en.wikipedia.org/wiki/Africa_Cup_of_Nations"
+      },
+      "factKey": "afcon_most_titles",
+      "volatile": true,
+      "verifiedAt": "2024-02-11",
+      "tags": [],
+      "notes": "مصر 7 ألقاب حتى نهائي فبراير 2024 — تحقق من النتائج بعد كل نسخة",
+      "status": "review",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    },
+    {
+      "id": "spo-vol-wc-most",
+      "category": "sports",
+      "subcategory": "world_cup",
+      "region": "world",
+      "difficulty": "easy",
+      "type": "mcq",
+      "text": {
+        "ar": "ما هو المنتخب الأكثر تتويجاً بكأس العالم؟",
+        "fr": "Quelle sélection a remporté le plus de Coupes du monde ?",
+        "en": "Which national team has won the most World Cups?"
+      },
+      "image": "",
+      "choices": [
+        {
+          "ar": "ألمانيا",
+          "fr": "Allemagne",
+          "en": "Germany"
+        },
+        {
+          "ar": "إيطاليا",
+          "fr": "Italie",
+          "en": "Italy"
+        },
+        {
+          "ar": "الأرجنتين",
+          "fr": "Argentine",
+          "en": "Argentina"
+        },
+        {
+          "ar": "البرازيل",
+          "fr": "Brésil",
+          "en": "Brazil"
+        }
+      ],
+      "correct": 3,
+      "answers": {
+        "ar": [],
+        "fr": [],
+        "en": []
+      },
+      "source": {
+        "title": "Wikipedia — FIFA World Cup",
+        "url": "https://en.wikipedia.org/wiki/FIFA_World_Cup"
+      },
+      "factKey": "wc_most_titles",
+      "volatile": true,
+      "verifiedAt": "2022-12-18",
+      "tags": [],
+      "notes": "البرازيل 5 ألقاب حتى نهائي 2022 — يجب التحقق بعد مونديال 2026 قبل النشر",
+      "status": "review",
+      "createdAt": "2026-11-04T00:00:00.000Z",
+      "updatedAt": "2026-11-04T00:00:00.000Z"
+    }
+  ]
+}
