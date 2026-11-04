@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
@@ -69,6 +70,7 @@ class MediaStorage @Inject constructor(
             ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
             PackageManager.PERMISSION_GRANTED
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun saveToMediaStore(source: File, name: String, mime: String): SavedFile {
         val resolver = context.contentResolver
         val values = ContentValues().apply {
