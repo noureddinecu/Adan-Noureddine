@@ -107,8 +107,8 @@ public class MainActivity extends Activity {
             prefs.edit().putString("lang", es() ? "ar" : "es").apply();
             recreate();
         }));
-        bar.addView(small(R.drawable.i3_gear, false, v -> settings()));
-        bar.addView(small(R.drawable.i3_restore, true, v -> askPin()));
+        bar.addView(small(R.drawable.i3_gear, false, v -> askPin(this::settings)));
+        bar.addView(small(R.drawable.i3_restore, true, v -> askPin(this::confirmRestore)));
         root.addView(bar);
 
         web = new WebView(this);
@@ -172,7 +172,7 @@ public class MainActivity extends Activity {
         }
         if (r.noor.size() > 1) {
             String[] ips = r.noor.toArray(new String[0]);
-            new AlertDialog.Builder(this).setTitle(tr("لقيت " + ips.length + " ديال التلفزيونات، اختار واحد", "Encontré " + ips.length + " teles, elige una"))
+            new AlertDialog.Builder(this).setTitle(tr("تم العثور على " + ips.length + " أجهزة تلفاز، اختر واحداً", "Encontré " + ips.length + " teles, elige una"))
                     .setItems(ips, (d, w) -> use(ips[w])).setCancelable(false).show();
             return;
         }
@@ -180,9 +180,9 @@ public class MainActivity extends Activity {
         if (!r.adb.isEmpty()) {
             String[] ips = r.adb.toArray(new String[0]);
             new AlertDialog.Builder(this)
-                    .setTitle(tr("لقيت تلفزيون، ولكن تطبيقات نور ماشي فيه", "Encontré una tele, pero sin las apps de Noor"))
-                    .setMessage(tr("الرسم والصلاة كيحتاجو تطبيقات نور فالتلفزيون. تقدر تحفظ هاد العنوان باش يخدم زر الرجوع.",
-                            "El dibujo y la oración necesitan las apps de Noor en la tele. Puedes guardar esta dirección para el botón de restaurar."))
+                    .setTitle(tr("تم العثور على تلفاز، لكن تطبيقات نور غير مثبّتة عليه", "Encontré una tele, pero sin las apps de Noor"))
+                    .setMessage(tr("الرسائل والإعدادات تحتاج تطبيقات نور على التلفاز. يمكنك حفظ هذا العنوان ليعمل زر الاستعادة.",
+                            "Los mensajes y los ajustes necesitan las apps de Noor en la tele. Puedes guardar esta dirección para el botón de restaurar."))
                     .setItems(ips, (d, w) -> prefs.edit().putString("tv", ips[w]).apply())
                     .setNegativeButton(tr("إلغاء", "Cancelar"), null).show();
         }
@@ -290,18 +290,18 @@ public class MainActivity extends Activity {
     private void searching() {
         page("<div class=r><i></i><i></i><i></i><svg viewBox='0 0 24 24' fill='none' stroke='#00d4ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>"
                 + "<path d='M4 7h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM17 2l-5 5-5-5'/></svg></div>"
-                + "<h2>" + tr("كنقلّب على التلفزيون…", "Buscando la tele…") + "</h2>"
-                + "<p>" + tr("التيليفون كيقلّب فالواي فاي ديالك بوحدو.", "El móvil busca la tele en tu wifi él solo.") + "</p><div class=bar><b></b></div>");
+                + "<h2>" + tr("جارٍ البحث عن التلفاز…", "Buscando la tele…") + "</h2>"
+                + "<p>" + tr("يبحث الهاتف عن التلفاز في شبكة الواي فاي تلقائياً.", "El móvil busca la tele en tu wifi él solo.") + "</p><div class=bar><b></b></div>");
     }
 
     private void offline(boolean searched) {
         page("<svg viewBox='0 0 24 24' width='72' height='72' fill='none' stroke='#ff6b8a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'>"
                 + "<path d='M4 7h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM17 2l-5 5-5-5M9 11l6 6M15 11l-6 6'/></svg>"
-                + "<h2>" + tr("ما لقيتش التلفزيون", "No encuentro la tele") + "</h2><p>"
-                + tr("تأكد بلّي التيليفون والتلفزيون فنفس الواي فاي، والتلفزيون شاعل.",
+                + "<h2>" + tr("لم يتم العثور على التلفاز", "No encuentro la tele") + "</h2><p>"
+                + tr("تأكّد أن الهاتف والتلفاز على شبكة الواي فاي نفسها وأن التلفاز يعمل.",
                         "Comprueba que el móvil y la tele están en el mismo wifi y que la tele está encendida.")
                 + (searched ? "" : "<br>" + tr("العنوان: ", "Dirección: ") + host()) + "</p>"
-                + "<button onclick='Zahhaf.search()'>" + SEARCH_ICON + tr("قلّب مرة أخرى", "Buscar otra vez") + "</button>");
+                + "<button onclick='Zahhaf.search()'>" + SEARCH_ICON + tr("البحث مرة أخرى", "Buscar otra vez") + "</button>");
     }
 
     @Override
@@ -317,14 +317,14 @@ public class MainActivity extends Activity {
         EditText ip = new EditText(this);
         ip.setText(host());
         ip.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-        box.addView(label(tr("عنوان التلفزيون (IP):", "Dirección de la tele (IP):")));
+        box.addView(label(tr("عنوان التلفاز (IP):", "Dirección de la tele (IP):")));
         box.addView(ip);
-        box.addView(label(tr("«جرّب الربط» كيطلب من التلفزيون يقبل هاد التيليفون: ملي يطلع السؤال فالتلفزيون، اختار «السماح دائماً» ووافق. "
+        box.addView(label(tr("«اختبار الاتصال» يطلب من التلفاز قبول هذا الهاتف: عند ظهور السؤال على التلفاز اختر «السماح دائماً» ثم موافق. "
                         + "هادشي خاصو باش يخدم زر ♻️.",
                 "«Probar conexión» pide a la tele que acepte este móvil: cuando salga la pregunta en la tele, elige «Permitir siempre» y acepta. "
                         + "Hace falta para el botón ♻️.")));
         Button find = new Button(this);
-        find.setText(tr("قلّب على التلفزيون", "Buscar la tele"));
+        find.setText(tr("البحث عن التلفاز", "Buscar la tele"));
         android.graphics.drawable.Drawable findIcon = getDrawable(R.drawable.i3_search);
         findIcon.setBounds(0, 0, dp(24), dp(24));
         find.setCompoundDrawablesRelative(findIcon, null, null, null);
@@ -338,11 +338,11 @@ public class MainActivity extends Activity {
                     prefs.edit().putString("tv", ip.getText().toString().trim()).apply();
                     connect(false);
                 })
-                .setNeutralButton(tr("جرّب الربط", "Probar conexión"), (x, w) -> {
+                .setNeutralButton(tr("اختبار الاتصال", "Probar conexión"), (x, w) -> {
                     prefs.edit().putString("tv", ip.getText().toString().trim()).apply();
-                    run(tr("كنتصل بالتلفزيون… إلى طلع سؤال فالتلفزيون، وافق عليه", "Conectando… si sale una pregunta en la tele, acéptala"),
+                    run(tr("جارٍ الاتصال بالتلفاز… إذا ظهر سؤال على التلفاز فوافق عليه", "Conectando… si sale una pregunta en la tele, acéptala"),
                             "echo ok", out -> out.trim().endsWith("ok")
-                                    ? tr("✅ التيليفون مربوط بالتلفزيون", "✅ El móvil está conectado a la tele") : "⚠️ " + out);
+                                    ? tr("✅ الهاتف متّصل بالتلفاز", "✅ El móvil está conectado a la tele") : "⚠️ " + out);
                 })
                 .setNegativeButton(tr("إلغاء", "Cancelar"), null)
                 .create();
@@ -355,7 +355,8 @@ public class MainActivity extends Activity {
 
     // ---------- restore ----------
 
-    private void askPin() {
+    /** The app's settings and the restore button open only with the PIN (0000). */
+    private void askPin(Runnable then) {
         EditText pin = new EditText(this);
         pin.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         pin.setGravity(Gravity.CENTER);
@@ -363,11 +364,11 @@ public class MainActivity extends Activity {
         LinearLayout box = column();
         box.addView(pin);
         new AlertDialog.Builder(this)
-                .setTitle(tr("دخّل الكود", "Introduce el código"))
+                .setTitle(tr("أدخل الرمز", "Introduce el código"))
                 .setView(box)
                 .setPositiveButton(tr("دخول", "Entrar"), (x, w) -> {
-                    if (PIN.equals(pin.getText().toString())) confirmRestore();
-                    else toastDialog(tr("❌ الكود غالط", "❌ Código incorrecto"));
+                    if (PIN.equals(pin.getText().toString())) then.run();
+                    else toastDialog(tr("❌ رمز غير صحيح", "❌ Código incorrecto"));
                 })
                 .setNegativeButton(tr("إلغاء", "Cancelar"), null)
                 .show();
@@ -376,17 +377,17 @@ public class MainActivity extends Activity {
 
     private void confirmRestore() {
         LinearLayout box = column();
-        box.addView(label(tr("هادشي غادي:\n• يشعّل جميع التطبيقات اللي تطفاو (Netflix، Prime، الإعلانات ديال شاومي…)\n• يرجّع شاشة قوقل الأصلية هي الرئيسية",
+        box.addView(label(tr("سيؤدي هذا إلى:\n• إعادة تفعيل كل التطبيقات المعطّلة (Netflix وPrime وإعلانات شاومي…)\n• إعادة شاشة Google الأصلية شاشةً رئيسية",
                 "Esto va a:\n• Volver a activar todas las apps desactivadas (Netflix, Prime, la publicidad de Xiaomi…)\n• Devolver la pantalla de inicio original de Google")));
         CheckBox ours = new CheckBox(this);
-        ours.setText(tr("وحتى يحيد تطبيقات نور (الشاشة الجديدة، الأذان، البطاقات، مواقيت الصلاة)",
+        ours.setText(tr("وإزالة تطبيقات نور أيضاً (الشاشة الجديدة، الأذان، البطاقات، مواقيت الصلاة)",
                 "Y quitar también las apps de Noor (pantalla nueva, adhan, tarjetas, horarios de oración)"));
         ours.setChecked(true);
         box.addView(ours);
         new AlertDialog.Builder(this)
-                .setTitle(tr("نرجّعو التلفزيون كيما كان؟", "¿Dejamos la tele como estaba?"))
+                .setTitle(tr("استعادة التلفاز كما كان؟", "¿Dejamos la tele como estaba?"))
                 .setView(box)
-                .setPositiveButton(tr("إيه، رجّعو", "Sí, restaurar"), (d, w) -> restore(ours.isChecked()))
+                .setPositiveButton(tr("نعم، استعادة", "Sí, restaurar"), (d, w) -> restore(ours.isChecked()))
                 .setNegativeButton(tr("لا", "No"), null)
                 .show();
     }
@@ -407,9 +408,9 @@ public class MainActivity extends Activity {
                     .append("pm uninstall $p 2>/dev/null | grep -q Success && echo \"gone=$p\"; done;; esac; ");
         }
         sh.append("am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1; echo done");
-        run(tr("كنرجّعو التلفزيون… (إلى طلع سؤال فالتلفزيون، وافق عليه)", "Restaurando la tele… (si sale una pregunta en la tele, acéptala)"),
+        run(tr("جارٍ استعادة التلفاز… (إذا ظهر سؤال على التلفاز فوافق عليه)", "Restaurando la tele… (si sale una pregunta en la tele, acéptala)"),
                 sh.toString(), out -> {
-                    if (!out.contains("done")) return tr("⚠️ ما كملش:\n", "⚠️ No terminó:\n") + out;
+                    if (!out.contains("done")) return tr("⚠️ لم تكتمل العملية:\n", "⚠️ No terminó:\n") + out;
                     int on = 0, gone = 0;
                     boolean home = false;
                     for (String line : out.split("\n")) {
@@ -417,11 +418,11 @@ public class MainActivity extends Activity {
                         if (line.startsWith("gone=")) gone++;
                         if (line.startsWith("home=com.google.android.tvlauncher/")) home = true;
                     }
-                    return (home ? tr("✅ رجعات شاشة قوقل الأصلية\n", "✅ Vuelve la pantalla original de Google\n")
-                            : tr("⚠️ الشاشة الرئيسية ما تبدّلاتش\n", "⚠️ La pantalla de inicio no cambió\n"))
-                            + tr("✅ تشعّلو " + on + " تطبيقات\n", "✅ " + on + " apps activadas\n")
-                            + (removeOurs ? tr("🗑️ تحيدو " + gone + " تطبيقات ديال نور\n", "🗑️ " + gone + " apps de Noor quitadas\n") : "")
-                            + tr("\nالتلفزيون رجع كيما كان 🌿", "\nLa tele está como antes 🌿");
+                    return (home ? tr("✅ عادت شاشة Google الأصلية\n", "✅ Vuelve la pantalla original de Google\n")
+                            : tr("⚠️ لم تتغيّر الشاشة الرئيسية\n", "⚠️ La pantalla de inicio no cambió\n"))
+                            + tr("✅ تم تفعيل " + on + " تطبيقات\n", "✅ " + on + " apps activadas\n")
+                            + (removeOurs ? tr("🗑️ تمت إزالة " + gone + " من تطبيقات نور\n", "🗑️ " + gone + " apps de Noor quitadas\n") : "")
+                            + tr("\nعاد التلفاز كما كان 🌿", "\nLa tele está como antes 🌿");
                 });
     }
 
@@ -439,8 +440,8 @@ public class MainActivity extends Activity {
             try {
                 msg = result.of(Adb.shell(this, h, command));
             } catch (Exception e) {
-                msg = tr("⚠️ ما قدرتش نتصل بالتلفزيون.\n\nتأكد بلّي:\n• «تصحيح أخطاء USB» مشعّل فخيارات المطوّر ديال التلفزيون\n"
-                                + "• التيليفون والتلفزيون فنفس الواي فاي\n• وافقتي على السؤال اللي طلع فالتلفزيون",
+                msg = tr("⚠️ تعذّر الاتصال بالتلفاز.\n\nتأكّد من:\n• تفعيل «تصحيح أخطاء USB» في خيارات المطوّر على التلفاز\n"
+                                + "• أن الهاتف والتلفاز على الشبكة نفسها\n• الموافقة على السؤال الذي ظهر على التلفاز",
                         "⚠️ No pude conectar con la tele.\n\nComprueba que:\n• «Depuración USB» está activada en las opciones de desarrollador de la tele\n"
                                 + "• El móvil y la tele están en el mismo wifi\n• Aceptaste la pregunta que salió en la tele")
                         + "\n\n(" + e.getClass().getSimpleName() + ")";
@@ -454,7 +455,7 @@ public class MainActivity extends Activity {
     }
 
     private void toastDialog(String msg) {
-        new AlertDialog.Builder(this).setMessage(msg).setPositiveButton(tr("مزيان", "Vale"), null).show();
+        new AlertDialog.Builder(this).setMessage(msg).setPositiveButton(tr("حسناً", "Vale"), null).show();
     }
 
     private android.widget.ImageButton small(int icon, boolean red, View.OnClickListener l) {

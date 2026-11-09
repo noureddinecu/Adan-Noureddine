@@ -24,11 +24,10 @@ body{background:radial-gradient(120% 60% at 100% 0%,#2a1f6b 0%,transparent 60%),
 .head h1 b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .lang{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-weight:700}
 .seg{position:relative;display:flex;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:4px;margin-bottom:14px}
-.seg button{position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:center;gap:9px;padding:11px 4px;font-size:16px;font-weight:800;border:0;background:none;color:var(--dim);border-radius:14px;transition:color .25s var(--ease)}
+.seg button{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:9px 4px;font-size:14.5px;font-weight:800;border:0;background:none;color:var(--dim);border-radius:14px;transition:color .25s var(--ease)}
 .seg button.on{color:#fff}
-.seg .i3{width:30px;height:30px;transition:transform .35s var(--ease)}
+.seg .i3{width:32px;height:32px;transition:transform .35s var(--ease)}
 .seg button.on .i3{transform:scale(1.12) rotate(-6deg)}
-.seg.small button{font-size:14.5px;padding:9px 4px}.seg.small .i3{width:24px;height:24px}
 .pill{position:absolute;top:4px;bottom:4px;left:0;border-radius:14px;background:var(--grad);box-shadow:0 4px 16px rgba(124,92,255,.4);transition:transform .35s var(--ease),width .35s var(--ease)}
 .panel{display:none}.panel.on{display:block;animation:in .35s var(--ease)}
 @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -36,6 +35,8 @@ body{background:radial-gradient(120% 60% at 100% 0%,#2a1f6b 0%,transparent 60%),
   background:repeating-conic-gradient(rgba(255,255,255,.05) 0 25%,transparent 0 50%) 0 0/22px 22px,#12142a;box-shadow:0 10px 30px rgba(0,0,0,.35)}
 canvas{width:100%;height:100%;display:block;touch-action:none}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-top:12px}
+.title{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;margin:2px 2px 12px}
+.title .i3{width:30px;height:30px}
 .lbl{font-size:14px;color:var(--dim);margin:2px 2px 10px;display:flex;justify-content:space-between;align-items:center}
 .lbl>span:first-child{display:inline-flex;align-items:center;gap:8px}
 .lbl .i3{width:22px;height:22px}
@@ -54,7 +55,7 @@ canvas{width:100%;height:100%;display:block;touch-action:none}
 .chips{display:flex;gap:6px}
 .chip{flex:1;padding:10px 2px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--txt);font-size:13px;font-weight:700;transition:all .2s var(--ease)}
 .chip.on{background:rgba(0,212,255,.18);border-color:var(--a2)}
-button:active,.chip:active,.font:active{transform:scale(.95)}
+button:active,.chip:active,.font:active,.key:active{transform:scale(.94)}
 textarea{width:100%;height:110px;font-size:20px;padding:14px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--txt);resize:none;
   font-family:inherit;outline:none;transition:border-color .2s;-webkit-user-select:text;user-select:text;margin-top:12px}
 textarea:focus{border-color:var(--a1)}
@@ -67,10 +68,6 @@ textarea:focus{border-color:var(--a1)}
 .sec.red{color:#ffd0da;border-color:rgba(255,107,138,.35);background:rgba(255,107,138,.1)}
 .hint{font-size:12.5px;color:var(--dim);text-align:center;margin-top:10px;line-height:1.6}
 .hide{display:none!important}
-.pr{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-radius:14px;margin-top:8px;background:var(--card2);border:1px solid transparent;font-size:18px;font-weight:700;transition:all .3s}
-.pr span:first-child{display:inline-flex;align-items:center;gap:10px}.pr span:last-child{font-variant-numeric:tabular-nums;font-size:22px}
-.pr.next{background:rgba(124,92,255,.22);border-color:var(--a1);box-shadow:0 6px 20px rgba(124,92,255,.25)}
-.count{text-align:center;font-size:15px;color:var(--dim);margin:6px 0 2px}.count b{display:block;font-size:34px;color:#fff;font-variant-numeric:tabular-nums;margin-top:4px}
 .sw{position:relative;width:52px;height:30px;flex:none}.sw input{opacity:0;width:0;height:0}
 .sw span{position:absolute;inset:0;border-radius:999px;background:var(--card2);border:1px solid var(--line);transition:background .25s}
 .sw span:before{content:"";position:absolute;width:22px;height:22px;top:3px;left:4px;border-radius:50%;background:#fff;transition:transform .25s var(--ease)}
@@ -81,7 +78,24 @@ textarea:focus{border-color:var(--a1)}
 .tv button:nth-child(1){align-self:start;justify-self:start}.tv button:nth-child(2){align-self:start;justify-self:end}
 .tv button:nth-child(3){align-self:end;justify-self:start}.tv button:nth-child(4){align-self:end;justify-self:end}
 .tv .i3{position:absolute;inset:0;margin:auto;width:46px;height:46px;opacity:.5;pointer-events:none}
-.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;pointer-events:none;
+/* PIN pad */
+.pin{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(6,7,16,.72);backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.pin.on{opacity:1;pointer-events:auto}
+.pbox{width:min(88vw,340px);padding:22px 20px;border-radius:26px;background:linear-gradient(180deg,rgba(40,34,90,.95),rgba(16,18,40,.95));border:1px solid var(--line);
+  box-shadow:0 30px 60px rgba(0,0,0,.5);text-align:center;transform:translateY(20px) scale(.96);transition:transform .35s var(--ease)}
+.pin.on .pbox{transform:none}
+.pbox .i3{width:58px;height:58px}
+.pbox h3{margin:10px 0 16px;font-size:19px}
+.dots{display:flex;justify-content:center;gap:16px;margin-bottom:20px;direction:ltr}
+.dots i{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.4);transition:all .2s var(--ease)}
+.dots i.f{background:var(--grad);border-color:transparent;transform:scale(1.15)}
+.dots.bad{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;direction:ltr}
+.key{height:58px;border-radius:18px;border:1px solid var(--line);background:var(--card2);color:#fff;font-size:24px;font-weight:700;display:grid;place-items:center;transition:transform .12s var(--ease)}
+.key .i3{width:30px;height:30px}
+.key.ghost{background:none;border:0;font-size:15px;color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;pointer-events:none;z-index:30;
   background:rgba(20,22,44,.95);border:1px solid var(--line);color:#fff;padding:12px 18px;border-radius:999px;font-size:15px;font-weight:600;
   box-shadow:0 10px 30px rgba(0,0,0,.4);transition:all .35s var(--ease);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
 .toast.on{transform:translate(-50%,0);opacity:1}
@@ -93,72 +107,69 @@ textarea:focus{border-color:var(--a1)}
 
 <div class="seg" id="seg">
   <div class="pill"></div>
-  <button class="on" onclick="tab(0)"><img class="i3" data-k="message" alt=""><span data-t="tMsg"></span></button>
-  <button onclick="tab(1)"><img class="i3" data-k="prayer" alt=""><span data-t="tPray"></span></button>
+  <button class="on" onclick="tab(0)"><img class="i3" data-k="written" alt=""><span data-t="tWrite"></span></button>
+  <button onclick="tab(1)"><img class="i3" data-k="drawn" alt=""><span data-t="tDraw"></span></button>
+  <button onclick="tab(2)"><img class="i3" data-k="gear" alt=""><span data-t="tSet"></span></button>
 </div>
 
-<!-- Message to the TV: written or drawn, both shown on the TV as one picture -->
+<!-- Page 1: a written message -->
 <section class="panel on" id="p0">
-  <div class="seg small" id="kind">
-    <div class="pill"></div>
-    <button class="on" onclick="kind(0)"><img class="i3" data-k="written" alt=""><span data-t="kWrite"></span></button>
-    <button onclick="kind(1)"><img class="i3" data-k="drawn" alt=""><span data-t="kDraw"></span></button>
+  <div class="stage"><canvas id="cvW" width="1280" height="720"></canvas></div>
+  <textarea id="t" maxlength="160" oninput="drawW()"></textarea>
+  <div class="card"><div class="lbl"><span><img class="i3" data-k="font" alt=""><span data-t="font"></span></span><span id="fname"></span></div><div class="fonts" id="fonts"></div></div>
+  <div class="card">
+    <div class="lbl"><span><img class="i3" data-k="color" alt=""><span data-t="color"></span></span></div>
+    <div class="scroll" id="tcolors"></div>
+    <div class="lbl" style="margin-top:8px"><span data-t="look"></span></div>
+    <div class="chips" id="look"><button class="chip" data-v="none" data-t="lNone"></button><button class="chip on" data-v="dark" data-t="lDark"></button><button class="chip" data-v="grad" data-t="lGrad"></button><button class="chip" data-v="light" data-t="lLight"></button></div>
+    <div class="lbl" style="margin-top:12px"><span><img class="i3" data-k="size" alt=""><span data-t="sizeL"></span></span></div>
+    <div class="size"><input type="range" id="tsz" min="40" max="170" value="96" oninput="drawW()"></div>
   </div>
-  <div class="stage"><canvas id="cv" width="1280" height="720"></canvas></div>
-
-  <div id="wBox">
-    <textarea id="t" maxlength="160" oninput="draw()"></textarea>
-    <div class="card"><div class="lbl"><span><img class="i3" data-k="font" alt=""><span data-t="font"></span></span><span id="fname"></span></div><div class="fonts" id="fonts"></div></div>
-    <div class="card">
-      <div class="lbl"><span><img class="i3" data-k="color" alt=""><span data-t="color"></span></span></div>
-      <div class="scroll" id="tcolors"></div>
-      <div class="lbl" style="margin-top:8px"><span data-t="look"></span></div>
-      <div class="chips" id="look"><button class="chip" data-v="none" data-t="lNone"></button><button class="chip on" data-v="dark" data-t="lDark"></button><button class="chip" data-v="grad" data-t="lGrad"></button><button class="chip" data-v="light" data-t="lLight"></button></div>
-      <div class="lbl" style="margin-top:12px"><span><img class="i3" data-k="size" alt=""><span data-t="sizeL"></span></span></div>
-      <div class="size"><input type="range" id="tsz" min="40" max="170" value="96" oninput="draw()"></div>
-    </div>
-  </div>
-
-  <div id="dBox2" class="hide">
-    <div class="card">
-      <div class="lbl"><span><img class="i3" data-k="color" alt=""><span data-t="color"></span></span></div>
-      <div class="scroll" id="pcolors"></div>
-      <div class="lbl" style="margin-top:8px"><span><img class="i3" data-k="pen" alt=""><span data-t="thick"></span></span></div>
-      <div class="size"><input type="range" id="psz" min="4" max="48" value="12"></div>
-    </div>
-    <div class="row">
-      <button class="sec" onclick="undo()"><img class="i3" data-k="undo" alt=""><span data-t="undo"></span></button>
-      <button class="sec red" onclick="wipe()"><img class="i3" data-k="clear" alt=""><span data-t="wipe"></span></button>
-    </div>
-  </div>
-
   <div class="card">
     <div class="lbl"><span><img class="i3" data-k="timer" alt=""><span data-t="howLong"></span></span></div>
-    <div class="chips" id="dur"><button class="chip" data-v="15" data-t="d15"></button><button class="chip on" data-v="60" data-t="d60"></button><button class="chip" data-v="300" data-t="d300"></button><button class="chip" data-v="0" data-t="d0"></button></div>
+    <div class="chips" id="durW"><button class="chip" data-v="15" data-t="d15"></button><button class="chip on" data-v="60" data-t="d60"></button><button class="chip" data-v="300" data-t="d300"></button><button class="chip" data-v="0" data-t="d0"></button></div>
   </div>
-  <button class="big" onclick="sendIt()"><img class="i3" data-k="send" alt=""><span data-t="sendTv"></span></button>
+  <button class="big" onclick="sendW()"><img class="i3" data-k="send" alt=""><span data-t="sendTv"></span></button>
   <div class="row"><button class="sec red" onclick="hideIt()"><img class="i3" data-k="hide" alt=""><span data-t="hideTv"></span></button></div>
 </section>
 
-<!-- Prayer -->
+<!-- Page 2: a drawn message -->
 <section class="panel" id="p1">
+  <div class="stage"><canvas id="cvD" width="1280" height="720"></canvas></div>
   <div class="card">
-    <div class="count"><span data-t="nextIn"></span> <span id="nextName"></span><b id="countdown">--:--:--</b></div>
-    <div id="plist"></div>
+    <div class="lbl"><span><img class="i3" data-k="color" alt=""><span data-t="color"></span></span></div>
+    <div class="scroll" id="pcolors"></div>
+    <div class="lbl" style="margin-top:8px"><span><img class="i3" data-k="pen" alt=""><span data-t="thick"></span></span></div>
+    <div class="size"><input type="range" id="psz" min="4" max="48" value="12"></div>
   </div>
   <div class="row">
-    <button class="sec" onclick="adhan('do=play')"><img class="i3" data-k="play" alt=""><span data-t="tryAdhan"></span></button>
-    <button class="sec red" onclick="adhan('do=stop')"><img class="i3" data-k="stop" alt=""><span data-t="stopAdhan"></span></button>
+    <button class="sec" onclick="undo()"><img class="i3" data-k="undo" alt=""><span data-t="undo"></span></button>
+    <button class="sec red" onclick="wipe()"><img class="i3" data-k="clear" alt=""><span data-t="wipe"></span></button>
   </div>
   <div class="card">
-    <div class="lbl"><span><img class="i3" data-k="vol" alt=""><span data-t="adhanVol"></span></span><span id="volv"></span></div>
+    <div class="lbl"><span><img class="i3" data-k="timer" alt=""><span data-t="howLong"></span></span></div>
+    <div class="chips" id="durD"><button class="chip" data-v="15" data-t="d15"></button><button class="chip on" data-v="60" data-t="d60"></button><button class="chip" data-v="300" data-t="d300"></button><button class="chip" data-v="0" data-t="d0"></button></div>
+  </div>
+  <button class="big" onclick="sendD()"><img class="i3" data-k="send" alt=""><span data-t="sendTv"></span></button>
+  <div class="row"><button class="sec red" onclick="hideIt()"><img class="i3" data-k="hide" alt=""><span data-t="hideTv"></span></button></div>
+</section>
+
+<!-- Page 3: TV settings, behind the PIN -->
+<section class="panel" id="p2">
+  <div class="card">
+    <div class="title"><img class="i3" data-k="prayer" alt=""><span data-t="adhanT"></span></div>
+    <div class="row" style="margin-top:0">
+      <button class="sec" onclick="adhan('do=play')"><img class="i3" data-k="play" alt=""><span data-t="tryAdhan"></span></button>
+      <button class="sec red" onclick="adhan('do=stop')"><img class="i3" data-k="stop" alt=""><span data-t="stopAdhan"></span></button>
+    </div>
+    <div class="lbl" style="margin-top:14px"><span><img class="i3" data-k="vol" alt=""><span data-t="adhanVol"></span></span><span id="volv"></span></div>
     <div class="size"><img class="i3" data-k="vollow" alt=""><input type="range" id="vol" min="0" max="100" value="100" oninput="$('volv').textContent=this.value+'%'" onchange="adhan('vol='+this.value)"><img class="i3" data-k="vol" alt=""></div>
   </div>
   <div class="card">
-    <div class="lbl"><span style="color:#fff;font-weight:700;font-size:15px"><img class="i3" data-k="beads" alt=""><span data-t="dhikrT"></span></span>
+    <div class="lbl" style="margin-bottom:4px"><span class="title" style="margin:0;color:#fff"><img class="i3" data-k="beads" alt=""><span data-t="dhikrT"></span></span>
       <label class="sw"><input type="checkbox" id="dOn" onchange="dset('on='+(this.checked?1:0))"><span></span></label></div>
     <div id="dBox">
-      <div class="lbl" style="margin-top:8px"><span data-t="dEvery"></span></div>
+      <div class="lbl" style="margin-top:10px"><span data-t="dEvery"></span></div>
       <div class="chips" id="dEvery"><button class="chip" data-v="5">5</button><button class="chip" data-v="10">10</button><button class="chip" data-v="15">15</button><button class="chip" data-v="30">30</button><button class="chip" data-v="60">60</button></div>
       <div class="lbl" style="margin-top:12px"><span data-t="dSecs"></span></div>
       <div class="chips" id="dSecs"><button class="chip" data-v="5">5</button><button class="chip" data-v="8">8</button><button class="chip" data-v="12">12</button><button class="chip" data-v="20">20</button></div>
@@ -167,8 +178,18 @@ textarea:focus{border-color:var(--a1)}
       <div class="row"><button class="sec" onclick="dset('do=test')"><img class="i3" data-k="eye" alt=""><span data-t="dTest"></span></button></div>
     </div>
   </div>
-  <p class="hint" data-t="hintPray"></p>
+  <div class="row"><button class="sec" onclick="lockNow()"><img class="i3" data-k="lock" alt=""><span data-t="lockBtn"></span></button></div>
+  <p class="hint" data-t="hintSet"></p>
 </section>
+</div>
+
+<div class="pin" id="pin">
+  <div class="pbox">
+    <img class="i3" data-k="lock" alt="">
+    <h3 data-t="pinT"></h3>
+    <div class="dots" id="dots"><i></i><i></i><i></i><i></i></div>
+    <div class="keys" id="keys"></div>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -176,51 +197,67 @@ textarea:focus{border-color:var(--a1)}
 function $(i){return document.getElementById(i)}
 /* 3D icons (Fluent Emoji, MIT), put in by the build as data URIs so the page needs nothing from outside. */
 var ICONS=/*ICONS*/{};
-document.querySelectorAll('img[data-k]').forEach(function(e){if(ICONS[e.dataset.k])e.src=ICONS[e.dataset.k]});
+function setIcons(){document.querySelectorAll('img[data-k]').forEach(function(e){if(ICONS[e.dataset.k])e.src=ICONS[e.dataset.k]})}
 
-/* ---------- languages ---------- */
-var L={ar:{name1:'زحاف',tMsg:'رسالة للتلفزيون',tPray:'الصلاة',kWrite:'مكتوبة',kDraw:'مرسومة',font:'الخط',color:'اللون',look:'الشكل',lNone:'بلا خلفية',lDark:'غامق',lGrad:'ملوّن',lLight:'فاتح',
-  sizeL:'الحجم',thick:'سُمك القلم',undo:'رجوع',wipe:'مسح الرسم',howLong:'شحال تبقى فالتلفزيون؟',d15:'١٥ ث',d60:'دقيقة',d300:'٥ د',d0:'حتى نحيدها',
-  sendTv:'صيفط للتلفزيون',hideTv:'حيد من التلفزيون',ph:'كتب رسالتك هنا…',sample:'السلام عليكم',fAr:'خطوط عربية',fEs:'خطوط لاتينية (إسبانية)',
-  nextIn:'الصلاة الجاية:',tryAdhan:'جرّب الأذان',stopAdhan:'حبس الأذان',adhanVol:'صوت الأذان',dhikrT:'الأذكار على الشاشة',dEvery:'كل شحال من دقيقة؟',dSecs:'شحال من ثانية يبقاو؟',
-  dCorner:'فين يبانو؟ (اختار الركن)',dTest:'ورّيني واحد دابا',hintPray:'الأذان كيتسمع فكل صلاة واخا يكون شي حاجة خدامة. الأذكار كيطلعو صغار فالركن فوق أي حاجة، وما كيطلعوش وقت الأذان.',
-  P:['الفجر','الظهر','العصر','المغرب','العشاء'],
-  writeFirst:'كتب شي حاجة الأول ✍️',drawFirst:'رسم شي حاجة الأول 🎨',sending:'كيتصيفط… ⏳',shown:'بانت فالتلفزيون ✅',notShown:'ما بانتش، عاود جرّب',
-  wifi:'ما وصلاتش، تأكد من الواي فاي 📶',gone:'تحيدات من التلفزيون ✖️',wiped:'تمسح الرسم 🧹',nothing:'ما بقا والو',
-  adhanPlay:'الأذان خدام فالتلفزيون 🕌',adhanStop:'تحبس الأذان',volSet:'تبدّل الصوت 🔊',noTimes:'ما قدرتش نجيب المواقيت 📶',
-  dOn:'الأذكار مشعّلين 📿',dOff:'الأذكار مطفيين',dSaved:'تحفظ ✅',dShow:'شوف التلفزيون 👀'},
- es:{name1:'Zahhaf',tMsg:'Mensaje a la tele',tPray:'Oración',kWrite:'Escrito',kDraw:'Dibujado',font:'Letra',color:'Color',look:'Estilo',lNone:'Sin fondo',lDark:'Oscuro',lGrad:'Color',lLight:'Claro',
-  sizeL:'Tamaño',thick:'Grosor del lápiz',undo:'Deshacer',wipe:'Borrar dibujo',howLong:'¿Cuánto tiempo en la tele?',d15:'15 s',d60:'1 min',d300:'5 min',d0:'Hasta quitarlo',
-  sendTv:'Enviar a la tele',hideTv:'Quitar de la tele',ph:'Escribe tu mensaje aquí…',sample:'¡Hola, familia!',fAr:'Letras árabes',fEs:'Letras latinas (español)',
-  nextIn:'Próxima oración:',tryAdhan:'Probar el adhan',stopAdhan:'Parar el adhan',adhanVol:'Volumen del adhan',dhikrT:'Adhkar en pantalla',dEvery:'¿Cada cuántos minutos?',dSecs:'¿Cuántos segundos se quedan?',
-  dCorner:'¿Dónde salen? (elige la esquina)',dTest:'Enséñame uno ahora',hintPray:'El adhan suena en cada oración aunque haya algo puesto. Los adhkar salen pequeños en la esquina encima de todo, y nunca durante el adhan.',
-  P:['Fajr (alba)','Dhuhr (mediodía)','Asr (tarde)','Maghrib (ocaso)','Isha (noche)'],
-  writeFirst:'Escribe algo primero ✍️',drawFirst:'Dibuja algo primero 🎨',sending:'Enviando… ⏳',shown:'Ya está en la tele ✅',notShown:'No salió, inténtalo otra vez',
-  wifi:'No llegó, revisa el wifi 📶',gone:'Quitado de la tele ✖️',wiped:'Dibujo borrado 🧹',nothing:'No queda nada',
-  adhanPlay:'El adhan suena en la tele 🕌',adhanStop:'Adhan parado',volSet:'Volumen cambiado 🔊',noTimes:'No pude traer los horarios 📶',
-  dOn:'Adhkar activados 📿',dOff:'Adhkar desactivados',dSaved:'Guardado ✅',dShow:'Mira la tele 👀'}};
+/* ---------- two languages: Arabic and Spanish ---------- */
+var L={ar:{name1:'زحاف',tWrite:'كتابة',tDraw:'رسم',tSet:'الإعدادات',font:'نوع الخط',color:'اللون',look:'النمط',lNone:'بدون خلفية',lDark:'داكن',lGrad:'ملوّن',lLight:'فاتح',
+  sizeL:'الحجم',thick:'سُمك القلم',undo:'تراجع',wipe:'مسح الرسم',howLong:'مدة الظهور على التلفاز',d15:'١٥ ثانية',d60:'دقيقة',d300:'٥ دقائق',d0:'حتى الإزالة',
+  sendTv:'إرسال إلى التلفاز',hideTv:'إزالة من التلفاز',ph:'اكتب رسالتك هنا…',sample:'السلام عليكم',fAr:'خطوط عربية',fEs:'خطوط لاتينية',
+  adhanT:'الأذان',tryAdhan:'تجربة الأذان',stopAdhan:'إيقاف الأذان',adhanVol:'مستوى صوت الأذان',dhikrT:'الأذكار على الشاشة',dEvery:'الظهور كل (دقيقة)',
+  dSecs:'مدة الظهور (ثانية)',dCorner:'مكان الظهور على الشاشة',dTest:'عرض ذكر الآن',lockBtn:'قفل الإعدادات',pinT:'أدخل الرمز',
+  hintSet:'مواقيت الصلاة تظهر على التلفاز. يُرفع الأذان في كل صلاة ولو كان شيء يعمل، والأذكار تظهر صغيرة في زاوية الشاشة ولا تظهر أثناء الأذان.',
+  writeFirst:'اكتب شيئاً أولاً',drawFirst:'ارسم شيئاً أولاً',sending:'جارٍ الإرسال…',shown:'ظهرت على التلفاز ✅',notShown:'لم تظهر، حاول مرة أخرى',
+  wifi:'تعذّر الوصول، تحقّق من شبكة الواي فاي',gone:'أُزيلت من التلفاز',wiped:'تم مسح الرسم',nothing:'لا يوجد ما يُتراجع عنه',
+  adhanPlay:'الأذان يعمل على التلفاز',adhanStop:'تم إيقاف الأذان',volSet:'تم تغيير مستوى الصوت',
+  dOn:'تم تفعيل الأذكار',dOff:'تم إيقاف الأذكار',dSaved:'تم الحفظ ✅',dShow:'انظر إلى التلفاز',pinBad:'رمز غير صحيح',locked:'تم قفل الإعدادات',cancel:'إلغاء'},
+ es:{name1:'Zahhaf',tWrite:'Escribir',tDraw:'Dibujar',tSet:'Ajustes',font:'Tipo de letra',color:'Color',look:'Estilo',lNone:'Sin fondo',lDark:'Oscuro',lGrad:'Color',lLight:'Claro',
+  sizeL:'Tamaño',thick:'Grosor del lápiz',undo:'Deshacer',wipe:'Borrar dibujo',howLong:'Tiempo en la tele',d15:'15 s',d60:'1 min',d300:'5 min',d0:'Hasta quitarlo',
+  sendTv:'Enviar a la tele',hideTv:'Quitar de la tele',ph:'Escribe tu mensaje aquí…',sample:'¡Hola, familia!',fAr:'Letras árabes',fEs:'Letras latinas',
+  adhanT:'El adhan',tryAdhan:'Probar el adhan',stopAdhan:'Parar el adhan',adhanVol:'Volumen del adhan',dhikrT:'Adhkar en pantalla',dEvery:'Aparecen cada (minutos)',
+  dSecs:'Duración (segundos)',dCorner:'Lugar en la pantalla',dTest:'Mostrar uno ahora',lockBtn:'Bloquear ajustes',pinT:'Introduce el código',
+  hintSet:'Los horarios de oración se ven en la tele. El adhan suena en cada oración aunque haya algo puesto, y los adhkar salen pequeños en una esquina, nunca durante el adhan.',
+  writeFirst:'Escribe algo primero',drawFirst:'Dibuja algo primero',sending:'Enviando…',shown:'Ya está en la tele ✅',notShown:'No salió, inténtalo otra vez',
+  wifi:'No llegó, revisa el wifi',gone:'Quitado de la tele',wiped:'Dibujo borrado',nothing:'No hay nada que deshacer',
+  adhanPlay:'El adhan suena en la tele',adhanStop:'Adhan parado',volSet:'Volumen cambiado',
+  dOn:'Adhkar activados',dOff:'Adhkar desactivados',dSaved:'Guardado ✅',dShow:'Mira la tele',pinBad:'Código incorrecto',locked:'Ajustes bloqueados',cancel:'Cancelar'}};
 var q0=new URLSearchParams(location.search);
 var lang=q0.get('lang')||(function(){try{return localStorage.getItem('zhf-lang')}catch(e){}})()||'ar';
+if(lang!=='es')lang='ar';
 if(q0.get('app'))document.body.classList.add('app');
 function T(k){return (L[lang]||L.ar)[k]}
 function toggleLang(){setLang(lang==='ar'?'es':'ar')}
 function setLang(l){lang=l;try{localStorage.setItem('zhf-lang',l)}catch(e){}
   document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';$('langb').lastChild.textContent=l==='ar'?'ES':'ع';
   document.querySelectorAll('[data-t]').forEach(function(e){e.textContent=T(e.dataset.t)});$('t').placeholder=T('ph');
-  buildFonts();renderPrayer();draw();setTimeout(pills,30)}
+  buildFonts();buildKeys();drawW();setTimeout(pills,30)}
 var tt;function say(k){var e=$('toast');e.textContent=T(k)||k;e.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('on')},2600)}
 function buzz(){try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}}
 document.addEventListener('click',function(e){if(e.target.closest('button,.dot'))buzz()},true);
 function post(u,b){return fetch(u,{method:'POST',body:b})}
 
-/* ---------- segmented controls with a sliding pill ---------- */
+/* ---------- pages ---------- */
 function pill(seg){var b=seg.querySelector('button.on'),p=seg.querySelector('.pill');if(!b)return;p.style.width=b.offsetWidth+'px';p.style.transform='translateX('+b.offsetLeft+'px)'}
 function pills(){document.querySelectorAll('.seg').forEach(pill)}
-function pick(seg,n){seg.querySelectorAll('button').forEach(function(b,i){b.classList.toggle('on',i===n)});pill(seg)}
-function tab(n){pick($('seg'),n);for(var i=0;i<2;i++)$('p'+i).classList.toggle('on',i===n);if(n===1){loadPrayer();dload()}else setTimeout(pills,30)}
+var page=0;
+function show(n){page=n;$('seg').querySelectorAll('button').forEach(function(b,i){b.classList.toggle('on',i===n)});pill($('seg'));
+  for(var i=0;i<3;i++)$('p'+i).classList.toggle('on',i===n);if(n===2)dload()}
+function tab(n){if(n===2&&!unlocked()){askPin();return}show(n)}
 window.addEventListener('resize',pills);
 
-/* ---------- colours ---------- */
+/* ---------- the settings PIN (0000) ---------- */
+var PIN='0000',entered='';
+function unlocked(){try{return sessionStorage.getItem('zhf-pin')==='1'}catch(e){return false}}
+function buildKeys(){var k=$('keys');k.innerHTML='';['1','2','3','4','5','6','7','8','9','x','0','<'].forEach(function(v){var b=document.createElement('button');b.className='key'+(v==='x'?' ghost':'');
+  if(v==='<'){var im=document.createElement('img');im.className='i3';im.src=ICONS.backspace||'';b.appendChild(im)}else b.textContent=v==='x'?T('cancel'):v;
+  b.onclick=function(){if(v==='x'){closePin();return}if(v==='<')entered=entered.slice(0,-1);else if(entered.length<4)entered+=v;dots();if(entered.length===4)setTimeout(checkPin,150)};k.appendChild(b)})}
+function dots(){$('dots').querySelectorAll('i').forEach(function(d,i){d.classList.toggle('f',i<entered.length)})}
+function askPin(){entered='';dots();$('pin').classList.add('on')}
+function closePin(){$('pin').classList.remove('on')}
+function checkPin(){if(entered===PIN){try{sessionStorage.setItem('zhf-pin','1')}catch(e){}closePin();show(2)}
+  else{var d=$('dots');d.classList.remove('bad');void d.offsetWidth;d.classList.add('bad');try{navigator.vibrate&&navigator.vibrate([40,40,40])}catch(e){}say('pinBad');entered='';setTimeout(dots,300)}}
+function lockNow(){try{sessionStorage.removeItem('zhf-pin')}catch(e){}show(0);say('locked')}
+
+/* ---------- colours and chips ---------- */
 var PALETTE=['#ffffff','#000000','#9ca3af','#ff3b30','#ff6b8a','#ff9500','#ffcc00','#f5c542','#a3e635','#34c759','#10b981','#00d4ff','#3b82f6','#1e3a8a','#7c5cff','#c084fc','#ec4899','#8b5a2b'];
 function palette(id,onPick){var box=$(id);PALETTE.forEach(function(c,i){var d=document.createElement('div');d.className='dot'+(i?'':' on');d.style.background=c;
     d.onclick=function(){choose(box,d);onPick(c)};box.appendChild(d)});
@@ -229,81 +266,68 @@ function palette(id,onPick){var box=$(id);PALETTE.forEach(function(c,i){var d=do
 function choose(box,d){box.querySelectorAll('.dot').forEach(function(x){x.classList.remove('on')});box.querySelector('.picker').style.boxShadow='';if(d)d.classList.add('on')}
 function chipRow(id,cb){document.querySelectorAll('#'+id+' .chip').forEach(function(b){b.onclick=function(){document.querySelectorAll('#'+id+' .chip').forEach(function(x){x.classList.remove('on')});b.classList.add('on');if(cb)cb(b.dataset.v)}})}
 function chipVal(id){return document.querySelector('#'+id+' .chip.on').dataset.v}
+function sendCanvas(cv,dur){cv.toBlob(function(b){say('sending');post('/image?s='+chipVal(dur),b).then(function(r){return r.text()})
+  .then(function(t){say(t==='ok'?'shown':'notShown')}).catch(function(){say('wifi')})},'image/png')}
+function hideIt(){post('/hide','').then(function(){say('gone')}).catch(function(){say('wifi')})}
+function rr(cx,x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.arcTo(x+w,y,x+w,y+h,r);cx.arcTo(x+w,y+h,x,y+h,r);cx.arcTo(x,y+h,x,y,r);cx.arcTo(x,y,x+w,y,r);cx.closePath()}
+var W=1280,H=720;
 
-/* ---------- fonts: Arabic families (they carry Latin too) and Latin ones for Spanish ---------- */
+/* ---------- page 1: writing, with Arabic and Latin fonts ---------- */
 var FA=['Cairo','Tajawal','Almarai','El Messiri','Changa','Reem Kufi','Kufam','Amiri','Scheherazade New','Noto Naskh Arabic','Lalezar','Lemonada',
   'Aref Ruqaa','Rakkas','Marhey','Mirza','Jomhuria','Katibeh','Harmattan','Blaka','Qahiri','Gulzar','Vibes','Readex Pro'];
 var FE=['Montserrat','Poppins','Playfair Display','Lobster','Pacifico','Dancing Script','Great Vibes','Caveat','Satisfy','Sacramento','Bebas Neue','Anton',
   'Righteous','Permanent Marker','Abril Fatface','Comfortaa','Baloo 2','Indie Flower','Kaushan Script','Cinzel','Merriweather','Courgette','Amatic SC','Fredoka'];
 $('gf').href='https://fonts.googleapis.com/css2?'+FA.concat(FE).map(function(f){return 'family='+f.replace(/ /g,'+')}).join('&')+'&display=swap';
-var font='Cairo',tcol='#ffffff';
+var font='Cairo',tcol='#ffffff',cw=$('cvW'),cxw=cw.getContext('2d');
 function buildFonts(){var box=$('fonts');box.innerHTML='';
   [[T('fAr'),FA,'أبجد هوز'],[T('fEs'),FE,'Hola ñ']].forEach(function(g){var h=document.createElement('div');h.className='fh';h.textContent=g[0];box.appendChild(h);
     g[1].forEach(function(f){var b=document.createElement('button');b.className='font'+(f===font?' on':'');b.style.fontFamily='"'+f+'"';b.textContent=g[2];
       var s=document.createElement('small');s.textContent=f;b.appendChild(s);
       b.onclick=function(){font=f;box.querySelectorAll('.font').forEach(function(x){x.classList.remove('on')});b.classList.add('on');$('fname').textContent=f;
-        document.fonts.load('80px "'+f+'"',$('t').value||T('sample')).then(draw,draw)};box.appendChild(b)})});
+        document.fonts.load('80px "'+f+'"',$('t').value||T('sample')).then(drawW,drawW)};box.appendChild(b)})});
   $('fname').textContent=font}
-palette('tcolors',function(c){tcol=c;draw()});
-chipRow('look',draw);chipRow('dur');
-
-/* ---------- the canvas: a written card or a drawing, 1280x720 like the TV ---------- */
-var W=1280,H=720,cv=$('cv'),cx=cv.getContext('2d'),mode=0,lines=[],cur=null,pcol='#ffffff';
-palette('pcolors',function(c){pcol=c});
-function kind(n){mode=n;pick($('kind'),n);$('wBox').classList.toggle('hide',n===1);$('dBox2').classList.toggle('hide',n===0);draw()}
-function wrap(text,max){var out=[];text.split('\n').forEach(function(par){var words=par.split(/\s+/),line='';
+palette('tcolors',function(c){tcol=c;drawW()});chipRow('look',drawW);chipRow('durW');chipRow('durD');
+function wrap(cx,text,max){var out=[];text.split('\n').forEach(function(par){var words=par.split(/\s+/),line='';
   words.forEach(function(w){var t=line?line+' '+w:w;if(cx.measureText(t).width>max&&line){out.push(line);line=w}else line=t});out.push(line)});return out}
-function rr(x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.arcTo(x+w,y,x+w,y+h,r);cx.arcTo(x+w,y+h,x,y+h,r);cx.arcTo(x,y+h,x,y,r);cx.arcTo(x,y,x+w,y,r);cx.closePath()}
-function draw(){cx.clearRect(0,0,W,H);
-  if(mode===1){lines.forEach(function(o){cx.strokeStyle=o.c;cx.lineWidth=o.w;cx.lineCap='round';cx.lineJoin='round';cx.beginPath();
-      o.p.forEach(function(p,i){i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1])});if(o.p.length===1)cx.lineTo(o.p[0][0]+.1,o.p[0][1]);cx.stroke()});return}
+function drawW(){var cx=cxw;cx.clearRect(0,0,W,H);
   var text=$('t').value.trim()||T('sample'),size=+$('tsz').value,look=chipVal('look');
   cx.font=size+'px "'+font+'",system-ui,sans-serif';cx.direction=/[؀-ۿ]/.test(text)?'rtl':'ltr';
-  var ls=wrap(text,W*0.8),lh=size*1.35,w=0;ls.forEach(function(l){w=Math.max(w,cx.measureText(l).width)});
+  var ls=wrap(cx,text,W*0.8),lh=size*1.35,w=0;ls.forEach(function(l){w=Math.max(w,cx.measureText(l).width)});
   var bw=w+size*1.2,bh=ls.length*lh+size*.6,x=(W-bw)/2,y=(H-bh)/2;
-  if(look!=='none'){cx.save();cx.shadowColor='rgba(0,0,0,.45)';cx.shadowBlur=30;cx.shadowOffsetY=10;rr(x,y,bw,bh,Math.min(48,size*.5));
+  if(look!=='none'){cx.save();cx.shadowColor='rgba(0,0,0,.45)';cx.shadowBlur=30;cx.shadowOffsetY=10;rr(cx,x,y,bw,bh,Math.min(48,size*.5));
     if(look==='dark')cx.fillStyle='rgba(12,14,32,.86)';else if(look==='light')cx.fillStyle='rgba(255,255,255,.94)';
     else{var g=cx.createLinearGradient(x,y,x+bw,y+bh);g.addColorStop(0,'#7c5cff');g.addColorStop(1,'#00d4ff');cx.fillStyle=g}cx.fill();cx.restore()}
   cx.textAlign='center';cx.textBaseline='middle';
   ls.forEach(function(l,i){var ty=y+size*.3+lh*(i+.5);if(look==='none'){cx.lineWidth=Math.max(4,size/9);cx.lineJoin='round';cx.strokeStyle='rgba(0,0,0,.65)';cx.strokeText(l,W/2,ty)}
     cx.fillStyle=tcol;cx.fillText(l,W/2,ty)})}
-function pt(e){var r=cv.getBoundingClientRect();return[(e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H]}
-var raf=0;function redraw(){if(!raf)raf=requestAnimationFrame(function(){raf=0;draw()})}
-cv.onpointerdown=function(e){if(mode!==1)return;cv.setPointerCapture(e.pointerId);cur={c:pcol,w:+$('psz').value,p:[pt(e)]};lines.push(cur);redraw()};
-cv.onpointermove=function(e){if(cur){cur.p.push(pt(e));redraw()}};
-cv.onpointerup=cv.onpointercancel=function(){cur=null};
-function undo(){if(!lines.pop())say('nothing');draw()}
-function wipe(){if(!lines.length)return;lines=[];draw();say('wiped')}
+function sendW(){if(!$('t').value.trim()){say('writeFirst');return}drawW();sendCanvas(cw,'durW')}
 
-function sendIt(){
-  if(mode===0&&!$('t').value.trim()){say('writeFirst');return}
-  if(mode===1&&!lines.length){say('drawFirst');return}
-  draw();cv.toBlob(function(b){say('sending');post('/image?s='+chipVal('dur'),b).then(function(r){return r.text()})
-    .then(function(t){say(t==='ok'?'shown':'notShown')}).catch(function(){say('wifi')})},'image/png')}
-function hideIt(){post('/hide','').then(function(){say('gone')}).catch(function(){say('wifi')})}
+/* ---------- page 2: drawing ---------- */
+var cd=$('cvD'),cxd=cd.getContext('2d'),lines=[],cur=null,pcol='#ffffff';
+palette('pcolors',function(c){pcol=c});
+function drawD(){var cx=cxd;cx.clearRect(0,0,W,H);lines.forEach(function(o){cx.strokeStyle=o.c;cx.lineWidth=o.w;cx.lineCap='round';cx.lineJoin='round';cx.beginPath();
+  o.p.forEach(function(p,i){i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1])});if(o.p.length===1)cx.lineTo(o.p[0][0]+.1,o.p[0][1]);cx.stroke()})}
+function pt(e){var r=cd.getBoundingClientRect();return[(e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H]}
+var raf=0;function redraw(){if(!raf)raf=requestAnimationFrame(function(){raf=0;drawD()})}
+cd.onpointerdown=function(e){cd.setPointerCapture(e.pointerId);cur={c:pcol,w:+$('psz').value,p:[pt(e)]};lines.push(cur);redraw()};
+cd.onpointermove=function(e){if(cur){cur.p.push(pt(e));redraw()}};
+cd.onpointerup=cd.onpointercancel=function(){cur=null};
+function undo(){if(!lines.pop())say('nothing');drawD()}
+function wipe(){if(!lines.length)return;lines=[];drawD();say('wiped')}
+function sendD(){if(!lines.length){say('drawFirst');return}drawD();sendCanvas(cd,'durD')}
 
-/* ---------- prayer ---------- */
-var PT=null;
-function loadPrayer(){fetch('/prayer').then(function(r){return r.json()}).then(function(j){PT=j;$('vol').value=j.vol;$('volv').textContent=j.vol+'%';renderPrayer()}).catch(function(){say('noTimes')})}
-function renderPrayer(){if(!PT||!PT.times.length){$('plist').innerHTML='';return}var n=T('P');$('plist').innerHTML='';
-  PT.times.forEach(function(t,i){var d=document.createElement('div');d.className='pr'+(i===PT.next?' next':'');d.innerHTML='<span></span><span></span>';
-    if(i===PT.next){var im=document.createElement('img');im.className='i3';im.src=ICONS.moon||'';d.children[0].appendChild(im)}
-    d.children[0].appendChild(document.createTextNode(n[i]));d.children[1].textContent=t;$('plist').appendChild(d)});$('nextName').textContent=n[PT.next]}
-setInterval(function(){if(!PT||!PT.times.length)return;var hm=PT.times[PT.next].split(':'),now=new Date(),t=new Date();t.setHours(+hm[0],+hm[1],0,0);
-  if(t<now)t.setDate(t.getDate()+1);var s=Math.floor((t-now)/1000);if(s<=0){loadPrayer();return}
-  $('countdown').textContent=[Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(function(x){return('0'+x).slice(-2)}).join(':')},1000);
+/* ---------- page 3: adhan and adhkar on the TV ---------- */
 function adhan(q){post('/adhan?'+q,'').then(function(){say(q==='do=play'?'adhanPlay':q==='do=stop'?'adhanStop':'volSet')}).catch(function(){say('wifi')})}
-
-/* ---------- adhkar on screen ---------- */
 function chipsSet(id,v){document.querySelectorAll('#'+id+' button').forEach(function(b){b.classList.toggle('on',b.dataset.v==String(v))})}
 ['dEvery','dSecs'].forEach(function(id){document.querySelectorAll('#'+id+' button').forEach(function(b){b.onclick=function(){chipsSet(id,b.dataset.v);dset((id==='dEvery'?'every=':'secs=')+b.dataset.v)}})});
 document.querySelectorAll('.tv button').forEach(function(b){b.onclick=function(){document.querySelectorAll('.tv button').forEach(function(x){x.classList.toggle('on',x===b)});dset('corner='+b.dataset.v+'&do=test')}});
 function dload(){fetch('/dhikr').then(function(r){return r.json()}).then(function(j){$('dOn').checked=j.on;$('dBox').style.opacity=j.on?1:.4;chipsSet('dEvery',j.every);chipsSet('dSecs',j.secs);
-  document.querySelectorAll('.tv button').forEach(function(x){x.classList.toggle('on',x.dataset.v===j.corner)})}).catch(function(){})}
+  document.querySelectorAll('.tv button').forEach(function(x){x.classList.toggle('on',x.dataset.v===j.corner)})}).catch(function(){});
+  fetch('/prayer').then(function(r){return r.json()}).then(function(j){$('vol').value=j.vol;$('volv').textContent=j.vol+'%'}).catch(function(){})}
 function dset(q){if(q.indexOf('on=')===0)$('dBox').style.opacity=q==='on=1'?1:.4;
   post('/dhikr?'+q,'').then(function(){say(q.indexOf('do=test')>=0?'dShow':q==='on=1'?'dOn':q==='on=0'?'dOff':'dSaved')}).catch(function(){say('wifi')})}
 
-setLang(lang);document.fonts.ready.then(draw);setTimeout(pills,0);
+setIcons();setLang(lang);drawD();document.fonts.ready.then(drawW);setTimeout(pills,0);
 </script>
 </body>
 </html>
