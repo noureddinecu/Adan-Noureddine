@@ -22,6 +22,9 @@ cp cleanyourtv/addons/prayer-times/app/build/outputs/apk/release/app-release.apk
 
 # The adhan recording comes from the phone (tv.sh adhan); the app's behaviour is the owner's choice.
 python3 -I noor/patch-adhan.py noor-tv/noor-app/app/src/main/java/app/noortv/Adhan.java
+# The phone page studio: draw, write, stickers and photos on the TV.
+python3 -I noor/patch-phone-page.py noor-tv/noor-app/app/src/main/java/app/noortv/MessageServer.java
+mkdir -p noor-tv/noor-app/app/src/main/assets && cp noor/phone-page.html noor-tv/noor-app/app/src/main/assets/page.html
 
 sed -i "s/static final String HOME = \"com.gathin.tvhome\";/static final String HOME = \"$HOME_ID\";/" noor-tv/noor-app/app/src/main/java/app/noortv/Adhan.java
 grep -q "HOME = \"$HOME_ID\"" noor-tv/noor-app/app/src/main/java/app/noortv/Adhan.java

@@ -1,0 +1,184 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0f1a17">
+<meta name="mobile-web-app-capable" content="yes">
+<title>نور للتلفزيون</title>
+<style>
+:root{--bg:#0f1a17;--card:#16241f;--line:#2f4a42;--acc:#1f6f50;--txt:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,system-ui,sans-serif;-webkit-user-select:none;user-select:none}
+.c{max-width:640px;margin:0 auto;padding:12px 12px 28px}
+h1{font-size:22px;margin:4px 0 12px;text-align:center}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{flex:1;padding:12px 4px;font-size:16px;font-weight:700;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--txt)}
+.tabs button.on{background:var(--acc);border-color:var(--acc)}
+.hide{display:none!important}
+.stage{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;border:1px solid var(--line);
+  background:repeating-conic-gradient(#1b2b26 0 25%,#13201c 0 50%) 0 0/24px 24px}
+canvas{width:100%;height:100%;display:block;touch-action:none}
+.tools{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tools button{flex:1 1 18%;min-width:56px;padding:10px 2px;font-size:15px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--txt)}
+.tools button.on{background:var(--acc);border-color:var(--acc)}
+.row{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap}
+.dot{width:34px;height:34px;border-radius:50%;border:3px solid transparent;flex:none}
+.dot.on{border-color:#fff}
+.stk{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-top:10px;background:var(--card);border-radius:12px;padding:6px}
+.stk span{font-size:30px;text-align:center;padding:4px 0;border-radius:8px}
+.stk span:active{background:var(--line)}
+label{font-size:14px;opacity:.8}
+input[type=range]{flex:1}
+select{flex:1;padding:10px;font-size:16px;border-radius:12px;background:var(--card);color:var(--txt);border:1px solid var(--line)}
+.big{width:100%;margin-top:12px;padding:16px;font-size:20px;font-weight:800;border:0;border-radius:16px;background:var(--acc);color:#fff}
+.sec{flex:1;padding:12px;font-size:16px;border-radius:12px;border:1px solid var(--line);background:#3a2a2a;color:#fff}
+textarea{width:100%;height:140px;font-size:22px;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:#fff;resize:none;-webkit-user-select:text;user-select:text}
+#s{opacity:.85;text-align:center;min-height:1.4em;margin:10px 0 0}
+.hint{font-size:13px;opacity:.6;text-align:center;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="c">
+<h1>📺 نور للتلفزيون</h1>
+<div class="tabs">
+  <button id="t0" class="on" onclick="tab(0)">🎨 استوديو</button>
+  <button id="t1" onclick="tab(1)">✍️ رسالة</button>
+  <button id="t2" onclick="tab(2)">✏️ رسم مباشر</button>
+</div>
+
+<!-- Studio: draw, write, stickers and photos, sent to the TV as one picture -->
+<div id="p0">
+  <div class="stage"><canvas id="cv" width="1280" height="720"></canvas></div>
+  <div class="tools">
+    <button id="m-pen" class="on" onclick="mode('pen')">✏️ قلم</button>
+    <button id="m-move" onclick="mode('move')">✋ حرّك</button>
+    <button onclick="addText()">🔤 نص</button>
+    <button id="m-stk" onclick="toggleStk()">😀 ستيكر</button>
+    <button onclick="pick('bg')">🖼️ خلفية</button>
+    <button onclick="pick('item')">📷 صورة</button>
+    <button onclick="undo()">↩️ رجوع</button>
+    <button onclick="wipe()">🧹 مسح</button>
+  </div>
+  <div id="stk" class="stk hide"></div>
+  <div class="row" id="colors"></div>
+  <div class="row"><label id="szl">السُمك</label><input type="range" id="sz" min="4" max="60" value="12" oninput="size(this.value)"></div>
+  <div class="row" id="selrow" style="display:none"><button class="sec" onclick="delSel()">🗑️ حيد اللي مختار</button></div>
+  <div class="row"><label>كم تبقى فالتلفزيون؟</label>
+    <select id="dur"><option value="15">١٥ ثانية</option><option value="60" selected>دقيقة</option><option value="300">٥ دقايق</option><option value="0">حتى نحيدها</option></select></div>
+  <button class="big" onclick="sendPic()">📤 صيفط للتلفزيون</button>
+  <div class="row"><button class="sec" onclick="post('/hide','');say('تحيدات من التلفزيون')">✖️ حيد من التلفزيون</button></div>
+  <p class="hint">بلا خلفية، الرسم كيبان فوق اللي خدام فالتلفزيون. ✋ «حرّك» باش تجرّ النص، والستيكر، والصورة، وتكبّرهم بالشريط.</p>
+</div>
+
+<!-- Quick message -->
+<div id="p1" class="hide">
+  <textarea id="t" maxlength="200" placeholder="كتب هنا..."></textarea>
+  <button class="big" onclick="sendText()">📤 صيفط</button>
+</div>
+
+<!-- Live drawing -->
+<div id="p2" class="hide">
+  <div class="stage"><canvas id="lv"></canvas></div>
+  <div class="row" id="lcolors"></div>
+  <div class="row"><button class="sec" onclick="lclr()">🧹 مسح</button></div>
+  <p class="hint">الرسم كيبان فالتلفزيون فنفس اللحظة، وكيمشي ١٥ ثانية من بعد آخر خط.</p>
+</div>
+
+<p id="s"></p>
+<input type="file" id="file" accept="image/*" class="hide">
+</div>
+
+<script>
+function $(i){return document.getElementById(i)}
+function say(t){$('s').textContent=t}
+function post(u,b){return fetch(u,{method:'POST',body:b})}
+function tab(n){for(var i=0;i<3;i++){$('p'+i).classList.toggle('hide',i!==n);$('t'+i).classList.toggle('on',i===n)}if(n===2)lfit()}
+
+/* ---------- Studio ---------- */
+var W=1280,H=720,cv=$('cv'),cx=cv.getContext('2d');
+var COLORS=['#ffffff','#000000','#f5c542','#4ade80','#f87171','#60a5fa','#c084fc','#fb923c'];
+var STICKERS=['🕌','🌙','⭐','✨','🤲','📿','📖','❤️','💚','🌹','🌸','🌷','💐','☕','🍵','🎂','🎉','🎁','👍','👏','😍','😂','🥰','😘','😎','🤗','👶','👨‍👩‍👧','🏠','☀️','🌈','🐱'];
+var col='#ffffff',thick=12,tool='pen',bg=null,ops=[],sel=null,drag=null,cur=null;
+
+COLORS.forEach(function(c,i){var d=document.createElement('div');d.className='dot'+(i?'':' on');d.style.background=c;
+  if(c==='#000000')d.style.borderColor='#555';
+  d.onclick=function(){col=c;document.querySelectorAll('#colors .dot').forEach(function(x){x.classList.remove('on')});d.classList.add('on');
+    if(sel&&sel.k==='text'){sel.color=c;draw()}};$('colors').appendChild(d)});
+STICKERS.forEach(function(s){var e=document.createElement('span');e.textContent=s;e.onclick=function(){addItem({k:'stk',t:s,x:W/2,y:H/2,s:160})};$('stk').appendChild(e)});
+
+function mode(m){tool=m;$('m-pen').classList.toggle('on',m==='pen');$('m-move').classList.toggle('on',m==='move');
+  if(m==='pen'){sel=null;$('selrow').style.display='none';$('szl').textContent='السُمك';$('sz').min=4;$('sz').max=60;$('sz').value=thick}draw()}
+function toggleStk(){$('stk').classList.toggle('hide');$('m-stk').classList.toggle('on')}
+function size(v){v=+v;if(tool==='move'&&sel){sel.s=v;draw()}else thick=v}
+function select(it){sel=it;$('selrow').style.display=it?'flex':'none';
+  if(it){$('szl').textContent='الحجم';$('sz').min=20;$('sz').max=it.k==='img'?1280:400;$('sz').value=it.s}draw()}
+function addItem(it){ops.push(it);$('stk').classList.add('hide');$('m-stk').classList.remove('on');mode('move');select(it)}
+function addText(){var t=prompt('شنو بغيتي تكتب؟');if(t&&t.trim())addItem({k:'text',t:t.trim(),x:W/2,y:H/2,s:90,color:col})}
+function undo(){var it=ops.pop();if(it===sel)select(null);draw()}
+function wipe(){if(!ops.length&&!bg)return;if(!confirm('نمسحو كلشي؟'))return;ops=[];bg=null;select(null);draw()}
+function delSel(){if(!sel)return;ops.splice(ops.indexOf(sel),1);select(null)}
+
+function pick(kind){var f=$('file');f.value='';f.onchange=function(){var file=f.files[0];if(!file)return;
+  var url=URL.createObjectURL(file),im=new Image();im.onload=function(){
+    if(kind==='bg'){bg=im}else{var s=Math.min(560,im.width);addItem({k:'img',im:im,x:W/2,y:H/2,s:s})}draw()};im.src=url};f.click()}
+
+function itemBox(it){
+  if(it.k==='img'){var h=it.s*it.im.height/it.im.width;return[it.x-it.s/2,it.y-h/2,it.s,h]}
+  cx.font=fontFor(it);var m=cx.measureText(it.t),w=m.width;return[it.x-w/2,it.y-it.s*0.6,w,it.s*1.2]}
+function fontFor(it){return (it.k==='text'?'700 ':'')+it.s+'px -apple-system,system-ui,"Noto Color Emoji",sans-serif'}
+
+function draw(){
+  cx.clearRect(0,0,W,H);
+  if(bg){var r=Math.max(W/bg.width,H/bg.height),w=bg.width*r,h=bg.height*r;cx.drawImage(bg,(W-w)/2,(H-h)/2,w,h)}
+  ops.forEach(function(o){
+    if(o.k==='line'){cx.strokeStyle=o.c;cx.lineWidth=o.w;cx.lineCap='round';cx.lineJoin='round';cx.beginPath();
+      o.p.forEach(function(p,i){i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1])});if(o.p.length===1)cx.lineTo(o.p[0][0]+0.1,o.p[0][1]);cx.stroke()}
+    else if(o.k==='img'){var b=itemBox(o);cx.drawImage(o.im,b[0],b[1],b[2],b[3])}
+    else{cx.font=fontFor(o);cx.textAlign='center';cx.textBaseline='middle';
+      if(o.k==='text'){cx.lineWidth=Math.max(4,o.s/10);cx.strokeStyle=o.color==='#000000'?'rgba(255,255,255,.85)':'rgba(0,0,0,.7)';cx.strokeText(o.t,o.x,o.y);cx.fillStyle=o.color}
+      else cx.fillStyle='#fff';
+      cx.fillText(o.t,o.x,o.y)}
+  });
+  if(sel){var b=itemBox(sel);cx.save();cx.setLineDash([12,8]);cx.strokeStyle='#4ade80';cx.lineWidth=4;cx.strokeRect(b[0]-8,b[1]-8,b[2]+16,b[3]+16);cx.restore()}
+}
+function pt(e){var r=cv.getBoundingClientRect();return[(e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H]}
+function hit(p){for(var i=ops.length-1;i>=0;i--){var o=ops[i];if(o.k==='line')continue;var b=itemBox(o);
+  if(p[0]>=b[0]-20&&p[0]<=b[0]+b[2]+20&&p[1]>=b[1]-20&&p[1]<=b[1]+b[3]+20)return o}return null}
+cv.onpointerdown=function(e){cv.setPointerCapture(e.pointerId);var p=pt(e);
+  if(tool==='pen'){cur={k:'line',c:col,w:thick,p:[p]};ops.push(cur);draw()}
+  else{var it=hit(p);select(it);if(it)drag=[p[0]-it.x,p[1]-it.y]}};
+cv.onpointermove=function(e){var p=pt(e);
+  if(cur){cur.p.push(p);draw()}else if(drag&&sel){sel.x=p[0]-drag[0];sel.y=p[1]-drag[1];draw()}};
+cv.onpointerup=cv.onpointercancel=function(){cur=null;drag=null};
+
+function sendPic(){
+  if(!ops.length&&!bg){say('رسم ولا زيد شي حاجة الأول 🙂');return}
+  var keep=sel;sel=null;draw();
+  var type=bg?'image/jpeg':'image/png';
+  cv.toBlob(function(b){sel=keep;draw();say('كيتصيفط...');
+    post('/image?s='+$('dur').value,b).then(function(r){return r.text()}).then(function(t){say(t==='ok'?'بانت فالتلفزيون ✅':'ما بانتش، عاود جرّب')})
+    .catch(function(){say('ما وصلاتش، تأكد بلّي التيليفون فنفس الواي فاي')})},type,0.85)}
+draw();
+
+/* ---------- Quick message ---------- */
+function sendText(){var t=$('t');if(!t.value.trim())return;post('/send',t.value).then(function(){say('وصلات ✅');t.value=''})
+  .catch(function(){say('ما وصلاتش، عاود جرّب')})}
+
+/* ---------- Live drawing (the TV's /draw format) ---------- */
+var lv=$('lv'),lx=lv.getContext('2d'),lcol='#ffffff',q=[],last=null,cont=false;
+['#ffffff','#f5c542','#4ade80','#f87171','#60a5fa'].forEach(function(c,i){var d=document.createElement('div');d.className='dot'+(i?'':' on');d.style.background=c;
+  d.onclick=function(){lcol=c;document.querySelectorAll('#lcolors .dot').forEach(function(x){x.classList.remove('on')});d.classList.add('on')};$('lcolors').appendChild(d)});
+function lfit(){var r=lv.getBoundingClientRect();lv.width=r.width*2;lv.height=r.height*2}
+function lpt(e){var r=lv.getBoundingClientRect();return[(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height]}
+function lline(a,b){lx.strokeStyle=lcol;lx.lineWidth=6;lx.lineCap='round';lx.beginPath();lx.moveTo(a[0]*lv.width,a[1]*lv.height);lx.lineTo(b[0]*lv.width,b[1]*lv.height);lx.stroke()}
+lv.onpointerdown=function(e){lv.setPointerCapture(e.pointerId);last=lpt(e);cont=false;q=[last]};
+lv.onpointermove=function(e){if(!last)return;var p=lpt(e);lline(last,p);last=p;q.push(p)};
+lv.onpointerup=lv.onpointercancel=function(){lflush();last=null};
+function lflush(){if(q.length<1)return;var s=(cont?'+':'')+lcol+' '+q.map(function(p){return p[0].toFixed(4)+','+p[1].toFixed(4)}).join(' ');
+  if(last){q=[last];cont=true}else q=[];post('/draw',s)}
+setInterval(function(){if(last&&q.length>1)lflush()},80);
+function lclr(){lx.clearRect(0,0,lv.width,lv.height);post('/clear','')}
+</script>
+</body>
+</html>
