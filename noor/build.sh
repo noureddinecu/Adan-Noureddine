@@ -4,16 +4,20 @@
 set -euo pipefail
 source noor/city.env
 OUT="$PWD/out"; rm -rf "$OUT"; mkdir -p "$OUT"
+# Every APK is signed with noor/debug.keystore, so a new build installs over the apps already on the TV.
+KS="$PWD/noor/debug.keystore"
+SIGN=(-Pandroid.injected.signing.store.file="$KS" -Pandroid.injected.signing.store.password=android
+      -Pandroid.injected.signing.key.alias=androiddebugkey -Pandroid.injected.signing.key.password=android)
 
 python3 -I noor-tv/launcher-patch/apply.py cleanyourtv "$LAT" "$LON" "$METHOD" "$CITY"
 
 # Own package name: this TV already has another build of the CleanYourTV launcher (com.gathin.tvhome, another
 # signing key), which cannot be updated in place and, by the skill's rule, is disabled rather than uninstalled.
 HOME_ID=app.noortv.home
-(cd cleanyourtv/launcher && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain -PlauncherApplicationId=$HOME_ID)
+(cd cleanyourtv/launcher && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain -PlauncherApplicationId=$HOME_ID "${SIGN[@]}")
 cp cleanyourtv/launcher/app/build/outputs/apk/release/app-release.apk "$OUT/launcher.apk"
 
-(cd cleanyourtv/addons/prayer-times && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain)
+(cd cleanyourtv/addons/prayer-times && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain "${SIGN[@]}")
 cp cleanyourtv/addons/prayer-times/app/build/outputs/apk/release/app-release.apk "$OUT/prayer-times.apk"
 
 # The adhan recording comes from the phone (tv.sh adhan); the app's behaviour is the owner's choice.
@@ -24,10 +28,19 @@ grep -q "HOME = \"$HOME_ID\"" noor-tv/noor-app/app/src/main/java/app/noortv/Adha
 
 P=noor-tv/noor-app/gradle.properties
 sed -i "s/^noor.lat=.*/noor.lat=$LAT/; s/^noor.lon=.*/noor.lon=$LON/; s/^noor.method=.*/noor.method=$METHOD/" "$P"
-(cd noor-tv/noor-app && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain)
+(cd noor-tv/noor-app && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain "${SIGN[@]}")
 for f in kahf baqara sabah masa ruqya; do
   cp "noor-tv/noor-app/app/build/outputs/apk/$f/release/app-$f-release.apk" "$OUT/noor-$f.apk"
 done
+
+# Refuse to publish an APK that is not signed with the repo key.
+keytool -exportcert -alias androiddebugkey -keystore "$KS" -storepass android -file key.der
+python3 -I - "$OUT"/*.apk <<'PY'
+import sys
+key = open("key.der", "rb").read()
+bad = [f for f in sys.argv[1:] if key not in open(f, "rb").read()]
+sys.exit(f"not signed with noor/debug.keystore: {bad}" if bad else 0)
+PY
 
 mkdir -p themes-out
 for t in zakhrafa masjid-layl awqat plain; do python3 -I noor-tv/tools/make-theme.py "$t" "themes-out/$t"; done

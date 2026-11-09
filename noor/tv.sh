@@ -10,6 +10,8 @@
 #   bash tv.sh noor <tv-ip>                         install the Kahf/Baqarah/adhkar/ruqyah cards, reminders and phone page
 #   bash tv.sh adhan <tv-ip> [youtube-url]          download the adhan on the phone and put it on the TV
 #   bash tv.sh test-adhan <tv-ip>                   play the adhan and its banner now, to check
+#   bash tv.sh reset-ours <tv-ip> <backup-folder>   give Home back to the stock launcher and remove only the apps this
+#                                                   setup installed (never a system app), e.g. after a signing-key change
 set -euo pipefail
 URL=https://github.com/noureddinecu/Adan-Noureddine/releases/download/noor-tv-build
 B=~/noor-build
@@ -129,6 +131,20 @@ adhan)
   sh_ "mkdir -p $F" >/dev/null; adb -s "$D" push "$B/adhan.mp3" "$F/adhan.mp3" >/dev/null
   [ "$(sh_ "wc -c < $F/adhan.mp3" | tr -d ' ')" = "$(wc -c < "$B/adhan.mp3" | tr -d ' ')" ] \
     && echo "✅ adhan on the TV ($(( $(wc -c < "$B/adhan.mp3") / 1024 )) KB)" || { echo "⛔ adhan did not reach the TV"; exit 1; }
+  ;;
+
+reset-ours)
+  need_ip; BK="${3:?usage: bash tv.sh reset-ours <tv-ip> <backup-folder>}"
+  sh_ "pm enable --user 0 com.google.android.tvlauncher" >/dev/null
+  sh_ "cmd package set-home-activity --user 0 com.google.android.tvlauncher/.MainActivity" >/dev/null || true
+  sed -i '/^com\.google\.android\.tvlauncher$/d' "$BK/disabled-by-us.txt"
+  case "$(home_now)" in com.google.android.tvlauncher/*) echo "✅ Google's home is back" ;;
+    *) echo "⛔ Home is $(home_now); nothing was removed"; exit 1 ;; esac
+  for p in app.noortv.home app.noortv.kahf app.noortv.baqara app.noortv.sabah app.noortv.masa app.noortv.ruqya com.majnioui.tv.prayer; do
+    sh_ "pm list packages $p" | grep -qx "package:$p" || continue
+    sh_ "pm list packages -s $p" | grep -qx "package:$p" && { echo "⛔ $p is a system app; left alone"; continue; }
+    sh_ "pm uninstall $p" | grep -q Success && echo "🗑️ $p (installed by this setup)"
+  done
   ;;
 
 test-adhan)
