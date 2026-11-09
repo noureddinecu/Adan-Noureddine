@@ -36,6 +36,11 @@ for f in kahf baqara sabah masa ruqya; do
   cp "noor-tv/noor-app/app/build/outputs/apk/$f/release/app-$f-release.apk" "$OUT/noor-$f.apk"
 done
 
+# The phone app (studio + PIN-protected restore), with the noor-app's Gradle wrapper.
+cp -r noor-tv/noor-app/gradlew noor-tv/noor-app/gradle noor/phone-app/
+(cd noor/phone-app && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain "${SIGN[@]}")
+cp noor/phone-app/app/build/outputs/apk/release/app-release.apk "$OUT/noor-phone.apk"
+
 # Refuse to publish an APK that is not signed with the repo key.
 keytool -exportcert -alias androiddebugkey -keystore "$KS" -storepass android -file key.der
 python3 -I - "$OUT"/*.apk <<'PY'
