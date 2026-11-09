@@ -177,5 +177,11 @@ sub("""    static void stop() {""",
 
     static void stop() {""")
 
+# The city comes from the phone now (NoorCity, kept by this app): times for the city that is set.
+sub("""            JSONObject t = new JSONObject(get("https://api.aladhan.com/v1/timings/" + date + "?latitude=" + LAT
+                    + "&longitude=" + LON + "&method=" + BuildConfig.METHOD)).getJSONObject("data").getJSONObject("timings");""",
+    """            JSONObject t = new JSONObject(get("https://api.aladhan.com/v1/timings/" + date + "?latitude=" + NoorCity.lat(c)
+                    + "&longitude=" + NoorCity.lon(c) + "&method=" + NoorCity.method(c))).getJSONObject("data").getJSONObject("timings");""")
+
 open(path, "w", encoding="utf-8").write(s)
 print("adhan patch applied")

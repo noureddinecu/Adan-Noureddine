@@ -10,6 +10,8 @@ SIGN=(-Pandroid.injected.signing.store.file="$KS" -Pandroid.injected.signing.sto
       -Pandroid.injected.signing.key.alias=androiddebugkey -Pandroid.injected.signing.key.password=android)
 
 python3 -I noor-tv/launcher-patch/apply.py cleanyourtv "$LAT" "$LON" "$METHOD" "$CITY"
+# The city then comes from the phone at run time; the one above is only the starting value.
+python3 -I noor/city-runtime.py "$LAT" "$LON" "$METHOD" "$CITY"
 
 # Own package name: this TV already has another build of the CleanYourTV launcher (com.gathin.tvhome, another
 # signing key), which cannot be updated in place and, by the skill's rule, is disabled rather than uninstalled.
@@ -51,7 +53,18 @@ for f in kahf baqara sabah masa ruqya; do
   cp "noor-tv/noor-app/app/build/outputs/apk/$f/release/app-$f-release.apk" "$OUT/noor-$f.apk"
 done
 
-# The phone app (studio + PIN-protected restore), with the noor-app's Gradle wrapper.
+mkdir -p themes-out
+for t in zakhrafa masjid-layl awqat plain; do python3 -I noor-tv/tools/make-theme.py "$t" "themes-out/$t"; done
+tar -czf "$OUT/themes.tar.gz" -C themes-out .
+
+# The phone app carries everything a TV needs, so it can set one up on its own: the TV apps, the themes,
+# CleanYourTV's tested per-model lists and the setup screens.
+A=noor/phone-app/app/src/main/assets
+rm -rf "$A" && mkdir -p "$A/tv" "$A/themes"
+cp "$OUT"/launcher.apk "$OUT"/prayer-times.apk "$OUT"/noor-*.apk "$A/tv/"
+cp -r themes-out/. "$A/themes/"
+python3 -I noor/make-debloat-index.py cleanyourtv "$A/debloat.json"
+python3 -I noor/inline-icons.py noor/setup.html "$A/setup.html"
 cp -r noor-tv/noor-app/gradlew noor-tv/noor-app/gradle noor/phone-app/
 (cd noor/phone-app && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain "${SIGN[@]}")
 cp noor/phone-app/app/build/outputs/apk/release/app-release.apk "$OUT/noor-phone.apk"
@@ -65,8 +78,5 @@ bad = [f for f in sys.argv[1:] if key not in open(f, "rb").read()]
 sys.exit(f"not signed with noor/debug.keystore: {bad}" if bad else 0)
 PY
 
-mkdir -p themes-out
-for t in zakhrafa masjid-layl awqat plain; do python3 -I noor-tv/tools/make-theme.py "$t" "themes-out/$t"; done
-tar -czf "$OUT/themes.tar.gz" -C themes-out .
 cp noor/tv.sh "$OUT/tv.sh"
 ls -la "$OUT"

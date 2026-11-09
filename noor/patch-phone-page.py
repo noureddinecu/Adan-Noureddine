@@ -341,5 +341,51 @@ sub(old_hide, """    private void hideImage() {
     }
 """)
 
+# The phone app sets the city (GET/POST /city) and fetches the adhan recording from a TV that has it (GET /adhan.mp3).
+sub("""        if (first.startsWith("GET /ping")) {""",
+    """        if (first.startsWith("GET /city")) {
+            reply(s.getOutputStream(), "text/plain", NoorCity.lat(this) + "\\n" + NoorCity.lon(this) + "\\n"
+                    + NoorCity.method(this) + "\\n" + NoorCity.place(this));
+            return;
+        }
+        if (first.startsWith("POST /city")) {
+            readBody(in, head);
+            java.util.Map<String, String> q = new java.util.HashMap<>();
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("[?&](lat|lon|method|place)=([^& ]*)").matcher(first);
+            while (m.find()) q.put(m.group(1), java.net.URLDecoder.decode(m.group(2), "UTF-8"));
+            if (q.containsKey("lat") && q.containsKey("lon") && q.get("lat").matches("-?\\\\d{1,3}(\\\\.\\\\d+)?")
+                    && q.get("lon").matches("-?\\\\d{1,3}(\\\\.\\\\d+)?")) {
+                String me = q.getOrDefault("method", "3");
+                NoorCity.save(this, q.get("lat"), q.get("lon"), me.matches("\\\\d{1,2}") ? me : "3", q.getOrDefault("place", ""));
+                android.content.SharedPreferences a = getSharedPreferences("adhan", MODE_PRIVATE);
+                android.content.SharedPreferences.Editor e = a.edit();
+                for (String k : a.getAll().keySet()) if (k.matches("\\\\d\\\\d-\\\\d\\\\d-\\\\d{4}")) e.remove(k);
+                e.apply();
+                Adhan.schedule(this);
+                reply(s.getOutputStream(), "text/plain", "ok");
+            } else {
+                reply(s.getOutputStream(), "text/plain", "bad");
+            }
+            return;
+        }
+        if (first.startsWith("GET /adhan.mp3")) {
+            java.io.File f = new java.io.File(getExternalFilesDir(null), "adhan.mp3");
+            OutputStream o = s.getOutputStream();
+            if (!f.exists()) {
+                o.write("HTTP/1.1 404 Not Found\\r\\nContent-Length: 0\\r\\nConnection: close\\r\\n\\r\\n".getBytes(StandardCharsets.UTF_8));
+                return;
+            }
+            o.write(("HTTP/1.1 200 OK\\r\\nContent-Type: audio/mpeg\\r\\nContent-Length: " + f.length()
+                    + "\\r\\nConnection: close\\r\\n\\r\\n").getBytes(StandardCharsets.UTF_8));
+            try (InputStream fi = new java.io.FileInputStream(f)) {
+                byte[] buf = new byte[16384];
+                int n;
+                while ((n = fi.read(buf)) > 0) o.write(buf, 0, n);
+            }
+            o.flush();
+            return;
+        }
+        if (first.startsWith("GET /ping")) {""")
+
 open(path, "w", encoding="utf-8").write(s)
 print("phone page patch applied")

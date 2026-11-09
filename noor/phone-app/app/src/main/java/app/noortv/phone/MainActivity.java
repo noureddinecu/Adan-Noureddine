@@ -102,6 +102,7 @@ public class MainActivity extends Activity {
         title.setTextSize(19);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         bar.addView(title, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        bar.addView(small(R.drawable.i3_tools, false, v -> askPin(() -> startActivity(new Intent(this, SetupActivity.class)))));
         bar.addView(small(R.drawable.i3_search, false, v -> connect(true)));
         bar.addView(small(R.drawable.i3_globe, false, v -> {
             prefs.edit().putString("lang", es() ? "ar" : "es").apply();
@@ -121,6 +122,11 @@ public class MainActivity extends Activity {
             @android.webkit.JavascriptInterface
             public void search() {
                 main.post(() -> connect(true));
+            }
+
+            @android.webkit.JavascriptInterface
+            public void setup() {
+                main.post(() -> startActivity(new Intent(MainActivity.this, SetupActivity.class)));
             }
         }, "Zahhaf");
         web.setWebViewClient(new WebViewClient() {
@@ -301,7 +307,8 @@ public class MainActivity extends Activity {
                 + tr("تأكّد أن الهاتف والتلفاز على شبكة الواي فاي نفسها وأن التلفاز يعمل.",
                         "Comprueba que el móvil y la tele están en el mismo wifi y que la tele está encendida.")
                 + (searched ? "" : "<br>" + tr("العنوان: ", "Dirección: ") + host()) + "</p>"
-                + "<button onclick='Zahhaf.search()'>" + SEARCH_ICON + tr("البحث مرة أخرى", "Buscar otra vez") + "</button>");
+                + "<button onclick='Zahhaf.search()'>" + SEARCH_ICON + tr("البحث مرة أخرى", "Buscar otra vez") + "</button>"
+                + "<br><button style='background:rgba(255,255,255,.1)' onclick='Zahhaf.setup()'>" + tr("تجهيز تلفاز جديد", "Preparar una tele nueva") + "</button>");
     }
 
     @Override
@@ -392,33 +399,59 @@ public class MainActivity extends Activity {
                 .show();
     }
 
-    private void restore(boolean removeOurs) {
+    /**
+     * The restore script: the TV's own backup from the setup (by serial number) when there is one, otherwise every app
+     * this setup or CleanYourTV may have turned off. Our apps go only once the TV's own home owns Home again.
+     */
+    private String restoreScript(String h, boolean removeOurs) throws Exception {
+        String serial = Adb.shell(this, h, "getprop ro.serialno").trim();
+        org.json.JSONObject bk = null;
+        java.io.File f = new java.io.File(getFilesDir(), "tv-" + serial.replaceAll("[^A-Za-z0-9._-]", "_") + ".json");
+        if (!serial.isEmpty() && f.exists()) bk = new org.json.JSONObject(new String(java.nio.file.Files.readAllBytes(f.toPath()), "UTF-8"));
+        java.util.Set<String> on = new java.util.LinkedHashSet<>(java.util.Arrays.asList(OFF));
+        java.util.Set<String> ours = new java.util.LinkedHashSet<>(java.util.Arrays.asList(OURS));
+        String homeAct = "com.google.android.tvlauncher/.MainActivity";
+        if (bk != null) {
+            org.json.JSONArray a = bk.optJSONArray("disabledByUs");
+            for (int i = 0; a != null && i < a.length(); i++) on.add(a.getString(i));
+            org.json.JSONArray b = bk.optJSONArray("installedByUs");
+            for (int i = 0; b != null && i < b.length(); i++) ours.add(b.getString(i));
+            String hm = bk.optString("home");
+            if (hm.contains("/") && !hm.startsWith(SetupActivity.HOME)) homeAct = hm;
+            // Apps that were already off when the TV came stay off.
+            org.json.JSONArray before = bk.optJSONArray("disabledBefore");
+            for (int i = 0; before != null && i < before.length(); i++) on.remove(before.getString(i));
+        }
         StringBuilder sh = new StringBuilder("D=$(pm list packages -d); n=0; for p in");
-        for (String p : OFF) sh.append(' ').append(p);
+        for (String p : on) if (p.matches("[A-Za-z][\\w.]+")) sh.append(' ').append(p);
         sh.append("; do case \"$D\" in *\"package:$p\"*) pm enable --user 0 $p >/dev/null 2>&1 && n=$((n+1));; esac; done; ")
                 .append("echo \"on=$n\"; ")
-                .append("cmd package set-home-activity --user 0 com.google.android.tvlauncher/.MainActivity >/dev/null 2>&1; ")
+                .append("cmd package set-home-activity --user 0 ").append(homeAct).append(" >/dev/null 2>&1; ")
                 .append("H=$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -n 1); ")
                 .append("echo \"home=$H\"; ");
         if (removeOurs) {
-            // Only once Google's home really owns Home, so the TV is never left without one.
-            sh.append("case \"$H\" in com.google.android.tvlauncher/*) for p in");
-            for (String p : OURS) sh.append(' ').append(p);
+            sh.append("case \"$H\" in ").append(SetupActivity.HOME).append("/*|\"\") ;; *) for p in");
+            for (String p : ours) if (p.matches("[A-Za-z][\\w.]+")) sh.append(' ').append(p);
             sh.append("; do pm list packages -s $p | grep -qx \"package:$p\" && continue; ")
                     .append("pm uninstall $p 2>/dev/null | grep -q Success && echo \"gone=$p\"; done;; esac; ");
         }
         sh.append("am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1; echo done");
+        if (bk != null && removeOurs) f.delete();
+        return sh.toString();
+    }
+
+    private void restore(boolean removeOurs) {
         run(tr("جارٍ استعادة التلفاز… (إذا ظهر سؤال على التلفاز فوافق عليه)", "Restaurando la tele… (si sale una pregunta en la tele, acéptala)"),
-                sh.toString(), out -> {
+                h -> restoreScript(h, removeOurs), out -> {
                     if (!out.contains("done")) return tr("⚠️ لم تكتمل العملية:\n", "⚠️ No terminó:\n") + out;
                     int on = 0, gone = 0;
                     boolean home = false;
                     for (String line : out.split("\n")) {
                         if (line.startsWith("on=")) on = Integer.parseInt(line.substring(3).trim());
                         if (line.startsWith("gone=")) gone++;
-                        if (line.startsWith("home=com.google.android.tvlauncher/")) home = true;
+                        if (line.startsWith("home=") && line.length() > 6 && !line.startsWith("home=" + SetupActivity.HOME)) home = true;
                     }
-                    return (home ? tr("✅ عادت شاشة Google الأصلية\n", "✅ Vuelve la pantalla original de Google\n")
+                    return (home ? tr("✅ عادت الشاشة الرئيسية الأصلية\n", "✅ Vuelve la pantalla de inicio original\n")
                             : tr("⚠️ لم تتغيّر الشاشة الرئيسية\n", "⚠️ La pantalla de inicio no cambió\n"))
                             + tr("✅ تم تفعيل " + on + " تطبيقات\n", "✅ " + on + " apps activadas\n")
                             + (removeOurs ? tr("🗑️ تمت إزالة " + gone + " من تطبيقات نور\n", "🗑️ " + gone + " apps de Noor quitadas\n") : "")
@@ -432,13 +465,21 @@ public class MainActivity extends Activity {
         String of(String output);
     }
 
+    interface Cmd {
+        String build(String host) throws Exception;
+    }
+
     private void run(String wait, String command, Result result) {
+        run(wait, h -> command, result);
+    }
+
+    private void run(String wait, Cmd command, Result result) {
         ProgressDialog p = ProgressDialog.show(this, null, wait, true, false);
         String h = host();
         new Thread(() -> {
             String msg;
             try {
-                msg = result.of(Adb.shell(this, h, command));
+                msg = result.of(Adb.shell(this, h, command.build(h)));
             } catch (Exception e) {
                 msg = tr("⚠️ تعذّر الاتصال بالتلفاز.\n\nتأكّد من:\n• تفعيل «تصحيح أخطاء USB» في خيارات المطوّر على التلفاز\n"
                                 + "• أن الهاتف والتلفاز على الشبكة نفسها\n• الموافقة على السؤال الذي ظهر على التلفاز",
