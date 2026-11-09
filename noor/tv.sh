@@ -8,6 +8,8 @@
 #   bash tv.sh prayer <tv-ip>                       install the prayer-times addon
 #   bash tv.sh theme <tv-ip> <zakhrafa|masjid-layl|awqat|plain>
 #   bash tv.sh noor <tv-ip>                         install the Kahf/Baqarah/adhkar/ruqyah cards, reminders and phone page
+#   bash tv.sh adhan <tv-ip> [youtube-url]          download the adhan on the phone and put it on the TV
+#   bash tv.sh test-adhan <tv-ip>                   play the adhan and its banner now, to check
 set -euo pipefail
 URL=https://github.com/noureddinecu/Adan-Noureddine/releases/download/noor-tv-build
 B=~/noor-build
@@ -30,7 +32,6 @@ get)
   for f in launcher.apk prayer-times.apk noor-kahf.apk noor-baqara.apk noor-sabah.apk noor-masa.apk noor-ruqya.apk themes.tar.gz; do
     curl -fsSL -o "$B/$f" "$URL/$f" && echo "✅ $f"
   done
-  curl -fsSL -o "$B/adhan.txt" "$URL/adhan.txt" 2>/dev/null && head -n 1 "$B/adhan.txt" || true
   rm -rf "$B/themes"; mkdir -p "$B/themes"; tar -xzf "$B/themes.tar.gz" -C "$B/themes"
   echo "ready: $B"
   ;;
@@ -116,5 +117,25 @@ noor)
   echo "Phone page: http://$IP:8080"
   ;;
 
-*) sed -n '2,11p' "$0"; exit 1 ;;
+adhan)
+  need_ip; YT="${3:-https://www.youtube.com/watch?v=yzZwAt1DRKA}"
+  command -v ffmpeg >/dev/null || pkg install -y ffmpeg
+  command -v yt-dlp >/dev/null || { command -v pip >/dev/null || pkg install -y python; pip install -q yt-dlp; }
+  T=$(mktemp -d); yt-dlp -q -x --audio-format mp3 -o "$T/a.%(ext)s" "$YT"
+  ffmpeg -v error -y -i "$T/a.mp3" -af "silenceremove=start_periods=1:start_threshold=-45dB,loudnorm=I=-18:TP=-2" \
+    -ar 44100 -ac 1 -b:a 96k "$B/adhan.mp3"
+  rm -rf "$T"
+  F=/sdcard/Android/data/app.noortv.kahf/files
+  sh_ "mkdir -p $F" >/dev/null; adb -s "$D" push "$B/adhan.mp3" "$F/adhan.mp3" >/dev/null
+  [ "$(sh_ "wc -c < $F/adhan.mp3" | tr -d ' ')" = "$(wc -c < "$B/adhan.mp3" | tr -d ' ')" ] \
+    && echo "✅ adhan on the TV ($(( $(wc -c < "$B/adhan.mp3") / 1024 )) KB)" || { echo "⛔ adhan did not reach the TV"; exit 1; }
+  ;;
+
+test-adhan)
+  need_ip
+  sh_ "am broadcast -n app.noortv.kahf/app.noortv.Adhan -a app.noortv.ADHAN --ei p 2" >/dev/null
+  echo "▶️ the Asr adhan should play on the TV now"
+  ;;
+
+*) sed -n '2,13p' "$0"; exit 1 ;;
 esac

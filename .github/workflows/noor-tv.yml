@@ -27,7 +27,6 @@ jobs:
           java-version: '17'
       - name: Use the repo's signing key, so every build updates the apps already on the TV
         run: mkdir -p ~/.android && cp noor/debug.keystore ~/.android/debug.keystore
-      - run: sudo apt-get install -y -qq ffmpeg >/dev/null
       - run: bash noor/build.sh
       - name: Publish to the noor-tv-build release
         env:

@@ -16,20 +16,8 @@ cp cleanyourtv/launcher/app/build/outputs/apk/release/app-release.apk "$OUT/laun
 (cd cleanyourtv/addons/prayer-times && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain)
 cp cleanyourtv/addons/prayer-times/app/build/outputs/apk/release/app-release.apk "$OUT/prayer-times.apk"
 
-# Adhan (SKILL.md step 8): pick a full adhan (2.5-6 min) by Anas Tazi from a YouTube search.
-# If YouTube refuses the runner, the build goes on and the banner is silent.
-if [ -n "${ADHAN_URL:-}${ADHAN_QUERY:-}" ]; then
-  pip install -q yt-dlp || true
-  yt-dlp --flat-playlist --print "%(id)s"$'\t'"%(duration)s"$'\t'"%(channel)s"$'\t'"%(title)s" "ytsearch15:$ADHAN_QUERY" > adhan-search.tsv 2>adhan-err.txt || true
-  cat adhan-search.tsv
-  if [ -n "${ADHAN_URL:-}" ]; then ID="${ADHAN_URL##*v=}"; else ID=$(awk -F'\t' '$2>=150 && $2<=360 && ($4 ~ /التازي|Tazi|tazi/) {print $1; exit}' adhan-search.tsv); fi
-  if [ -n "$ID" ] && (cd noor-tv && bash tools/fetch-adhan.sh "https://www.youtube.com/watch?v=$ID" 2>>../adhan-err.txt); then
-    echo "adhan: https://www.youtube.com/watch?v=$ID $(grep "^$ID" adhan-search.tsv | cut -f4)" > "$OUT/adhan.txt"
-  else
-    { echo "adhan: none (silent banner)"; cat adhan-err.txt; } > "$OUT/adhan.txt"
-  fi
-  cp adhan-search.tsv "$OUT/adhan-search.txt" 2>/dev/null || true
-fi
+# The adhan recording comes from the phone (tv.sh adhan); the app's behaviour is the owner's choice.
+python3 -I noor/patch-adhan.py noor-tv/noor-app/app/src/main/java/app/noortv/Adhan.java
 
 sed -i "s/static final String HOME = \"com.gathin.tvhome\";/static final String HOME = \"$HOME_ID\";/" noor-tv/noor-app/app/src/main/java/app/noortv/Adhan.java
 grep -q "HOME = \"$HOME_ID\"" noor-tv/noor-app/app/src/main/java/app/noortv/Adhan.java
