@@ -29,6 +29,7 @@ get)
   for f in launcher.apk prayer-times.apk noor-kahf.apk noor-baqara.apk noor-sabah.apk noor-masa.apk noor-ruqya.apk themes.tar.gz; do
     curl -fsSL -o "$B/$f" "$URL/$f" && echo "✅ $f"
   done
+  curl -fsSL -o "$B/adhan.txt" "$URL/adhan.txt" 2>/dev/null && head -n 1 "$B/adhan.txt" || true
   rm -rf "$B/themes"; mkdir -p "$B/themes"; tar -xzf "$B/themes.tar.gz" -C "$B/themes"
   echo "ready: $B"
   ;;
