@@ -94,7 +94,22 @@ textarea:focus{border-color:var(--a1)}
 .tv button.on{border:1px solid var(--a2);background:linear-gradient(135deg,rgba(124,92,255,.35),rgba(0,212,255,.25))}
 .tv button:nth-child(1){align-self:start;justify-self:start;width:60%;height:45%}.tv button:nth-child(2){align-self:start;justify-self:end;width:60%;height:45%}
 .tv button:nth-child(3){align-self:end;justify-self:start;width:60%;height:45%}.tv button:nth-child(4){align-self:end;justify-self:end;width:60%;height:45%}
-.tv i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:26px;opacity:.35;pointer-events:none}
+
+.ic{width:1.2em;height:1.2em;flex:none;display:block}
+i[data-i]{font-style:normal;display:inline-grid;place-items:center}
+.seg button i .ic{width:22px;height:22px;margin:0 auto 3px}
+.tool i .ic{width:24px;height:24px}
+.logo .ic{width:24px;height:24px;color:#fff}
+.lang{display:inline-flex;align-items:center;gap:6px}
+.big,.sec{display:flex;align-items:center;justify-content:center;gap:9px}
+.big .ic{width:22px;height:22px}
+.lbl span:first-child{display:inline-flex;align-items:center;gap:7px}
+.lbl .ic{width:18px;height:18px;color:var(--a2)}
+.dim{color:var(--dim)}
+.dim .ic{width:22px;height:22px}
+.tvi{position:absolute;inset:0;opacity:.3;pointer-events:none}.tvi .ic{width:34px;height:34px}
+.saved button{display:grid;place-items:center}.saved .ic{width:18px;height:18px}
+.pr span:first-child{display:inline-flex;align-items:center;gap:10px}.pr .ic{width:22px;height:22px;color:var(--a2)}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;pointer-events:none;
   background:rgba(20,22,44,.95);border:1px solid var(--line);color:#fff;padding:12px 18px;border-radius:999px;font-size:15px;font-weight:600;
   box-shadow:0 10px 30px rgba(0,0,0,.4);transition:all .35s var(--ease);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
@@ -103,14 +118,14 @@ textarea:focus{border-color:var(--a1)}
 </head>
 <body>
 <div class="c">
-<div class="head"><div class="logo">📺</div><h1><b data-t="name1">زحاف</b> TV</h1><button class="lang" onclick="toggleLang()" id="langb">ES</button></div>
+<div class="head"><div class="logo"><i data-i="tv"></i></div><h1><b data-t="name1">زحاف</b> TV</h1><button class="lang" onclick="toggleLang()" id="langb"><i data-i="globe"></i><span>ES</span></button></div>
 
 <div class="seg" id="seg">
   <div class="pill" id="pill"></div>
-  <button class="on" onclick="tab(0)"><i>🎨</i><span data-t="tStudio"></span></button>
-  <button onclick="tab(1)"><i>✍️</i><span data-t="tMsg"></span></button>
-  <button onclick="tab(2)"><i>✏️</i><span data-t="tLive"></span></button>
-  <button onclick="tab(3)"><i>🕌</i><span data-t="tPray"></span></button>
+  <button class="on" onclick="tab(0)"><i data-i="palette"></i><span data-t="tStudio"></span></button>
+  <button onclick="tab(1)"><i data-i="message"></i><span data-t="tMsg"></span></button>
+  <button onclick="tab(2)"><i data-i="live"></i><span data-t="tLive"></span></button>
+  <button onclick="tab(3)"><i data-i="moon"></i><span data-t="tPray"></span></button>
 </div>
 
 <!-- Studio -->
@@ -118,16 +133,16 @@ textarea:focus{border-color:var(--a1)}
   <div class="stage"><canvas id="cv" width="1280" height="720"></canvas></div>
   <div class="card">
     <div class="grid">
-      <button class="tool on" id="m-pen" onclick="mode('pen')"><i>✏️</i><span data-t="pen"></span></button>
-      <button class="tool" id="m-move" onclick="mode('move')"><i>✋</i><span data-t="move"></span></button>
-      <button class="tool" onclick="addText()"><i>🔤</i><span data-t="text"></span></button>
-      <button class="tool" id="m-stk" onclick="toggleStk()"><i>😀</i><span data-t="sticker"></span></button>
-      <button class="tool" onclick="pick('cam')"><i>📸</i><span data-t="camera"></span></button>
-      <button class="tool" onclick="pick('bg')"><i>🖼️</i><span data-t="bg"></span></button>
-      <button class="tool" onclick="pick('item')"><i>🏞️</i><span data-t="photo"></span></button>
-      <button class="tool" onclick="saveIt()"><i>💾</i><span data-t="save"></span></button>
-      <button class="tool" onclick="undo()"><i>↩️</i><span data-t="undo"></span></button>
-      <button class="tool" id="m-del" onclick="delSel()"><i>🗑️</i><span data-t="del"></span></button>
+      <button class="tool on" id="m-pen" onclick="mode('pen')"><i data-i="pen"></i><span data-t="pen"></span></button>
+      <button class="tool" id="m-move" onclick="mode('move')"><i data-i="move"></i><span data-t="move"></span></button>
+      <button class="tool" onclick="addText()"><i data-i="text"></i><span data-t="text"></span></button>
+      <button class="tool" id="m-stk" onclick="toggleStk()"><i data-i="smile"></i><span data-t="sticker"></span></button>
+      <button class="tool" onclick="pick('cam')"><i data-i="camera"></i><span data-t="camera"></span></button>
+      <button class="tool" onclick="pick('bg')"><i data-i="image"></i><span data-t="bg"></span></button>
+      <button class="tool" onclick="pick('item')"><i data-i="imageplus"></i><span data-t="photo"></span></button>
+      <button class="tool" onclick="saveIt()"><i data-i="save"></i><span data-t="save"></span></button>
+      <button class="tool" onclick="undo()"><i data-i="undo"></i><span data-t="undo"></span></button>
+      <button class="tool" id="m-del" onclick="delSel()"><i data-i="trash"></i><span data-t="del"></span></button>
     </div>
     <div class="stk" id="stk"></div>
   </div>
@@ -139,9 +154,9 @@ textarea:focus{border-color:var(--a1)}
     <div class="size"><input type="range" id="sz" min="4" max="60" value="12" oninput="size(this.value)"><div class="prev"><span id="pv"></span></div></div>
   </div>
   <div class="row">
-    <button class="sec" onclick="wipeText()" data-t="wText"></button>
-    <button class="sec" onclick="wipeLines()" data-t="wLines"></button>
-    <button class="sec red" onclick="wipe()" data-t="wAll"></button>
+    <button class="sec" onclick="wipeText()" data-t="wText" data-i="textx"></button>
+    <button class="sec" onclick="wipeLines()" data-t="wLines" data-i="eraser"></button>
+    <button class="sec red" onclick="wipe()" data-t="wAll" data-i="trash"></button>
   </div>
   <div class="card">
     <div class="lbl"><span data-t="howLong"></span></div>
@@ -150,17 +165,17 @@ textarea:focus{border-color:var(--a1)}
       <button class="chip" data-v="300" data-t="d300"></button><button class="chip" data-v="0" data-t="d0"></button>
     </div>
   </div>
-  <button class="big" onclick="sendPic()" data-t="sendTv"></button>
-  <div class="row"><button class="sec red" onclick="hidePic()" data-t="hidePic"></button></div>
-  <div class="card" id="savedCard"><div class="lbl"><span data-t="savedT"></span></div><div class="scroll" id="savedList"></div></div>
+  <button class="big" onclick="sendPic()" data-t="sendTv" data-i="send"></button>
+  <div class="row"><button class="sec red" onclick="hidePic()" data-t="hidePic" data-i="eyeoff"></button></div>
+  <div class="card" id="savedCard"><div class="lbl"><span data-t="savedT" data-i="bookmark"></span></div><div class="scroll" id="savedList"></div></div>
   <p class="hint" data-t="hintStudio"></p>
 </section>
 
 <!-- Quick message -->
 <section class="panel" id="p1">
   <textarea id="t" maxlength="200"></textarea>
-  <button class="big" onclick="sendText()" data-t="send"></button>
-  <div class="row"><button class="sec red" onclick="hideText()" data-t="hideText"></button></div>
+  <button class="big" onclick="sendText()" data-t="send" data-i="send"></button>
+  <div class="row"><button class="sec red" onclick="hideText()" data-t="hideText" data-i="eyeoff"></button></div>
   <p class="hint" data-t="hintMsg"></p>
 </section>
 
@@ -168,7 +183,7 @@ textarea:focus{border-color:var(--a1)}
 <section class="panel" id="p2">
   <div class="stage"><canvas id="lv"></canvas></div>
   <div class="card"><div class="lbl"><span data-t="color"></span></div><div class="scroll" id="lcolors"></div></div>
-  <div class="row"><button class="sec red" onclick="lclr()" data-t="clearLive"></button></div>
+  <div class="row"><button class="sec red" onclick="lclr()" data-t="clearLive" data-i="eraser"></button></div>
   <p class="hint" data-t="hintLive"></p>
 </section>
 
@@ -179,15 +194,15 @@ textarea:focus{border-color:var(--a1)}
     <div id="plist"></div>
   </div>
   <div class="row">
-    <button class="sec" onclick="adhan('do=play')" data-t="tryAdhan"></button>
-    <button class="sec red" onclick="adhan('do=stop')" data-t="stopAdhan"></button>
+    <button class="sec" onclick="adhan('do=play')" data-t="tryAdhan" data-i="play"></button>
+    <button class="sec red" onclick="adhan('do=stop')" data-t="stopAdhan" data-i="stop"></button>
   </div>
   <div class="card">
-    <div class="lbl"><span data-t="adhanVol"></span><span id="volv"></span></div>
-    <div class="size"><span>🔈</span><input type="range" id="vol" min="0" max="100" value="100" oninput="$('volv').textContent=this.value+'%'" onchange="adhan('vol='+this.value)"><span>🔊</span></div>
+    <div class="lbl"><span data-t="adhanVol" data-i="vol"></span><span id="volv"></span></div>
+    <div class="size"><i data-i="vollow" class="dim"></i><input type="range" id="vol" min="0" max="100" value="100" oninput="$('volv').textContent=this.value+'%'" onchange="adhan('vol='+this.value)"><i data-i="vol" class="dim"></i></div>
   </div>
   <div class="card">
-    <div class="lbl"><span data-t="dhikrT" style="font-size:15px;color:#fff;font-weight:700"></span>
+    <div class="lbl"><span data-t="dhikrT" data-i="sparkles" style="font-size:15px;color:#fff;font-weight:700"></span>
       <label class="sw"><input type="checkbox" id="dOn" onchange="dset('on='+(this.checked?1:0))"><span></span></label></div>
     <div id="dBox">
       <div class="lbl" style="margin-top:8px"><span data-t="dEvery"></span></div>
@@ -195,8 +210,8 @@ textarea:focus{border-color:var(--a1)}
       <div class="lbl" style="margin-top:12px"><span data-t="dSecs"></span></div>
       <div class="chips" id="dSecs"><button class="chip" data-v="5">5</button><button class="chip" data-v="8">8</button><button class="chip" data-v="12">12</button><button class="chip" data-v="20">20</button></div>
       <div class="lbl" style="margin-top:12px"><span data-t="dCorner"></span></div>
-      <div class="tv"><button data-v="tl"></button><button data-v="tr"></button><button data-v="bl"></button><button data-v="br"></button><i>📺</i></div>
-      <div class="row"><button class="sec" onclick="dset('do=test')" data-t="dTest"></button></div>
+      <div class="tv"><button data-v="tl"></button><button data-v="tr"></button><button data-v="bl"></button><button data-v="br"></button><i data-i="tv" class="tvi"></i></div>
+      <div class="row"><button class="sec" onclick="dset('do=test')" data-t="dTest" data-i="eye"></button></div>
     </div>
   </div>
   <p class="hint" data-t="hintPray"></p>
@@ -209,15 +224,46 @@ textarea:focus{border-color:var(--a1)}
 
 <script>
 function $(i){return document.getElementById(i)}
+/* One icon family (24px grid, 2px rounded strokes) for every button; only the drawing differs. */
+var IC={
+ palette:'M12 22a10 10 0 1 1 10-10c0 2.8-2.2 4-4 4h-2.5a2 2 0 0 0-1.5 3.3A1.6 1.6 0 0 1 12 22zM7.5 10.5h.01M10.5 7h.01M14.5 7h.01M17 10.5h.01',
+ message:'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2zM8 9h8M8 13h5',
+ live:'M4.9 19.1a10 10 0 0 1 0-14.2M7.8 16.2a6 6 0 0 1 0-8.4M16.2 7.8a6 6 0 0 1 0 8.4M19.1 4.9a10 10 0 0 1 0 14.2M12 12h.01',
+ moon:'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8zM17 3.5v3M15.5 5h3',
+ pen:'M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5zM15 5l4 4',
+ move:'M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20',
+ text:'M4 7V4h16v3M9 20h6M12 4v16',
+ textx:'M4 7V4h16v3M12 4v9M15 16l5 5M20 16l-5 5M9 20h2',
+ smile:'M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20zM8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01',
+ camera:'M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3zM12 10a3 3 0 1 0 0 6a3 3 0 1 0 0-6z',
+ image:'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM21 15l-5-5L5 21M9 7a2 2 0 1 0 0 4a2 2 0 1 0 0-4z',
+ imageplus:'M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7M16 5h6M19 2v6M21 15l-5-5L5 21M9 7a2 2 0 1 0 0 4a2 2 0 1 0 0-4z',
+ save:'M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2zM17 21v-8H7v8M7 3v5h8',
+ undo:'M3 7v6h6M21 17a9 9 0 0 0-15-6.7L3 13',
+ trash:'M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2',
+ eraser:'M7 21l-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L13 21M22 21H7M5 11l9 9',
+ send:'M22 2L11 13M22 2l-7 20-4-9-9-4z',
+ eyeoff:'M17.9 17.9A10 10 0 0 1 12 20c-7 0-10-8-10-8a18 18 0 0 1 5.1-5.9M9.9 4.2A9 9 0 0 1 12 4c7 0 10 8 10 8a18 18 0 0 1-2.2 3.2M14.1 14.1a3 3 0 1 1-4.2-4.2M2 2l20 20',
+ eye:'M2 12s3-8 10-8 10 8 10 8-3 8-10 8S2 12 2 12zM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6z',
+ play:'M7 4l13 8-13 8z',
+ stop:'M6 6h12v12H6z',
+ vol:'M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14',
+ vollow:'M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7',
+ sparkles:'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z',
+ bookmark:'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z',
+ globe:'M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20zM2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20',
+ tv:'M4 7h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM17 2l-5 5-5-5'};
+function icon(n){return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+IC[n]+'"/></svg>'}
+function icons(){document.querySelectorAll('i[data-i]').forEach(function(e){e.innerHTML=icon(e.dataset.i)})}
 /* ---------- languages ---------- */
 var L={ar:{name1:'زحاف',tStudio:'استوديو',tMsg:'رسالة',tLive:'مباشر',tPray:'الصلاة',pen:'قلم',move:'حرّك',text:'نص',sticker:'ستيكر',camera:'كاميرا',bg:'خلفية',photo:'صورة',
-  save:'حفظ',undo:'رجوع',del:'حيد',color:'اللون',font:'الخط',thick:'السُمك',sizeL:'الحجم',wText:'🔤 مسح الكتابة',wLines:'✏️ مسح الرسم',wAll:'🧹 مسح الكل',
-  howLong:'شحال تبقى فالتلفزيون؟',d15:'١٥ ث',d60:'دقيقة',d300:'٥ د',d0:'حتى نحيدها',sendTv:'📤 صيفط للتلفزيون',hidePic:'✖️ حيد التصويرة من التلفزيون',
-  savedT:'💾 المحفوظات',hintStudio:'بلا خلفية، الرسم كيبان فوق اللي خدام فالتلفزيون · ✋ «حرّك» باش تجرّ وتكبّر النص والستيكر والصورة',
-  ph:'كتب هنا... ✨',send:'📤 صيفط',hideText:'🧹 حيد الكتابة من التلفزيون',hintMsg:'الكتابة كتبان فوسط التلفزيون ٢٠ ثانية، ولا حتى تحيدها.',
-  clearLive:'🧹 مسح الرسم من التلفزيون',hintLive:'الرسم كيبان فالتلفزيون فنفس اللحظة، وكيمشي ١٥ ثانية من بعد آخر خط.',
-  nextIn:'الصلاة الجاية:',dhikrT:'📿 الأذكار على الشاشة',dEvery:'كل شحال من دقيقة؟',dSecs:'شحال من ثانية يبقاو؟',dCorner:'فين يبانو؟ (اختار الركن)',
-  dTest:'👁️ ورّيني واحد دابا',dOn:'الأذكار مشعّلين 📿',dOff:'الأذكار مطفيين',dSaved:'تحفظ ✅',dShow:'شوف التلفزيون 👀',tryAdhan:'▶️ جرّب الأذان',stopAdhan:'⏹️ حبس الأذان',adhanVol:'🔊 صوت الأذان',
+  save:'حفظ',undo:'رجوع',del:'حيد',color:'اللون',font:'الخط',thick:'السُمك',sizeL:'الحجم',wText:'مسح الكتابة',wLines:'مسح الرسم',wAll:'مسح الكل',
+  howLong:'شحال تبقى فالتلفزيون؟',d15:'١٥ ث',d60:'دقيقة',d300:'٥ د',d0:'حتى نحيدها',sendTv:'صيفط للتلفزيون',hidePic:'حيد التصويرة من التلفزيون',
+  savedT:'المحفوظات',hintStudio:'بلا خلفية، الرسم كيبان فوق اللي خدام فالتلفزيون · ✋ «حرّك» باش تجرّ وتكبّر النص والستيكر والصورة',
+  ph:'كتب هنا... ✨',send:'صيفط',hideText:'حيد الكتابة من التلفزيون',hintMsg:'الكتابة كتبان فوسط التلفزيون ٢٠ ثانية، ولا حتى تحيدها.',
+  clearLive:'مسح الرسم من التلفزيون',hintLive:'الرسم كيبان فالتلفزيون فنفس اللحظة، وكيمشي ١٥ ثانية من بعد آخر خط.',
+  nextIn:'الصلاة الجاية:',dhikrT:'الأذكار على الشاشة',dEvery:'كل شحال من دقيقة؟',dSecs:'شحال من ثانية يبقاو؟',dCorner:'فين يبانو؟ (اختار الركن)',
+  dTest:'ورّيني واحد دابا',dOn:'الأذكار مشعّلين 📿',dOff:'الأذكار مطفيين',dSaved:'تحفظ ✅',dShow:'شوف التلفزيون 👀',tryAdhan:'جرّب الأذان',stopAdhan:'حبس الأذان',adhanVol:'صوت الأذان',
   hintPray:'الأذان كيتسمع فكل صلاة واخا يكون شي حاجة خدامة، وكيتحبس إلى بدّلتي التطبيق فالتلفزيون. الأذكار كيطلعو صغار فالركن فوق أي حاجة، وما كيطلعوش وقت الأذان.',
   P:['الفجر','الظهر','العصر','المغرب','العشاء'],
   askText:'شنو بغيتي تكتب؟',nothing:'ما بقا والو',pickFirst:'اختار شي حاجة بـ ✋ الأول',textGone:'تمسحات الكتابة 🔤',noText:'ما كاين حتى كتابة',
@@ -226,13 +272,13 @@ var L={ar:{name1:'زحاف',tStudio:'استوديو',tMsg:'رسالة',tLive:'م
   writeFirst:'كتب شي حاجة الأول ✍️',arrived:'وصلات ✅',txtGone:'تحيدات الكتابة 🧹',liveGone:'تمسح الرسم 🧹',saved:'تحفظات 💾',full:'الذاكرة عامرة، حيد شي وحدة قديمة',
   delSaved:'نحيدو هادي؟',adhanPlay:'الأذان خدام فالتلفزيون 🕌',adhanStop:'تحبس الأذان ⏹️',volSet:'تبدّل الصوت 🔊',noTimes:'ما قدرتش نجيب المواقيت 📶'},
  es:{name1:'Zahhaf',tStudio:'Estudio',tMsg:'Mensaje',tLive:'En vivo',tPray:'Oración',pen:'Lápiz',move:'Mover',text:'Texto',sticker:'Sticker',camera:'Cámara',bg:'Fondo',photo:'Foto',
-  save:'Guardar',undo:'Deshacer',del:'Quitar',color:'Color',font:'Letra',thick:'Grosor',sizeL:'Tamaño',wText:'🔤 Borrar texto',wLines:'✏️ Borrar dibujo',wAll:'🧹 Borrar todo',
-  howLong:'¿Cuánto tiempo en la tele?',d15:'15 s',d60:'1 min',d300:'5 min',d0:'Hasta quitarla',sendTv:'📤 Enviar a la tele',hidePic:'✖️ Quitar la imagen de la tele',
-  savedT:'💾 Guardados',hintStudio:'Sin fondo, el dibujo aparece encima de lo que se ve en la tele · ✋ «Mover» para arrastrar y cambiar el tamaño',
-  ph:'Escribe aquí... ✨',send:'📤 Enviar',hideText:'🧹 Quitar el texto de la tele',hintMsg:'El texto sale en el centro de la tele 20 segundos, o hasta que lo quites.',
-  clearLive:'🧹 Borrar el dibujo de la tele',hintLive:'El dibujo sale en la tele al instante y se va 15 segundos después del último trazo.',
-  nextIn:'Próxima oración:',dhikrT:'📿 Adhkar en pantalla',dEvery:'¿Cada cuántos minutos?',dSecs:'¿Cuántos segundos se quedan?',dCorner:'¿Dónde salen? (elige la esquina)',
-  dTest:'👁️ Enséñame uno ahora',dOn:'Adhkar activados 📿',dOff:'Adhkar desactivados',dSaved:'Guardado ✅',dShow:'Mira la tele 👀',tryAdhan:'▶️ Probar el adhan',stopAdhan:'⏹️ Parar el adhan',adhanVol:'🔊 Volumen del adhan',
+  save:'Guardar',undo:'Deshacer',del:'Quitar',color:'Color',font:'Letra',thick:'Grosor',sizeL:'Tamaño',wText:'Borrar texto',wLines:'Borrar dibujo',wAll:'Borrar todo',
+  howLong:'¿Cuánto tiempo en la tele?',d15:'15 s',d60:'1 min',d300:'5 min',d0:'Hasta quitarla',sendTv:'Enviar a la tele',hidePic:'Quitar la imagen de la tele',
+  savedT:'Guardados',hintStudio:'Sin fondo, el dibujo aparece encima de lo que se ve en la tele · ✋ «Mover» para arrastrar y cambiar el tamaño',
+  ph:'Escribe aquí... ✨',send:'Enviar',hideText:'Quitar el texto de la tele',hintMsg:'El texto sale en el centro de la tele 20 segundos, o hasta que lo quites.',
+  clearLive:'Borrar el dibujo de la tele',hintLive:'El dibujo sale en la tele al instante y se va 15 segundos después del último trazo.',
+  nextIn:'Próxima oración:',dhikrT:'Adhkar en pantalla',dEvery:'¿Cada cuántos minutos?',dSecs:'¿Cuántos segundos se quedan?',dCorner:'¿Dónde salen? (elige la esquina)',
+  dTest:'Enséñame uno ahora',dOn:'Adhkar activados 📿',dOff:'Adhkar desactivados',dSaved:'Guardado ✅',dShow:'Mira la tele 👀',tryAdhan:'Probar el adhan',stopAdhan:'Parar el adhan',adhanVol:'Volumen del adhan',
   hintPray:'El adhan suena en cada oración aunque haya algo puesto, y se para si cambias de app en la tele. Los adhkar salen pequeños en la esquina encima de todo, y nunca durante el adhan.',
   P:['Fajr (alba)','Dhuhr (mediodía)','Asr (tarde)','Maghrib (ocaso)','Isha (noche)'],
   askText:'¿Qué quieres escribir?',nothing:'No queda nada',pickFirst:'Elige algo con ✋ primero',textGone:'Texto borrado 🔤',noText:'No hay texto',
@@ -245,8 +291,8 @@ var lang=q0.get('lang')||(function(){try{return localStorage.getItem('zhf-lang')
 function toggleLang(){setLang(lang==='ar'?'es':'ar')}
 function T(k){return (L[lang]||L.ar)[k]}
 function setLang(l){lang=l;try{localStorage.setItem('zhf-lang',l)}catch(e){}
-  document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';$('langb').textContent=l==='ar'?'ES':'ع';
-  document.querySelectorAll('[data-t]').forEach(function(e){e.textContent=T(e.dataset.t)});$('t').placeholder=T('ph');
+  document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';$('langb').lastChild.textContent=l==='ar'?'ES':'ع';
+  document.querySelectorAll('[data-t]').forEach(function(e){if(e.dataset.i){e.innerHTML=icon(e.dataset.i)+'<span></span>';e.lastChild.textContent=T(e.dataset.t)}else e.textContent=T(e.dataset.t)});$('t').placeholder=T('ph');
   $('szl').textContent=tool==='move'&&sel?T('sizeL'):T('thick');renderPrayer();setTimeout(function(){placePill(cur0)},30)}
 if(q0.get('app'))document.body.classList.add('app');
 
@@ -348,7 +394,7 @@ function saveIt(){if(!ops.length&&!bg){say('drawFirst');return}var keep=sel;sel=
   while(!savedPut(a)&&a.length>1)a.pop();say(savedGet().length?'saved':'full');renderSaved()}
 function renderSaved(){var a=savedGet(),box=$('savedList');box.innerHTML='';$('savedCard').classList.toggle('hide',!a.length);
   a.forEach(function(url,i){var d=document.createElement('div');d.className='saved';
-    d.innerHTML='<img alt=""><div><button>📤</button><button>✏️</button><button>🗑️</button></div>';d.querySelector('img').src=url;
+    d.innerHTML='<img alt=""><div><button>'+icon('send')+'</button><button>'+icon('pen')+'</button><button>'+icon('trash')+'</button></div>';d.querySelector('img').src=url;
     var bs=d.querySelectorAll('button');
     bs[0].onclick=function(){fetch(url).then(function(r){return r.blob()}).then(sendBlob)};
     bs[1].onclick=function(){var im=new Image();im.onload=function(){bg=im;ops=[];select(null);draw();window.scrollTo({top:0,behavior:'smooth'})};im.src=url};
@@ -379,7 +425,7 @@ function loadPrayer(){fetch('/prayer').then(function(r){return r.json()}).then(f
   .catch(function(){say('noTimes')})}
 function renderPrayer(){if(!PT||!PT.times.length){$('plist').innerHTML='';return}var n=T('P');$('plist').innerHTML='';
   PT.times.forEach(function(t,i){var d=document.createElement('div');d.className='pr'+(i===PT.next?' next':'');
-    d.innerHTML='<span></span><span></span>';d.children[0].textContent=(i===PT.next?'🕌 ':'')+n[i];d.children[1].textContent=t;$('plist').appendChild(d)});
+    d.innerHTML='<span></span><span></span>';d.children[0].innerHTML=(i===PT.next?icon('moon'):'')+'<b></b>';d.children[0].lastChild.textContent=n[i];d.children[1].textContent=t;$('plist').appendChild(d)});
   $('nextName').textContent=n[PT.next]}
 setInterval(function(){if(!PT||!PT.times.length)return;var hm=PT.times[PT.next].split(':'),now=new Date(),t=new Date();t.setHours(+hm[0],+hm[1],0,0);
   if(t<now)t.setDate(t.getDate()+1);var s=Math.floor((t-now)/1000);if(s<=0){loadPrayer();return}
@@ -396,7 +442,7 @@ function dset(q){if(q.indexOf('on=')===0)$('dBox').style.opacity=q==='on=1'?1:.4
 
 function adhan(q){post('/adhan?'+q,'').then(function(){say(q==='do=play'?'adhanPlay':q==='do=stop'?'adhanStop':'volSet')}).catch(function(){say('wifi')})}
 
-setLang(lang);prev();draw();renderSaved();setTimeout(function(){placePill(0)},0);
+icons();setLang(lang);prev();draw();renderSaved();setTimeout(function(){placePill(0)},0);
 </script>
 </body>
 </html>

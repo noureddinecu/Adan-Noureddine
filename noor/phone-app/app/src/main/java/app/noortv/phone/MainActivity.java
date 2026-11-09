@@ -100,18 +100,20 @@ public class MainActivity extends Activity {
         bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(14), dp(10), dp(10), dp(10));
         TextView title = new TextView(this);
-        title.setText(tr("📺 زحاف TV", "📺 Zahhaf TV"));
+        title.setText(tr("زحاف TV", "Zahhaf TV"));
+        title.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_tv, 0, 0, 0);
+        title.setCompoundDrawablePadding(dp(10));
         title.setTextColor(Color.WHITE);
         title.setTextSize(19);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         bar.addView(title, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        bar.addView(small(es() ? "ع" : "ES", false, v -> {
+        bar.addView(small(R.drawable.ic_search, false, v -> connect(true)));
+        bar.addView(small(R.drawable.ic_globe, false, v -> {
             prefs.edit().putString("lang", es() ? "ar" : "es").apply();
             recreate();
         }));
-        bar.addView(small("🔄", false, v -> connect(false)));
-        bar.addView(small("⚙️", false, v -> settings()));
-        bar.addView(small("♻️", true, v -> askPin()));
+        bar.addView(small(R.drawable.ic_settings, false, v -> settings()));
+        bar.addView(small(R.drawable.ic_restore, true, v -> askPin()));
         root.addView(bar);
 
         web = new WebView(this);
@@ -120,6 +122,12 @@ public class MainActivity extends Activity {
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        web.addJavascriptInterface(new Object() {
+            @android.webkit.JavascriptInterface
+            public void search() {
+                main.post(() -> connect(true));
+            }
+        }, "Zahhaf");
         web.setWebViewClient(new WebViewClient() {
             @Override
             public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
@@ -158,21 +166,52 @@ public class MainActivity extends Activity {
         web.loadUrl("http://" + host() + ":8080/?app=1&lang=" + (es() ? "es" : "ar"));
     }
 
-    /** Opens the saved TV if it answers; otherwise looks for it on the Wi-Fi (or straight away when asked). */
+    /** Opens the saved TV if it answers; otherwise searches the Wi-Fi for it (or straight away from the search button). */
     private void connect(boolean searchNow) {
-        searching();
         String saved = host();
+        if (!searchNow) {
+            new Thread(() -> {
+                boolean ok = ping(saved);
+                main.post(() -> {
+                    if (ok) load();
+                    else connect(true);
+                });
+            }, "ping-tv").start();
+            return;
+        }
+        searching();
         new Thread(() -> {
-            String found = !searchNow && ping(saved) ? saved : discover();
-            main.post(() -> {
-                if (found == null) {
-                    offline(true);
-                    return;
-                }
-                prefs.edit().putString("tv", found).apply();
-                load();
-            });
+            Scan r = discover(n -> main.post(() -> web.evaluateJavascript("p(" + n + ")", null)));
+            main.post(() -> found(r));
         }, "find-tv").start();
+    }
+
+    private void found(Scan r) {
+        if (r.noor.size() == 1) {
+            use(r.noor.get(0));
+            return;
+        }
+        if (r.noor.size() > 1) {
+            String[] ips = r.noor.toArray(new String[0]);
+            new AlertDialog.Builder(this).setTitle(tr("لقيت " + ips.length + " ديال التلفزيونات، اختار واحد", "Encontré " + ips.length + " teles, elige una"))
+                    .setItems(ips, (d, w) -> use(ips[w])).setCancelable(false).show();
+            return;
+        }
+        offline(true);
+        if (!r.adb.isEmpty()) {
+            String[] ips = r.adb.toArray(new String[0]);
+            new AlertDialog.Builder(this)
+                    .setTitle(tr("لقيت تلفزيون، ولكن تطبيقات نور ماشي فيه", "Encontré una tele, pero sin las apps de Noor"))
+                    .setMessage(tr("الرسم والصلاة كيحتاجو تطبيقات نور فالتلفزيون. تقدر تحفظ هاد العنوان باش يخدم زر الرجوع.",
+                            "El dibujo y la oración necesitan las apps de Noor en la tele. Puedes guardar esta dirección para el botón de restaurar."))
+                    .setItems(ips, (d, w) -> prefs.edit().putString("tv", ips[w]).apply())
+                    .setNegativeButton(tr("إلغاء", "Cancelar"), null).show();
+        }
+    }
+
+    private void use(String ip) {
+        prefs.edit().putString("tv", ip).apply();
+        load();
     }
 
     private static boolean ping(String ip) {
@@ -192,8 +231,30 @@ public class MainActivity extends Activity {
         }
     }
 
-    /** Asks every address of this phone's Wi-Fi network (a /24) for the TV's page, 48 at a time. */
-    private String discover() {
+    private static boolean adbOpen(String ip) {
+        try (java.net.Socket s = new java.net.Socket()) {
+            s.connect(new java.net.InetSocketAddress(ip, 5555), 500);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    static final class Scan {
+        final java.util.List<String> noor = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
+        final java.util.List<String> adb = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
+    }
+
+    interface Progress {
+        void at(int done);
+    }
+
+    /**
+     * Asks every address of this phone's Wi-Fi network (a /24) for the TV's page, 64 at a time; an address with
+     * no page but network ADB open is noted as a TV without the Noor apps.
+     */
+    private Scan discover(Progress progress) {
+        Scan r = new Scan();
         String prefix = null;
         try {
             ConnectivityManager cm = getSystemService(ConnectivityManager.class);
@@ -209,43 +270,59 @@ public class MainActivity extends Activity {
             }
         } catch (Exception ignored) {
         }
-        if (prefix == null) return null;
-        AtomicReference<String> hit = new AtomicReference<>();
-        ExecutorService pool = Executors.newFixedThreadPool(48);
+        if (prefix == null) return r;
+        java.util.concurrent.atomic.AtomicInteger done = new java.util.concurrent.atomic.AtomicInteger();
+        ExecutorService pool = Executors.newFixedThreadPool(64);
         for (int i = 1; i < 255; i++) {
             String ip = prefix + i;
             pool.execute(() -> {
-                if (hit.get() == null && ping(ip)) hit.compareAndSet(null, ip);
+                if (ping(ip)) r.noor.add(ip);
+                else if (adbOpen(ip)) r.adb.add(ip);
+                int d = done.incrementAndGet();
+                if (d % 6 == 0 || d == 254) progress.at(d);
             });
         }
         pool.shutdown();
         try {
-            pool.awaitTermination(15, TimeUnit.SECONDS);
+            pool.awaitTermination(20, TimeUnit.SECONDS);
         } catch (InterruptedException ignored) {
         }
         pool.shutdownNow();
-        return hit.get();
+        return r;
     }
 
-    private void page(String emoji, String title, String body) {
-        String html = "<html dir=" + (es() ? "ltr" : "rtl") + "><head><meta name=viewport content='width=device-width,initial-scale=1'>"
-                + "<style>@keyframes p{50%{transform:scale(1.15);opacity:.7}}</style></head>"
-                + "<body style='margin:0;background:#0d0f1e;color:#fff;font-family:sans-serif;text-align:center;padding:60px 24px'>"
-                + "<div style='font-size:64px;animation:p 1.4s infinite'>" + emoji + "</div><h2>" + title + "</h2>"
-                + "<p style='opacity:.75;line-height:1.8;font-size:16px'>" + body + "</p></body></html>";
+    private void page(String body) {
+        String html = "<html dir=" + (es() ? "ltr" : "rtl") + "><head><meta name=viewport content='width=device-width,initial-scale=1'><style>"
+                + "body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:"
+                + "radial-gradient(120% 60% at 100% 0%,#2a1f6b 0%,transparent 60%),#0d0f1e;color:#fff;font-family:sans-serif;text-align:center;padding:24px;box-sizing:border-box}"
+                + ".r{position:relative;width:180px;height:180px;margin-bottom:28px}.r i{position:absolute;inset:0;border-radius:50%;border:2px solid #7c5cff;opacity:0;animation:w 2.4s infinite}"
+                + ".r i:nth-child(2){animation-delay:.8s}.r i:nth-child(3){animation-delay:1.6s}@keyframes w{0%{transform:scale(.2);opacity:.9}100%{transform:scale(1);opacity:0}}"
+                + ".r svg{position:absolute;inset:60px;width:60px;height:60px}.bar{width:220px;height:6px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:18px}"
+                + ".bar b{display:block;height:100%;width:0;background:linear-gradient(90deg,#7c5cff,#00d4ff);transition:width .3s}"
+                + "p{opacity:.72;line-height:1.8;font-size:16px;max-width:340px}button{margin-top:22px;padding:15px 28px;font-size:17px;font-weight:700;border:0;border-radius:16px;"
+                + "color:#fff;background:linear-gradient(135deg,#7c5cff,#00d4ff);display:inline-flex;align-items:center;gap:10px}</style></head><body>" + body
+                + "<script>function p(n){var b=document.querySelector('.bar b');if(b)b.style.width=(n/254*100)+'%'}</script></body></html>";
         web.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
     }
 
+    private static final String SEARCH_ICON = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' "
+            + "stroke-linejoin='round' width='22' height='22'><path d='M11 3a8 8 0 1 0 0 16a8 8 0 1 0 0-16zM21 21l-4.3-4.3'/></svg>";
+
     private void searching() {
-        page("🔍", tr("كنقلّب على التلفزيون…", "Buscando la tele…"),
-                tr("ثانية، التيليفون كيقلّب على التلفزيون فالواي فاي.", "Un momento, el móvil busca la tele en el wifi."));
+        page("<div class=r><i></i><i></i><i></i><svg viewBox='0 0 24 24' fill='none' stroke='#00d4ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>"
+                + "<path d='M4 7h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM17 2l-5 5-5-5'/></svg></div>"
+                + "<h2>" + tr("كنقلّب على التلفزيون…", "Buscando la tele…") + "</h2>"
+                + "<p>" + tr("التيليفون كيقلّب فالواي فاي ديالك بوحدو.", "El móvil busca la tele en tu wifi él solo.") + "</p><div class=bar><b></b></div>");
     }
 
     private void offline(boolean searched) {
-        page("📡", tr("ما لقيتش التلفزيون", "No encuentro la tele"),
-                tr("تأكد بلّي التيليفون والتلفزيون فنفس الواي فاي، والتلفزيون شاعل.<br>ومن بعد ضغط 🔄 الفوق.",
-                        "Comprueba que el móvil y la tele están en el mismo wifi y que la tele está encendida.<br>Luego pulsa 🔄 arriba.")
-                        + (searched ? "" : "<br><br>" + tr("العنوان: ", "Dirección: ") + host()));
+        page("<svg viewBox='0 0 24 24' width='72' height='72' fill='none' stroke='#ff6b8a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'>"
+                + "<path d='M4 7h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM17 2l-5 5-5-5M9 11l6 6M15 11l-6 6'/></svg>"
+                + "<h2>" + tr("ما لقيتش التلفزيون", "No encuentro la tele") + "</h2><p>"
+                + tr("تأكد بلّي التيليفون والتلفزيون فنفس الواي فاي، والتلفزيون شاعل.",
+                        "Comprueba que el móvil y la tele están en el mismo wifi y que la tele está encendida.")
+                + (searched ? "" : "<br>" + tr("العنوان: ", "Dirección: ") + host()) + "</p>"
+                + "<button onclick='Zahhaf.search()'>" + SEARCH_ICON + tr("قلّب مرة أخرى", "Buscar otra vez") + "</button>");
     }
 
     // ---------- photos and the camera ----------
@@ -288,22 +365,24 @@ public class MainActivity extends Activity {
         ip.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
         box.addView(label(tr("عنوان التلفزيون (IP):", "Dirección de la tele (IP):")));
         box.addView(ip);
-        box.addView(label(tr("«🔌 جرّب الربط» كيطلب من التلفزيون يقبل هاد التيليفون: ملي يطلع السؤال فالتلفزيون، اختار «السماح دائماً» ووافق. "
+        box.addView(label(tr("«جرّب الربط» كيطلب من التلفزيون يقبل هاد التيليفون: ملي يطلع السؤال فالتلفزيون، اختار «السماح دائماً» ووافق. "
                         + "هادشي خاصو باش يخدم زر ♻️.",
-                "«🔌 Probar conexión» pide a la tele que acepte este móvil: cuando salga la pregunta en la tele, elige «Permitir siempre» y acepta. "
+                "«Probar conexión» pide a la tele que acepte este móvil: cuando salga la pregunta en la tele, elige «Permitir siempre» y acepta. "
                         + "Hace falta para el botón ♻️.")));
         Button find = new Button(this);
-        find.setText(tr("🔍 قلّب على التلفزيون", "🔍 Buscar la tele"));
+        find.setText(tr("قلّب على التلفزيون", "Buscar la tele"));
+        find.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
+        find.setCompoundDrawablePadding(dp(8));
         find.setAllCaps(false);
         box.addView(find);
         AlertDialog d = new AlertDialog.Builder(this)
-                .setTitle(tr("⚙️ الإعدادات", "⚙️ Ajustes"))
+                .setTitle(tr("الإعدادات", "Ajustes"))
                 .setView(box)
                 .setPositiveButton(tr("حفظ", "Guardar"), (x, w) -> {
                     prefs.edit().putString("tv", ip.getText().toString().trim()).apply();
                     connect(false);
                 })
-                .setNeutralButton(tr("🔌 جرّب الربط", "🔌 Probar conexión"), (x, w) -> {
+                .setNeutralButton(tr("جرّب الربط", "Probar conexión"), (x, w) -> {
                     prefs.edit().putString("tv", ip.getText().toString().trim()).apply();
                     run(tr("كنتصل بالتلفزيون… إلى طلع سؤال فالتلفزيون، وافق عليه", "Conectando… si sale una pregunta en la tele, acéptala"),
                             "echo ok", out -> out.trim().endsWith("ok")
@@ -328,7 +407,7 @@ public class MainActivity extends Activity {
         LinearLayout box = column();
         box.addView(pin);
         new AlertDialog.Builder(this)
-                .setTitle(tr("🔒 دخّل الكود", "🔒 Introduce el código"))
+                .setTitle(tr("دخّل الكود", "Introduce el código"))
                 .setView(box)
                 .setPositiveButton(tr("دخول", "Entrar"), (x, w) -> {
                     if (PIN.equals(pin.getText().toString())) confirmRestore();
@@ -349,7 +428,7 @@ public class MainActivity extends Activity {
         ours.setChecked(true);
         box.addView(ours);
         new AlertDialog.Builder(this)
-                .setTitle(tr("♻️ نرجّعو التلفزيون كيما كان؟", "♻️ ¿Dejamos la tele como estaba?"))
+                .setTitle(tr("نرجّعو التلفزيون كيما كان؟", "¿Dejamos la tele como estaba?"))
                 .setView(box)
                 .setPositiveButton(tr("إيه، رجّعو", "Sí, restaurar"), (d, w) -> restore(ours.isChecked()))
                 .setNegativeButton(tr("لا", "No"), null)
@@ -422,28 +501,21 @@ public class MainActivity extends Activity {
         new AlertDialog.Builder(this).setMessage(msg).setPositiveButton(tr("مزيان", "Vale"), null).show();
     }
 
-    private Button small(String text, boolean red, View.OnClickListener l) {
-        Button b = new Button(this);
-        b.setText(text);
-        b.setAllCaps(false);
-        b.setTextColor(Color.WHITE);
-        b.setTextSize(15);
-        b.setTypeface(Typeface.DEFAULT_BOLD);
+    private android.widget.ImageButton small(int icon, boolean red, View.OnClickListener l) {
+        android.widget.ImageButton b = new android.widget.ImageButton(this);
+        b.setImageResource(icon);
+        if (red) b.setColorFilter(0xFFFFD0DA);
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(red ? 0x33FF6B8A : CARD);
         bg.setStroke(dp(1), red ? 0x59FF6B8A : 0x22FFFFFF);
-        bg.setCornerRadius(dp(12));
+        bg.setCornerRadius(dp(13));
         b.setBackground(bg);
-        b.setPadding(0, 0, 0, 0);
-        b.setMinWidth(0);
-        b.setMinimumWidth(0);
-        b.setMinHeight(0);
-        b.setMinimumHeight(0);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(44), dp(40));
-        lp.setMarginStart(dp(6));
+        b.setScaleType(android.widget.ImageView.ScaleType.CENTER);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(42), dp(42));
+        lp.setMarginStart(dp(7));
         b.setLayoutParams(lp);
         b.setOnClickListener(v -> {
-            v.animate().scaleX(.9f).scaleY(.9f).setDuration(80).withEndAction(() -> v.animate().scaleX(1).scaleY(1).setDuration(120).start()).start();
+            v.animate().scaleX(.88f).scaleY(.88f).setDuration(80).withEndAction(() -> v.animate().scaleX(1).scaleY(1).setDuration(140).start()).start();
             v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
             l.onClick(v);
         });
