@@ -11,7 +11,8 @@
 set -euo pipefail
 URL=https://github.com/noureddinecu/Adan-Noureddine/releases/download/noor-tv-build
 B=~/noor-build
-PKG=com.gathin.tvhome
+PKG=app.noortv.home
+ACT=$PKG/com.gathin.tvhome.MainActivity
 HOMEQ='cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME'
 CMD="${1:-}"; IP="${2:-}"; D="$IP:5555"
 
@@ -39,14 +40,21 @@ launcher)
   [ -f "$BK/disabled-by-us.txt" ] || { echo "no backup in $BK"; exit 1; }
   STOCK=$(home_now | cut -d/ -f1)
   case "$STOCK" in
-    com.google.android.tvlauncher|com.google.android.leanbacklauncher|com.google.android.apps.tv.launcherx) ;;
+    com.google.android.tvlauncher|com.google.android.leanbacklauncher|com.google.android.apps.tv.launcherx|com.gathin.tvhome) ;;
     "$PKG") STOCK=none ;;
     *) echo "⛔ Home is '$STOCK', which this script does not know. Nothing was changed."; exit 1 ;;
   esac
   echo "stock launcher: $STOCK"
+  # A stock launcher someone else already disabled goes into the backup list too, so restore.sh brings it back.
+  DIS=$(sh_ "pm list packages -d")
+  for p in com.google.android.tvlauncher com.google.android.leanbacklauncher; do
+    if printf '%s\n' "$DIS" | grep -qx "package:$p" && ! grep -qx "$p" "$BK/disabled-by-us.txt"; then
+      echo "$p" >> "$BK/disabled-by-us.txt"; echo "noted for restore: $p (was already off)"
+    fi
+  done
   install_apk "$B/launcher.apk"
   # Start the new Home first; the stock one is only disabled once this one is really up.
-  OUT=$(sh_ "am start -W -a android.intent.action.MAIN -c android.intent.category.HOME -n $PKG/.MainActivity")
+  OUT=$(sh_ "am start -W -a android.intent.action.MAIN -c android.intent.category.HOME -n $ACT")
   echo "$OUT" | grep -q 'Status: ok' && ! echo "$OUT" | grep -qi '^Error' || {
     echo "⛔ the new Home did not start; $STOCK was left as it was."; echo "$OUT"; exit 1; }
   sh_ "pm grant $PKG android.permission.ACCESS_FINE_LOCATION" 2>/dev/null || true
@@ -55,7 +63,7 @@ launcher)
     R=$(sh_ "pm disable-user --user 0 $STOCK")
     case "$R" in *disabled-user*) echo "$STOCK" >> "$BK/disabled-by-us.txt" ;; esac
   fi
-  sh_ "cmd package set-home-activity --user 0 $PKG/.MainActivity" >/dev/null || true
+  sh_ "cmd package set-home-activity --user 0 $ACT" >/dev/null || true
   NOW=$(home_now)
   case "$NOW" in
     "$PKG"/*) echo "✅ the new Home is set" ;;
@@ -95,7 +103,7 @@ theme)
   if [ -d "$T/wallpapers" ]; then for w in "$T"/wallpapers/*; do [ -f "$w" ] && put "$w" "wallpapers/$(basename "$w")"; done; fi
   REV="$B/theme_revision"; head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \n' > "$REV"
   put "$REV" theme_revision
-  sh_ "am force-stop $PKG; am start -W -a android.intent.action.MAIN -c android.intent.category.HOME -n $PKG/.MainActivity" | grep -q 'Status: ok' \
+  sh_ "am force-stop $PKG; am start -W -a android.intent.action.MAIN -c android.intent.category.HOME -n $ACT" | grep -q 'Status: ok' \
     && echo "✅ theme $NAME is on the TV" || echo "⚠️ theme is on the TV; press Home on the remote to see it"
   ;;
 

@@ -7,7 +7,10 @@ OUT="$PWD/out"; rm -rf "$OUT"; mkdir -p "$OUT"
 
 python3 -I noor-tv/launcher-patch/apply.py cleanyourtv "$LAT" "$LON" "$METHOD" "$CITY"
 
-(cd cleanyourtv/launcher && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain)
+# Own package name: this TV already has another build of the CleanYourTV launcher (com.gathin.tvhome, another
+# signing key), which cannot be updated in place and, by the skill's rule, is disabled rather than uninstalled.
+HOME_ID=app.noortv.home
+(cd cleanyourtv/launcher && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain -PlauncherApplicationId=$HOME_ID)
 cp cleanyourtv/launcher/app/build/outputs/apk/release/app-release.apk "$OUT/launcher.apk"
 
 (cd cleanyourtv/addons/prayer-times && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain)
@@ -27,6 +30,9 @@ if [ -n "${ADHAN_URL:-}${ADHAN_QUERY:-}" ]; then
   fi
   cp adhan-search.tsv "$OUT/adhan-search.txt" 2>/dev/null || true
 fi
+
+sed -i "s/static final String HOME = \"com.gathin.tvhome\";/static final String HOME = \"$HOME_ID\";/" noor-tv/noor-app/app/src/main/java/app/noortv/Adhan.java
+grep -q "HOME = \"$HOME_ID\"" noor-tv/noor-app/app/src/main/java/app/noortv/Adhan.java
 
 P=noor-tv/noor-app/gradle.properties
 sed -i "s/^noor.lat=.*/noor.lat=$LAT/; s/^noor.lon=.*/noor.lon=$LON/; s/^noor.method=.*/noor.method=$METHOD/" "$P"
