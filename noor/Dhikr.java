@@ -156,14 +156,14 @@ final class Dhikr {
             TextView ornament = text("✦ ذِكر ✦", 11, 0xB3FFE08A);
             ornament.setLetterSpacing(0.15f);
             box.addView(ornament);
-            TextView body = text((String) d[1], 21, 0xF2FFFFFF);
-            body.setMaxWidth(px(560));
+            TextView body = text((String) d[1], 19, 0xF2FFFFFF);
+            body.setMaxWidth(px(380));
             body.setShadowLayer(px(6), 0, px(1), 0xAA000000);
             box.addView(body);
             String virtue = (String) d[2];
             if (!virtue.isEmpty()) {
-                TextView sub = text(virtue, 12.5f, 0xCCFFE08A);
-                sub.setMaxWidth(px(560));
+                TextView sub = text(virtue, 12, 0xCCFFE08A);
+                sub.setMaxWidth(px(380));
                 box.addView(sub);
             }
             View line = new View(app);
