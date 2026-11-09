@@ -237,6 +237,7 @@ final class Dhikr {
     static String json(Context c) {
         SharedPreferences p = prefs(c);
         return "{\"on\":" + p.getBoolean("on", true) + ",\"every\":" + p.getInt("every", 10)
-                + ",\"secs\":" + p.getInt("secs", 5) + ",\"corner\":\"" + p.getString("corner", "br") + "\"}";
+                + ",\"secs\":" + p.getInt("secs", 5) + ",\"corner\":\"" + p.getString("corner", "br")
+                + "\",\"chime\":" + p.getBoolean("chime", true) + "}";
     }
 }

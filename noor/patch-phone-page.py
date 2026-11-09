@@ -205,10 +205,10 @@ sub("""        if (first.startsWith("GET /prayer")) {""",
         if (first.startsWith("POST /dhikr")) {
             readBody(in, head);
             android.content.SharedPreferences.Editor e = Dhikr.prefs(this).edit();
-            java.util.regex.Matcher m = java.util.regex.Pattern.compile("[?&](on|every|secs|corner)=([a-z0-9]{1,3})").matcher(first);
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("[?&](on|every|secs|corner|chime)=([a-z0-9]{1,3})").matcher(first);
             while (m.find()) {
                 String k = m.group(1), v = m.group(2);
-                if (k.equals("on")) e.putBoolean("on", v.equals("1"));
+                if (k.equals("on") || k.equals("chime")) e.putBoolean(k, v.equals("1"));
                 else if (k.equals("corner")) { if (v.matches("[tb][lr]")) e.putString("corner", v); }
                 else if (v.matches("\\\\d+")) e.putInt(k, Math.max(1, Math.min(k.equals("secs") ? 30 : 240, Integer.parseInt(v))));
             }
@@ -219,6 +219,127 @@ sub("""        if (first.startsWith("GET /prayer")) {""",
             return;
         }
         if (first.startsWith("GET /prayer")) {""")
+
+# Live messages (the phone sends a frame on every change): a frame updates the picture in place; a new message
+# comes in with a soft animation and, if switched on, a chime; pos=ticker scrolls the strip along the bottom.
+sub("""            if (bmp != null) main.post(() -> showImage(bmp, sec));""",
+    """            boolean live = first.contains("live=1"), ticker = first.contains("pos=ticker"), rtl = first.contains("dir=rtl");
+            if (bmp != null) main.post(() -> showImage(bmp, sec, live, ticker, rtl));""")
+sub("""    private android.widget.ImageView picture;""",
+    """    private View picture;
+    private android.widget.ImageView pictureImg;
+    private boolean pictureTicker;
+    private android.animation.ValueAnimator scroller;""")
+old_show = s[s.index("    private void showImage(android.graphics.Bitmap bmp, int secs) {"):s.index("    private void hideImageNow(WindowManager wm) {")]
+sub(old_show, """    private void showImage(android.graphics.Bitmap bmp, int secs, boolean live, boolean ticker, boolean rtl) {
+        if (!Settings.canDrawOverlays(this)) return;
+        WindowManager wm = getSystemService(WindowManager.class);
+        main.removeCallbacks(hidePicture);
+        if (picture != null && live && pictureTicker == ticker) {
+            pictureImg.setImageBitmap(bmp); // a live frame: swap it in place, no animation, no chime
+            if (ticker) scroll(bmp, rtl);
+        } else {
+            hideImageNow(wm);
+            android.widget.ImageView img = new android.widget.ImageView(this);
+            img.setImageBitmap(bmp);
+            View v;
+            WindowManager.LayoutParams lp;
+            if (ticker) {
+                android.widget.FrameLayout strip = new android.widget.FrameLayout(this);
+                strip.setClipChildren(true);
+                img.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
+                strip.addView(img);
+                v = strip;
+                lp = overlay(WindowManager.LayoutParams.MATCH_PARENT);
+                lp.height = Math.round(bmp.getHeight() * scale());
+                lp.gravity = Gravity.BOTTOM;
+                lp.y = Math.round(36 * scale());
+            } else {
+                img.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+                v = img;
+                lp = overlay(WindowManager.LayoutParams.MATCH_PARENT);
+            }
+            try {
+                wm.addView(v, lp);
+            } catch (Exception e) {
+                return;
+            }
+            picture = v;
+            pictureImg = img;
+            pictureTicker = ticker;
+            if (ticker) scroll(bmp, rtl);
+            v.setAlpha(0f);
+            v.setScaleX(.94f);
+            v.setScaleY(.94f);
+            v.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(450)
+                    .setInterpolator(new android.view.animation.OvershootInterpolator(1.4f)).start();
+            chime();
+        }
+        if (secs > 0) main.postDelayed(hidePicture, secs * 1000L);
+    }
+
+    /** Phone frames are drawn for a 1280-wide screen. */
+    private float scale() {
+        return getResources().getDisplayMetrics().widthPixels / 1280f;
+    }
+
+    /** The ticker strip runs across the screen and round again: left to right for Arabic, right to left otherwise. */
+    private void scroll(android.graphics.Bitmap bmp, boolean rtl) {
+        if (scroller != null) scroller.cancel();
+        float k = scale();
+        int w = Math.round(bmp.getWidth() * k), h = Math.round(bmp.getHeight() * k);
+        int screen = getResources().getDisplayMetrics().widthPixels;
+        pictureImg.setLayoutParams(new android.widget.FrameLayout.LayoutParams(w, h));
+        float from = rtl ? -w : screen, to = rtl ? screen : -w;
+        scroller = android.animation.ValueAnimator.ofFloat(from, to);
+        scroller.setDuration(Math.max(4000, (long) ((screen + w) / (180f * k) * 1000)));
+        scroller.setInterpolator(new android.view.animation.LinearInterpolator());
+        scroller.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+        android.widget.ImageView img = pictureImg;
+        scroller.addUpdateListener(a -> img.setTranslationX((Float) a.getAnimatedValue()));
+        scroller.start();
+    }
+
+    /** A soft two-note chime when a new message comes in, unless switched off on the phone. */
+    private void chime() {
+        if (!Dhikr.prefs(this).getBoolean("chime", true)) return;
+        int id = getResources().getIdentifier("chime", "raw", getPackageName());
+        if (id == 0) return;
+        try {
+            android.media.MediaPlayer mp = android.media.MediaPlayer.create(this, id);
+            if (mp == null) return;
+            mp.setVolume(.6f, .6f);
+            mp.setOnCompletionListener(android.media.MediaPlayer::release);
+            mp.start();
+        } catch (Exception ignored) {
+        }
+    }
+
+""")
+sub("""    private void hideImageNow(WindowManager wm) {
+        main.removeCallbacks(hidePicture);""",
+    """    private void hideImageNow(WindowManager wm) {
+        main.removeCallbacks(hidePicture);
+        if (scroller != null) scroller.cancel();
+        scroller = null;""")
+old_hide = s[s.index("    private void hideImage() {"):]
+old_hide = old_hide[:old_hide.index("        }).start();\n    }\n")+len("        }).start();\n    }\n")]
+sub(old_hide, """    private void hideImage() {
+        main.removeCallbacks(hidePicture);
+        if (picture == null) return;
+        View v = picture;
+        picture = null;
+        android.animation.ValueAnimator sc = scroller;
+        scroller = null;
+        v.animate().alpha(0f).scaleX(.96f).scaleY(.96f).setDuration(500).withEndAction(() -> {
+            if (sc != null) sc.cancel();
+            try {
+                getSystemService(WindowManager.class).removeView(v);
+            } catch (Exception ignored) {
+            }
+        }).start();
+    }
+""")
 
 open(path, "w", encoding="utf-8").write(s)
 print("phone page patch applied")

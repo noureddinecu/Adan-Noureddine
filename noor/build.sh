@@ -27,6 +27,8 @@ python3 -I noor/patch-phone-page.py noor-tv/noor-app/app/src/main/java/app/noort
 mkdir -p noor-tv/noor-app/app/src/main/assets && python3 -I noor/inline-icons.py noor/phone-page.html noor-tv/noor-app/app/src/main/assets/page.html
 # Adhkar on screen, in Amiri (SIL Open Font License); the salawat line every 45 minutes is now one of the adhkar.
 cp noor/Dhikr.java noor-tv/noor-app/app/src/main/java/app/noortv/Dhikr.java
+# The chime for a new message on the TV.
+mkdir -p noor-tv/noor-app/app/src/main/res/raw && python3 -I noor/make-chime.py noor-tv/noor-app/app/src/main/res/raw/chime.wav
 curl -fsSL -o noor-tv/noor-app/app/src/main/assets/amiri.ttf https://github.com/google/fonts/raw/main/ofl/amiri/Amiri-Bold.ttf || echo "no Amiri; serif fallback"
 python3 -I - noor-tv/noor-app/app/src/main/java/app/noortv/Reminder.java <<'PY'
 import sys
