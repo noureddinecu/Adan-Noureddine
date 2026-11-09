@@ -29,13 +29,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * «نور للتلفزيون» on the phone: the studio served by the TV (draw, write, stickers, photos) in a WebView, plus a
+ * «زحاف TV» on the phone: the studio served by the TV (draw, write, stickers, photos) in a WebView, plus a
  * PIN-protected button that gives the TV back its own home screen and apps over network ADB.
  */
 public class MainActivity extends Activity {
     static final String PIN = "0000";
     static final int PICK = 7;
-    static final int BG = 0xFF0F1A17, CARD = 0xFF16241F, ACC = 0xFF1F6F50;
+    static final int BG = 0xFF0D0F1E, CARD = 0x1AFFFFFF, ACC = 0xFF7C5CFF;
 
     /** Everything this setup (and the CleanYourTV app before it) may have turned off; restore turns them back on. */
     static final String[] OFF = {
@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
         bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(12), dp(8), dp(12), dp(8));
         TextView title = new TextView(this);
-        title.setText("📺 نور للتلفزيون");
+        title.setText("📺 زحاف TV");
         title.setTextColor(Color.WHITE);
         title.setTextSize(18);
         title.setTypeface(Typeface.DEFAULT_BOLD);
@@ -88,6 +88,8 @@ public class MainActivity extends Activity {
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
+        s.setUserAgentString(s.getUserAgentString() + " ZahhafApp"); // the page hides its own header inside the app
+        web.setOverScrollMode(View.OVER_SCROLL_NEVER);
         web.setWebViewClient(new WebViewClient() {
             @Override
             public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
@@ -123,7 +125,7 @@ public class MainActivity extends Activity {
     }
 
     private void offline() {
-        String html = "<html dir=rtl><body style='background:#0f1a17;color:#fff;font-family:sans-serif;text-align:center;padding:40px 20px'>"
+        String html = "<html dir=rtl><body style='background:#0d0f1e;color:#fff;font-family:sans-serif;text-align:center;padding:40px 20px'>"
                 + "<div style='font-size:60px'>📡</div><h2>ما لقيتش التلفزيون</h2>"
                 + "<p style='opacity:.8;line-height:1.7'>تأكد بلّي التيليفون والتلفزيون فنفس الواي فاي، والتلفزيون شاعل.<br>"
                 + "العنوان دابا: <b>" + host() + "</b> (تقدر تبدّلو من ⚙️)</p>"
@@ -279,7 +281,8 @@ public class MainActivity extends Activity {
         b.setTextColor(Color.WHITE);
         b.setTextSize(14);
         android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
-        bg.setColor(text.startsWith("♻️") ? 0xFF3A2A2A : CARD);
+        bg.setColor(text.startsWith("♻️") ? 0x33FF6B8A : CARD);
+        bg.setStroke(dp(1), 0x22FFFFFF);
         bg.setCornerRadius(dp(12));
         b.setBackground(bg);
         b.setPadding(dp(10), 0, dp(10), 0);

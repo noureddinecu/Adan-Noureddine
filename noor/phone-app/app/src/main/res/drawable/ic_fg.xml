@@ -2,11 +2,11 @@
 <!-- A TV with a crescent and a star, in gold, inside the adaptive icon's safe zone. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
-    <path android:fillColor="#00000000" android:strokeColor="#FFE08A" android:strokeWidth="4"
+    <path android:fillColor="#00000000" android:strokeColor="#00D4FF" android:strokeWidth="4"
         android:pathData="M30,36h48a4,4 0,0 1,4 4v28a4,4 0,0 1,-4 4h-48a4,4 0,0 1,-4 -4v-28a4,4 0,0 1,4 -4z" />
-    <path android:fillColor="#FFE08A" android:pathData="M44,78h20v4h-20z" />
-    <path android:fillColor="#FFE08A"
+    <path android:fillColor="#00D4FF" android:pathData="M44,78h20v4h-20z" />
+    <path android:fillColor="#FFFFFF"
         android:pathData="M56,44a11,11 0,1 0,0 20a9,9 0,1 1,0 -20z" />
-    <path android:fillColor="#FFE08A"
+    <path android:fillColor="#FFFFFF"
         android:pathData="M64,48l1.8,3.7 4.1,0.6 -3,2.9 0.7,4.1 -3.6,-1.9 -3.6,1.9 0.7,-4.1 -3,-2.9 4.1,-0.6z" />
 </vector>

@@ -3,7 +3,7 @@
 - GET serves assets/page.html (noor/phone-page.html): draw, write, stickers and photos, plus the quick message and live drawing;
 - POST /image?s=<seconds> takes the composed picture (PNG with transparency, or JPEG over a photo) and shows it
   full screen over whatever is on the TV, for s seconds (0 = until POST /hide);
-- POST /hide takes it down.
+- POST /hide takes it down; POST /hidetext takes down the quick message.
 Usage: patch-phone-page.py <MessageServer.java>"""
 import sys
 
@@ -37,6 +37,11 @@ sub("""            reply(s.getOutputStream(), "text/html", PAGE);
             return;
         }
         String body = readBody(in, head);
+        if (first.startsWith("POST /hidetext")) {
+            main.post(this::hideText);
+            reply(s.getOutputStream(), "text/plain", "ok");
+            return;
+        }
         if (first.startsWith("POST /hide")) {
             main.post(this::hideImage);
             reply(s.getOutputStream(), "text/plain", "ok");
@@ -111,6 +116,18 @@ sub("""    private static void reply(OutputStream out, String type, String body)
         } catch (Exception ignored) {
         }
         picture = null;
+    }
+
+    private void hideText() {
+        if (shown == null) return;
+        View v = shown;
+        shown = null;
+        v.animate().alpha(0f).setDuration(400).withEndAction(() -> {
+            try {
+                getSystemService(WindowManager.class).removeView(v);
+            } catch (Exception ignored) {
+            }
+        }).start();
     }
 
     private void hideImage() {
