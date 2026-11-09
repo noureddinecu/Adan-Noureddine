@@ -4,6 +4,11 @@
 set -euo pipefail
 source noor/city.env
 OUT="$PWD/out"; rm -rf "$OUT"; mkdir -p "$OUT"
+# One version number for every app of this build, so the phone app knows when a TV needs updating.
+VER=$((1000 + ${GITHUB_RUN_NUMBER:-0}))
+sed -i -E "s/^( *versionCode) [0-9]+/\1 $VER/" noor-tv/noor-app/app/build.gradle cleanyourtv/launcher/app/build.gradle \
+  cleanyourtv/addons/prayer-times/app/build.gradle noor/phone-app/app/build.gradle
+grep -q "versionCode $VER" noor-tv/noor-app/app/build.gradle
 # Every APK is signed with noor/debug.keystore, so a new build installs over the apps already on the TV.
 KS="$PWD/noor/debug.keystore"
 SIGN=(-Pandroid.injected.signing.store.file="$KS" -Pandroid.injected.signing.store.password=android
@@ -62,9 +67,11 @@ tar -czf "$OUT/themes.tar.gz" -C themes-out .
 A=noor/phone-app/app/src/main/assets
 rm -rf "$A" && mkdir -p "$A/tv" "$A/themes"
 cp "$OUT"/launcher.apk "$OUT"/prayer-times.apk "$OUT"/noor-*.apk "$A/tv/"
+echo "$VER" > "$A/tv/version.txt"
 cp -r themes-out/. "$A/themes/"
 python3 -I noor/make-debloat-index.py cleanyourtv "$A/debloat.json"
 python3 -I noor/inline-icons.py noor/setup.html "$A/setup.html"
+python3 -I noor/inline-icons.py noor/home.html "$A/home.html"
 cp -r noor-tv/noor-app/gradlew noor-tv/noor-app/gradle noor/phone-app/
 (cd noor/phone-app && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain "${SIGN[@]}")
 cp noor/phone-app/app/build/outputs/apk/release/app-release.apk "$OUT/noor-phone.apk"
@@ -79,4 +86,5 @@ sys.exit(f"not signed with noor/debug.keystore: {bad}" if bad else 0)
 PY
 
 cp noor/tv.sh "$OUT/tv.sh"
+printf '{"version":%s,"name":"%s"}\n' "$VER" "$(sed -n "s/.*versionName '\(.*\)'.*/\1/p" noor/phone-app/app/build.gradle)" > "$OUT/version.json"
 ls -la "$OUT"

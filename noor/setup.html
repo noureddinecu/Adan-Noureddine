@@ -52,6 +52,8 @@ button:active{transform:scale(.97)}
 .st.skip{border:0;background:#8a8fb0}.st.fail{border:0;background:var(--bad)}
 .note{font-size:13px;color:var(--dim);line-height:1.7;text-align:center;margin-top:12px}
 .hide{display:none!important}
+.name{width:100%;margin-top:12px;padding:12px 14px;font-size:16px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:#fff;outline:none;-webkit-user-select:text;user-select:text}
+.name:focus{border-color:var(--a1)}
 .err{color:#ffd0da;text-align:center;margin-top:12px;line-height:1.7}
 </style>
 </head>
@@ -89,7 +91,8 @@ button:active{transform:scale(.97)}
 
 <!-- 3: the plan -->
 <section class="scr" id="s3">
-  <div class="card"><div class="kv"><img class="i3" data-k="tv" alt=""><div><b id="model"></b><span id="tested"></span><p id="modelp"></p></div></div></div>
+  <div class="card"><div class="kv"><img class="i3" data-k="tv" alt=""><div><b id="model"></b><span id="tested"></span><p id="modelp"></p></div></div>
+    <input id="tvname" class="name" maxlength="30"></div>
   <div class="card">
     <div class="kv"><img class="i3" data-k="broom" alt=""><div><b id="cleanT"></b><p id="cleanP"></p></div></div>
     <button class="more" id="moreb" onclick="$('pk').classList.toggle('on')"></button>
@@ -112,12 +115,13 @@ button:active{transform:scale(.97)}
   <div class="hero"><h2 data-t="h4"></h2><p data-t="p4"></p></div>
   <div class="card prog" id="prog"></div>
   <p class="err" id="err4"></p>
+  <button class="big hide" id="retry4" onclick="go()"><img class="i3" data-k="update" alt=""><span data-t="retry"></span></button>
 </section>
 
 <!-- 5: done -->
 <section class="scr" id="s5">
   <div class="hero"><img class="i3" data-k="check" alt=""><h2 data-t="h5"></h2><p id="sum"></p></div>
-  <button class="big" onclick="Z.close()"><img class="i3" data-k="tv" alt=""><span data-t="openB"></span></button>
+  <button class="big" onclick="Z.openControl(doneKey)"><img class="i3" data-k="tv" alt=""><span data-t="openB"></span></button>
 </section>
 </div>
 
@@ -142,7 +146,7 @@ var L={ar:{title:'تجهيز التلفاز',h0:'جهّز تلفازك في دق
   sbackup:'نسخة احتياطية',sclean:'تنظيف التطبيقات',snoor:'تطبيقات نور (البطاقات والأذكار)',scity:'المدينة ومواقيت الصلاة',sadhan:'الأذان',
   shome:'الشاشة الرئيسية الجديدة',sprayer:'بطاقة مواقيت الصلاة',stheme:'شكل الشاشة',disabledN:'{n} تطبيقاً معطّلاً',skipped:'تم التخطي',
   h5:'تلفازك جاهز 🎉',openB:'افتح التحكم',sum:'عُطِّل {n} تطبيقاً، وتمّ تركيب الشاشة الجديدة وشكل «{t}». ',sumAdhan:'الأذان جاهز.',sumNoAdhan:'لم يُعثر على ملف الأذان؛ تظهر لافتة الأذان دون صوت.',
-  failed:'حدث خطأ: ',themes:{zakhrafa:'زخرفة','masjid-layl':'مسجد الليل',awqat:'أوقات',plain:'بسيط'}},
+  failed:'تعذّر إكمال التجهيز. اضغط «حاول مرة أخرى» ليكمل من حيث توقّف.\n',namePh:'اسم التلفاز (مثلاً: الصالون)',themes:{zakhrafa:'زخرفة','masjid-layl':'مسجد الليل',awqat:'أوقات',plain:'بسيط'}},
  es:{title:'Preparar la tele',h0:'Prepara tu tele en minutos',p0:'Limpieza, la nueva pantalla de inicio, los horarios de oración, el adhan y los adhkar: todo lo que hicimos, de una vez.',
   how1:'En la tele: Ajustes ← Información ← pulsa 7 veces «Compilación» hasta ver «Ya eres desarrollador».',
   how2:'Vuelve a «Opciones de desarrollador» y activa «Depuración USB» (y «Depuración en red» si existe).',
@@ -160,7 +164,7 @@ var L={ar:{title:'تجهيز التلفاز',h0:'جهّز تلفازك في دق
   sbackup:'Copia de seguridad',sclean:'Limpieza de apps',snoor:'Apps de Noor (tarjetas y adhkar)',scity:'Ciudad y horarios de oración',sadhan:'El adhan',
   shome:'Nueva pantalla de inicio',sprayer:'Tarjeta de horarios',stheme:'Aspecto de la pantalla',disabledN:'{n} apps desactivadas',skipped:'omitido',
   h5:'¡Tu tele está lista! 🎉',openB:'Abrir el control',sum:'{n} apps desactivadas, nueva pantalla de inicio y aspecto «{t}». ',sumAdhan:'El adhan está listo.',sumNoAdhan:'No encontré el adhan; el aviso sale sin sonido.',
-  failed:'Error: ',themes:{zakhrafa:'Arabesco','masjid-layl':'Mezquita de noche',awqat:'Awqat',plain:'Sencillo'}}};
+  failed:'No se pudo terminar. Pulsa «Intentar otra vez» y seguirá donde se quedó.\n',namePh:'Nombre de la tele (p. ej.: Salón)',themes:{zakhrafa:'Arabesco','masjid-layl':'Mezquita de noche',awqat:'Awqat',plain:'Sencillo'}}};
 var lang=new URLSearchParams(location.search).get('lang')==='es'?'es':'ar';
 document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('backb').textContent=lang==='ar'?'→':'←';
 function T(k,v){var s=L[lang][k];if(v)for(var x in v)s=s.replace('{'+x+'}',v[x]);return s}
@@ -171,7 +175,7 @@ var waits={},seq=0;
 function call(fn){var id=++seq,args=[].slice.call(arguments,1);return new Promise(function(res){waits[id]=res;Z[fn].apply(Z,[id].concat(args))})}
 function onResult(id,s){var f=waits[id];delete waits[id];var v;try{v=JSON.parse(s)}catch(e){v=s}if(f)f(v)}
 
-var page=0,cur={},plan=null,city=null,theme='awqat';
+var page=0,cur={},plan=null,city=null,theme='awqat',doneKey='';
 function show(n){page=n;document.querySelectorAll('.scr').forEach(function(s,i){s.classList.toggle('on',i===n)});
   var b=Math.min(4,[0,1,1,2,3,4][n]);$('bar').querySelectorAll('i').forEach(function(x,i){x.classList.toggle('on',i<=b)});window.scrollTo(0,0)}
 function back(){if(page===4)return;if(page===0||page===5)Z.close();else show(page===3?1:page-1)}
@@ -188,7 +192,7 @@ function search(){show(1);$('radar').style.display='';$('h1').textContent=T('sea
 /* 2. connect and plan */
 function connectTo(ip){cur={ip:ip};show(2);$('err2').textContent='';$('retry2').classList.add('hide');
   call('connect',ip).then(function(r){if(!r.ok){$('err2').textContent=T('connErr');$('retry2').classList.remove('hide');return}
-    cur.info=r.info;plan=r.plan;showPlan();show(3);locate()})}
+    cur.info=r.info;plan=r.plan;showPlan();$('tvname').value=r.name||'';$('tvname').placeholder=T('namePh');show(3);locate()})}
 function showPlan(){var i=cur.info;$('model').textContent=(i.product_manufacturer||'')+' '+(i.product_model||'');
   $('tested').innerHTML='<span class="badge'+(plan.tested?'':' warn')+'">'+T(plan.tested?'testedB':'untestedB')+'</span>';
   $('modelp').textContent='Android '+(i.build_version_release||'?')+' · '+(plan.tested?T('testedP')+plan.model.tv:T('untestedP'));
@@ -208,10 +212,10 @@ var KEYS=['backup','clean','noor','city','adhan','home','prayer','theme'],SI={ba
 function go(){var pk=[].slice.call(document.querySelectorAll('#pk input')).filter(function(x){return x.checked}).map(function(x){return x.dataset.p});
   var box=$('prog');box.innerHTML='';KEYS.forEach(function(k){var r=document.createElement('div');r.className='row';r.id='r-'+k;
     r.innerHTML='<img class="i3" src="'+(ICONS[SI[k]]||'')+'"><b></b><i class="st"></i>';r.querySelector('b').textContent=T('s'+k);box.appendChild(r)});
-  show(4);$('err4').textContent='';
-  call('start',JSON.stringify({ip:cur.ip,pkgs:pk,theme:theme,city:city})).then(function(r){
-    if(!r.ok){$('err4').textContent=T('failed')+(r.error||'');return}
-    Z.useTv(cur.ip);$('sum').textContent=T('sum',{n:r.disabled,t:T('themes')[r.theme]})+T(r.adhan?'sumAdhan':'sumNoAdhan');show(5)})}
+  show(4);$('err4').textContent='';$('retry4').classList.add('hide');
+  call('start',JSON.stringify({ip:cur.ip,pkgs:pk,theme:theme,city:city,name:$('tvname').value})).then(function(r){
+    if(!r.ok){$('err4').textContent=T('failed')+(r.error||'');$('retry4').classList.remove('hide');return}
+    Z.useTv(cur.ip);doneKey=r.key;$('sum').textContent=T('sum',{n:r.disabled,t:T('themes')[r.theme]})+T(r.adhan?'sumAdhan':'sumNoAdhan');show(5)})}
 function onStep(k,state,detail){var r=$('r-'+k);if(!r)return;r.querySelector('.st').className='st '+state;
   var sm=r.querySelector('small');if(!sm){sm=document.createElement('small');r.querySelector('b').appendChild(sm)}
   sm.textContent=k==='clean'&&state==='ok'?T('disabledN',{n:detail}):state==='skip'?T('skipped'):state==='fail'?detail:(detail&&k==='city'?detail:'')}

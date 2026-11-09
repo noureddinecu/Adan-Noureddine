@@ -41,8 +41,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import dadb.AdbKeyPair;
-import dadb.Dadb;
 
 /**
  * Sets up a TV from the phone, everything done today in one go: finds the TV, connects over network ADB, recognises
@@ -112,6 +110,15 @@ public class SetupActivity extends Activity {
         prefs.edit().putString("tv", ip).apply();
     }
 
+    /** Back to the start screen, opening the TV just set up. */
+    @JavascriptInterface
+    public void openControl(String key) {
+        main.post(() -> {
+            setResult(RESULT_OK, new android.content.Intent().putExtra("open", key));
+            finish();
+        });
+    }
+
     // ---------- 1. finding the TV ----------
 
     @JavascriptInterface
@@ -127,7 +134,7 @@ public class SetupActivity extends Activity {
                     String ip = prefix + i;
                     pool.execute(() -> {
                         if (open(ip, 5555)) adb.add(ip);
-                        if (open(ip, 8080) && text("http://" + ip + ":8080/ping").startsWith("zahhaf")) noor.add(ip);
+                        if (open(ip, 8080) && Tv.text("http://" + ip + ":8080/ping", 1200).startsWith("zahhaf")) noor.add(ip);
                     });
                 }
                 pool.shutdown();
@@ -180,49 +187,33 @@ public class SetupActivity extends Activity {
 
     // ---------- 2. connecting and recognising it ----------
 
-    private Dadb adb(String ip) throws Exception {
-        File priv = new File(getFilesDir(), "adbkey"), pub = new File(getFilesDir(), "adbkey.pub");
-        if (!priv.exists() || !pub.exists()) AdbKeyPair.generate(priv, pub);
-        return Dadb.Companion.create(ip, 5555, AdbKeyPair.read(priv, pub), 10_000, 90_000);
-    }
-
-    private static String sh(Dadb d, String cmd) throws Exception {
-        return d.shell(cmd).getAllOutput().replace("\r", "");
-    }
-
     @JavascriptInterface
     public void connect(int id, String ip) {
         async(() -> {
-            try (Dadb d = adb(ip)) {
-                String props = sh(d, "for p in ro.product.model ro.product.manufacturer ro.build.version.release ro.product.device "
+            try {
+                Tv tv = new Tv(this, ip);
+                String props = tv.shell("for p in ro.product.model ro.product.manufacturer ro.build.version.release ro.product.device "
                         + "ro.build.display.id ro.serialno; do echo \"$p=$(getprop $p)\"; done");
                 JSONObject info = new JSONObject();
                 for (String l : props.split("\n")) {
                     int i = l.indexOf('=');
                     if (i > 0) info.put(l.substring(0, i).replace("ro.", "").replace('.', '_'), l.substring(i + 1).trim());
                 }
-                Set<String> all = pkgs(sh(d, "pm list packages")), off = pkgs(sh(d, "pm list packages -d"));
-                info.put("home", home(d));
+                Set<String> all = Tv.pkgs(tv.shell("pm list packages")), off = Tv.pkgs(tv.shell("pm list packages -d"));
+                info.put("home", tv.home());
                 info.put("ip", ip);
                 JSONObject plan = plan(info, all, off);
+                String serial = info.optString("product_serialno", ip);
+                JSONObject known = Store.tv(this, serial.isEmpty() ? ip : serial);
                 result(id, new JSONObject().put("ok", true).put("info", info).put("plan", plan)
-                        .put("hasNoor", all.contains("app.noortv.kahf")).put("backup", backup(info.optString("product_serialno", ip)) != null));
+                        .put("hasNoor", all.contains("app.noortv.kahf")).put("name", known == null ? "" : known.optString("name")));
             } catch (Exception e) {
                 result(id, "{\"ok\":false,\"error\":" + JSONObject.quote(e.getClass().getSimpleName()) + "}");
             }
         });
     }
 
-    private static Set<String> pkgs(String out) {
-        Set<String> s = new HashSet<>();
-        for (String l : out.split("\n")) if (l.startsWith("package:")) s.add(l.substring(8).trim());
-        return s;
-    }
 
-    private static String home(Dadb d) throws Exception {
-        String[] l = sh(d, "cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME").trim().split("\n");
-        return l[l.length - 1].trim();
-    }
 
     /** The best tested model for this TV, and what to turn off on it: installed, still on, and not on the keep list. */
     private JSONObject plan(JSONObject info, Set<String> all, Set<String> off) throws Exception {
@@ -399,9 +390,7 @@ public class SetupActivity extends Activity {
             try {
                 JSONObject o = new JSONObject(json);
                 String ip = o.getString("ip");
-                try (Dadb d = adb(ip)) {
-                    run(d, ip, o, r);
-                }
+                run(ip, o, r);
                 r.put("ok", true);
             } catch (Exception e) {
                 try {
@@ -413,23 +402,24 @@ public class SetupActivity extends Activity {
         });
     }
 
-    private void run(Dadb d, String ip, JSONObject o, JSONObject r) throws Exception {
-        String serial = sh(d, "getprop ro.serialno").trim();
+    private void run(String ip, JSONObject o, JSONObject r) throws Exception {
+        Tv tv = new Tv(this, ip);
+        String serial = tv.prop("ro.serialno");
         if (serial.isEmpty()) serial = ip;
 
         // Backup: kept from the first time, so «restore» goes back to how the TV came, not to an earlier setup.
         step("backup", "run", null);
-        JSONObject bk = backup(serial);
+        JSONObject bk = Store.backup(this, serial);
         if (bk == null) {
-            bk = new JSONObject().put("serial", serial).put("model", sh(d, "getprop ro.product.model").trim())
-                    .put("home", home(d)).put("disabledBefore", new JSONArray(pkgs(sh(d, "pm list packages -d"))))
+            bk = new JSONObject().put("serial", serial).put("model", tv.prop("ro.product.model")).put("home", tv.home())
+                    .put("disabledBefore", new JSONArray(Tv.pkgs(tv.shell("pm list packages -d"))))
                     .put("disabledByUs", new JSONArray()).put("installedByUs", new JSONArray());
         }
         bk.put("ip", ip);
-        saveBackup(bk);
+        Store.saveBackup(this, bk);
         step("backup", "ok", null);
 
-        // Clean-up: every package in one go, disabled, never uninstalled.
+        // Clean-up: the whole list in one go, disabled, never uninstalled.
         JSONArray list = o.optJSONArray("pkgs");
         step("clean", "run", null);
         int n = 0;
@@ -440,214 +430,57 @@ public class SetupActivity extends Activity {
                 if (p.matches("[A-Za-z][\\w.]+")) c.append(' ').append(p);
             }
             c.append("; do pm disable-user --user 0 $p 2>/dev/null | grep -q disabled-user && echo \"off=$p\"; done");
-            for (String l : sh(d, c.toString()).split("\n")) {
+            for (String l : tv.shell(c.toString()).split("\n")) {
                 if (l.startsWith("off=")) {
-                    addOnce(bk.getJSONArray("disabledByUs"), l.substring(4).trim());
+                    Tv.addOnce(bk.getJSONArray("disabledByUs"), l.substring(4).trim());
                     n++;
                 }
             }
-            saveBackup(bk);
+            Store.saveBackup(this, bk);
         }
         step("clean", "ok", String.valueOf(n));
 
-        // The Noor apps: cards, adhan, adhkar, the page the phone talks to.
         step("noor", "run", null);
-        for (String f : NOOR) {
-            d.install(assetFile("tv/noor-" + f + ".apk"), "-r");
-            addOnce(bk.getJSONArray("installedByUs"), "app.noortv." + f);
-        }
-        saveBackup(bk);
-        sh(d, "appops set app.noortv.kahf SYSTEM_ALERT_WINDOW allow; appops set app.noortv.kahf GET_USAGE_STATS allow");
-        Thread.sleep(6000);
-        sh(d, "am broadcast -n app.noortv.kahf/app.noortv.Reminder");
+        tv.noorApps(bk);
+        Store.saveBackup(this, bk);
         step("noor", "ok", null);
 
-        // The city from the phone, once the Noor page answers.
-        step("city", "run", null);
         JSONObject city = o.optJSONObject("city");
-        boolean cityOk = false;
-        if (city != null) {
-            String q = "lat=" + city.getString("lat") + "&lon=" + city.getString("lon") + "&method=" + city.optInt("method", 3)
-                    + "&place=" + URLEncoder.encode(city.optString("place"), "UTF-8");
-            for (int i = 0; i < 15 && !cityOk; i++) {
-                cityOk = "ok".equals(post("http://" + ip + ":8080/city?" + q).trim());
-                if (!cityOk) Thread.sleep(1000);
-            }
-        }
+        step("city", "run", null);
+        boolean cityOk = tv.city(city);
         step("city", cityOk ? "ok" : "skip", city == null ? null : city.optString("place"));
 
-        // The adhan: the one kept on this phone, or fetched from a TV that already has it.
         step("adhan", "run", null);
-        File mp3 = adhan(ip);
-        if (mp3 != null) {
-            String dir = "/sdcard/Android/data/app.noortv.kahf/files";
-            sh(d, "mkdir -p " + dir);
-            d.push(mp3, dir + "/adhan.mp3", 0644, System.currentTimeMillis());
+        List<String> others;
+        synchronized (noorTvs) {
+            others = new ArrayList<>(noorTvs);
         }
-        step("adhan", mp3 != null ? "ok" : "skip", null);
+        JSONArray known = Store.tvs(this);
+        for (int i = 0; i < known.length(); i++) others.add(known.getJSONObject(i).optString("ip"));
+        boolean adhan = tv.adhan(others);
+        step("adhan", adhan ? "ok" : "skip", null);
 
-        // The new home screen: it has to start before the stock one is turned off.
         step("home", "run", null);
-        String stock = home(d).split("/")[0];
-        d.install(assetFile("tv/launcher.apk"), "-r");
-        addOnce(bk.getJSONArray("installedByUs"), HOME);
-        saveBackup(bk);
-        String started = sh(d, "am start -W -a android.intent.action.MAIN -c android.intent.category.HOME -n " + HOME_ACT);
-        if (!started.contains("Status: ok") || started.contains("Error")) {
-            step("home", "fail", started.trim());
-        } else {
-            sh(d, "pm grant " + HOME + " android.permission.ACCESS_FINE_LOCATION 2>/dev/null");
-            boolean stockKnown = stock.equals("com.google.android.tvlauncher") || stock.equals("com.google.android.apps.tv.launcherx")
-                    || stock.equals("com.google.android.leanbacklauncher") || stock.equals("com.mitv.tvhome") || stock.equals("com.gathin.tvhome");
-            if (stockKnown && sh(d, "pm disable-user --user 0 " + stock).contains("disabled-user")) addOnce(bk.getJSONArray("disabledByUs"), stock);
-            saveBackup(bk);
-            sh(d, "cmd package set-home-activity --user 0 " + HOME_ACT);
-            if (home(d).startsWith(HOME + "/")) {
-                step("home", "ok", null);
-            } else {
-                if (stockKnown) {
-                    sh(d, "pm enable --user 0 " + stock);
-                    sh(d, "cmd package set-home-activity --user 0 $(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME " + stock + " | tail -n 1)");
-                }
-                step("home", "fail", home(d));
-            }
-        }
+        String home = tv.launcher(bk);
+        Store.saveBackup(this, bk);
+        step("home", "ok".equals(home) ? "ok" : "fail", "ok".equals(home) ? null : home);
 
-        // The prayer-times card on the home screen.
         step("prayer", "run", null);
-        d.install(assetFile("tv/prayer-times.apk"), "-r");
-        addOnce(bk.getJSONArray("installedByUs"), "com.majnioui.tv.prayer");
-        saveBackup(bk);
+        tv.prayerCard(bk);
+        Store.saveBackup(this, bk);
         step("prayer", "ok", null);
 
-        // The theme.
         String theme = o.optString("theme", "awqat");
         step("theme", "run", theme);
-        theme(d, theme);
+        tv.theme(theme);
         step("theme", "ok", theme);
+
+        // The TV joins the list on the start screen.
+        String name = o.optString("name").trim();
+        Store.putTv(this, new JSONObject().put("key", serial).put("ip", ip).put("name", name.isEmpty() ? bk.optString("model") : name)
+                .put("model", bk.optString("model")).put("id", tv.id()).put("theme", theme).put("city", city == null ? JSONObject.NULL : city)
+                .put("version", Tv.bundled(this)).put("setupAt", System.currentTimeMillis()));
         prefs.edit().putString("tv", ip).apply();
-        r.put("disabled", n).put("theme", theme).put("adhan", mp3 != null).put("city", cityOk);
-    }
-
-    private static void addOnce(JSONArray a, String v) throws Exception {
-        for (int i = 0; i < a.length(); i++) if (a.getString(i).equals(v)) return;
-        a.put(v);
-    }
-
-    private void theme(Dadb d, String name) throws Exception {
-        String pkg = HOME, dir = "/sdcard/Android/data/" + pkg + "/files", uri = "content://" + pkg + ".theme", tmp = "/data/local/tmp/noor-theme";
-        List<String> files = new ArrayList<>();
-        files.add("config.json");
-        String[] top = getAssets().list("themes/" + name);
-        for (String f : top == null ? new String[0] : top) if (f.equals("wallpaper.jpg")) files.add(f);
-        String[] walls = getAssets().list("themes/" + name + "/wallpapers");
-        sh(d, "mkdir -p " + dir + "; rm -f " + dir + "/wallpaper.jpg " + dir + "/wallpapers/* 2>/dev/null; content delete --uri " + uri
-                + "/wallpaper.jpg 2>/dev/null; content delete --uri " + uri + "/wallpapers 2>/dev/null");
-        for (String f : walls == null ? new String[0] : walls) files.add("wallpapers/" + f);
-        File rev = new File(getCacheDir(), "theme_revision");
-        try (OutputStream o = new FileOutputStream(rev)) {
-            o.write(Long.toHexString(System.nanoTime()).getBytes());
-        }
-        for (String rel : files) put(d, assetFile("themes/" + name + "/" + rel), rel, dir, uri, tmp);
-        put(d, rev, "theme_revision", dir, uri, tmp);
-        sh(d, "am force-stop " + pkg + "; am start -a android.intent.action.MAIN -c android.intent.category.HOME -n " + HOME_ACT);
-    }
-
-    private static void put(Dadb d, File f, String rel, String dir, String uri, String tmp) throws Exception {
-        d.push(f, tmp, 0644, System.currentTimeMillis());
-        sh(d, "mkdir -p $(dirname " + dir + "/" + rel + ") 2>/dev/null; rm -f " + dir + "/" + rel + " 2>/dev/null; "
-                + "o=$(content write --uri " + uri + "/" + rel + " < " + tmp + " 2>&1) || o=fail; "
-                + "case \"$o\" in *fail*|*Unsupported*|*Error*) cp " + tmp + " " + dir + "/" + rel + " ;; esac; rm -f " + tmp);
-    }
-
-    /** The adhan recording: kept on this phone after the first time, else fetched from a Noor TV that has one. */
-    private File adhan(String target) {
-        File keep = new File(getFilesDir(), "adhan.mp3");
-        if (keep.length() > 10_000) return keep;
-        List<String> tvs;
-        synchronized (noorTvs) {
-            tvs = new ArrayList<>(noorTvs);
-        }
-        String saved = prefs.getString("tv", "");
-        if (!saved.isEmpty() && !tvs.contains(saved)) tvs.add(saved);
-        for (String ip : tvs) {
-            try {
-                HttpURLConnection c = (HttpURLConnection) new URL("http://" + ip + ":8080/adhan.mp3").openConnection();
-                c.setConnectTimeout(2000);
-                c.setReadTimeout(15000);
-                if (c.getResponseCode() != 200) continue;
-                File tmp = new File(getFilesDir(), "adhan.part");
-                try (InputStream in = c.getInputStream(); OutputStream o = new FileOutputStream(tmp)) {
-                    byte[] buf = new byte[65536];
-                    int n;
-                    while ((n = in.read(buf)) > 0) o.write(buf, 0, n);
-                }
-                if (tmp.length() > 10_000 && tmp.renameTo(keep)) return keep;
-            } catch (Exception ignored) {
-            }
-        }
-        return null;
-    }
-
-    // ---------- backups, one per TV (by serial number) ----------
-
-    private File backupFile(String serial) {
-        return new File(getFilesDir(), "tv-" + serial.replaceAll("[^A-Za-z0-9._-]", "_") + ".json");
-    }
-
-    JSONObject backup(String serial) {
-        try {
-            File f = backupFile(serial);
-            if (!f.exists()) return null;
-            byte[] b = java.nio.file.Files.readAllBytes(f.toPath());
-            return new JSONObject(new String(b, "UTF-8"));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private void saveBackup(JSONObject bk) throws Exception {
-        try (OutputStream o = new FileOutputStream(backupFile(bk.getString("serial")))) {
-            o.write(bk.toString(2).getBytes("UTF-8"));
-        }
-    }
-
-    // ---------- small HTTP helpers ----------
-
-    private static String text(String url) {
-        try {
-            HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
-            c.setConnectTimeout(800);
-            c.setReadTimeout(1200);
-            try (InputStream in = c.getInputStream()) {
-                byte[] b = new byte[64];
-                int n = in.read(b);
-                return n > 0 ? new String(b, 0, n) : "";
-            } finally {
-                c.disconnect();
-            }
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    private static String post(String url) {
-        try {
-            HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
-            c.setRequestMethod("POST");
-            c.setDoOutput(true);
-            c.setConnectTimeout(1500);
-            c.setReadTimeout(4000);
-            c.getOutputStream().close();
-            try (InputStream in = c.getInputStream()) {
-                byte[] b = new byte[64];
-                int n = in.read(b);
-                return n > 0 ? new String(b, 0, n) : "";
-            } finally {
-                c.disconnect();
-            }
-        } catch (Exception e) {
-            return "";
-        }
+        r.put("disabled", n).put("theme", theme).put("adhan", adhan).put("city", cityOk).put("key", serial);
     }
 }

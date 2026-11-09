@@ -18,7 +18,8 @@ body{background:radial-gradient(120% 60% at 100% 0%,#2a1f6b 0%,transparent 60%),
 .c{max-width:640px;margin:0 auto;padding:14px 14px calc(30px + env(safe-area-inset-bottom))}
 .i3{width:26px;height:26px;flex:none;object-fit:contain;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
 .head{display:flex;align-items:center;gap:10px;margin:6px 0 14px}
-.app .head{display:none}
+.back{display:none;width:42px;height:42px;border-radius:13px;border:1px solid var(--line);background:var(--card);color:#fff;font-size:20px;flex:none}
+.app .back{display:grid;place-items:center}.app .head>.i3{display:none}.app .head h1{font-size:20px}
 .head .i3{width:40px;height:40px}
 .head h1{flex:1;font-size:22px;margin:0;font-weight:800}
 .head h1 b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -132,7 +133,7 @@ textarea:focus{border-color:var(--a1)}
 </head>
 <body>
 <div class="c">
-<div class="head"><img class="i3" data-k="tv" alt=""><h1><b data-t="name1">زحاف</b> TV</h1><button class="lang" onclick="toggleLang()" id="langb"><img class="i3" data-k="globe" alt=""><span>ES</span></button></div>
+<div class="head"><button class="back" id="backb" onclick="Zahhaf.home()">→</button><img class="i3" data-k="tv" alt=""><h1 id="h1"><b data-t="name1">زحاف</b> TV</h1><button class="lang" onclick="toggleLang()" id="langb"><img class="i3" data-k="globe" alt=""><span>ES</span></button></div>
 
 <div class="seg" id="seg">
   <div class="pill"></div>
@@ -290,11 +291,13 @@ var lang=q0.get('lang')||(function(){try{return localStorage.getItem('zhf-lang')
 if(lang!=='es')lang='ar';
 if(q0.get('app'))document.body.classList.add('app');
 function T(k){return (L[lang]||L.ar)[k]}
-function toggleLang(){setLang(lang==='ar'?'es':'ar')}
+function toggleLang(){setLang(lang==='ar'?'es':'ar');if(window.Zahhaf&&Zahhaf.setLang)Zahhaf.setLang(lang)}
 function setLang(l){lang=l;try{localStorage.setItem('zhf-lang',l)}catch(e){}
   document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';$('langb').lastChild.textContent=l==='ar'?'ES':'ع';
   document.querySelectorAll('[data-t]').forEach(function(e){e.textContent=T(e.dataset.t)});$('t').placeholder=T('ph');
-  buildFonts();buildPresets();buildKeys();liveState(liveOk);drawW();setTimeout(pills,30)}
+  buildFonts();buildPresets();buildKeys();liveState(liveOk);drawW();appHead();setTimeout(pills,30)}
+/* inside the phone app: a back arrow to the TV list and the TV's name as the title */
+function appHead(){if(!q0.get('app'))return;$('backb').textContent=lang==='ar'?'→':'←';var n=q0.get('name');if(n)$('h1').textContent=n}
 var tt;function say(k){var e=$('toast');e.textContent=T(k)||k;e.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('on')},2400)}
 function buzz(){try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}}
 document.addEventListener('click',function(e){if(e.target.closest('button,.dot'))buzz()},true);

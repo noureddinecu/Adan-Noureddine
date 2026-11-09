@@ -1,53 +1,52 @@
 package app.noortv.phone;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.LinkAddress;
 import android.net.LinkProperties;
 import android.net.Network;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.InputType;
-import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.Inet4Address;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * «زحاف TV» on the phone: the page served by the TV (a written or drawn message, prayer times, adhkar) in a
- * WebView, finding the TV on the Wi-Fi by itself, in Arabic or Spanish, plus a PIN-protected button that gives the
- * TV back its own home screen and apps over network ADB.
+ * «زحاف TV»: one screen that starts on the list of TVs set up from this phone (assets/home.html), opens the setup
+ * for a new one (SetupActivity), keeps each TV up to date by itself, and opens a TV's own page (write, draw,
+ * settings) served by the Noor app on it. Everything the pages ask for goes through the «Zahhaf» bridge below.
  */
 public class MainActivity extends Activity {
-    static final String PIN = "0000";
-    static final int BG = 0xFF0D0F1E, CARD = 0x1AFFFFFF;
+    static final int BG = 0xFF0D0F1E;
+    static final int SETUP = 1, EXPORT = 2, IMPORT = 3;
+    static final String RELEASE = "https://github.com/noureddinecu/Adan-Noureddine/releases/download/noor-tv-build/";
 
     /** Everything this setup (and the CleanYourTV app before it) may have turned off; restore turns them back on. */
     static final String[] OFF = {
@@ -60,483 +59,459 @@ public class MainActivity extends Activity {
             "com.netflix.ninja", "com.amazon.amazonvideo.livingroom", "com.google.android.youtube.tvmusic",
             "com.google.android.leanbacklauncher", "com.google.android.leanbacklauncher.recommendations",
             "com.google.android.tvlauncher"};
-    /** Apps this setup installed (never a system app); removed on request. The Kahf app last: it serves the page. */
-    static final String[] OURS = {"app.noortv.home", "com.majnioui.tv.prayer", "app.noortv.baqara",
+    /** Apps this setup installs (never a system app). The Kahf app last: it serves the TV's page. */
+    static final String[] OURS = {Tv.HOME, "com.majnioui.tv.prayer", "app.noortv.baqara",
             "app.noortv.sabah", "app.noortv.masa", "app.noortv.ruqya", "app.noortv.kahf"};
 
     private final Handler main = new Handler(Looper.getMainLooper());
     private SharedPreferences prefs;
     private WebView web;
-
-    private boolean es() {
-        return "es".equals(prefs.getString("lang", "ar"));
-    }
-
-    /** The Arabic (Darija) or Spanish wording, by the language chosen with 🌐. */
-    private String tr(String ar, String es) {
-        return es() ? es : ar;
-    }
+    private boolean onHome = true, firstShow = true;
+    private int pendingId;
 
     @Override
     protected void onCreate(Bundle b) {
+        setTheme(R.style.App); // the launch theme only covers the cold start
         super.onCreate(b);
-        prefs = getSharedPreferences("noor", MODE_PRIVATE);
+        prefs = Store.prefs(this);
         getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(BG);
-
-        LinearLayout root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setBackgroundColor(BG);
-        root.setLayoutDirection(es() ? View.LAYOUT_DIRECTION_LTR : View.LAYOUT_DIRECTION_RTL);
-
-        LinearLayout bar = new LinearLayout(this);
-        bar.setGravity(Gravity.CENTER_VERTICAL);
-        bar.setPadding(dp(14), dp(10), dp(10), dp(10));
-        TextView title = new TextView(this);
-        title.setText(tr("زحاف TV", "Zahhaf TV"));
-        android.graphics.drawable.Drawable tvIcon = getDrawable(R.drawable.i3_tv);
-        tvIcon.setBounds(0, 0, dp(34), dp(34));
-        title.setCompoundDrawablesRelative(tvIcon, null, null, null);
-        title.setCompoundDrawablePadding(dp(10));
-        title.setTextColor(Color.WHITE);
-        title.setTextSize(19);
-        title.setTypeface(Typeface.DEFAULT_BOLD);
-        bar.addView(title, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        bar.addView(small(R.drawable.i3_tools, false, v -> askPin(() -> startActivity(new Intent(this, SetupActivity.class)))));
-        bar.addView(small(R.drawable.i3_search, false, v -> connect(true)));
-        bar.addView(small(R.drawable.i3_globe, false, v -> {
-            prefs.edit().putString("lang", es() ? "ar" : "es").apply();
-            recreate();
-        }));
-        bar.addView(small(R.drawable.i3_gear, false, v -> askPin(this::settings)));
-        bar.addView(small(R.drawable.i3_restore, true, v -> askPin(this::confirmRestore)));
-        root.addView(bar);
-
         web = new WebView(this);
         web.setBackgroundColor(BG);
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
+        s.setAllowFileAccess(true);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        web.addJavascriptInterface(new Object() {
-            @android.webkit.JavascriptInterface
-            public void search() {
-                main.post(() -> connect(true));
-            }
-
-            @android.webkit.JavascriptInterface
-            public void setup() {
-                main.post(() -> startActivity(new Intent(MainActivity.this, SetupActivity.class)));
-            }
-        }, "Zahhaf");
+        web.addJavascriptInterface(new Bridge(), "Zahhaf");
         web.setWebViewClient(new WebViewClient() {
             @Override
             public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
-                if (r.isForMainFrame()) offline(false);
+                if (r.isForMainFrame() && !onHome) home(); // the TV went away: back to the list, which says so
             }
         });
-        web.setWebChromeClient(new WebChromeClient());
-        root.addView(web, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
-        setContentView(root);
-        connect(false);
+        setContentView(web);
+        home();
     }
 
-    // ---------- finding the TV ----------
-
-    private String host() {
-        return prefs.getString("tv", "192.168.1.35");
+    private String lang() {
+        return prefs.getString("lang", "ar");
     }
 
-    private void load() {
-        web.loadUrl("http://" + host() + ":8080/?app=1&lang=" + (es() ? "es" : "ar"));
+    private void home() {
+        onHome = true;
+        web.loadUrl("file:///android_asset/home.html");
     }
 
-    /** Opens the saved TV if it answers; otherwise searches the Wi-Fi for it (or straight away from the search button). */
-    private void connect(boolean searchNow) {
-        String saved = host();
-        if (!searchNow) {
-            new Thread(() -> {
-                boolean ok = ping(saved);
-                main.post(() -> {
-                    if (ok) load();
-                    else connect(true);
-                });
-            }, "ping-tv").start();
-            return;
-        }
-        searching();
-        new Thread(() -> {
-            Scan r = discover(n -> main.post(() -> web.evaluateJavascript("p(" + n + ")", null)));
-            main.post(() -> found(r));
-        }, "find-tv").start();
+    private void js(String code) {
+        main.post(() -> web.evaluateJavascript(code, null));
     }
 
-    private void found(Scan r) {
-        if (r.noor.size() == 1) {
-            use(r.noor.get(0));
-            return;
-        }
-        if (r.noor.size() > 1) {
-            String[] ips = r.noor.toArray(new String[0]);
-            new AlertDialog.Builder(this).setTitle(tr("تم العثور على " + ips.length + " أجهزة تلفاز، اختر واحداً", "Encontré " + ips.length + " teles, elige una"))
-                    .setItems(ips, (d, w) -> use(ips[w])).setCancelable(false).show();
-            return;
-        }
-        offline(true);
-        if (!r.adb.isEmpty()) {
-            String[] ips = r.adb.toArray(new String[0]);
-            new AlertDialog.Builder(this)
-                    .setTitle(tr("تم العثور على تلفاز، لكن تطبيقات نور غير مثبّتة عليه", "Encontré una tele, pero sin las apps de Noor"))
-                    .setMessage(tr("الرسائل والإعدادات تحتاج تطبيقات نور على التلفاز. يمكنك حفظ هذا العنوان ليعمل زر الاستعادة.",
-                            "Los mensajes y los ajustes necesitan las apps de Noor en la tele. Puedes guardar esta dirección para el botón de restaurar."))
-                    .setItems(ips, (d, w) -> prefs.edit().putString("tv", ips[w]).apply())
-                    .setNegativeButton(tr("إلغاء", "Cancelar"), null).show();
-        }
+    private void result(int id, Object json) {
+        js("window.onResult&&onResult(" + id + "," + JSONObject.quote(String.valueOf(json)) + ")");
     }
 
-    private void use(String ip) {
-        prefs.edit().putString("tv", ip).apply();
-        load();
+    private void async(Runnable r) {
+        new Thread(r, "zahhaf").start();
     }
 
-    private static boolean ping(String ip) {
-        try {
-            HttpURLConnection c = (HttpURLConnection) new URL("http://" + ip + ":8080/ping").openConnection();
-            c.setConnectTimeout(700);
-            c.setReadTimeout(900);
-            try (InputStream in = c.getInputStream()) {
-                byte[] b = new byte[16];
-                int n = in.read(b);
-                return n > 0 && new String(b, 0, n).startsWith("zahhaf");
-            } finally {
-                c.disconnect();
-            }
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private static boolean adbOpen(String ip) {
-        try (java.net.Socket s = new java.net.Socket()) {
-            s.connect(new java.net.InetSocketAddress(ip, 5555), 500);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    static final class Scan {
-        final java.util.List<String> noor = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
-        final java.util.List<String> adb = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
-    }
-
-    interface Progress {
-        void at(int done);
-    }
-
-    /**
-     * Asks every address of this phone's Wi-Fi network (a /24) for the TV's page, 64 at a time; an address with
-     * no page but network ADB open is noted as a TV without the Noor apps.
-     */
-    private Scan discover(Progress progress) {
-        Scan r = new Scan();
-        String prefix = null;
-        try {
-            ConnectivityManager cm = getSystemService(ConnectivityManager.class);
-            Network n = cm.getActiveNetwork();
-            LinkProperties lp = n == null ? null : cm.getLinkProperties(n);
-            if (lp != null) {
-                for (LinkAddress a : lp.getLinkAddresses()) {
-                    if (a.getAddress() instanceof Inet4Address && !a.getAddress().isLoopbackAddress()) {
-                        String ip = a.getAddress().getHostAddress();
-                        prefix = ip.substring(0, ip.lastIndexOf('.') + 1);
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        if (prefix == null) return r;
-        java.util.concurrent.atomic.AtomicInteger done = new java.util.concurrent.atomic.AtomicInteger();
-        ExecutorService pool = Executors.newFixedThreadPool(64);
-        for (int i = 1; i < 255; i++) {
-            String ip = prefix + i;
-            pool.execute(() -> {
-                if (ping(ip)) r.noor.add(ip);
-                else if (adbOpen(ip)) r.adb.add(ip);
-                int d = done.incrementAndGet();
-                if (d % 6 == 0 || d == 254) progress.at(d);
-            });
-        }
-        pool.shutdown();
-        try {
-            pool.awaitTermination(20, TimeUnit.SECONDS);
-        } catch (InterruptedException ignored) {
-        }
-        pool.shutdownNow();
-        return r;
-    }
-
-    private void page(String body) {
-        String html = "<html dir=" + (es() ? "ltr" : "rtl") + "><head><meta name=viewport content='width=device-width,initial-scale=1'><style>"
-                + "body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:"
-                + "radial-gradient(120% 60% at 100% 0%,#2a1f6b 0%,transparent 60%),#0d0f1e;color:#fff;font-family:sans-serif;text-align:center;padding:24px;box-sizing:border-box}"
-                + ".r{position:relative;width:180px;height:180px;margin-bottom:28px}.r i{position:absolute;inset:0;border-radius:50%;border:2px solid #7c5cff;opacity:0;animation:w 2.4s infinite}"
-                + ".r i:nth-child(2){animation-delay:.8s}.r i:nth-child(3){animation-delay:1.6s}@keyframes w{0%{transform:scale(.2);opacity:.9}100%{transform:scale(1);opacity:0}}"
-                + ".r svg{position:absolute;inset:60px;width:60px;height:60px}.bar{width:220px;height:6px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:18px}"
-                + ".bar b{display:block;height:100%;width:0;background:linear-gradient(90deg,#7c5cff,#00d4ff);transition:width .3s}"
-                + "p{opacity:.72;line-height:1.8;font-size:16px;max-width:340px}button{margin-top:22px;padding:15px 28px;font-size:17px;font-weight:700;border:0;border-radius:16px;"
-                + "color:#fff;background:linear-gradient(135deg,#7c5cff,#00d4ff);display:inline-flex;align-items:center;gap:10px}</style></head><body>" + body
-                + "<script>function p(n){var b=document.querySelector('.bar b');if(b)b.style.width=(n/254*100)+'%'}</script></body></html>";
-        web.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-    }
-
-    private static final String SEARCH_ICON = "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' "
-            + "stroke-linejoin='round' width='22' height='22'><path d='M11 3a8 8 0 1 0 0 16a8 8 0 1 0 0-16zM21 21l-4.3-4.3'/></svg>";
-
-    private void searching() {
-        page("<div class=r><i></i><i></i><i></i><svg viewBox='0 0 24 24' fill='none' stroke='#00d4ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>"
-                + "<path d='M4 7h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM17 2l-5 5-5-5'/></svg></div>"
-                + "<h2>" + tr("جارٍ البحث عن التلفاز…", "Buscando la tele…") + "</h2>"
-                + "<p>" + tr("يبحث الهاتف عن التلفاز في شبكة الواي فاي تلقائياً.", "El móvil busca la tele en tu wifi él solo.") + "</p><div class=bar><b></b></div>");
-    }
-
-    private void offline(boolean searched) {
-        page("<svg viewBox='0 0 24 24' width='72' height='72' fill='none' stroke='#ff6b8a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'>"
-                + "<path d='M4 7h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM17 2l-5 5-5-5M9 11l6 6M15 11l-6 6'/></svg>"
-                + "<h2>" + tr("لم يتم العثور على التلفاز", "No encuentro la tele") + "</h2><p>"
-                + tr("تأكّد أن الهاتف والتلفاز على شبكة الواي فاي نفسها وأن التلفاز يعمل.",
-                        "Comprueba que el móvil y la tele están en el mismo wifi y que la tele está encendida.")
-                + (searched ? "" : "<br>" + tr("العنوان: ", "Dirección: ") + host()) + "</p>"
-                + "<button onclick='Zahhaf.search()'>" + SEARCH_ICON + tr("البحث مرة أخرى", "Buscar otra vez") + "</button>"
-                + "<br><button style='background:rgba(255,255,255,.1)' onclick='Zahhaf.setup()'>" + tr("تجهيز تلفاز جديد", "Preparar una tele nueva") + "</button>");
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (onHome && !firstShow) js("window.resumed&&resumed()");
     }
 
     @Override
     public void onBackPressed() {
-        if (web.canGoBack()) web.goBack();
+        if (!onHome) home();
         else super.onBackPressed();
     }
 
-    // ---------- settings ----------
-
-    private void settings() {
-        LinearLayout box = column();
-        EditText ip = new EditText(this);
-        ip.setText(host());
-        ip.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-        box.addView(label(tr("عنوان التلفاز (IP):", "Dirección de la tele (IP):")));
-        box.addView(ip);
-        box.addView(label(tr("«اختبار الاتصال» يطلب من التلفاز قبول هذا الهاتف: عند ظهور السؤال على التلفاز اختر «السماح دائماً» ثم موافق. "
-                        + "هادشي خاصو باش يخدم زر ♻️.",
-                "«Probar conexión» pide a la tele que acepte este móvil: cuando salga la pregunta en la tele, elige «Permitir siempre» y acepta. "
-                        + "Hace falta para el botón ♻️.")));
-        Button find = new Button(this);
-        find.setText(tr("البحث عن التلفاز", "Buscar la tele"));
-        android.graphics.drawable.Drawable findIcon = getDrawable(R.drawable.i3_search);
-        findIcon.setBounds(0, 0, dp(24), dp(24));
-        find.setCompoundDrawablesRelative(findIcon, null, null, null);
-        find.setCompoundDrawablePadding(dp(8));
-        find.setAllCaps(false);
-        box.addView(find);
-        AlertDialog d = new AlertDialog.Builder(this)
-                .setTitle(tr("الإعدادات", "Ajustes"))
-                .setView(box)
-                .setPositiveButton(tr("حفظ", "Guardar"), (x, w) -> {
-                    prefs.edit().putString("tv", ip.getText().toString().trim()).apply();
-                    connect(false);
-                })
-                .setNeutralButton(tr("اختبار الاتصال", "Probar conexión"), (x, w) -> {
-                    prefs.edit().putString("tv", ip.getText().toString().trim()).apply();
-                    run(tr("جارٍ الاتصال بالتلفاز… إذا ظهر سؤال على التلفاز فوافق عليه", "Conectando… si sale una pregunta en la tele, acéptala"),
-                            "echo ok", out -> out.trim().endsWith("ok")
-                                    ? tr("✅ الهاتف متّصل بالتلفاز", "✅ El móvil está conectado a la tele") : "⚠️ " + out);
-                })
-                .setNegativeButton(tr("إلغاء", "Cancelar"), null)
-                .create();
-        find.setOnClickListener(v -> {
-            d.dismiss();
-            connect(true);
-        });
-        d.show();
+    @Override
+    protected void onActivityResult(int req, int res, Intent data) {
+        if (req == SETUP) {
+            String key = data == null ? null : data.getStringExtra("open");
+            if (key != null) openControl(key);
+            else home();
+            return;
+        }
+        if (req == EXPORT || req == IMPORT) {
+            Uri u = res == RESULT_OK && data != null ? data.getData() : null;
+            int id = pendingId;
+            if (u == null) {
+                result(id, "{\"ok\":false}");
+                return;
+            }
+            async(() -> {
+                try {
+                    if (req == EXPORT) {
+                        try (OutputStream o = getContentResolver().openOutputStream(u)) {
+                            o.write(Store.exportAll(this).toString().getBytes("UTF-8"));
+                        }
+                        result(id, "{\"ok\":true}");
+                    } else {
+                        java.io.ByteArrayOutputStream b = new java.io.ByteArrayOutputStream();
+                        try (InputStream in = getContentResolver().openInputStream(u)) {
+                            byte[] buf = new byte[65536];
+                            int n;
+                            while ((n = in.read(buf)) > 0) b.write(buf, 0, n);
+                        }
+                        Store.importAll(this, new JSONObject(b.toString("UTF-8")));
+                        result(id, "{\"ok\":true}");
+                    }
+                } catch (Exception e) {
+                    result(id, "{\"ok\":false,\"error\":" + JSONObject.quote(String.valueOf(e.getMessage())) + "}");
+                }
+            });
+        }
     }
 
-    // ---------- restore ----------
-
-    /** The app's settings and the restore button open only with the PIN (0000). */
-    private void askPin(Runnable then) {
-        EditText pin = new EditText(this);
-        pin.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-        pin.setGravity(Gravity.CENTER);
-        pin.setTextSize(28);
-        LinearLayout box = column();
-        box.addView(pin);
-        new AlertDialog.Builder(this)
-                .setTitle(tr("أدخل الرمز", "Introduce el código"))
-                .setView(box)
-                .setPositiveButton(tr("دخول", "Entrar"), (x, w) -> {
-                    if (PIN.equals(pin.getText().toString())) then.run();
-                    else toastDialog(tr("❌ رمز غير صحيح", "❌ Código incorrecto"));
-                })
-                .setNegativeButton(tr("إلغاء", "Cancelar"), null)
-                .show();
-        pin.requestFocus();
+    private void openControl(String key) {
+        JSONObject t = Store.tv(this, key);
+        if (t == null) {
+            home();
+            return;
+        }
+        onHome = false;
+        try {
+            web.loadUrl("http://" + t.getString("ip") + ":8080/?app=1&lang=" + lang() + "&name="
+                    + java.net.URLEncoder.encode(t.optString("name", t.optString("model")), "UTF-8"));
+        } catch (Exception e) {
+            home();
+        }
     }
 
-    private void confirmRestore() {
-        LinearLayout box = column();
-        box.addView(label(tr("سيؤدي هذا إلى:\n• إعادة تفعيل كل التطبيقات المعطّلة (Netflix وPrime وإعلانات شاومي…)\n• إعادة شاشة Google الأصلية شاشةً رئيسية",
-                "Esto va a:\n• Volver a activar todas las apps desactivadas (Netflix, Prime, la publicidad de Xiaomi…)\n• Devolver la pantalla de inicio original de Google")));
-        CheckBox ours = new CheckBox(this);
-        ours.setText(tr("وإزالة تطبيقات نور أيضاً (الشاشة الجديدة، الأذان، البطاقات، مواقيت الصلاة)",
-                "Y quitar también las apps de Noor (pantalla nueva, adhan, tarjetas, horarios de oración)"));
-        ours.setChecked(true);
-        box.addView(ours);
-        new AlertDialog.Builder(this)
-                .setTitle(tr("استعادة التلفاز كما كان؟", "¿Dejamos la tele como estaba?"))
-                .setView(box)
-                .setPositiveButton(tr("نعم، استعادة", "Sí, restaurar"), (d, w) -> restore(ours.isChecked()))
-                .setNegativeButton(tr("لا", "No"), null)
-                .show();
+    // ---------- finding TVs on the Wi-Fi ----------
+
+    private String prefix() {
+        try {
+            ConnectivityManager cm = getSystemService(ConnectivityManager.class);
+            Network n = cm.getActiveNetwork();
+            LinkProperties lp = n == null ? null : cm.getLinkProperties(n);
+            if (lp == null) return null;
+            for (LinkAddress a : lp.getLinkAddresses()) {
+                if (a.getAddress() instanceof Inet4Address && !a.getAddress().isLoopbackAddress()) {
+                    String ip = a.getAddress().getHostAddress();
+                    return ip.substring(0, ip.lastIndexOf('.') + 1);
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 
-    /**
-     * The restore script: the TV's own backup from the setup (by serial number) when there is one, otherwise every app
-     * this setup or CleanYourTV may have turned off. Our apps go only once the TV's own home owns Home again.
-     */
-    private String restoreScript(String h, boolean removeOurs) throws Exception {
-        String serial = Adb.shell(this, h, "getprop ro.serialno").trim();
-        org.json.JSONObject bk = null;
-        java.io.File f = new java.io.File(getFilesDir(), "tv-" + serial.replaceAll("[^A-Za-z0-9._-]", "_") + ".json");
-        if (!serial.isEmpty() && f.exists()) bk = new org.json.JSONObject(new String(java.nio.file.Files.readAllBytes(f.toPath()), "UTF-8"));
-        java.util.Set<String> on = new java.util.LinkedHashSet<>(java.util.Arrays.asList(OFF));
-        java.util.Set<String> ours = new java.util.LinkedHashSet<>(java.util.Arrays.asList(OURS));
+    /** Every Noor TV answering on the Wi-Fi (its page on 8080), with its id. Cached for a few seconds. */
+    private List<String[]> lastScan;
+    private long lastScanAt;
+
+    private synchronized List<String[]> scanNoor() {
+        if (lastScan != null && System.currentTimeMillis() - lastScanAt < 8000) return lastScan;
+        List<String[]> out = Collections.synchronizedList(new ArrayList<>());
+        String prefix = prefix();
+        if (prefix != null) {
+            ExecutorService pool = Executors.newFixedThreadPool(64);
+            for (int i = 1; i < 255; i++) {
+                String ip = prefix + i;
+                pool.execute(() -> {
+                    if (Tv.text("http://" + ip + ":8080/ping", 900).startsWith("zahhaf")) out.add(new String[]{ip, new Tv(this, ip).id()});
+                });
+            }
+            pool.shutdown();
+            try {
+                pool.awaitTermination(15, TimeUnit.SECONDS);
+            } catch (InterruptedException ignored) {
+            }
+        }
+        lastScan = out;
+        lastScanAt = System.currentTimeMillis();
+        return out;
+    }
+
+    // ---------- the TV's own backup, for restore ----------
+
+    private String restoreScript(Tv tv, boolean removeOurs) throws Exception {
+        String serial = tv.prop("ro.serialno");
+        JSONObject bk = serial.isEmpty() ? null : Store.backup(this, serial);
+        Set<String> on = new LinkedHashSet<>(Arrays.asList(OFF)), ours = new LinkedHashSet<>(Arrays.asList(OURS));
         String homeAct = "com.google.android.tvlauncher/.MainActivity";
         if (bk != null) {
-            org.json.JSONArray a = bk.optJSONArray("disabledByUs");
+            JSONArray a = bk.optJSONArray("disabledByUs");
             for (int i = 0; a != null && i < a.length(); i++) on.add(a.getString(i));
-            org.json.JSONArray b = bk.optJSONArray("installedByUs");
+            JSONArray b = bk.optJSONArray("installedByUs");
             for (int i = 0; b != null && i < b.length(); i++) ours.add(b.getString(i));
             String hm = bk.optString("home");
-            if (hm.contains("/") && !hm.startsWith(SetupActivity.HOME)) homeAct = hm;
-            // Apps that were already off when the TV came stay off.
-            org.json.JSONArray before = bk.optJSONArray("disabledBefore");
+            if (hm.contains("/") && !hm.startsWith(Tv.HOME)) homeAct = hm;
+            JSONArray before = bk.optJSONArray("disabledBefore");
             for (int i = 0; before != null && i < before.length(); i++) on.remove(before.getString(i));
         }
         StringBuilder sh = new StringBuilder("D=$(pm list packages -d); n=0; for p in");
         for (String p : on) if (p.matches("[A-Za-z][\\w.]+")) sh.append(' ').append(p);
-        sh.append("; do case \"$D\" in *\"package:$p\"*) pm enable --user 0 $p >/dev/null 2>&1 && n=$((n+1));; esac; done; ")
-                .append("echo \"on=$n\"; ")
+        sh.append("; do case \"$D\" in *\"package:$p\"*) pm enable --user 0 $p >/dev/null 2>&1 && n=$((n+1));; esac; done; echo \"on=$n\"; ")
                 .append("cmd package set-home-activity --user 0 ").append(homeAct).append(" >/dev/null 2>&1; ")
-                .append("H=$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -n 1); ")
-                .append("echo \"home=$H\"; ");
+                .append("H=$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -n 1); echo \"home=$H\"; ");
         if (removeOurs) {
-            sh.append("case \"$H\" in ").append(SetupActivity.HOME).append("/*|\"\") ;; *) for p in");
+            sh.append("case \"$H\" in ").append(Tv.HOME).append("/*|\"\") ;; *) for p in");
             for (String p : ours) if (p.matches("[A-Za-z][\\w.]+")) sh.append(' ').append(p);
             sh.append("; do pm list packages -s $p | grep -qx \"package:$p\" && continue; ")
                     .append("pm uninstall $p 2>/dev/null | grep -q Success && echo \"gone=$p\"; done;; esac; ");
         }
         sh.append("am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1; echo done");
-        if (bk != null && removeOurs) f.delete();
         return sh.toString();
     }
 
-    private void restore(boolean removeOurs) {
-        run(tr("جارٍ استعادة التلفاز… (إذا ظهر سؤال على التلفاز فوافق عليه)", "Restaurando la tele… (si sale una pregunta en la tele, acéptala)"),
-                h -> restoreScript(h, removeOurs), out -> {
-                    if (!out.contains("done")) return tr("⚠️ لم تكتمل العملية:\n", "⚠️ No terminó:\n") + out;
-                    int on = 0, gone = 0;
-                    boolean home = false;
-                    for (String line : out.split("\n")) {
-                        if (line.startsWith("on=")) on = Integer.parseInt(line.substring(3).trim());
-                        if (line.startsWith("gone=")) gone++;
-                        if (line.startsWith("home=") && line.length() > 6 && !line.startsWith("home=" + SetupActivity.HOME)) home = true;
-                    }
-                    return (home ? tr("✅ عادت الشاشة الرئيسية الأصلية\n", "✅ Vuelve la pantalla de inicio original\n")
-                            : tr("⚠️ لم تتغيّر الشاشة الرئيسية\n", "⚠️ La pantalla de inicio no cambió\n"))
-                            + tr("✅ تم تفعيل " + on + " تطبيقات\n", "✅ " + on + " apps activadas\n")
-                            + (removeOurs ? tr("🗑️ تمت إزالة " + gone + " من تطبيقات نور\n", "🗑️ " + gone + " apps de Noor quitadas\n") : "")
-                            + tr("\nعاد التلفاز كما كان 🌿", "\nLa tele está como antes 🌿");
-                });
-    }
+    // ---------- the bridge the pages talk to ----------
 
-    // ---------- helpers ----------
+    final class Bridge {
+        @JavascriptInterface
+        public String lang() {
+            return MainActivity.this.lang();
+        }
 
-    interface Result {
-        String of(String output);
-    }
+        @JavascriptInterface
+        public void setLang(String l) {
+            prefs.edit().putString("lang", "es".equals(l) ? "es" : "ar").apply();
+        }
 
-    interface Cmd {
-        String build(String host) throws Exception;
-    }
+        @JavascriptInterface
+        public String tvs() {
+            return Store.tvs(MainActivity.this).toString();
+        }
 
-    private void run(String wait, String command, Result result) {
-        run(wait, h -> command, result);
-    }
+        @JavascriptInterface
+        public boolean firstShow() {
+            boolean f = firstShow;
+            firstShow = false;
+            return f;
+        }
 
-    private void run(String wait, Cmd command, Result result) {
-        ProgressDialog p = ProgressDialog.show(this, null, wait, true, false);
-        String h = host();
-        new Thread(() -> {
-            String msg;
+        @JavascriptInterface
+        public void tap() {
+            main.post(() -> web.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY));
+        }
+
+        @JavascriptInterface
+        public void buzz() {
+            main.post(() -> web.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS));
+        }
+
+        @JavascriptInterface
+        public void setup() {
+            main.post(() -> startActivityForResult(new Intent(MainActivity.this, SetupActivity.class), SETUP));
+        }
+
+        @JavascriptInterface
+        public void control(String key) {
+            main.post(() -> openControl(key));
+        }
+
+        @JavascriptInterface
+        public void home() {
+            main.post(MainActivity.this::home);
+        }
+
+        @JavascriptInterface
+        public void rename(String key, String name) {
             try {
-                msg = result.of(Adb.shell(this, h, command.build(h)));
-            } catch (Exception e) {
-                msg = tr("⚠️ تعذّر الاتصال بالتلفاز.\n\nتأكّد من:\n• تفعيل «تصحيح أخطاء USB» في خيارات المطوّر على التلفاز\n"
-                                + "• أن الهاتف والتلفاز على الشبكة نفسها\n• الموافقة على السؤال الذي ظهر على التلفاز",
-                        "⚠️ No pude conectar con la tele.\n\nComprueba que:\n• «Depuración USB» está activada en las opciones de desarrollador de la tele\n"
-                                + "• El móvil y la tele están en el mismo wifi\n• Aceptaste la pregunta que salió en la tele")
-                        + "\n\n(" + e.getClass().getSimpleName() + ")";
+                if (!name.isEmpty()) Store.putTv(MainActivity.this, new JSONObject().put("key", key).put("name", name));
+            } catch (Exception ignored) {
             }
-            String m = msg;
-            main.post(() -> {
-                p.dismiss();
-                toastDialog(m);
+        }
+
+        @JavascriptInterface
+        public void remove(String key) {
+            Store.removeTv(MainActivity.this, key);
+        }
+
+        @JavascriptInterface
+        public void openUrl(String url) {
+            if (url.startsWith("https://github.com/noureddinecu/")) main.post(() -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))));
+        }
+
+        @JavascriptInterface
+        public String about() {
+            try {
+                android.content.pm.PackageInfo p = getPackageManager().getPackageInfo(getPackageName(), 0);
+                return new JSONObject().put("name", p.versionName).put("code", p.getLongVersionCode()).toString();
+            } catch (Exception e) {
+                return "{\"name\":\"?\",\"code\":0}";
+            }
+        }
+
+        /** Where the TV is now (its address can change: it is found again by its id) and which version it runs. */
+        @JavascriptInterface
+        public void status(int id, String key) {
+            async(() -> {
+                JSONObject t = Store.tv(MainActivity.this, key);
+                JSONObject r = new JSONObject();
+                try {
+                    if (t == null) throw new IllegalStateException();
+                    String ip = t.optString("ip");
+                    boolean online = new Tv(MainActivity.this, ip).online();
+                    if (!online && !t.optString("id").isEmpty()) {
+                        for (String[] f : scanNoor()) {
+                            if (t.optString("id").equals(f[1])) {
+                                ip = f[0];
+                                online = true;
+                                Store.putTv(MainActivity.this, new JSONObject().put("key", key).put("ip", ip));
+                            }
+                        }
+                    }
+                    r.put("online", online).put("ip", ip).put("latest", Tv.bundled(MainActivity.this))
+                            .put("version", online ? new Tv(MainActivity.this, ip).version() : 0);
+                } catch (Exception e) {
+                    try {
+                        r.put("online", false);
+                    } catch (Exception ignored) {
+                    }
+                }
+                result(id, r);
             });
-        }, "adb").start();
-    }
+        }
 
-    private void toastDialog(String msg) {
-        new AlertDialog.Builder(this).setMessage(msg).setPositiveButton(tr("حسناً", "Vale"), null).show();
-    }
+        /** Brings the TV's apps to this app's version (or reinstalls them for a repair), keeping its clean-up and settings. */
+        @JavascriptInterface
+        public void update(int id, String key, boolean repair) {
+            async(() -> {
+                JSONObject r = new JSONObject();
+                try {
+                    JSONObject t = Store.tv(MainActivity.this, key);
+                    Tv tv = new Tv(MainActivity.this, t.getString("ip"));
+                    JSONObject bk = Store.backup(MainActivity.this, key);
+                    tv.noorApps(bk);
+                    JSONObject city = t.optJSONObject("city");
+                    if (city != null) tv.city(city);
+                    List<String> others = new ArrayList<>();
+                    JSONArray all = Store.tvs(MainActivity.this);
+                    for (int i = 0; i < all.length(); i++) others.add(all.getJSONObject(i).optString("ip"));
+                    tv.adhan(others);
+                    String home = tv.launcher(bk);
+                    tv.prayerCard(bk);
+                    tv.theme(t.optString("theme", "awqat"));
+                    if (bk != null) Store.saveBackup(MainActivity.this, bk);
+                    Store.putTv(MainActivity.this, new JSONObject().put("key", key).put("version", Tv.bundled(MainActivity.this)).put("id", tv.id()));
+                    r.put("ok", "ok".equals(home)).put("home", home);
+                } catch (Exception e) {
+                    try {
+                        r.put("ok", false).put("error", e.getClass().getSimpleName() + ": " + e.getMessage());
+                    } catch (Exception ignored) {
+                    }
+                }
+                result(id, r);
+            });
+        }
 
-    private android.widget.ImageButton small(int icon, boolean red, View.OnClickListener l) {
-        android.widget.ImageButton b = new android.widget.ImageButton(this);
-        b.setImageResource(icon);
-        b.setPadding(dp(7), dp(7), dp(7), dp(7));
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(red ? 0x33FF6B8A : CARD);
-        bg.setStroke(dp(1), red ? 0x59FF6B8A : 0x22FFFFFF);
-        bg.setCornerRadius(dp(13));
-        b.setBackground(bg);
-        b.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(42), dp(42));
-        lp.setMarginStart(dp(7));
-        b.setLayoutParams(lp);
-        b.setOnClickListener(v -> {
-            v.animate().scaleX(.88f).scaleY(.88f).setDuration(80).withEndAction(() -> v.animate().scaleX(1).scaleY(1).setDuration(140).start()).start();
-            v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
-            l.onClick(v);
-        });
-        return b;
-    }
+        /** Noor TVs on the Wi-Fi that are not in the list yet (set up before this app could). */
+        @JavascriptInterface
+        public void discover(int id) {
+            async(() -> {
+                JSONArray out = new JSONArray();
+                Set<String> known = new java.util.HashSet<>();
+                JSONArray all = Store.tvs(MainActivity.this);
+                for (int i = 0; i < all.length(); i++) {
+                    known.add(all.optJSONObject(i).optString("ip"));
+                    known.add(all.optJSONObject(i).optString("id"));
+                }
+                for (String[] f : scanNoor()) {
+                    if (known.contains(f[0]) || (!f[1].isEmpty() && known.contains(f[1]))) continue;
+                    try {
+                        out.put(new JSONObject().put("ip", f[0]).put("id", f[1]));
+                    } catch (Exception ignored) {
+                    }
+                }
+                result(id, out);
+            });
+        }
 
-    private LinearLayout column() {
-        LinearLayout box = new LinearLayout(this);
-        box.setOrientation(LinearLayout.VERTICAL);
-        box.setPadding(dp(20), dp(8), dp(20), 0);
-        return box;
-    }
+        /** Adds a Noor TV found on the Wi-Fi to the list, with a backup of how it is now if there is none. */
+        @JavascriptInterface
+        public void adopt(int id, String ip) {
+            async(() -> {
+                JSONObject r = new JSONObject();
+                try {
+                    Tv tv = new Tv(MainActivity.this, ip);
+                    String serial = tv.prop("ro.serialno");
+                    if (serial.isEmpty()) serial = ip;
+                    String model = tv.prop("ro.product.model");
+                    if (Store.backup(MainActivity.this, serial) == null) {
+                        JSONArray ours = new JSONArray();
+                        for (String p : Tv.pkgs(tv.shell("pm list packages"))) if (p.startsWith("app.noortv.") || p.equals("com.majnioui.tv.prayer")) ours.put(p);
+                        Store.saveBackup(MainActivity.this, new JSONObject().put("serial", serial).put("model", model)
+                                .put("home", "com.google.android.tvlauncher/.MainActivity").put("disabledBefore", new JSONArray())
+                                .put("disabledByUs", new JSONArray()).put("installedByUs", ours).put("ip", ip));
+                    }
+                    Store.putTv(MainActivity.this, new JSONObject().put("key", serial).put("ip", ip).put("name", model).put("model", model)
+                            .put("id", tv.id()).put("theme", "awqat").put("version", tv.version()));
+                    r.put("ok", true).put("key", serial);
+                } catch (Exception e) {
+                    try {
+                        r.put("ok", false).put("error", e.getClass().getSimpleName());
+                    } catch (Exception ignored) {
+                    }
+                }
+                result(id, r);
+            });
+        }
 
-    private TextView label(String t) {
-        TextView v = new TextView(this);
-        v.setText(t);
-        v.setTextSize(15);
-        v.setLineSpacing(0, 1.2f);
-        v.setPadding(0, dp(6), 0, dp(6));
-        return v;
-    }
+        @JavascriptInterface
+        public void restore(int id, String key, boolean removeOurs) {
+            async(() -> {
+                JSONObject r = new JSONObject();
+                try {
+                    JSONObject t = Store.tv(MainActivity.this, key);
+                    Tv tv = new Tv(MainActivity.this, t.getString("ip"));
+                    String out = tv.shell(restoreScript(tv, removeOurs));
+                    if (!out.contains("done")) throw new IllegalStateException(out.trim());
+                    if (removeOurs) {
+                        Store.removeTv(MainActivity.this, key);
+                        Store.backupFile(MainActivity.this, key).delete();
+                    }
+                    r.put("ok", true);
+                } catch (Exception e) {
+                    try {
+                        r.put("ok", false).put("error", lang().equals("es") ? "No pude conectar con la tele." : "تعذّر الاتصال بالتلفاز.");
+                    } catch (Exception ignored) {
+                    }
+                }
+                result(id, r);
+            });
+        }
 
-    private int dp(int v) {
-        return Math.round(v * getResources().getDisplayMetrics().density);
+        /** The newest build on GitHub, for «check for a new version». */
+        @JavascriptInterface
+        public void checkUpdate(int id) {
+            async(() -> {
+                try {
+                    HttpURLConnection h = (HttpURLConnection) new URL(RELEASE + "version.json").openConnection();
+                    h.setConnectTimeout(5000);
+                    h.setReadTimeout(5000);
+                    h.setInstanceFollowRedirects(true);
+                    java.io.ByteArrayOutputStream b = new java.io.ByteArrayOutputStream();
+                    try (InputStream in = h.getInputStream()) {
+                        byte[] buf = new byte[4096];
+                        int n;
+                        while ((n = in.read(buf)) > 0) b.write(buf, 0, n);
+                    }
+                    JSONObject v = new JSONObject(b.toString("UTF-8"));
+                    result(id, new JSONObject().put("ok", true).put("version", v.optLong("version")).put("name", v.optString("name"))
+                            .put("url", RELEASE + "noor-phone.apk"));
+                } catch (Exception e) {
+                    result(id, "{\"ok\":false}");
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void exportData(int id) {
+            pendingId = id;
+            main.post(() -> startActivityForResult(new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
+                    .setType("application/json").putExtra(Intent.EXTRA_TITLE, "zahhaf-tv.json"), EXPORT));
+        }
+
+        @JavascriptInterface
+        public void importData(int id) {
+            pendingId = id;
+            main.post(() -> startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
+                    .setType("*/*"), IMPORT));
+        }
     }
 }

@@ -387,5 +387,23 @@ sub("""        if (first.startsWith("GET /ping")) {""",
         }
         if (first.startsWith("GET /ping")) {""")
 
+# The phone app recognises each TV (GET /id, this app's ANDROID_ID) and keeps it up to date (GET /version).
+sub("""        if (first.startsWith("GET /ping")) {""",
+    """        if (first.startsWith("GET /id")) {
+            reply(s.getOutputStream(), "text/plain", android.provider.Settings.Secure.getString(getContentResolver(),
+                    android.provider.Settings.Secure.ANDROID_ID));
+            return;
+        }
+        if (first.startsWith("GET /version")) {
+            long v = 0;
+            try {
+                v = getPackageManager().getPackageInfo(getPackageName(), 0).getLongVersionCode();
+            } catch (Exception ignored) {
+            }
+            reply(s.getOutputStream(), "text/plain", String.valueOf(v));
+            return;
+        }
+        if (first.startsWith("GET /ping")) {""")
+
 open(path, "w", encoding="utf-8").write(s)
 print("phone page patch applied")
