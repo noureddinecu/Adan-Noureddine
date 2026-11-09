@@ -83,6 +83,18 @@ textarea:focus{border-color:var(--a1)}
 .pr.next{background:rgba(124,92,255,.22);border-color:var(--a1);box-shadow:0 6px 20px rgba(124,92,255,.25)}
 .count{text-align:center;font-size:15px;color:var(--dim);margin:6px 0 2px}
 .count b{display:block;font-size:34px;color:#fff;font-variant-numeric:tabular-nums;margin-top:4px}
+.sw{position:relative;width:52px;height:30px;flex:none}
+.sw input{opacity:0;width:0;height:0}
+.sw span{position:absolute;inset:0;border-radius:999px;background:var(--card2);border:1px solid var(--line);transition:background .25s}
+.sw span:before{content:"";position:absolute;width:22px;height:22px;top:3px;left:4px;border-radius:50%;background:#fff;transition:transform .25s var(--ease)}
+.sw input:checked+span{background:var(--grad)}
+.sw input:checked+span:before{transform:translateX(21px)}
+.tv{position:relative;aspect-ratio:16/9;border-radius:14px;border:2px solid var(--line);background:#12142a;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;padding:8px;direction:ltr}
+.tv button{border-radius:10px;border:1px dashed var(--line);background:none;transition:all .25s var(--ease)}
+.tv button.on{border:1px solid var(--a2);background:linear-gradient(135deg,rgba(124,92,255,.35),rgba(0,212,255,.25))}
+.tv button:nth-child(1){align-self:start;justify-self:start;width:60%;height:45%}.tv button:nth-child(2){align-self:start;justify-self:end;width:60%;height:45%}
+.tv button:nth-child(3){align-self:end;justify-self:start;width:60%;height:45%}.tv button:nth-child(4){align-self:end;justify-self:end;width:60%;height:45%}
+.tv i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:26px;opacity:.35;pointer-events:none}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;pointer-events:none;
   background:rgba(20,22,44,.95);border:1px solid var(--line);color:#fff;padding:12px 18px;border-radius:999px;font-size:15px;font-weight:600;
   box-shadow:0 10px 30px rgba(0,0,0,.4);transition:all .35s var(--ease);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
@@ -174,6 +186,19 @@ textarea:focus{border-color:var(--a1)}
     <div class="lbl"><span data-t="adhanVol"></span><span id="volv"></span></div>
     <div class="size"><span>🔈</span><input type="range" id="vol" min="0" max="100" value="100" oninput="$('volv').textContent=this.value+'%'" onchange="adhan('vol='+this.value)"><span>🔊</span></div>
   </div>
+  <div class="card">
+    <div class="lbl"><span data-t="dhikrT" style="font-size:15px;color:#fff;font-weight:700"></span>
+      <label class="sw"><input type="checkbox" id="dOn" onchange="dset('on='+(this.checked?1:0))"><span></span></label></div>
+    <div id="dBox">
+      <div class="lbl" style="margin-top:8px"><span data-t="dEvery"></span></div>
+      <div class="chips" id="dEvery"><button class="chip" data-v="5">5</button><button class="chip" data-v="10">10</button><button class="chip" data-v="15">15</button><button class="chip" data-v="30">30</button><button class="chip" data-v="60">60</button></div>
+      <div class="lbl" style="margin-top:12px"><span data-t="dSecs"></span></div>
+      <div class="chips" id="dSecs"><button class="chip" data-v="5">5</button><button class="chip" data-v="8">8</button><button class="chip" data-v="12">12</button><button class="chip" data-v="20">20</button></div>
+      <div class="lbl" style="margin-top:12px"><span data-t="dCorner"></span></div>
+      <div class="tv"><button data-v="tl"></button><button data-v="tr"></button><button data-v="bl"></button><button data-v="br"></button><i>📺</i></div>
+      <div class="row"><button class="sec" onclick="dset('do=test')" data-t="dTest"></button></div>
+    </div>
+  </div>
   <p class="hint" data-t="hintPray"></p>
 </section>
 
@@ -191,8 +216,9 @@ var L={ar:{name1:'زحاف',tStudio:'استوديو',tMsg:'رسالة',tLive:'م
   savedT:'💾 المحفوظات',hintStudio:'بلا خلفية، الرسم كيبان فوق اللي خدام فالتلفزيون · ✋ «حرّك» باش تجرّ وتكبّر النص والستيكر والصورة',
   ph:'كتب هنا... ✨',send:'📤 صيفط',hideText:'🧹 حيد الكتابة من التلفزيون',hintMsg:'الكتابة كتبان فوسط التلفزيون ٢٠ ثانية، ولا حتى تحيدها.',
   clearLive:'🧹 مسح الرسم من التلفزيون',hintLive:'الرسم كيبان فالتلفزيون فنفس اللحظة، وكيمشي ١٥ ثانية من بعد آخر خط.',
-  nextIn:'الصلاة الجاية:',tryAdhan:'▶️ جرّب الأذان',stopAdhan:'⏹️ حبس الأذان',adhanVol:'🔊 صوت الأذان',
-  hintPray:'الأذان كيتسمع فكل صلاة واخا يكون شي حاجة خدامة، وكيتحبس إلى بدّلتي التطبيق فالتلفزيون.',
+  nextIn:'الصلاة الجاية:',dhikrT:'📿 الأذكار على الشاشة',dEvery:'كل شحال من دقيقة؟',dSecs:'شحال من ثانية يبقاو؟',dCorner:'فين يبانو؟ (اختار الركن)',
+  dTest:'👁️ ورّيني واحد دابا',dOn:'الأذكار مشعّلين 📿',dOff:'الأذكار مطفيين',dSaved:'تحفظ ✅',dShow:'شوف التلفزيون 👀',tryAdhan:'▶️ جرّب الأذان',stopAdhan:'⏹️ حبس الأذان',adhanVol:'🔊 صوت الأذان',
+  hintPray:'الأذان كيتسمع فكل صلاة واخا يكون شي حاجة خدامة، وكيتحبس إلى بدّلتي التطبيق فالتلفزيون. الأذكار كيطلعو صغار فالركن فوق أي حاجة، وما كيطلعوش وقت الأذان.',
   P:['الفجر','الظهر','العصر','المغرب','العشاء'],
   askText:'شنو بغيتي تكتب؟',nothing:'ما بقا والو',pickFirst:'اختار شي حاجة بـ ✋ الأول',textGone:'تمسحات الكتابة 🔤',noText:'ما كاين حتى كتابة',
   linesGone:'تمسح الرسم ✏️',noLines:'ما كاين حتى رسم',sure:'نمسحو كلشي؟',allGone:'تمسح كلشي 🧹',bgAdded:'تزادت الخلفية 🖼️',drawFirst:'رسم ولا زيد شي حاجة الأول 🙂',
@@ -205,8 +231,9 @@ var L={ar:{name1:'زحاف',tStudio:'استوديو',tMsg:'رسالة',tLive:'م
   savedT:'💾 Guardados',hintStudio:'Sin fondo, el dibujo aparece encima de lo que se ve en la tele · ✋ «Mover» para arrastrar y cambiar el tamaño',
   ph:'Escribe aquí... ✨',send:'📤 Enviar',hideText:'🧹 Quitar el texto de la tele',hintMsg:'El texto sale en el centro de la tele 20 segundos, o hasta que lo quites.',
   clearLive:'🧹 Borrar el dibujo de la tele',hintLive:'El dibujo sale en la tele al instante y se va 15 segundos después del último trazo.',
-  nextIn:'Próxima oración:',tryAdhan:'▶️ Probar el adhan',stopAdhan:'⏹️ Parar el adhan',adhanVol:'🔊 Volumen del adhan',
-  hintPray:'El adhan suena en cada oración aunque haya algo puesto, y se para si cambias de app en la tele.',
+  nextIn:'Próxima oración:',dhikrT:'📿 Adhkar en pantalla',dEvery:'¿Cada cuántos minutos?',dSecs:'¿Cuántos segundos se quedan?',dCorner:'¿Dónde salen? (elige la esquina)',
+  dTest:'👁️ Enséñame uno ahora',dOn:'Adhkar activados 📿',dOff:'Adhkar desactivados',dSaved:'Guardado ✅',dShow:'Mira la tele 👀',tryAdhan:'▶️ Probar el adhan',stopAdhan:'⏹️ Parar el adhan',adhanVol:'🔊 Volumen del adhan',
+  hintPray:'El adhan suena en cada oración aunque haya algo puesto, y se para si cambias de app en la tele. Los adhkar salen pequeños en la esquina encima de todo, y nunca durante el adhan.',
   P:['Fajr (alba)','Dhuhr (mediodía)','Asr (tarde)','Maghrib (ocaso)','Isha (noche)'],
   askText:'¿Qué quieres escribir?',nothing:'No queda nada',pickFirst:'Elige algo con ✋ primero',textGone:'Texto borrado 🔤',noText:'No hay texto',
   linesGone:'Dibujo borrado ✏️',noLines:'No hay dibujo',sure:'¿Borramos todo?',allGone:'Todo borrado 🧹',bgAdded:'Fondo añadido 🖼️',drawFirst:'Dibuja o añade algo primero 🙂',
@@ -232,7 +259,7 @@ function post(u,b){return fetch(u,{method:'POST',body:b})}
 var tabs=document.querySelectorAll('#seg button'),cur0=0;
 function placePill(n){var b=tabs[n];$('pill').style.width=b.offsetWidth+'px';$('pill').style.transform='translateX('+b.offsetLeft+'px)'}
 function tab(n){cur0=n;tabs.forEach(function(b,i){b.classList.toggle('on',i===n)});for(var i=0;i<4;i++)$('p'+i).classList.toggle('on',i===n);placePill(n);
-  if(n===2)setTimeout(lfit,30);if(n===3)loadPrayer()}
+  if(n===2)setTimeout(lfit,30);if(n===3){loadPrayer();dload()}}
 window.addEventListener('resize',function(){placePill(cur0)});
 
 /* ---------- palette ---------- */
@@ -357,6 +384,16 @@ function renderPrayer(){if(!PT||!PT.times.length){$('plist').innerHTML='';return
 setInterval(function(){if(!PT||!PT.times.length)return;var hm=PT.times[PT.next].split(':'),now=new Date(),t=new Date();t.setHours(+hm[0],+hm[1],0,0);
   if(t<now)t.setDate(t.getDate()+1);var s=Math.floor((t-now)/1000);if(s<=0){loadPrayer();return}
   $('countdown').textContent=[Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(function(x){return('0'+x).slice(-2)}).join(':')},1000);
+/* ---------- adhkar on screen ---------- */
+function chipsSet(id,v){document.querySelectorAll('#'+id+' button').forEach(function(b){b.classList.toggle('on',b.dataset.v==String(v))})}
+['dEvery','dSecs'].forEach(function(id){document.querySelectorAll('#'+id+' button').forEach(function(b){b.onclick=function(){chipsSet(id,b.dataset.v);
+  dset((id==='dEvery'?'every=':'secs=')+b.dataset.v)}})});
+document.querySelectorAll('.tv button').forEach(function(b){b.onclick=function(){document.querySelectorAll('.tv button').forEach(function(x){x.classList.toggle('on',x===b)});dset('corner='+b.dataset.v+'&do=test')}});
+function dload(){fetch('/dhikr').then(function(r){return r.json()}).then(function(j){$('dOn').checked=j.on;$('dBox').style.opacity=j.on?1:.4;chipsSet('dEvery',j.every);chipsSet('dSecs',j.secs);
+  document.querySelectorAll('.tv button').forEach(function(x){x.classList.toggle('on',x.dataset.v===j.corner)})}).catch(function(){})}
+function dset(q){if(q.indexOf('on=')===0)$('dBox').style.opacity=q==='on=1'?1:.4;
+  post('/dhikr?'+q,'').then(function(){say(q.indexOf('do=test')>=0?'dShow':q==='on=1'?'dOn':q==='on=0'?'dOff':'dSaved')}).catch(function(){say('wifi')})}
+
 function adhan(q){post('/adhan?'+q,'').then(function(){say(q==='do=play'?'adhanPlay':q==='do=stop'?'adhanStop':'volSet')}).catch(function(){say('wifi')})}
 
 setLang(lang);prev();draw();renderSaved();setTimeout(function(){placePill(0)},0);

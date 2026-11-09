@@ -193,5 +193,32 @@ sub("""        if (first.startsWith("POST /image")) {""",
         }
         if (first.startsWith("POST /image")) {""")
 
+# Adhkar on screen (Dhikr.java): started with the server, set from the phone with GET/POST /dhikr.
+sub("""        new Thread(this::serve, "msg-server").start();""",
+    """        new Thread(this::serve, "msg-server").start();
+        Dhikr.start(this);""")
+sub("""        if (first.startsWith("GET /prayer")) {""",
+    """        if (first.startsWith("GET /dhikr")) {
+            reply(s.getOutputStream(), "application/json", Dhikr.json(this));
+            return;
+        }
+        if (first.startsWith("POST /dhikr")) {
+            readBody(in, head);
+            android.content.SharedPreferences.Editor e = Dhikr.prefs(this).edit();
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("[?&](on|every|secs|corner)=([a-z0-9]{1,3})").matcher(first);
+            while (m.find()) {
+                String k = m.group(1), v = m.group(2);
+                if (k.equals("on")) e.putBoolean("on", v.equals("1"));
+                else if (k.equals("corner")) { if (v.matches("[tb][lr]")) e.putString("corner", v); }
+                else if (v.matches("\\\\d+")) e.putInt(k, Math.max(1, Math.min(k.equals("secs") ? 30 : 240, Integer.parseInt(v))));
+            }
+            e.apply();
+            Dhikr.reschedule();
+            if (first.contains("do=test")) Dhikr.show();
+            reply(s.getOutputStream(), "text/plain", "ok");
+            return;
+        }
+        if (first.startsWith("GET /prayer")) {""")
+
 open(path, "w", encoding="utf-8").write(s)
 print("phone page patch applied")

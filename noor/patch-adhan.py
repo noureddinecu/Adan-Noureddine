@@ -151,7 +151,11 @@ sub("""    private static void stop() {
 # For the phone app's prayer page (MessageServer): today's times, play/stop now, and the adhan's own volume.
 sub("""    private static String[] times(Context c, Calendar day) {""",
     """    static String[] times(Context c, Calendar day) {""")
-sub("""    private static void stop() {""", """    static void stop() {""")
+sub("""    private static void stop() {""", """    static boolean playing() {
+        return player != null;
+    }
+
+    static void stop() {""")
 sub("""        player.setOnCompletionListener(mp -> stop());
         player.start();""",
     """        float vol = app.getSharedPreferences("adhan", Context.MODE_PRIVATE).getInt("vol", 100) / 100f;

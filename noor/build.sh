@@ -25,6 +25,19 @@ python3 -I noor/patch-adhan.py noor-tv/noor-app/app/src/main/java/app/noortv/Adh
 # The phone page studio: draw, write, stickers and photos on the TV.
 python3 -I noor/patch-phone-page.py noor-tv/noor-app/app/src/main/java/app/noortv/MessageServer.java
 mkdir -p noor-tv/noor-app/app/src/main/assets && cp noor/phone-page.html noor-tv/noor-app/app/src/main/assets/page.html
+# Adhkar on screen, in Amiri (SIL Open Font License); the salawat line every 45 minutes is now one of the adhkar.
+cp noor/Dhikr.java noor-tv/noor-app/app/src/main/java/app/noortv/Dhikr.java
+curl -fsSL -o noor-tv/noor-app/app/src/main/assets/amiri.ttf https://github.com/google/fonts/raw/main/ofl/amiri/Amiri-Bold.ttf || echo "no Amiri; serif fallback"
+python3 -I - noor-tv/noor-app/app/src/main/java/app/noortv/Reminder.java <<'PY'
+import sys
+p = sys.argv[1]; s = open(p, encoding="utf-8").read()
+old = """        if (!friday) {
+            show(app, "صلّ على النبي ﷺ");
+            return;
+        }"""
+assert old in s, "Reminder.java changed upstream"
+open(p, "w", encoding="utf-8").write(s.replace(old, "        if (!friday) return; // the salawat line comes with the adhkar now"))
+PY
 
 sed -i "s/static final String HOME = \"com.gathin.tvhome\";/static final String HOME = \"$HOME_ID\";/" noor-tv/noor-app/app/src/main/java/app/noortv/Adhan.java
 grep -q "HOME = \"$HOME_ID\"" noor-tv/noor-app/app/src/main/java/app/noortv/Adhan.java
