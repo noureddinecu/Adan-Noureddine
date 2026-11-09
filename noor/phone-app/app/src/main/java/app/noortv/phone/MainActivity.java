@@ -3,14 +3,21 @@ package app.noortv.phone;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.net.ConnectivityManager;
+import android.net.LinkAddress;
+import android.net.LinkProperties;
+import android.net.Network;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
@@ -28,14 +35,24 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.Inet4Address;
+import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
- * «زحاف TV» on the phone: the studio served by the TV (draw, write, stickers, photos) in a WebView, plus a
- * PIN-protected button that gives the TV back its own home screen and apps over network ADB.
+ * «زحاف TV» on the phone: the studio served by the TV (draw, write, stickers, photos, camera, prayer times) in a
+ * WebView, finding the TV on the Wi-Fi by itself, in Arabic or Spanish, plus a PIN-protected button that gives the
+ * TV back its own home screen and apps over network ADB.
  */
 public class MainActivity extends Activity {
     static final String PIN = "0000";
     static final int PICK = 7;
-    static final int BG = 0xFF0D0F1E, CARD = 0x1AFFFFFF, ACC = 0xFF7C5CFF;
+    static final int BG = 0xFF0D0F1E, CARD = 0x1AFFFFFF;
 
     /** Everything this setup (and the CleanYourTV app before it) may have turned off; restore turns them back on. */
     static final String[] OFF = {
@@ -56,6 +73,16 @@ public class MainActivity extends Activity {
     private SharedPreferences prefs;
     private WebView web;
     private ValueCallback<Uri[]> pending;
+    private long camAt;
+
+    private boolean es() {
+        return "es".equals(prefs.getString("lang", "ar"));
+    }
+
+    /** The Arabic (Darija) or Spanish wording, by the language chosen with 🌐. */
+    private String tr(String ar, String es) {
+        return es() ? es : ar;
+    }
 
     @Override
     protected void onCreate(Bundle b) {
@@ -67,20 +94,24 @@ public class MainActivity extends Activity {
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(BG);
-        root.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        root.setLayoutDirection(es() ? View.LAYOUT_DIRECTION_LTR : View.LAYOUT_DIRECTION_RTL);
 
         LinearLayout bar = new LinearLayout(this);
         bar.setGravity(Gravity.CENTER_VERTICAL);
-        bar.setPadding(dp(12), dp(8), dp(12), dp(8));
+        bar.setPadding(dp(14), dp(10), dp(10), dp(10));
         TextView title = new TextView(this);
-        title.setText("📺 زحاف TV");
+        title.setText(tr("📺 زحاف TV", "📺 Zahhaf TV"));
         title.setTextColor(Color.WHITE);
-        title.setTextSize(18);
+        title.setTextSize(19);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         bar.addView(title, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        bar.addView(small("🔄", v -> load()));
-        bar.addView(small("⚙️", v -> settings()));
-        bar.addView(small("♻️ رجّع التلفزيون", v -> askPin()));
+        bar.addView(small(es() ? "ع" : "ES", false, v -> {
+            prefs.edit().putString("lang", es() ? "ar" : "es").apply();
+            recreate();
+        }));
+        bar.addView(small("🔄", false, v -> connect(false)));
+        bar.addView(small("⚙️", false, v -> settings()));
+        bar.addView(small("♻️", true, v -> askPin()));
         root.addView(bar);
 
         web = new WebView(this);
@@ -88,12 +119,11 @@ public class MainActivity extends Activity {
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
-        s.setUserAgentString(s.getUserAgentString() + " ZahhafApp"); // the page hides its own header inside the app
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
         web.setWebViewClient(new WebViewClient() {
             @Override
             public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
-                if (r.isForMainFrame()) offline();
+                if (r.isForMainFrame()) offline(false);
             }
         });
         web.setWebChromeClient(new WebChromeClient() {
@@ -101,9 +131,11 @@ public class MainActivity extends Activity {
             public boolean onShowFileChooser(WebView v, ValueCallback<Uri[]> cb, FileChooserParams p) {
                 if (pending != null) pending.onReceiveValue(null);
                 pending = cb;
-                Intent i = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE);
                 try {
-                    startActivityForResult(Intent.createChooser(i, "اختار تصويرة"), PICK);
+                    startActivityForResult(p.isCaptureEnabled() ? camera()
+                            : Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*")
+                                    .addCategory(Intent.CATEGORY_OPENABLE), tr("اختار تصويرة", "Elige una foto"))
+                            .putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{camera()}), PICK);
                 } catch (Exception e) {
                     pending = null;
                     return false;
@@ -113,30 +145,130 @@ public class MainActivity extends Activity {
         });
         root.addView(web, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
         setContentView(root);
-        load();
+        connect(false);
     }
+
+    // ---------- finding the TV ----------
 
     private String host() {
         return prefs.getString("tv", "192.168.1.35");
     }
 
     private void load() {
-        web.loadUrl("http://" + host() + ":8080/");
+        web.loadUrl("http://" + host() + ":8080/?app=1&lang=" + (es() ? "es" : "ar"));
     }
 
-    private void offline() {
-        String html = "<html dir=rtl><body style='background:#0d0f1e;color:#fff;font-family:sans-serif;text-align:center;padding:40px 20px'>"
-                + "<div style='font-size:60px'>📡</div><h2>ما لقيتش التلفزيون</h2>"
-                + "<p style='opacity:.8;line-height:1.7'>تأكد بلّي التيليفون والتلفزيون فنفس الواي فاي، والتلفزيون شاعل.<br>"
-                + "العنوان دابا: <b>" + host() + "</b> (تقدر تبدّلو من ⚙️)</p>"
-                + "<p style='opacity:.8'>ومن بعد ضغط 🔄 الفوق.</p></body></html>";
+    /** Opens the saved TV if it answers; otherwise looks for it on the Wi-Fi (or straight away when asked). */
+    private void connect(boolean searchNow) {
+        searching();
+        String saved = host();
+        new Thread(() -> {
+            String found = !searchNow && ping(saved) ? saved : discover();
+            main.post(() -> {
+                if (found == null) {
+                    offline(true);
+                    return;
+                }
+                prefs.edit().putString("tv", found).apply();
+                load();
+            });
+        }, "find-tv").start();
+    }
+
+    private static boolean ping(String ip) {
+        try {
+            HttpURLConnection c = (HttpURLConnection) new URL("http://" + ip + ":8080/ping").openConnection();
+            c.setConnectTimeout(700);
+            c.setReadTimeout(900);
+            try (InputStream in = c.getInputStream()) {
+                byte[] b = new byte[16];
+                int n = in.read(b);
+                return n > 0 && new String(b, 0, n).startsWith("zahhaf");
+            } finally {
+                c.disconnect();
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** Asks every address of this phone's Wi-Fi network (a /24) for the TV's page, 48 at a time. */
+    private String discover() {
+        String prefix = null;
+        try {
+            ConnectivityManager cm = getSystemService(ConnectivityManager.class);
+            Network n = cm.getActiveNetwork();
+            LinkProperties lp = n == null ? null : cm.getLinkProperties(n);
+            if (lp != null) {
+                for (LinkAddress a : lp.getLinkAddresses()) {
+                    if (a.getAddress() instanceof Inet4Address && !a.getAddress().isLoopbackAddress()) {
+                        String ip = a.getAddress().getHostAddress();
+                        prefix = ip.substring(0, ip.lastIndexOf('.') + 1);
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        if (prefix == null) return null;
+        AtomicReference<String> hit = new AtomicReference<>();
+        ExecutorService pool = Executors.newFixedThreadPool(48);
+        for (int i = 1; i < 255; i++) {
+            String ip = prefix + i;
+            pool.execute(() -> {
+                if (hit.get() == null && ping(ip)) hit.compareAndSet(null, ip);
+            });
+        }
+        pool.shutdown();
+        try {
+            pool.awaitTermination(15, TimeUnit.SECONDS);
+        } catch (InterruptedException ignored) {
+        }
+        pool.shutdownNow();
+        return hit.get();
+    }
+
+    private void page(String emoji, String title, String body) {
+        String html = "<html dir=" + (es() ? "ltr" : "rtl") + "><head><meta name=viewport content='width=device-width,initial-scale=1'>"
+                + "<style>@keyframes p{50%{transform:scale(1.15);opacity:.7}}</style></head>"
+                + "<body style='margin:0;background:#0d0f1e;color:#fff;font-family:sans-serif;text-align:center;padding:60px 24px'>"
+                + "<div style='font-size:64px;animation:p 1.4s infinite'>" + emoji + "</div><h2>" + title + "</h2>"
+                + "<p style='opacity:.75;line-height:1.8;font-size:16px'>" + body + "</p></body></html>";
         web.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+    }
+
+    private void searching() {
+        page("🔍", tr("كنقلّب على التلفزيون…", "Buscando la tele…"),
+                tr("ثانية، التيليفون كيقلّب على التلفزيون فالواي فاي.", "Un momento, el móvil busca la tele en el wifi."));
+    }
+
+    private void offline(boolean searched) {
+        page("📡", tr("ما لقيتش التلفزيون", "No encuentro la tele"),
+                tr("تأكد بلّي التيليفون والتلفزيون فنفس الواي فاي، والتلفزيون شاعل.<br>ومن بعد ضغط 🔄 الفوق.",
+                        "Comprueba que el móvil y la tele están en el mismo wifi y que la tele está encendida.<br>Luego pulsa 🔄 arriba.")
+                        + (searched ? "" : "<br><br>" + tr("العنوان: ", "Dirección: ") + host()));
+    }
+
+    // ---------- photos and the camera ----------
+
+    private Intent camera() {
+        CamProvider.file(this).delete();
+        camAt = System.currentTimeMillis();
+        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                .putExtra(MediaStore.EXTRA_OUTPUT, CamProvider.URI)
+                .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        i.setClipData(ClipData.newRawUri("", CamProvider.URI));
+        return i;
     }
 
     @Override
     protected void onActivityResult(int req, int res, Intent data) {
         if (req != PICK || pending == null) return;
-        Uri u = res == RESULT_OK && data != null ? data.getData() : null;
+        Uri u = null;
+        if (res == RESULT_OK) {
+            u = data != null ? data.getData() : null;
+            java.io.File shot = CamProvider.file(this);
+            if (u == null && shot.length() > 0 && shot.lastModified() >= camAt - 2000) u = CamProvider.URI;
+        }
         pending.onReceiveValue(u == null ? null : new Uri[]{u});
         pending = null;
     }
@@ -151,28 +283,39 @@ public class MainActivity extends Activity {
 
     private void settings() {
         LinearLayout box = column();
-        TextView l = label("عنوان التلفزيون (IP):");
         EditText ip = new EditText(this);
         ip.setText(host());
         ip.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-        box.addView(l);
+        box.addView(label(tr("عنوان التلفزيون (IP):", "Dirección de la tele (IP):")));
         box.addView(ip);
-        box.addView(label("«🔌 جرّب الربط» كيطلب من التلفزيون يقبل هاد التيليفون: ملي يطلع السؤال فالتلفزيون، "
-                + "اختار «السماح دائماً» ووافق. هادشي خاصو باش يخدم زر «رجّع التلفزيون»."));
-        new AlertDialog.Builder(this)
-                .setTitle("⚙️ الإعدادات")
+        box.addView(label(tr("«🔌 جرّب الربط» كيطلب من التلفزيون يقبل هاد التيليفون: ملي يطلع السؤال فالتلفزيون، اختار «السماح دائماً» ووافق. "
+                        + "هادشي خاصو باش يخدم زر ♻️.",
+                "«🔌 Probar conexión» pide a la tele que acepte este móvil: cuando salga la pregunta en la tele, elige «Permitir siempre» y acepta. "
+                        + "Hace falta para el botón ♻️.")));
+        Button find = new Button(this);
+        find.setText(tr("🔍 قلّب على التلفزيون", "🔍 Buscar la tele"));
+        find.setAllCaps(false);
+        box.addView(find);
+        AlertDialog d = new AlertDialog.Builder(this)
+                .setTitle(tr("⚙️ الإعدادات", "⚙️ Ajustes"))
                 .setView(box)
-                .setPositiveButton("حفظ", (d, w) -> {
+                .setPositiveButton(tr("حفظ", "Guardar"), (x, w) -> {
                     prefs.edit().putString("tv", ip.getText().toString().trim()).apply();
-                    load();
+                    connect(false);
                 })
-                .setNeutralButton("🔌 جرّب الربط", (d, w) -> {
+                .setNeutralButton(tr("🔌 جرّب الربط", "🔌 Probar conexión"), (x, w) -> {
                     prefs.edit().putString("tv", ip.getText().toString().trim()).apply();
-                    run("كنتصل بالتلفزيون… إلى طلع سؤال فالتلفزيون، وافق عليه", "echo ok",
-                            out -> out.trim().endsWith("ok") ? "✅ التيليفون مربوط بالتلفزيون" : "⚠️ " + out);
+                    run(tr("كنتصل بالتلفزيون… إلى طلع سؤال فالتلفزيون، وافق عليه", "Conectando… si sale una pregunta en la tele, acéptala"),
+                            "echo ok", out -> out.trim().endsWith("ok")
+                                    ? tr("✅ التيليفون مربوط بالتلفزيون", "✅ El móvil está conectado a la tele") : "⚠️ " + out);
                 })
-                .setNegativeButton("إلغاء", null)
-                .show();
+                .setNegativeButton(tr("إلغاء", "Cancelar"), null)
+                .create();
+        find.setOnClickListener(v -> {
+            d.dismiss();
+            connect(true);
+        });
+        d.show();
     }
 
     // ---------- restore ----------
@@ -184,32 +327,32 @@ public class MainActivity extends Activity {
         pin.setTextSize(28);
         LinearLayout box = column();
         box.addView(pin);
-        AlertDialog d = new AlertDialog.Builder(this)
-                .setTitle("🔒 دخّل الكود")
+        new AlertDialog.Builder(this)
+                .setTitle(tr("🔒 دخّل الكود", "🔒 Introduce el código"))
                 .setView(box)
-                .setPositiveButton("دخول", (x, w) -> {
+                .setPositiveButton(tr("دخول", "Entrar"), (x, w) -> {
                     if (PIN.equals(pin.getText().toString())) confirmRestore();
-                    else toastDialog("❌ الكود غالط");
+                    else toastDialog(tr("❌ الكود غالط", "❌ Código incorrecto"));
                 })
-                .setNegativeButton("إلغاء", null)
-                .create();
-        d.show();
+                .setNegativeButton(tr("إلغاء", "Cancelar"), null)
+                .show();
         pin.requestFocus();
     }
 
     private void confirmRestore() {
         LinearLayout box = column();
-        box.addView(label("هادشي غادي:\n• يشعّل جميع التطبيقات اللي تطفاو (Netflix، Prime، الإعلانات ديال شاومي…)\n"
-                + "• يرجّع شاشة قوقل الأصلية هي الرئيسية"));
+        box.addView(label(tr("هادشي غادي:\n• يشعّل جميع التطبيقات اللي تطفاو (Netflix، Prime، الإعلانات ديال شاومي…)\n• يرجّع شاشة قوقل الأصلية هي الرئيسية",
+                "Esto va a:\n• Volver a activar todas las apps desactivadas (Netflix, Prime, la publicidad de Xiaomi…)\n• Devolver la pantalla de inicio original de Google")));
         CheckBox ours = new CheckBox(this);
-        ours.setText("وحتى يحيد تطبيقات نور (الشاشة الجديدة، الأذان، البطاقات، مواقيت الصلاة)");
+        ours.setText(tr("وحتى يحيد تطبيقات نور (الشاشة الجديدة، الأذان، البطاقات، مواقيت الصلاة)",
+                "Y quitar también las apps de Noor (pantalla nueva, adhan, tarjetas, horarios de oración)"));
         ours.setChecked(true);
         box.addView(ours);
         new AlertDialog.Builder(this)
-                .setTitle("♻️ نرجّعو التلفزيون كيما كان؟")
+                .setTitle(tr("♻️ نرجّعو التلفزيون كيما كان؟", "♻️ ¿Dejamos la tele como estaba?"))
                 .setView(box)
-                .setPositiveButton("إيه، رجّعو", (d, w) -> restore(ours.isChecked()))
-                .setNegativeButton("لا", null)
+                .setPositiveButton(tr("إيه، رجّعو", "Sí, restaurar"), (d, w) -> restore(ours.isChecked()))
+                .setNegativeButton(tr("لا", "No"), null)
                 .show();
     }
 
@@ -229,20 +372,22 @@ public class MainActivity extends Activity {
                     .append("pm uninstall $p 2>/dev/null | grep -q Success && echo \"gone=$p\"; done;; esac; ");
         }
         sh.append("am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1; echo done");
-        run("كنرجّعو التلفزيون… (إلى طلع سؤال فالتلفزيون، وافق عليه)", sh.toString(), out -> {
-            if (!out.contains("done")) return "⚠️ ما كملش:\n" + out;
-            int on = 0, gone = 0;
-            boolean home = false;
-            for (String line : out.split("\n")) {
-                if (line.startsWith("on=")) on = Integer.parseInt(line.substring(3).trim());
-                if (line.startsWith("gone=")) gone++;
-                if (line.startsWith("home=com.google.android.tvlauncher/")) home = true;
-            }
-            return (home ? "✅ رجعات شاشة قوقل الأصلية\n" : "⚠️ الشاشة الرئيسية ما تبدّلاتش\n")
-                    + "✅ تشعّلو " + on + " تطبيقات\n"
-                    + (removeOurs ? "🗑️ تحيدو " + gone + " تطبيقات ديال نور\n" : "")
-                    + "\nالتلفزيون رجع كيما كان 🌿";
-        });
+        run(tr("كنرجّعو التلفزيون… (إلى طلع سؤال فالتلفزيون، وافق عليه)", "Restaurando la tele… (si sale una pregunta en la tele, acéptala)"),
+                sh.toString(), out -> {
+                    if (!out.contains("done")) return tr("⚠️ ما كملش:\n", "⚠️ No terminó:\n") + out;
+                    int on = 0, gone = 0;
+                    boolean home = false;
+                    for (String line : out.split("\n")) {
+                        if (line.startsWith("on=")) on = Integer.parseInt(line.substring(3).trim());
+                        if (line.startsWith("gone=")) gone++;
+                        if (line.startsWith("home=com.google.android.tvlauncher/")) home = true;
+                    }
+                    return (home ? tr("✅ رجعات شاشة قوقل الأصلية\n", "✅ Vuelve la pantalla original de Google\n")
+                            : tr("⚠️ الشاشة الرئيسية ما تبدّلاتش\n", "⚠️ La pantalla de inicio no cambió\n"))
+                            + tr("✅ تشعّلو " + on + " تطبيقات\n", "✅ " + on + " apps activadas\n")
+                            + (removeOurs ? tr("🗑️ تحيدو " + gone + " تطبيقات ديال نور\n", "🗑️ " + gone + " apps de Noor quitadas\n") : "")
+                            + tr("\nالتلفزيون رجع كيما كان 🌿", "\nLa tele está como antes 🌿");
+                });
     }
 
     // ---------- helpers ----------
@@ -259,8 +404,11 @@ public class MainActivity extends Activity {
             try {
                 msg = result.of(Adb.shell(this, h, command));
             } catch (Exception e) {
-                msg = "⚠️ ما قدرتش نتصل بالتلفزيون.\n\nتأكد بلّي:\n• «تصحيح أخطاء USB» مشعّل فخيارات المطوّر ديال التلفزيون\n"
-                        + "• التيليفون والتلفزيون فنفس الواي فاي\n• وافقتي على السؤال اللي طلع فالتلفزيون\n\n(" + e.getClass().getSimpleName() + ")";
+                msg = tr("⚠️ ما قدرتش نتصل بالتلفزيون.\n\nتأكد بلّي:\n• «تصحيح أخطاء USB» مشعّل فخيارات المطوّر ديال التلفزيون\n"
+                                + "• التيليفون والتلفزيون فنفس الواي فاي\n• وافقتي على السؤال اللي طلع فالتلفزيون",
+                        "⚠️ No pude conectar con la tele.\n\nComprueba que:\n• «Depuración USB» está activada en las opciones de desarrollador de la tele\n"
+                                + "• El móvil y la tele están en el mismo wifi\n• Aceptaste la pregunta que salió en la tele")
+                        + "\n\n(" + e.getClass().getSimpleName() + ")";
             }
             String m = msg;
             main.post(() -> {
@@ -271,27 +419,34 @@ public class MainActivity extends Activity {
     }
 
     private void toastDialog(String msg) {
-        new AlertDialog.Builder(this).setMessage(msg).setPositiveButton("مزيان", null).show();
+        new AlertDialog.Builder(this).setMessage(msg).setPositiveButton(tr("مزيان", "Vale"), null).show();
     }
 
-    private Button small(String text, View.OnClickListener l) {
+    private Button small(String text, boolean red, View.OnClickListener l) {
         Button b = new Button(this);
         b.setText(text);
         b.setAllCaps(false);
         b.setTextColor(Color.WHITE);
-        b.setTextSize(14);
-        android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
-        bg.setColor(text.startsWith("♻️") ? 0x33FF6B8A : CARD);
-        bg.setStroke(dp(1), 0x22FFFFFF);
+        b.setTextSize(15);
+        b.setTypeface(Typeface.DEFAULT_BOLD);
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(red ? 0x33FF6B8A : CARD);
+        bg.setStroke(dp(1), red ? 0x59FF6B8A : 0x22FFFFFF);
         bg.setCornerRadius(dp(12));
         b.setBackground(bg);
-        b.setPadding(dp(10), 0, dp(10), 0);
+        b.setPadding(0, 0, 0, 0);
         b.setMinWidth(0);
         b.setMinimumWidth(0);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(40));
+        b.setMinHeight(0);
+        b.setMinimumHeight(0);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(44), dp(40));
         lp.setMarginStart(dp(6));
         b.setLayoutParams(lp);
-        b.setOnClickListener(l);
+        b.setOnClickListener(v -> {
+            v.animate().scaleX(.9f).scaleY(.9f).setDuration(80).withEndAction(() -> v.animate().scaleX(1).scaleY(1).setDuration(120).start()).start();
+            v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
+            l.onClick(v);
+        });
         return b;
     }
 

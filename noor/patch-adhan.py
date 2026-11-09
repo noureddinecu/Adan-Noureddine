@@ -148,5 +148,30 @@ sub("""    private static void stop() {
         removeBanner();
         if (player == null) return;""")
 
+# For the phone app's prayer page (MessageServer): today's times, play/stop now, and the adhan's own volume.
+sub("""    private static String[] times(Context c, Calendar day) {""",
+    """    static String[] times(Context c, Calendar day) {""")
+sub("""    private static void stop() {""", """    static void stop() {""")
+sub("""        player.setOnCompletionListener(mp -> stop());
+        player.start();""",
+    """        float vol = app.getSharedPreferences("adhan", Context.MODE_PRIVATE).getInt("vol", 100) / 100f;
+        player.setVolume(vol, vol);
+        player.setOnCompletionListener(mp -> stop());
+        player.start();""")
+sub("""    static void stop() {""",
+    """    /** The adhan's own volume, 0-100, kept for the next one and applied to one playing now. */
+    static void volume(Context c, int v) {
+        v = Math.max(0, Math.min(100, v));
+        c.getSharedPreferences("adhan", Context.MODE_PRIVATE).edit().putInt("vol", v).apply();
+        if (player != null) {
+            try {
+                player.setVolume(v / 100f, v / 100f);
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    static void stop() {""")
+
 open(path, "w", encoding="utf-8").write(s)
 print("adhan patch applied")

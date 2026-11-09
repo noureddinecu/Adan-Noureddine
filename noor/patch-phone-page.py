@@ -54,7 +54,27 @@ sub("""                try (Socket s = server.accept()) {
                     s.setSoTimeout(20000); // a photo from the phone takes longer than a message""")
 
 sub("""    private static void reply(OutputStream out, String type, String body) throws Exception {""",
-    """    private String pageCache;
+    """    /** Index of the next prayer today from "HH:mm" times, or 0 (Fajr) once Isha has passed. */
+    static int nextPrayer(String[] t) {
+        if (t == null) return 0;
+        java.util.Calendar now = java.util.Calendar.getInstance();
+        int m = now.get(java.util.Calendar.HOUR_OF_DAY) * 60 + now.get(java.util.Calendar.MINUTE);
+        for (int i = 0; i < t.length; i++) {
+            String[] hm = t[i].split(":");
+            if (Integer.parseInt(hm[0]) * 60 + Integer.parseInt(hm[1]) > m) return i;
+        }
+        return 0;
+    }
+
+    private String prayerJson() {
+        String[] t = Adhan.times(this, java.util.Calendar.getInstance());
+        StringBuilder b = new StringBuilder("{\\"times\\":[");
+        if (t != null) for (int i = 0; i < t.length; i++) b.append(i == 0 ? "" : ",").append('"').append(t[i]).append('"');
+        int vol = getSharedPreferences("adhan", MODE_PRIVATE).getInt("vol", 100);
+        return b.append("],\\"next\\":").append(nextPrayer(t)).append(",\\"vol\\":").append(vol).append('}').toString();
+    }
+
+    private String pageCache;
 
     private String page() {
         if (pageCache == null) {
@@ -144,6 +164,34 @@ sub("""    private static void reply(OutputStream out, String type, String body)
     }
 
     private static void reply(OutputStream out, String type, String body) throws Exception {""")
+
+# The phone app: GET /ping (discovery), GET /prayer (today's times, next prayer, adhan volume) and
+# POST /adhan?do=play|stop&vol=N (try the adhan now, stop it, set its volume).
+sub("""        if (!first.startsWith("POST ")) {""",
+    """        if (first.startsWith("GET /ping")) {
+            reply(s.getOutputStream(), "text/plain", "zahhaf");
+            return;
+        }
+        if (first.startsWith("GET /prayer")) {
+            reply(s.getOutputStream(), "application/json", prayerJson());
+            return;
+        }
+        if (!first.startsWith("POST ")) {""")
+sub("""        if (first.startsWith("POST /image")) {""",
+    """        if (first.startsWith("POST /adhan")) {
+            readBody(in, head);
+            java.util.regex.Matcher v = java.util.regex.Pattern.compile("[?&]vol=(\\\\d{1,3})").matcher(first);
+            if (v.find()) Adhan.volume(this, Integer.parseInt(v.group(1)));
+            if (first.contains("do=play")) {
+                int next = nextPrayer(Adhan.times(this, java.util.Calendar.getInstance()));
+                main.post(() -> Adhan.fire(getApplicationContext(), next, true));
+            } else if (first.contains("do=stop")) {
+                main.post(Adhan::stop);
+            }
+            reply(s.getOutputStream(), "text/plain", "ok");
+            return;
+        }
+        if (first.startsWith("POST /image")) {""")
 
 open(path, "w", encoding="utf-8").write(s)
 print("phone page patch applied")
