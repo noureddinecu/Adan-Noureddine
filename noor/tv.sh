@@ -19,7 +19,7 @@ need_ip() { [ -n "$IP" ] || { echo "usage: bash tv.sh $CMD <tv-ip> ..."; exit 1;
 sh_() { adb -s "$D" shell "$@" | tr -d '\r'; }
 home_now() { sh_ "$HOMEQ" | tail -n 1; }
 install_apk() {
-  local out; out=$(adb -s "$D" install -r "$1" 2>&1 | tr -d '\r')
+  local out; out=$(adb -s "$D" install -r "$1" 2>&1 | tr -d '\r') || true
   case "$out" in *Success*) echo "✅ $(basename "$1")" ;; *) echo "⛔ $(basename "$1"): $out"; return 1 ;; esac
 }
 
