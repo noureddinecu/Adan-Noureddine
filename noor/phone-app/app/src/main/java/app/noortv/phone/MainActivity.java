@@ -3,7 +3,6 @@ package app.noortv.phone;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -13,16 +12,13 @@ import android.net.ConnectivityManager;
 import android.net.LinkAddress;
 import android.net.LinkProperties;
 import android.net.Network;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -45,13 +41,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * «زحاف TV» on the phone: the studio served by the TV (draw, write, stickers, photos, camera, prayer times) in a
+ * «زحاف TV» on the phone: the page served by the TV (a written or drawn message, prayer times, adhkar) in a
  * WebView, finding the TV on the Wi-Fi by itself, in Arabic or Spanish, plus a PIN-protected button that gives the
  * TV back its own home screen and apps over network ADB.
  */
 public class MainActivity extends Activity {
     static final String PIN = "0000";
-    static final int PICK = 7;
     static final int BG = 0xFF0D0F1E, CARD = 0x1AFFFFFF;
 
     /** Everything this setup (and the CleanYourTV app before it) may have turned off; restore turns them back on. */
@@ -72,8 +67,6 @@ public class MainActivity extends Activity {
     private final Handler main = new Handler(Looper.getMainLooper());
     private SharedPreferences prefs;
     private WebView web;
-    private ValueCallback<Uri[]> pending;
-    private long camAt;
 
     private boolean es() {
         return "es".equals(prefs.getString("lang", "ar"));
@@ -101,19 +94,21 @@ public class MainActivity extends Activity {
         bar.setPadding(dp(14), dp(10), dp(10), dp(10));
         TextView title = new TextView(this);
         title.setText(tr("زحاف TV", "Zahhaf TV"));
-        title.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_tv, 0, 0, 0);
+        android.graphics.drawable.Drawable tvIcon = getDrawable(R.drawable.i3_tv);
+        tvIcon.setBounds(0, 0, dp(34), dp(34));
+        title.setCompoundDrawablesRelative(tvIcon, null, null, null);
         title.setCompoundDrawablePadding(dp(10));
         title.setTextColor(Color.WHITE);
         title.setTextSize(19);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         bar.addView(title, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        bar.addView(small(R.drawable.ic_search, false, v -> connect(true)));
-        bar.addView(small(R.drawable.ic_globe, false, v -> {
+        bar.addView(small(R.drawable.i3_search, false, v -> connect(true)));
+        bar.addView(small(R.drawable.i3_globe, false, v -> {
             prefs.edit().putString("lang", es() ? "ar" : "es").apply();
             recreate();
         }));
-        bar.addView(small(R.drawable.ic_settings, false, v -> settings()));
-        bar.addView(small(R.drawable.ic_restore, true, v -> askPin()));
+        bar.addView(small(R.drawable.i3_gear, false, v -> settings()));
+        bar.addView(small(R.drawable.i3_restore, true, v -> askPin()));
         root.addView(bar);
 
         web = new WebView(this);
@@ -134,23 +129,7 @@ public class MainActivity extends Activity {
                 if (r.isForMainFrame()) offline(false);
             }
         });
-        web.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public boolean onShowFileChooser(WebView v, ValueCallback<Uri[]> cb, FileChooserParams p) {
-                if (pending != null) pending.onReceiveValue(null);
-                pending = cb;
-                try {
-                    startActivityForResult(p.isCaptureEnabled() ? camera()
-                            : Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*")
-                                    .addCategory(Intent.CATEGORY_OPENABLE), tr("اختار تصويرة", "Elige una foto"))
-                            .putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{camera()}), PICK);
-                } catch (Exception e) {
-                    pending = null;
-                    return false;
-                }
-                return true;
-            }
-        });
+        web.setWebChromeClient(new WebChromeClient());
         root.addView(web, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
         setContentView(root);
         connect(false);
@@ -325,31 +304,6 @@ public class MainActivity extends Activity {
                 + "<button onclick='Zahhaf.search()'>" + SEARCH_ICON + tr("قلّب مرة أخرى", "Buscar otra vez") + "</button>");
     }
 
-    // ---------- photos and the camera ----------
-
-    private Intent camera() {
-        CamProvider.file(this).delete();
-        camAt = System.currentTimeMillis();
-        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                .putExtra(MediaStore.EXTRA_OUTPUT, CamProvider.URI)
-                .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        i.setClipData(ClipData.newRawUri("", CamProvider.URI));
-        return i;
-    }
-
-    @Override
-    protected void onActivityResult(int req, int res, Intent data) {
-        if (req != PICK || pending == null) return;
-        Uri u = null;
-        if (res == RESULT_OK) {
-            u = data != null ? data.getData() : null;
-            java.io.File shot = CamProvider.file(this);
-            if (u == null && shot.length() > 0 && shot.lastModified() >= camAt - 2000) u = CamProvider.URI;
-        }
-        pending.onReceiveValue(u == null ? null : new Uri[]{u});
-        pending = null;
-    }
-
     @Override
     public void onBackPressed() {
         if (web.canGoBack()) web.goBack();
@@ -371,7 +325,9 @@ public class MainActivity extends Activity {
                         + "Hace falta para el botón ♻️.")));
         Button find = new Button(this);
         find.setText(tr("قلّب على التلفزيون", "Buscar la tele"));
-        find.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_search, 0, 0, 0);
+        android.graphics.drawable.Drawable findIcon = getDrawable(R.drawable.i3_search);
+        findIcon.setBounds(0, 0, dp(24), dp(24));
+        find.setCompoundDrawablesRelative(findIcon, null, null, null);
         find.setCompoundDrawablePadding(dp(8));
         find.setAllCaps(false);
         box.addView(find);
@@ -504,13 +460,13 @@ public class MainActivity extends Activity {
     private android.widget.ImageButton small(int icon, boolean red, View.OnClickListener l) {
         android.widget.ImageButton b = new android.widget.ImageButton(this);
         b.setImageResource(icon);
-        if (red) b.setColorFilter(0xFFFFD0DA);
+        b.setPadding(dp(7), dp(7), dp(7), dp(7));
         GradientDrawable bg = new GradientDrawable();
         bg.setColor(red ? 0x33FF6B8A : CARD);
         bg.setStroke(dp(1), red ? 0x59FF6B8A : 0x22FFFFFF);
         bg.setCornerRadius(dp(13));
         b.setBackground(bg);
-        b.setScaleType(android.widget.ImageView.ScaleType.CENTER);
+        b.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(42), dp(42));
         lp.setMarginStart(dp(7));
         b.setLayoutParams(lp);
