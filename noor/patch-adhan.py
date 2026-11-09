@@ -2,7 +2,7 @@
 """Owner's choice for the adhan (noor-app/Adhan.java), applied at build time:
 - the adhan sounds at every prayer (Fajr too) whatever is on screen; other audio pauses for it (transient
   audio focus) and resumes after;
-- it stops if the viewer switches to another app while it plays;
+- it stops if the viewer switches to another app while it plays, and its banner goes with it;
 - the recording is read from the app's own folder on the TV (/sdcard/Android/data/app.noortv.kahf/files/adhan.mp3,
   put there by `tv.sh adhan`), falling back to res/raw/adhan when the build has one.
 Usage: patch-adhan.py <Adhan.java>"""
@@ -93,6 +93,60 @@ sub("""        player.release();
         if (audio != null && focus != null) audio.abandonAudioFocusRequest(focus);
         focus = null;
     }""")
+
+# The banner goes away with the adhan: when it ends, when the viewer switches app, or when a new one starts.
+sub("""    private static android.media.AudioFocusRequest focus;""",
+    """    private static android.media.AudioFocusRequest focus;
+    private static TextView bannerView;
+    private static WindowManager bannerWm;
+
+    private static void removeBanner() {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (bannerView == null) return;
+            try {
+                bannerWm.removeView(bannerView);
+            } catch (Exception ignored) {
+            }
+            bannerView = null;
+        });
+    }""")
+sub("""            try {
+                wm.addView(v, lp);
+            } catch (Exception e) {
+                return;
+            }
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                try {
+                    wm.removeView(v);
+                } catch (Exception ignored) {
+                }
+            }, ms);""",
+    """            if (bannerView != null) {
+                try {
+                    bannerWm.removeView(bannerView);
+                } catch (Exception ignored) {
+                }
+            }
+            try {
+                wm.addView(v, lp);
+            } catch (Exception e) {
+                return;
+            }
+            bannerView = v;
+            bannerWm = wm;
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (bannerView != v) return;
+                try {
+                    wm.removeView(v);
+                } catch (Exception ignored) {
+                }
+                bannerView = null;
+            }, ms);""")
+sub("""    private static void stop() {
+        if (player == null) return;""",
+    """    private static void stop() {
+        removeBanner();
+        if (player == null) return;""")
 
 open(path, "w", encoding="utf-8").write(s)
 print("adhan patch applied")
