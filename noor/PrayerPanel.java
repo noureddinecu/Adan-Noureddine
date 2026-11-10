@@ -24,6 +24,7 @@ import java.util.Calendar;
  * on the right through Isha on the left, each with the prayer's name and its time in large figures. The next prayer
  * glows gold, slightly larger, with the time left. Shows while the home screen is in front and steps aside the
  * moment an app, a channel or HDMI opens. Started by MessageServer; switched on and off from the phone (/dhikr panel=1|0).
+ * A home that draws the times in its own layout (PrayerRow, noor/prayer-row.py) gets no floating panel on top.
  */
 final class PrayerPanel {
     private PrayerPanel() {
@@ -56,7 +57,8 @@ final class PrayerPanel {
 
     private static void tick() {
         main.postDelayed(tick, 1500);
-        boolean show = on() && Settings.canDrawOverlays(app) && app.getSystemService(PowerManager.class).isInteractive() && homeInFront();
+        boolean show = on() && Settings.canDrawOverlays(app) && app.getSystemService(PowerManager.class).isInteractive() && homeInFront()
+                && !drawsOwnRow(lastTop);
         if (!show) {
             hide();
             return;
@@ -93,6 +95,24 @@ final class PrayerPanel {
         if (lastTop == null) return false;
         for (String h : HOMES) if (h.equals(lastTop)) return true;
         return false;
+    }
+
+    private static String rowChecked;
+    private static boolean rowOwn;
+
+    /** A home built with noor/prayer-row.py shows the times in its own layout: this panel then stays out of its way. */
+    private static boolean drawsOwnRow(String pkg) {
+        if (pkg == null) return false;
+        if (!pkg.equals(rowChecked)) {
+            rowChecked = pkg;
+            try {
+                android.os.Bundle md = app.getPackageManager().getApplicationInfo(pkg, android.content.pm.PackageManager.GET_META_DATA).metaData;
+                rowOwn = md != null && md.getBoolean("app.noortv.prayerRow", false);
+            } catch (Exception e) {
+                rowOwn = false;
+            }
+        }
+        return rowOwn;
     }
 
     private static int px(float dp) {

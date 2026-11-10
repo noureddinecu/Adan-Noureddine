@@ -17,6 +17,8 @@ SIGN=(-Pandroid.injected.signing.store.file="$KS" -Pandroid.injected.signing.sto
 python3 -I noor-tv/launcher-patch/apply.py cleanyourtv "$LAT" "$LON" "$METHOD" "$CITY"
 # The city then comes from the phone at run time; the one above is only the starting value.
 python3 -I noor/city-runtime.py "$LAT" "$LON" "$METHOD" "$CITY"
+# The prayer times as a row of the home layout itself, under the clock header (noor/PrayerRow.java).
+python3 -I noor/prayer-row.py
 
 # Own package name: this TV already has another build of the CleanYourTV launcher (com.gathin.tvhome, another
 # signing key), which cannot be updated in place and, by the skill's rule, is disabled rather than uninstalled.

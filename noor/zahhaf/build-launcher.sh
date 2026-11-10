@@ -7,6 +7,7 @@ VER="$1"
 source noor/city.env
 python3 -I noor-tv/launcher-patch/apply.py cleanyourtv "$LAT" "$LON" "$METHOD" "$CITY" >&2
 python3 -I noor/city-runtime.py "$LAT" "$LON" "$METHOD" "$CITY" >&2
+python3 -I noor/prayer-row.py >&2
 sed -i -E "s/^( *versionCode) [0-9]+/\1 $VER/" cleanyourtv/launcher/app/build.gradle
 KS="$PWD/noor/debug.keystore"
 (cd cleanyourtv/launcher && echo "sdk.dir=$ANDROID_HOME" > local.properties && ./gradlew assembleRelease -q --console=plain \
