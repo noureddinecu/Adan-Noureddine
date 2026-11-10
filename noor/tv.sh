@@ -11,6 +11,7 @@
 #                                                   and update the Home screen when it is ours
 #   bash tv.sh adhan <tv-ip> [youtube-url]          download the adhan on the phone and put it on the TV
 #   bash tv.sh test-adhan <tv-ip>                   play the adhan and its banner now, to check
+#   bash tv.sh doctor <tv-ip>                       adhkar or adhan not showing: check and fix, then show a dhikr
 #   bash tv.sh reset-ours <tv-ip> <backup-folder>   give Home back to the stock launcher and remove only the apps this
 #                                                   setup installed (never a system app), e.g. after a signing-key change
 set -euo pipefail
@@ -24,6 +25,13 @@ CMD="${1:-}"; IP="${2:-}"; D="$IP:5555"
 need_ip() { [ -n "$IP" ] || { echo "usage: bash tv.sh $CMD <tv-ip> ..."; exit 1; }; }
 sh_() { adb -s "$D" shell "$@" | tr -d '\r'; }
 home_now() { sh_ "$HOMEQ" | tail -n 1; }
+# The adhkar and the adhan run in the Noor app's background service: allow it over other apps, keep the system from
+# putting it to sleep or killing it, and start it.
+keep_alive() {
+  sh_ "appops set app.noortv.kahf SYSTEM_ALERT_WINDOW allow; appops set app.noortv.kahf GET_USAGE_STATS allow; \
+dumpsys deviceidle whitelist +app.noortv.kahf; am set-standby-bucket app.noortv.kahf active; \
+appops set app.noortv.kahf RUN_IN_BACKGROUND allow" >/dev/null 2>&1 || true
+}
 install_apk() {
   local out; out=$(adb -s "$D" install -r "$1" 2>&1 | tr -d '\r') || true
   case "$out" in *Success*) echo "✅ $(basename "$1")" ;; *) echo "⛔ $(basename "$1"): $out"; return 1 ;; esac
@@ -125,10 +133,24 @@ noor)
     echo "⚠️ Home on the TV is '$HP', not $PKG: the Home screen was not updated (bash tv.sh launcher $IP <backup-folder>)"
   fi
   echo "versions: $(sh_ "dumpsys package $PKG | grep -m1 versionCode; dumpsys package app.noortv.kahf | grep -m1 versionCode" | tr -s ' \n' ' ')"
-  sh_ "appops set app.noortv.kahf SYSTEM_ALERT_WINDOW allow; appops set app.noortv.kahf GET_USAGE_STATS allow" >/dev/null
+  keep_alive
   sleep 8  # Android restarts the app right after an update
   sh_ "am broadcast -n app.noortv.kahf/app.noortv.Reminder" >/dev/null
   echo "Phone page: http://$IP:8080"
+  ;;
+
+doctor)
+  # Why the adhkar or the adhan do not show, and the fix: permissions, sleep, the service, the next adhan alarm.
+  need_ip
+  echo "over other apps: $(sh_ "appops get app.noortv.kahf SYSTEM_ALERT_WINDOW")"
+  echo "service running: $(sh_ "dumpsys activity services app.noortv.kahf/.MessageServer | grep -c ServiceRecord")"
+  echo "adhan alarm set: $(sh_ "dumpsys alarm | grep -c 'app.noortv.kahf'")"
+  echo "adhkar settings: $(curl -s -m 3 "http://$IP:8080/dhikr" || echo 'no answer from the Noor app')"
+  keep_alive
+  sh_ "am broadcast -n app.noortv.kahf/app.noortv.Reminder" >/dev/null
+  sleep 4
+  curl -s -m 3 -X POST "http://$IP:8080/dhikr?on=1&do=test" >/dev/null && echo "✅ fixed; a dhikr is on the TV now" \
+    || echo "⛔ the Noor app does not answer: bash tv.sh noor $IP"
   ;;
 
 adhan)

@@ -84,6 +84,7 @@ final class PrayerRow {
     static void update(Activity a) {
         LinearLayout box = a.findViewById(R.id.noorPrayers);
         if (box == null) return;
+        appContext = a.getApplicationContext();
         if (box != row) build(a, box);
         refresh();
         fill();
@@ -104,13 +105,26 @@ final class PrayerRow {
                 }
                 enabled = new JSONObject(get("http://127.0.0.1:8080/dhikr")).optBoolean("panel", true);
                 fetchedAt = System.currentTimeMillis();
-            } catch (Exception ignored) {
-                // The Noor app is not up yet: try again next minute, keep what we have.
+            } catch (Exception e) {
+                // The Noor app is not answering: its service (adhkar, adhan, this server) was stopped. Wake it the way
+                // a boot does; it starts the service and sets the next adhan again. Tried again next minute.
+                wakeNoor();
             } finally {
                 fetching = false;
             }
             main.post(PrayerRow::fill);
         }, "noor-prayers").start();
+    }
+
+    private static Context appContext;
+
+    private static void wakeNoor() {
+        Context c = appContext;
+        if (c == null) return;
+        try {
+            c.sendBroadcast(new Intent().setClassName("app.noortv.kahf", "app.noortv.Reminder"));
+        } catch (Exception ignored) {
+        }
     }
 
     /** The countdown and the bar, once a second on the second, only while the row is on screen. */

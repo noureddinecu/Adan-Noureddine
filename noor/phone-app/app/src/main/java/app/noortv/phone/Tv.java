@@ -115,7 +115,10 @@ final class Tv {
             install("tv/noor-" + f + ".apk");
             if (bk != null) addOnce(bk.getJSONArray("installedByUs"), "app.noortv." + f);
         }
-        shell("appops set app.noortv.kahf SYSTEM_ALERT_WINDOW allow; appops set app.noortv.kahf GET_USAGE_STATS allow");
+        // Over other apps, and kept awake and alive: the adhkar and the adhan run in its background service.
+        shell("appops set app.noortv.kahf SYSTEM_ALERT_WINDOW allow; appops set app.noortv.kahf GET_USAGE_STATS allow; "
+                + "appops set app.noortv.kahf RUN_IN_BACKGROUND allow; dumpsys deviceidle whitelist +app.noortv.kahf; "
+                + "am set-standby-bucket app.noortv.kahf active");
         Thread.sleep(5000);
         shell("am broadcast -n app.noortv.kahf/app.noortv.Reminder");
     }
