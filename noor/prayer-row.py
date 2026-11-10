@@ -62,4 +62,20 @@ patch(src / "AndroidManifest.xml",
         <meta-data android:name="app.noortv.prayerRow" android:value="true" />
 """,
       "app.noortv.prayerRow")
+# The times come from the Noor app on this same TV over plain HTTP (127.0.0.1:8080), which Android blocks by
+# default for this target SDK: allow it for this TV itself only, nothing on the network.
+(src / "res/xml").mkdir(parents=True, exist_ok=True)
+(src / "res/xml/noor_network.xml").write_text("""<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>
+""", encoding="utf-8")
+patch(src / "AndroidManifest.xml",
+      """        android:localeConfig="@xml/locales_config">""",
+      """        android:localeConfig="@xml/locales_config"
+        android:networkSecurityConfig="@xml/noor_network">""",
+      "@xml/noor_network")
 print("prayer row: in the home layout, under the header")
