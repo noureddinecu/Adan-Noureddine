@@ -18,11 +18,26 @@ jobs:
           ref: 03ad20ebec68284a362b9d90690876c18e212286
           path: cyt-app
           submodules: true
+      - uses: actions/checkout@v4
+        with:
+          repository: majedphotos/noor-tv
+          ref: c0ae5b7124332730da534bccfed35d9bef3e08c2
+          path: noor-tv
+      - uses: actions/checkout@v4
+        with:
+          repository: Gathin23/cleanyourtv
+          ref: 3b6b3a15760d426dfcbcc6007bf26c429f35096a
+          path: cleanyourtv
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-      - run: python3 -I noor/zahhaf/patch.py cyt-app
+      - name: Noor launcher, then Zahhaf TV changes
+        run: |
+          VER=$((1000 + GITHUB_RUN_NUMBER))
+          LAUNCHER=$(bash noor/zahhaf/build-launcher.sh "$VER")
+          keytool -exportcert -alias androiddebugkey -keystore noor/debug.keystore -storepass android -file signer.der
+          python3 -I noor/zahhaf/patch.py cyt-app "$LAUNCHER" signer.der "$VER"
       - name: Build, signed with the repo key
         env:
           CYT_RELEASE_KEYSTORE: ${{ github.workspace }}/noor/debug.keystore
