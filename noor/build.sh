@@ -32,6 +32,9 @@ python3 -I noor/patch-adhan.py noor-tv/noor-app/app/src/main/java/app/noortv/Adh
 # The phone page studio: draw, write, stickers and photos on the TV.
 python3 -I noor/patch-phone-page.py noor-tv/noor-app/app/src/main/java/app/noortv/MessageServer.java
 mkdir -p noor-tv/noor-app/app/src/main/assets && python3 -I noor/inline-icons.py noor/phone-page.html noor-tv/noor-app/app/src/main/assets/page.html
+# The adhan the owner chose (Anas Tazi, Moroccan style), built into the Noor app (res/raw); a file put on the TV
+# by the phone still wins.
+mkdir -p noor-tv/noor-app/app/src/kahf/res/raw && cp noor/adhan.mp3 noor-tv/noor-app/app/src/kahf/res/raw/adhan.mp3
 # Adhkar on screen, in Amiri (SIL Open Font License); the salawat line every 45 minutes is now one of the adhkar.
 cp noor/Dhikr.java noor-tv/noor-app/app/src/main/java/app/noortv/Dhikr.java
 # The chime for a new message on the TV.
