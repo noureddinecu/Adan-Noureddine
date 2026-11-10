@@ -21,6 +21,13 @@ def patch(path, old, new, marker):
 
 
 shutil.copy(here / "PrayerRow.java", pkg / "PrayerRow.java")
+# Amiri Bold (SIL Open Font License) for the prayer names; without it the row falls back to the system serif.
+try:
+    import urllib.request
+    (src / "assets").mkdir(parents=True, exist_ok=True)
+    urllib.request.urlretrieve("https://github.com/google/fonts/raw/main/ofl/amiri/Amiri-Bold.ttf", src / "assets/noor-amiri.ttf")
+except Exception as e:
+    print("prayer row: no Amiri (", e, "), serif fallback")
 
 # The row, in the column that holds the header and the apps: header (wrap) / prayers (wrap) / apps (weight 1).
 patch(src / "res/layout/activity_main.xml",
@@ -30,7 +37,7 @@ patch(src / "res/layout/activity_main.xml",
       """        </RelativeLayout>
 
         <!-- Noor: today's prayer times, a row of its own under the header (filled by PrayerRow; gone until the
-             times arrive or when switched off from the phone). Not focusable, so the remote skips it. -->
+             times arrive or when switched off from the phone). Its cards take focus from the dock with Up. -->
         <LinearLayout
             android:id="@+id/noorPrayers"
             android:layout_width="match_parent"
