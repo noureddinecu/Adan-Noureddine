@@ -238,6 +238,6 @@ final class Dhikr {
         SharedPreferences p = prefs(c);
         return "{\"on\":" + p.getBoolean("on", true) + ",\"every\":" + p.getInt("every", 10)
                 + ",\"secs\":" + p.getInt("secs", 5) + ",\"corner\":\"" + p.getString("corner", "br")
-                + "\",\"chime\":" + p.getBoolean("chime", true) + "}";
+                + "\",\"chime\":" + p.getBoolean("chime", true) + ",\"panel\":" + p.getBoolean("panel", true) + "}";
     }
 }

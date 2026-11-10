@@ -222,6 +222,10 @@ textarea:focus{border-color:var(--a1)}
     <div class="size"><img class="i3" data-k="vollow" alt=""><input type="range" id="vol" min="0" max="100" value="100" oninput="$('volv').textContent=this.value+'%'" onchange="adhan('vol='+this.value)"><img class="i3" data-k="vol" alt=""></div>
   </div>
   <div class="card">
+    <div class="tg"><span style="font-size:16px;font-weight:800"><img class="i3" data-k="moon" alt="" style="width:30px;height:30px"><span data-t="panelL"></span></span>
+      <label class="sw"><input type="checkbox" id="panel" onchange="dset('panel='+(this.checked?1:0))"><span></span></label></div>
+  </div>
+  <div class="card">
     <div class="tg"><span style="font-size:16px;font-weight:800"><img class="i3" data-k="bell" alt="" style="width:30px;height:30px"><span data-t="chimeL"></span></span>
       <label class="sw"><input type="checkbox" id="chime" onchange="dset('chime='+(this.checked?1:0))"><span></span></label></div>
   </div>
@@ -267,7 +271,7 @@ var L={ar:{name1:'زحاف',tWrite:'كتابة',tDraw:'رسم',tSet:'الإعد�
   P:['جمعة مباركة 🌙','رمضان كريم 🌙','عيد مبارك 🎉','السلام عليكم','الطعام جاهز 🍽️','وقت النوم 😴','حان وقت الصلاة 🕌','أحبكم ❤️','مرحباً بالضيوف 🌹','تصبحون على خير 🌙'],
   tPen:'قلم',tNeon:'نيون',tSpray:'بخّاخ',tEraser:'ممحاة',tShape:'أشكال',tFull:'ملء الشاشة',thick:'سُمك القلم',natural:'قلم طبيعي (حسب السرعة)',fadeL:'خطوط تختفي تدريجياً',blackL:'خلفية سوداء',
   hintDraw:'كل ما ترسمه يظهر على التلفاز مباشرة. بدون خلفية سوداء يظهر الرسم فوق ما يُعرض.',
-  adhanT:'الأذان',tryAdhan:'تجربة الأذان',stopAdhan:'إيقاف الأذان',adhanVol:'مستوى صوت الأذان',chimeL:'صوت تنبيه عند وصول رسالة',dhikrT:'الأذكار على الشاشة',dEvery:'الظهور كل (دقيقة)',
+  adhanT:'الأذان',tryAdhan:'تجربة الأذان',stopAdhan:'إيقاف الأذان',adhanVol:'مستوى صوت الأذان',chimeL:'صوت تنبيه عند وصول رسالة',panelL:'مواقيت الصلاة على الشاشة الرئيسية',dhikrT:'الأذكار على الشاشة',dEvery:'الظهور كل (دقيقة)',
   dSecs:'مدة الظهور (ثانية)',dCorner:'مكان الظهور على الشاشة',dTest:'عرض ذكر الآن',lockBtn:'قفل الإعدادات',pinT:'أدخل الرمز',
   hintSet:'مواقيت الصلاة تظهر على التلفاز. يُرفع الأذان في كل صلاة ولو كان شيء يعمل، والأذكار تظهر صغيرة في زاوية الشاشة ولا تظهر أثناء الأذان.',
   wifi:'تعذّر الوصول، تحقّق من شبكة الواي فاي',cleared:'تم المسح',nothing:'لا يوجد ما يُتراجع عنه',soundOn:'صوت القلم مفعّل',soundOff:'صوت القلم متوقف',
@@ -280,7 +284,7 @@ var L={ar:{name1:'زحاف',tWrite:'كتابة',tDraw:'رسم',tSet:'الإعد�
   P:['¡Feliz viernes! 🌙','¡Ramadán Karim! 🌙','¡Feliz Eid! 🎉','¡Hola, familia!','¡La comida está lista! 🍽️','Hora de dormir 😴','Es la hora del rezo 🕌','Os quiero ❤️','¡Bienvenidos! 🌹','Buenas noches 🌙'],
   tPen:'Lápiz',tNeon:'Neón',tSpray:'Spray',tEraser:'Goma',tShape:'Formas',tFull:'Pantalla completa',thick:'Grosor del lápiz',natural:'Lápiz natural (según la velocidad)',fadeL:'Trazos que se desvanecen',blackL:'Fondo negro',
   hintDraw:'Todo lo que dibujas sale en la tele al instante. Sin fondo negro, el dibujo aparece encima de lo que se ve.',
-  adhanT:'El adhan',tryAdhan:'Probar el adhan',stopAdhan:'Parar el adhan',adhanVol:'Volumen del adhan',chimeL:'Sonido al llegar un mensaje',dhikrT:'Adhkar en pantalla',dEvery:'Aparecen cada (minutos)',
+  adhanT:'El adhan',tryAdhan:'Probar el adhan',stopAdhan:'Parar el adhan',adhanVol:'Volumen del adhan',chimeL:'Sonido al llegar un mensaje',panelL:'Horarios de oración en la pantalla de inicio',dhikrT:'Adhkar en pantalla',dEvery:'Aparecen cada (minutos)',
   dSecs:'Duración (segundos)',dCorner:'Lugar en la pantalla',dTest:'Mostrar uno ahora',lockBtn:'Bloquear ajustes',pinT:'Introduce el código',
   hintSet:'Los horarios de oración se ven en la tele. El adhan suena en cada oración aunque haya algo puesto, y los adhkar salen pequeños en una esquina, nunca durante el adhan.',
   wifi:'No llegó, revisa el wifi',cleared:'Borrado',nothing:'No hay nada que deshacer',soundOn:'Sonido del lápiz activado',soundOff:'Sonido del lápiz desactivado',
@@ -481,7 +485,7 @@ function adhan(q){post('/adhan?'+q,'').then(function(){say(q==='do=play'?'adhanP
 function chipsSet(id,v){document.querySelectorAll('#'+id+' button').forEach(function(b){b.classList.toggle('on',b.dataset.v==String(v))})}
 ['dEvery','dSecs'].forEach(function(id){document.querySelectorAll('#'+id+' button').forEach(function(b){b.onclick=function(){chipsSet(id,b.dataset.v);dset((id==='dEvery'?'every=':'secs=')+b.dataset.v)}})});
 document.querySelectorAll('.tv button').forEach(function(b){b.onclick=function(){document.querySelectorAll('.tv button').forEach(function(x){x.classList.toggle('on',x===b)});dset('corner='+b.dataset.v+'&do=test')}});
-function dload(){fetch('/dhikr').then(function(r){return r.json()}).then(function(j){$('dOn').checked=j.on;$('chime').checked=j.chime!==false;$('dBox').style.opacity=j.on?1:.4;chipsSet('dEvery',j.every);chipsSet('dSecs',j.secs);
+function dload(){fetch('/dhikr').then(function(r){return r.json()}).then(function(j){$('dOn').checked=j.on;$('chime').checked=j.chime!==false;$('panel').checked=j.panel!==false;$('dBox').style.opacity=j.on?1:.4;chipsSet('dEvery',j.every);chipsSet('dSecs',j.secs);
   document.querySelectorAll('.tv button').forEach(function(x){x.classList.toggle('on',x.dataset.v===j.corner)})}).catch(function(){});
   fetch('/prayer').then(function(r){return r.json()}).then(function(j){$('vol').value=j.vol;$('volv').textContent=j.vol+'%'}).catch(function(){})}
 function dset(q){if(q.indexOf('on=')===0)$('dBox').style.opacity=q==='on=1'?1:.4;

@@ -196,7 +196,8 @@ sub("""        if (first.startsWith("POST /image")) {""",
 # Adhkar on screen (Dhikr.java): started with the server, set from the phone with GET/POST /dhikr.
 sub("""        new Thread(this::serve, "msg-server").start();""",
     """        new Thread(this::serve, "msg-server").start();
-        Dhikr.start(this);""")
+        Dhikr.start(this);
+        PrayerPanel.start(this);""")
 sub("""        if (first.startsWith("GET /prayer")) {""",
     """        if (first.startsWith("GET /dhikr")) {
             reply(s.getOutputStream(), "application/json", Dhikr.json(this));
@@ -205,10 +206,10 @@ sub("""        if (first.startsWith("GET /prayer")) {""",
         if (first.startsWith("POST /dhikr")) {
             readBody(in, head);
             android.content.SharedPreferences.Editor e = Dhikr.prefs(this).edit();
-            java.util.regex.Matcher m = java.util.regex.Pattern.compile("[?&](on|every|secs|corner|chime)=([a-z0-9]{1,3})").matcher(first);
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("[?&](on|every|secs|corner|chime|panel)=([a-z0-9]{1,3})").matcher(first);
             while (m.find()) {
                 String k = m.group(1), v = m.group(2);
-                if (k.equals("on") || k.equals("chime")) e.putBoolean(k, v.equals("1"));
+                if (k.equals("on") || k.equals("chime") || k.equals("panel")) e.putBoolean(k, v.equals("1"));
                 else if (k.equals("corner")) { if (v.matches("[tb][lr]")) e.putString("corner", v); }
                 else if (v.matches("\\\\d+")) e.putInt(k, Math.max(1, Math.min(k.equals("secs") ? 30 : 240, Integer.parseInt(v))));
             }
