@@ -17,6 +17,7 @@ jobs:
           repository: udhaykumarbala/cleanyourtv-app
           ref: 03ad20ebec68284a362b9d90690876c18e212286
           path: cyt-app
+          submodules: true
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
