@@ -35,7 +35,7 @@ patch(src / "res/layout/activity_main.xml",
             android:id="@+id/noorPrayers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="34dp"
             android:orientation="vertical"
             android:clipChildren="false"
             android:clipToPadding="false"
