@@ -20,9 +20,10 @@ import android.widget.TextView;
 import java.util.Calendar;
 
 /**
- * Today's five prayer times on the home screen, always in view: a small glass panel in the top corner that shows
- * while the home screen is in front and steps aside the moment an app, a channel or HDMI opens. The next prayer is
- * in gold with the time left. Started by MessageServer; switched on and off from the phone (/dhikr panel=1|0).
+ * Today's five prayer times on the home screen, always in view: one row of five glass cards in the top right, Fajr
+ * on the right through Isha on the left, each with the prayer's name and its time in large figures. The next prayer
+ * glows gold, slightly larger, with the time left. Shows while the home screen is in front and steps aside the
+ * moment an app, a channel or HDMI opens. Started by MessageServer; switched on and off from the phone (/dhikr panel=1|0).
  */
 final class PrayerPanel {
     private PrayerPanel() {
@@ -37,21 +38,14 @@ final class PrayerPanel {
     private static LinearLayout panel;
     private static TextView title;
     private static final TextView[] names = new TextView[5], times = new TextView[5];
-    private static TextView left;
     private static String[] today;
     private static int todayDay = -1;
     private static String lastTop;
     private static long lastQuery;
-    private static Typeface font;
     private static final Runnable tick = PrayerPanel::tick;
 
     static void start(Context c) {
         app = c.getApplicationContext();
-        try {
-            font = Typeface.createFromAsset(app.getAssets(), "amiri.ttf");
-        } catch (Exception e) {
-            font = Typeface.DEFAULT_BOLD;
-        }
         main.removeCallbacks(tick);
         main.postDelayed(tick, 3000);
     }
@@ -105,49 +99,92 @@ final class PrayerPanel {
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, app.getResources().getDisplayMetrics()));
     }
 
-    private static TextView text(float sp, int color) {
+    // Sizes for a 16:9 TV read from the sofa: five cards of one size in one row, right to left in prayer order.
+    private static final int CARD_W = 98, CARD_H = 96, GAP = 10;
+    private static final int TEXT = 0xF2FFFFFF, DIM = 0x8CFFFFFF;
+    private static final LinearLayout[] cards = new LinearLayout[5];
+    private static final TextView[] lefts = new TextView[5];
+
+    private static TextView text(float sp, int color, Typeface face) {
         TextView t = new TextView(app);
         t.setTextSize(TypedValue.COMPLEX_UNIT_SP, sp);
         t.setTextColor(color);
-        t.setTypeface(font);
-        t.setShadowLayer(px(4), 0, px(1), 0x99000000);
+        t.setTypeface(face);
+        t.setGravity(Gravity.CENTER);
+        t.setIncludeFontPadding(false);
+        t.setMaxLines(1);
+        t.setShadowLayer(px(3), 0, px(1), 0x80000000);
         return t;
     }
 
+    /** Glass: a deep navy gradient, see-through, with a hairline edge; gold and brighter for the next prayer. */
+    private static GradientDrawable glass(boolean next) {
+        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                next ? new int[]{0xB8423A1E, 0xA6201A0C} : new int[]{0x99182040, 0x8C0B1124});
+        g.setCornerRadius(px(18));
+        g.setStroke(px(next ? 2 : 1), next ? 0xE6FFD27A : 0x33FFFFFF);
+        return g;
+    }
+
     private static void build() {
+        Typeface modern = Typeface.create("sans-serif-medium", Typeface.NORMAL);
+        Typeface bold = Typeface.create("sans-serif", Typeface.BOLD);
         panel = new LinearLayout(app);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-        panel.setPadding(px(16), px(10), px(16), px(10));
-        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0x8C101428, 0x73081A14});
-        bg.setCornerRadius(px(18));
-        bg.setStroke(px(1), 0x33FFE08A);
+        panel.setPadding(px(14), px(10), px(14), px(12));
+        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0x66101633, 0x4D0A0F22});
+        bg.setCornerRadius(px(24));
+        bg.setStroke(px(1), 0x26FFE08A);
         panel.setBackground(bg);
-        title = text(11, 0xB3FFE08A);
-        title.setLetterSpacing(0.05f);
-        panel.addView(title);
+
+        title = text(12.5f, 0xD9FFE08A, modern);
+        title.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+        title.setTextDirection(View.TEXT_DIRECTION_RTL);
+        LinearLayout.LayoutParams tlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        tlp.bottomMargin = px(8);
+        tlp.setMarginStart(px(4));
+        panel.addView(title, tlp);
+
+        LinearLayout row = new LinearLayout(app);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setLayoutDirection(View.LAYOUT_DIRECTION_RTL); // the first child, Fajr, is on the right
+        row.setPadding(px(4), px(4), px(4), px(4)); // room for the next card's 1.06 scale, so it is never clipped
+        row.setClipChildren(false);
+        panel.setClipChildren(false);
         for (int i = 0; i < 5; i++) {
-            LinearLayout row = new LinearLayout(app);
-            row.setOrientation(LinearLayout.HORIZONTAL);
-            row.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-            row.setPadding(0, px(2), 0, px(2));
-            names[i] = text(15, 0xE6FFFFFF);
-            times[i] = text(15, 0xE6FFFFFF);
+            LinearLayout c = new LinearLayout(app);
+            c.setOrientation(LinearLayout.VERTICAL);
+            c.setGravity(Gravity.CENTER);
+            c.setBackground(glass(false));
+            c.setPadding(px(6), px(8), px(6), px(8));
+            names[i] = text(15, TEXT, modern);
+            names[i].setTextDirection(View.TEXT_DIRECTION_RTL);
+            times[i] = text(25, TEXT, bold);
             times[i].setTextDirection(View.TEXT_DIRECTION_LTR);
-            row.addView(names[i], new LinearLayout.LayoutParams(px(78), LinearLayout.LayoutParams.WRAP_CONTENT));
-            row.addView(times[i]);
-            panel.addView(row);
+            lefts[i] = text(11.5f, 0xFFFFD27A, modern);
+            lefts[i].setTextDirection(View.TEXT_DIRECTION_RTL);
+            LinearLayout.LayoutParams gap = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            gap.topMargin = px(4);
+            c.addView(names[i]);
+            c.addView(times[i], gap);
+            c.addView(lefts[i], gap);
+            LinearLayout.LayoutParams clp = new LinearLayout.LayoutParams(px(CARD_W), px(CARD_H));
+            if (i > 0) clp.setMarginStart(px(GAP));
+            row.addView(c, clp);
+            cards[i] = c;
         }
-        left = text(11.5f, GOLD);
-        panel.addView(left);
+        panel.addView(row);
+
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 PixelFormat.TRANSLUCENT);
+        // Top right, under the header's buttons: clear of the clock block on the left and of the dock below.
         lp.gravity = Gravity.TOP | Gravity.RIGHT;
         lp.x = px(28);
-        lp.y = px(96); // under the header's buttons, clear of the dock at the bottom
+        lp.y = px(92);
         try {
             app.getSystemService(WindowManager.class).addView(panel, lp);
         } catch (Exception e) {
@@ -155,19 +192,22 @@ final class PrayerPanel {
             return;
         }
         panel.setAlpha(0f);
-        panel.animate().alpha(1f).setDuration(500).start();
+        panel.setTranslationY(-px(8));
+        panel.animate().alpha(1f).translationY(0).setDuration(500).start();
     }
+
+    private static int shown = -2;
 
     private static void fill() {
         if (panel == null) return;
         String place = NoorCity.place(app);
-        title.setText(place == null || place.isEmpty() ? "✦ مواقيت الصلاة" : "✦ مواقيت الصلاة · " + place);
+        title.setText(place == null || place.isEmpty() ? "✦  مواقيت الصلاة" : "✦  مواقيت الصلاة  ·  " + place);
         if (today == null) {
             for (int i = 0; i < 5; i++) {
                 names[i].setText(NAMES[i]);
                 times[i].setText("--:--");
+                lefts[i].setText(" ");
             }
-            left.setText("");
             return;
         }
         Calendar now = Calendar.getInstance();
@@ -175,23 +215,32 @@ final class PrayerPanel {
         int next = -1;
         for (int i = 0; i < 5; i++) {
             String[] hm = today[i].split(":");
-            int t = Integer.parseInt(hm[0]) * 60 + Integer.parseInt(hm[1]);
-            if (next < 0 && t > m) next = i;
+            if (next < 0 && Integer.parseInt(hm[0]) * 60 + Integer.parseInt(hm[1]) > m) next = i;
         }
+        // After Isha the next one is tomorrow's Fajr.
+        int highlight = next < 0 ? 0 : next;
         for (int i = 0; i < 5; i++) {
-            boolean n = i == next;
-            names[i].setText((n ? "◂ " : "") + NAMES[i]);
+            boolean n = i == highlight;
+            boolean past = next >= 0 && i < next;
+            names[i].setText(NAMES[i]);
             times[i].setText(today[i]);
-            int col = n ? GOLD : (next >= 0 && i < next) || next < 0 ? 0x80FFFFFF : 0xE6FFFFFF;
-            names[i].setTextColor(col);
-            times[i].setTextColor(col);
+            names[i].setTextColor(n ? 0xFFFFE08A : past ? DIM : 0xD9FFFFFF);
+            times[i].setTextColor(n ? 0xFFFFF3D0 : past ? DIM : TEXT);
+            if (n) {
+                String[] hm = today[i].split(":");
+                int mins = Integer.parseInt(hm[0]) * 60 + Integer.parseInt(hm[1]) - m;
+                if (mins <= 0) mins += 24 * 60;
+                lefts[i].setText("◂ بعد " + (mins >= 60 ? (mins / 60) + " س " : "") + (mins % 60) + " د");
+            } else {
+                lefts[i].setText(" ");
+            }
         }
-        if (next >= 0) {
-            String[] hm = today[next].split(":");
-            int mins = Integer.parseInt(hm[0]) * 60 + Integer.parseInt(hm[1]) - m;
-            left.setText("بعد " + (mins >= 60 ? (mins / 60) + " س " : "") + (mins % 60) + " د");
-        } else {
-            left.setText("");
+        if (shown != highlight) {
+            for (int i = 0; i < 5; i++) {
+                cards[i].setBackground(glass(i == highlight));
+                cards[i].animate().scaleX(i == highlight ? 1.06f : 1f).scaleY(i == highlight ? 1.06f : 1f).setDuration(400).start();
+            }
+            shown = highlight;
         }
     }
 
@@ -199,6 +248,7 @@ final class PrayerPanel {
         if (panel == null) return;
         View v = panel;
         panel = null;
+        shown = -2;
         try {
             app.getSystemService(WindowManager.class).removeView(v);
         } catch (Exception ignored) {
