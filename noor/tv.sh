@@ -7,7 +7,8 @@
 #   bash tv.sh launcher <tv-ip> <backup-folder>     install the new Home; disables the stock one only once the new one runs
 #   bash tv.sh prayer <tv-ip>                       install the prayer-times addon
 #   bash tv.sh theme <tv-ip> <zakhrafa|masjid-layl|awqat|plain>
-#   bash tv.sh noor <tv-ip>                         install the Kahf/Baqarah/adhkar/ruqyah cards, reminders and phone page
+#   bash tv.sh noor <tv-ip>                         install the Kahf/Baqarah/adhkar/ruqyah cards, reminders and phone page,
+#                                                   and update the Home screen when it is ours
 #   bash tv.sh adhan <tv-ip> [youtube-url]          download the adhan on the phone and put it on the TV
 #   bash tv.sh test-adhan <tv-ip>                   play the adhan and its banner now, to check
 #   bash tv.sh reset-ours <tv-ip> <backup-folder>   give Home back to the stock launcher and remove only the apps this
@@ -35,6 +36,8 @@ get)
     curl -fsSL -o "$B/$f" "$URL/$f" && echo "✅ $f"
   done
   rm -rf "$B/themes"; mkdir -p "$B/themes"; tar -xzf "$B/themes.tar.gz" -C "$B/themes"
+  # This script too, so the next run uses the newest one (moved into place, not written over while it runs).
+  curl -fsSL -o ~/tv.sh.new "$URL/tv.sh" && mv ~/tv.sh.new ~/tv.sh && echo "✅ tv.sh"
   echo "ready: $B"
   ;;
 
@@ -113,6 +116,15 @@ theme)
 noor)
   need_ip
   for f in kahf baqara sabah masa ruqya; do install_apk "$B/noor-$f.apk"; done
+  # The Home screen (prayer row, Noor line) is part of the update too when it is ours.
+  HP=$(home_now | cut -d/ -f1)
+  if [ "$HP" = "$PKG" ]; then
+    install_apk "$B/launcher.apk"
+    sh_ "am start -a android.intent.action.MAIN -c android.intent.category.HOME" >/dev/null || true
+  else
+    echo "⚠️ Home on the TV is '$HP', not $PKG: the Home screen was not updated (bash tv.sh launcher $IP <backup-folder>)"
+  fi
+  echo "versions: $(sh_ "dumpsys package $PKG | grep -m1 versionCode; dumpsys package app.noortv.kahf | grep -m1 versionCode" | tr -s ' \n' ' ')"
   sh_ "appops set app.noortv.kahf SYSTEM_ALERT_WINDOW allow; appops set app.noortv.kahf GET_USAGE_STATS allow" >/dev/null
   sleep 8  # Android restarts the app right after an update
   sh_ "am broadcast -n app.noortv.kahf/app.noortv.Reminder" >/dev/null

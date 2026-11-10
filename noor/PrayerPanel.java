@@ -151,7 +151,9 @@ final class PrayerPanel {
         Typeface bold = Typeface.create("sans-serif", Typeface.BOLD);
         panel = new LinearLayout(app);
         panel.setOrientation(LinearLayout.VERTICAL);
-        panel.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        // Left to right on purpose: this app has no supportsRtl, so RTL layout direction is ignored; the right-to-left
+        // order is built by hand below (Isha added first, so Fajr ends up on the right).
+        panel.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
         panel.setPadding(px(14), px(10), px(14), px(12));
         GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0x66101633, 0x4D0A0F22});
         bg.setCornerRadius(px(24));
@@ -159,20 +161,20 @@ final class PrayerPanel {
         panel.setBackground(bg);
 
         title = text(12.5f, 0xD9FFE08A, modern);
-        title.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+        title.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         title.setTextDirection(View.TEXT_DIRECTION_RTL);
         LinearLayout.LayoutParams tlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         tlp.bottomMargin = px(8);
-        tlp.setMarginStart(px(4));
+        tlp.rightMargin = px(4);
         panel.addView(title, tlp);
 
         LinearLayout row = new LinearLayout(app);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setLayoutDirection(View.LAYOUT_DIRECTION_RTL); // the first child, Fajr, is on the right
+        row.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
         row.setPadding(px(4), px(4), px(4), px(4)); // room for the next card's 1.06 scale, so it is never clipped
         row.setClipChildren(false);
         panel.setClipChildren(false);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 4; i >= 0; i--) {
             LinearLayout c = new LinearLayout(app);
             c.setOrientation(LinearLayout.VERTICAL);
             c.setGravity(Gravity.CENTER);
@@ -190,7 +192,7 @@ final class PrayerPanel {
             c.addView(times[i], gap);
             c.addView(lefts[i], gap);
             LinearLayout.LayoutParams clp = new LinearLayout.LayoutParams(px(CARD_W), px(CARD_H));
-            if (i > 0) clp.setMarginStart(px(GAP));
+            if (i < 4) clp.leftMargin = px(GAP);
             row.addView(c, clp);
             cards[i] = c;
         }
@@ -201,10 +203,11 @@ final class PrayerPanel {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 PixelFormat.TRANSLUCENT);
-        // Top right, under the header's buttons: clear of the clock block on the left and of the dock below.
+        // Only over a home without its own prayer row: top right, below the header's buttons (they end near 110dp)
+        // and above the dock's title, clear of the clock block on the left.
         lp.gravity = Gravity.TOP | Gravity.RIGHT;
-        lp.x = px(28);
-        lp.y = px(92);
+        lp.x = px(56);
+        lp.y = px(124);
         try {
             app.getSystemService(WindowManager.class).addView(panel, lp);
         } catch (Exception e) {
