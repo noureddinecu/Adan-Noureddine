@@ -37,7 +37,11 @@ jobs:
           VER=$((1000 + GITHUB_RUN_NUMBER))
           LAUNCHER=$(bash noor/zahhaf/build-launcher.sh "$VER")
           keytool -exportcert -alias androiddebugkey -keystore noor/debug.keystore -storepass android -file signer.der
-          python3 -I noor/zahhaf/patch.py cyt-app "$LAUNCHER" signer.der "$VER"
+          mkdir -p noorapks
+          for n in noor-kahf noor-baqara noor-sabah noor-masa noor-ruqya prayer-times; do
+            curl -fsSL -o "noorapks/$n.apk" "https://github.com/${{ github.repository }}/releases/download/noor-tv-build/$n.apk"
+          done
+          python3 -I noor/zahhaf/patch.py cyt-app "$LAUNCHER" signer.der "$VER" noorapks
       - name: Build, signed with the repo key
         env:
           CYT_RELEASE_KEYSTORE: ${{ github.workspace }}/noor/debug.keystore

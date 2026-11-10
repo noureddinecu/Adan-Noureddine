@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Turns a checkout of the Clean Your TV app (github.com/udhaykumarbala/cleanyourtv-app, MIT) into «زحاف TV»:
 its own application id and name, so it installs next to the original. Further Noor changes are added here.
-Usage: patch.py <cleanyourtv-app checkout> [<noor launcher.apk> <signer cert .der> <version code>]"""
+Usage: patch.py <cleanyourtv-app checkout> [<noor launcher.apk> <signer cert .der> <version code> [<folder of Noor TV apps>]]"""
 import hashlib, pathlib, re, shutil, sys
 
 root = pathlib.Path(sys.argv[1])
@@ -46,3 +46,39 @@ if len(sys.argv) > 4:
     s = s.replace("const val SIGNER_SHA256 = PinnedLauncher.SIGNER_SHA256", f'const val SIGNER_SHA256 = "{original_signer}"')
     pins.write_text(s, encoding="utf-8")
     print(f"zahhaf: Noor launcher bundled ({len(data)} bytes, version {version})")
+
+# 3. «نور»: a row on each TV's page that opens the Noor screen (NoorScreen.kt): the Noor apps put on through the
+#    app's own TV session, with the overlay and usage permissions the adhan and adhkar need, the city from the
+#    phone's location, and the TV's own page (live writing and drawing, adhan and adhkar settings).
+here = pathlib.Path(__file__).resolve().parent
+shutil.copyfile(here / "NoorScreen.kt", root / "app/src/main/kotlin/tv/cleanyour/app/NoorScreen.kt")
+sub("core/flows/src/main/kotlin/tv/cleanyour/core/flows/ManageMachine.kt",
+    'RESTORE_POINT("restore"), TV_SETTINGS("tvsettings"),', 'RESTORE_POINT("restore"), TV_SETTINGS("tvsettings"), NOOR("noor"),')
+sub("feature/manage/src/main/kotlin/tv/cleanyour/feature/manage/ManageScreens.kt",
+    "                ListRow(stringResource(R.string.manage_row_home),",
+    """                ListRow("نور: الأذان والأذكار والرسائل", subtitle = "الأذان في كل صلاة، والأذكار، والكتابة والرسم على التلفاز",
+                    onClick = { onIntent(ManageIntent.Open(ManageSection.NOOR)) })
+                ListDivider()
+                ListRow(stringResource(R.string.manage_row_home),""")
+sub("app/src/main/kotlin/tv/cleanyour/app/AppRoot.kt",
+    "    @Serializable data class TvSettings(val tvId: String) : Dest",
+    "    @Serializable data class TvSettings(val tvId: String) : Dest\n    @Serializable data class Noor(val tvId: String) : Dest")
+sub("app/src/main/kotlin/tv/cleanyour/app/AppRoot.kt",
+    '        "tvsettings" -> id?.let { Dest.TvSettings(it) }',
+    '        "tvsettings" -> id?.let { Dest.TvSettings(it) }\n        "noor" -> id?.let { Dest.Noor(it) }')
+sub("app/src/main/kotlin/tv/cleanyour/app/AppRoot.kt",
+    "                entry<Dest.Modules> { key ->",
+    """                entry<Dest.Noor> { key -> NoorScreen(graph, TvId(key.tvId), onBack = { go("back") }) }
+                entry<Dest.Modules> { key ->""")
+sub("app/src/main/AndroidManifest.xml",
+    '    <uses-permission android:name="android.permission.INTERNET" />',
+    '    <uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />')
+# The Noor page and city are plain HTTP on the TV's own address on the home network.
+sub("app/src/full/res/xml/network_security_config.xml",
+    '<base-config cleartextTrafficPermitted="false">', '<base-config cleartextTrafficPermitted="true">')
+if len(sys.argv) > 5:
+    dest = root / "app/src/main/assets/noor"
+    dest.mkdir(parents=True, exist_ok=True)
+    for name in ("noor-kahf", "noor-baqara", "noor-sabah", "noor-masa", "noor-ruqya", "prayer-times"):
+        shutil.copyfile(pathlib.Path(sys.argv[5]) / f"{name}.apk", dest / f"{name}.apk")
+print("zahhaf: Noor screen added")
