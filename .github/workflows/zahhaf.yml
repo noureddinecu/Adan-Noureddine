@@ -1,0 +1,37 @@
+name: Build Zahhaf TV (on Clean Your TV app)
+on:
+  push:
+    branches: [claude/noor-tv-cleanup-fftvwv]
+    paths: ['noor/zahhaf/**', '.github/workflows/zahhaf.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: udhaykumarbala/cleanyourtv-app
+          ref: 03ad20ebec68284a362b9d90690876c18e212286
+          path: cyt-app
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: python3 -I noor/zahhaf/patch.py cyt-app
+      - name: Build, signed with the repo key
+        env:
+          CYT_RELEASE_KEYSTORE: ${{ github.workspace }}/noor/debug.keystore
+          CYT_RELEASE_KEY_ALIAS: androiddebugkey
+          CYT_RELEASE_KEYSTORE_PASSWORD: android
+        run: cd cyt-app && ./gradlew :app:assembleFullRelease --console=plain
+      - name: Publish to the noor-tv-build release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          APK=$(ls cyt-app/app/build/outputs/apk/full/release/*.apk | head -n 1)
+          cp "$APK" zahhaf-tv.apk && ls -la zahhaf-tv.apk
+          gh release upload noor-tv-build zahhaf-tv.apk --clobber
