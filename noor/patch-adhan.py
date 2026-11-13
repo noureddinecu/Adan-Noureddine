@@ -162,6 +162,12 @@ sub("""        player.setOnCompletionListener(mp -> stop());
         player.setVolume(vol, vol);
         player.setOnCompletionListener(mp -> stop());
         player.start();""")
+# Played to its end (not stopped from the remote or the phone): the dua after the adhan on screen (Dhikr.afterAdhan).
+sub("""        player.setOnCompletionListener(mp -> stop());""",
+    """        player.setOnCompletionListener(mp -> {
+            stop();
+            Dhikr.afterAdhan(app);
+        });""")
 sub("""    static void stop() {""",
     """    /** The adhan's own volume, 0-100, kept for the next one and applied to one playing now. */
     static void volume(Context c, int v) {

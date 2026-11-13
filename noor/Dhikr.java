@@ -103,7 +103,7 @@ final class Dhikr {
         SharedPreferences p = prefs(app);
         if (!p.getBoolean("on", true)) return;
         if (!app.getSystemService(PowerManager.class).isInteractive()) return; // TV is off
-        if (Adhan.playing()) return;
+        if (Adhan.playing() || dua != null) return;
         show();
     }
 
@@ -199,6 +199,101 @@ final class Dhikr {
             });
             main.postDelayed(() -> hide(1100), 600 + secs * 1000L);
         });
+    }
+
+    // ---------- the dua after the adhan ----------
+
+    static final String DUA_TITLE = "✦  دعاء ما بعد الأذان  ✦";
+    /** Sahih al-Bukhari 614 (from Jabir ibn Abdillah), as it is said after the adhan. */
+    static final String DUA = "اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ، وَالصَّلَاةِ القَائِمَةِ، آتِ مُحَمَّدًا الوَسِيلَةَ"
+            + " وَالفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ";
+    static final String DUA_SOURCE = "رواه البخاري";
+    private static final int DUA_SECS = 25;
+    private static View dua;
+
+    /**
+     * Right after the adhan has played to its end: the dua after the adhan, larger than a dhikr and at the bottom
+     * centre, over whatever is on screen, for DUA_SECS seconds with the gold thread running out. Not focusable, so
+     * the remote keeps working; the adhkar wait while it is up.
+     */
+    static void afterAdhan(Context c) {
+        if (app == null) start(c);
+        if (!Settings.canDrawOverlays(app)) return;
+        main.post(() -> {
+            hideDua(0);
+            hide(0);
+            LinearLayout box = new LinearLayout(app);
+            box.setOrientation(LinearLayout.VERTICAL);
+            box.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            box.setGravity(Gravity.CENTER_HORIZONTAL);
+            box.setPadding(px(28), px(14), px(28), px(12));
+            GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{0xD9142152, 0xCC0A1233});
+            bg.setCornerRadius(px(24));
+            bg.setStroke(px(1), 0x66D9B66A);
+            box.setBackground(bg);
+
+            TextView title = text(DUA_TITLE, 14, 0xE6E8C987);
+            title.setGravity(Gravity.CENTER);
+            title.setLetterSpacing(0.05f);
+            box.addView(title);
+            TextView body = text(DUA, 22, 0xF7FFFFFF);
+            body.setGravity(Gravity.CENTER);
+            body.setMaxLines(4);
+            body.setMaxWidth(px(620));
+            body.setLineSpacing(0, 1.25f);
+            body.setShadowLayer(px(6), 0, px(1), 0xAA000000);
+            LinearLayout.LayoutParams blp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            blp.topMargin = px(6);
+            box.addView(body, blp);
+            TextView src = text(DUA_SOURCE, 12, 0xB3E8C987);
+            src.setGravity(Gravity.CENTER);
+            LinearLayout.LayoutParams slp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            slp.topMargin = px(6);
+            box.addView(src, slp);
+            View line = new View(app);
+            GradientDrawable gold = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, new int[]{0xFFE8C987, 0x33E8C987});
+            gold.setCornerRadius(px(2));
+            line.setBackground(gold);
+            LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, px(2));
+            llp.topMargin = px(10);
+            box.addView(line, llp);
+
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    PixelFormat.TRANSLUCENT);
+            lp.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+            lp.y = px(48);
+            try {
+                app.getSystemService(WindowManager.class).addView(box, lp);
+            } catch (Exception e) {
+                return;
+            }
+            dua = box;
+            box.setAlpha(0f);
+            box.setTranslationY(px(16));
+            box.animate().alpha(1f).translationY(0).setDuration(800).start();
+            line.post(() -> {
+                line.setPivotX(0);
+                line.animate().scaleX(0f).setDuration(DUA_SECS * 1000L).setStartDelay(600).start();
+            });
+            main.postDelayed(() -> hideDua(1200), 700 + DUA_SECS * 1000L);
+        });
+    }
+
+    private static void hideDua(int fade) {
+        View v = dua;
+        if (v == null) return;
+        dua = null;
+        Runnable gone = () -> {
+            try {
+                app.getSystemService(WindowManager.class).removeView(v);
+            } catch (Exception ignored) {
+            }
+        };
+        if (fade == 0) gone.run();
+        else v.animate().alpha(0f).translationY(px(8)).setDuration(fade).withEndAction(gone).start();
     }
 
     private static void hide(int fade) {
