@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cold-start screen: the app colour with the 3D TV in the middle, until the first page draws. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/bg" />
+    <item android:width="120dp" android:height="120dp" android:gravity="center" android:drawable="@drawable/i3_tv_big" />
+</layer-list>

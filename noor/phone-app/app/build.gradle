@@ -1,0 +1,35 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'app.noortv.phone'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'app.noortv.phone'
+        minSdk 26
+        targetSdk 34
+        versionCode 7
+        versionName '5.4'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    packagingOptions {
+        resources { excludes += ['META-INF/*.kotlin_module', 'META-INF/versions/**', 'kotlin/**'] }
+    }
+}
+
+dependencies {
+    // A plain-Java ADB client: lets the phone give the TV back its own home screen and apps (restore).
+    implementation 'dev.mobile:dadb:1.2.10'
+}

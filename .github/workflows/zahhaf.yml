@@ -1,0 +1,57 @@
+name: Build Zahhaf TV (on Clean Your TV app)
+on:
+  push:
+    branches: [claude/noor-tv-cleanup-fftvwv]
+    paths: ['noor/zahhaf/**', '.github/workflows/zahhaf.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: udhaykumarbala/cleanyourtv-app
+          ref: 03ad20ebec68284a362b9d90690876c18e212286
+          path: cyt-app
+          submodules: true
+      - uses: actions/checkout@v4
+        with:
+          repository: majedphotos/noor-tv
+          ref: c0ae5b7124332730da534bccfed35d9bef3e08c2
+          path: noor-tv
+      - uses: actions/checkout@v4
+        with:
+          repository: Gathin23/cleanyourtv
+          ref: 3b6b3a15760d426dfcbcc6007bf26c429f35096a
+          path: cleanyourtv
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Noor launcher, then Zahhaf TV changes
+        run: |
+          VER=$((1000 + GITHUB_RUN_NUMBER))
+          LAUNCHER=$(bash noor/zahhaf/build-launcher.sh "$VER")
+          keytool -exportcert -alias androiddebugkey -keystore noor/debug.keystore -storepass android -file signer.der
+          mkdir -p noorapks
+          for n in noor-kahf noor-baqara noor-sabah noor-masa noor-ruqya prayer-times; do
+            curl -fsSL -o "noorapks/$n.apk" "https://github.com/${{ github.repository }}/releases/download/noor-tv-build/$n.apk"
+          done
+          python3 -I noor/zahhaf/patch.py cyt-app "$LAUNCHER" signer.der "$VER" noorapks
+      - name: Build, signed with the repo key
+        env:
+          CYT_RELEASE_KEYSTORE: ${{ github.workspace }}/noor/debug.keystore
+          CYT_RELEASE_KEY_ALIAS: androiddebugkey
+          CYT_RELEASE_KEYSTORE_PASSWORD: android
+        run: cd cyt-app && ./gradlew :app:assembleFullRelease --console=plain
+      - name: Publish to the noor-tv-build release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          APK=$(ls cyt-app/app/build/outputs/apk/full/release/*.apk | head -n 1)
+          cp "$APK" zahhaf-tv.apk && ls -la zahhaf-tv.apk
+          gh release upload noor-tv-build zahhaf-tv.apk --clobber
