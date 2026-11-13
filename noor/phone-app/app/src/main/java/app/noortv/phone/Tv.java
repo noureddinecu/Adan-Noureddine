@@ -126,6 +126,7 @@ final class Tv {
     /** The new home screen, started before the stock one is turned off, and the stock one back if Home is lost. */
     String launcher(JSONObject bk) throws Exception {
         String stock = home().split("/")[0];
+        shell("pm enable --user 0 " + HOME + " >/dev/null 2>&1"); // a restore that kept the Noor apps switched it off
         install("tv/launcher.apk");
         if (bk != null) addOnce(bk.getJSONArray("installedByUs"), HOME);
         String started = shell("am start -W -a android.intent.action.MAIN -c android.intent.category.HOME -n " + HOME_ACT);

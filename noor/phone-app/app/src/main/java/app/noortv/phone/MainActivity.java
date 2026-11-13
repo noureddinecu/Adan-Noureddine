@@ -229,33 +229,64 @@ public class MainActivity extends Activity {
 
     // ---------- the TV's own backup, for restore ----------
 
+    /** Stock home screens, in the order restore tries them after the one the backup recorded. */
+    static final String[] STOCK_HOMES = {"com.google.android.tvlauncher", "com.google.android.apps.tv.launcherx",
+            "com.mitv.tvhome.atv", "com.mitv.tvhome", "com.google.android.leanbacklauncher"};
+
+    /**
+     * One shell script for the TV: turn back on what was turned off, find the TV's own home screen among those really
+     * there and enabled, give Home back to it, and only then (with removeOurs) remove the apps this setup installed,
+     * the new home screen first. Without a stock home it removes nothing, so the TV is never left without one.
+     * Prints on=N, stock=..., gone=... and home=... for the app to check.
+     */
     private String restoreScript(Tv tv, boolean removeOurs) throws Exception {
         String serial = tv.prop("ro.serialno");
         JSONObject bk = serial.isEmpty() ? null : Store.backup(this, serial);
         Set<String> on = new LinkedHashSet<>(Arrays.asList(OFF)), ours = new LinkedHashSet<>(Arrays.asList(OURS));
-        String homeAct = "com.google.android.tvlauncher/.MainActivity";
+        Set<String> homes = new LinkedHashSet<>();
         if (bk != null) {
             JSONArray a = bk.optJSONArray("disabledByUs");
             for (int i = 0; a != null && i < a.length(); i++) on.add(a.getString(i));
             JSONArray b = bk.optJSONArray("installedByUs");
             for (int i = 0; b != null && i < b.length(); i++) ours.add(b.getString(i));
-            String hm = bk.optString("home");
-            if (hm.contains("/") && !hm.startsWith(Tv.HOME)) homeAct = hm;
+            String hm = bk.optString("home").split("/")[0];
+            if (!hm.isEmpty() && !ours.contains(hm) && !hm.equals("com.gathin.tvhome")) homes.add(hm);
             JSONArray before = bk.optJSONArray("disabledBefore");
             for (int i = 0; before != null && i < before.length(); i++) on.remove(before.getString(i));
         }
+        homes.addAll(Arrays.asList(STOCK_HOMES));
+        ours.remove(Tv.HOME);
+        String hq = "cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME";
         StringBuilder sh = new StringBuilder("D=$(pm list packages -d); n=0; for p in");
         for (String p : on) if (p.matches("[A-Za-z][\\w.]+")) sh.append(' ').append(p);
-        sh.append("; do case \"$D\" in *\"package:$p\"*) pm enable --user 0 $p >/dev/null 2>&1 && n=$((n+1));; esac; done; echo \"on=$n\"; ")
-                .append("cmd package set-home-activity --user 0 ").append(homeAct).append(" >/dev/null 2>&1; ")
-                .append("H=$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -n 1); echo \"home=$H\"; ");
+        sh.append("; do case \"$D\" in *\"package:$p\"*) pm enable --user 0 $p >/dev/null 2>&1 && n=$((n+1));; esac; done; echo \"on=$n\"; ");
+        // The stock home: the first of these that is installed, enabled and has a Home screen; else any other.
+        sh.append("S=; for p in");
+        for (String p : homes) if (p.matches("[A-Za-z][\\w.]+")) sh.append(' ').append(p);
+        sh.append("; do pm list packages -e $p | grep -qx \"package:$p\" || continue; a=$(").append(hq)
+                .append(" $p | tail -n 1); case \"$a\" in */*) S=$a; break;; esac; done; ")
+                .append("[ -n \"$S\" ] || for a in $(cmd package query-activities --brief -a android.intent.action.MAIN ")
+                .append("-c android.intent.category.HOME | grep -oE '[A-Za-z0-9_.]+/[A-Za-z0-9_.$]+'); do case \"$a\" in ")
+                .append(Tv.HOME).append("/*|com.gathin.tvhome/*|com.android.tv.settings/*|com.android.settings/*) ;; *) S=$a; break;; esac; done; ")
+                .append("echo \"stock=$S\"; ");
+        sh.append("if [ -n \"$S\" ]; then cmd package set-home-activity --user 0 $S >/dev/null 2>&1; ");
         if (removeOurs) {
-            sh.append("case \"$H\" in ").append(Tv.HOME).append("/*|\"\") ;; *) for p in");
+            // The new home screen goes first, so Android has only the stock one left; then the others.
+            sh.append("pm list packages -s ").append(Tv.HOME).append(" | grep -q . || { pm uninstall ").append(Tv.HOME)
+                    .append(" 2>/dev/null | grep -q Success && echo \"gone=").append(Tv.HOME).append("\"; }; ")
+                    .append("cmd package set-home-activity --user 0 $S >/dev/null 2>&1; for p in");
             for (String p : ours) if (p.matches("[A-Za-z][\\w.]+")) sh.append(' ').append(p);
-            sh.append("; do pm list packages -s $p | grep -qx \"package:$p\" && continue; ")
-                    .append("pm uninstall $p 2>/dev/null | grep -q Success && echo \"gone=$p\"; done;; esac; ");
+            sh.append("; do pm list packages $p | grep -qx \"package:$p\" || continue; ")
+                    .append("pm list packages -s $p | grep -qx \"package:$p\" && continue; ")
+                    .append("pm uninstall $p 2>/dev/null | grep -q Success && echo \"gone=$p\"; done; ");
+        } else {
+            // Keeping the Noor apps: the new home screen is only switched off (repair turns it back on).
+            sh.append("case \"$(").append(hq).append(" | tail -n 1)\" in ").append(Tv.HOME)
+                    .append("/*) pm disable-user --user 0 ").append(Tv.HOME)
+                    .append(" >/dev/null 2>&1; cmd package set-home-activity --user 0 $S >/dev/null 2>&1;; esac; ");
         }
-        sh.append("am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1; echo done");
+        sh.append("fi; am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1; ")
+                .append("echo \"home=$(").append(hq).append(" | tail -n 1)\"; echo done");
         return sh.toString();
     }
 
@@ -461,6 +492,20 @@ public class MainActivity extends Activity {
                     Tv tv = new Tv(MainActivity.this, t.getString("ip"));
                     String out = tv.shell(restoreScript(tv, removeOurs));
                     if (!out.contains("done")) throw new IllegalStateException(out.trim());
+                    // Done only when Home really went back to the TV's own screen; otherwise the TV stays in the list.
+                    String home = "", stock = "";
+                    for (String line : out.split("\n")) {
+                        if (line.startsWith("home=")) home = line.substring(5).trim();
+                        if (line.startsWith("stock=")) stock = line.substring(6).trim();
+                    }
+                    if (stock.isEmpty() || !home.contains("/") || home.startsWith(Tv.HOME + "/")) {
+                        boolean es = lang().equals("es");
+                        r.put("ok", false).put("error", stock.isEmpty()
+                                ? (es ? "No encontré la pantalla de inicio original de la tele: no se quitó nada." : "لم أجد الشاشة الرئيسية الأصلية للتلفاز، فلم أُزل شيئاً.")
+                                : (es ? "La tele no volvió a su pantalla de inicio (" + home + "). Prueba otra vez." : "لم يرجع التلفاز إلى شاشته الأصلية (" + home + "). أعد المحاولة."));
+                        result(id, r);
+                        return;
+                    }
                     if (removeOurs) {
                         Store.removeTv(MainActivity.this, key);
                         Store.backupFile(MainActivity.this, key).delete();

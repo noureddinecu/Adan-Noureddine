@@ -12,8 +12,8 @@
 #   bash tv.sh adhan <tv-ip> [youtube-url]          download the adhan on the phone and put it on the TV
 #   bash tv.sh test-adhan <tv-ip>                   play the adhan and its banner now, to check
 #   bash tv.sh doctor <tv-ip>                       adhkar or adhan not showing: check and fix, then show a dhikr
-#   bash tv.sh reset-ours <tv-ip> <backup-folder>   give Home back to the stock launcher and remove only the apps this
-#                                                   setup installed (never a system app), e.g. after a signing-key change
+#   bash tv.sh restore <tv-ip> [backup-folder]      the TV as it was: apps turned back on, its own Home back, and only
+#                                                   the apps this setup installed removed (never a system app)
 set -euo pipefail
 URL=https://github.com/noureddinecu/Adan-Noureddine/releases/download/noor-tv-build
 B=~/noor-build
@@ -167,18 +167,19 @@ adhan)
     && echo "✅ adhan on the TV ($(( $(wc -c < "$B/adhan.mp3") / 1024 )) KB)" || { echo "⛔ adhan did not reach the TV"; exit 1; }
   ;;
 
-reset-ours)
-  need_ip; BK="${3:?usage: bash tv.sh reset-ours <tv-ip> <backup-folder>}"
-  sh_ "pm enable --user 0 com.google.android.tvlauncher" >/dev/null
-  sh_ "cmd package set-home-activity --user 0 com.google.android.tvlauncher/.MainActivity" >/dev/null || true
-  sed -i '/^com\.google\.android\.tvlauncher$/d' "$BK/disabled-by-us.txt"
-  case "$(home_now)" in com.google.android.tvlauncher/*) echo "✅ Google's home is back" ;;
-    *) echo "⛔ Home is $(home_now); nothing was removed"; exit 1 ;; esac
-  for p in app.noortv.home app.noortv.kahf app.noortv.baqara app.noortv.sabah app.noortv.masa app.noortv.ruqya com.majnioui.tv.prayer; do
-    sh_ "pm list packages $p" | grep -qx "package:$p" || continue
-    sh_ "pm list packages -s $p" | grep -qx "package:$p" && { echo "⛔ $p is a system app; left alone"; continue; }
-    sh_ "pm uninstall $p" | grep -q Success && echo "🗑️ $p (installed by this setup)"
-  done
+restore|reset-ours)
+  # The TV as it was: everything turned off is on again, Home goes back to the TV's own screen (the first stock one
+  # really there), and only then the apps this setup installed are removed, the new home screen first. With no stock
+  # home found nothing is removed, so the TV is never left without one. The same script as the phone app's restore.
+  need_ip; BK="${3:-}"
+  ON="$([ -n "$BK" ] && [ -f "$BK/disabled-by-us.txt" ] && grep -E '^[A-Za-z][A-Za-z0-9_.]+$' "$BK/disabled-by-us.txt" | tr '\n' ' ')"
+  OUT=$(sh_ "D=\$(pm list packages -d); n=0; for p in $ON com.miui.tv.analytics com.xiaomi.statistic com.google.android.feedback com.google.android.tv.bugreportsender com.xiaomi.mitv.tvmanager com.mitv.tvhome.atv com.mitv.tvhome.michannel com.xm.webcontent com.xiaomi.floatingframe com.google.android.tvrecommendations android.autoinstalls.config.xiaomi.amelie com.xiaomi.mimusic2 com.google.android.play.games com.google.android.videos com.mitv.gallery com.google.android.katniss com.google.android.backdrop com.mitv.dream com.netflix.ninja com.amazon.amazonvideo.livingroom com.google.android.youtube.tvmusic com.google.android.leanbacklauncher com.google.android.leanbacklauncher.recommendations com.google.android.tvlauncher; do case \"\$D\" in *\"package:\$p\"*) pm enable --user 0 \$p >/dev/null 2>&1 && n=\$((n+1));; esac; done; echo \"on=\$n\"; S=; for p in com.google.android.tvlauncher com.google.android.apps.tv.launcherx com.mitv.tvhome.atv com.mitv.tvhome com.google.android.leanbacklauncher; do pm list packages -e \$p | grep -qx \"package:\$p\" || continue; a=\$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME \$p | tail -n 1); case \"\$a\" in */*) S=\$a; break;; esac; done; [ -n \"\$S\" ] || for a in \$(cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME | grep -oE '[A-Za-z0-9_.]+/[A-Za-z0-9_.\$]+'); do case \"\$a\" in app.noortv.home/*|com.gathin.tvhome/*|com.android.tv.settings/*|com.android.settings/*) ;; *) S=\$a; break;; esac; done; echo \"stock=\$S\"; if [ -n \"\$S\" ]; then cmd package set-home-activity --user 0 \$S >/dev/null 2>&1; pm list packages -s app.noortv.home | grep -q . || { pm uninstall app.noortv.home 2>/dev/null | grep -q Success && echo \"gone=app.noortv.home\"; }; cmd package set-home-activity --user 0 \$S >/dev/null 2>&1; for p in com.majnioui.tv.prayer app.noortv.baqara app.noortv.sabah app.noortv.masa app.noortv.ruqya app.noortv.kahf; do pm list packages \$p | grep -qx \"package:\$p\" || continue; pm list packages -s \$p | grep -qx \"package:\$p\" && continue; pm uninstall \$p 2>/dev/null | grep -q Success && echo \"gone=\$p\"; done; fi; am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1; echo \"home=\$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -n 1)\"; echo done")
+  echo "$OUT" | sed -n 's/^on=/turned back on: /p; s/^stock=/the TV'"'"'s own home: /p; s/^gone=/🗑️ removed: /p'
+  H=$(echo "$OUT" | sed -n 's/^home=//p'); S=$(echo "$OUT" | sed -n 's/^stock=//p')
+  if [ -z "$S" ]; then echo "⛔ no stock home screen found on the TV: nothing was removed"; exit 1; fi
+  case "$H" in "$PKG"/*|"") echo "⛔ Home is still '$H': run this again"; exit 1 ;; esac
+  [ -n "$BK" ] && [ -f "$BK/disabled-by-us.txt" ] && : > "$BK/disabled-by-us.txt"
+  echo "✅ the TV is back as it was (Home: $H)"
   ;;
 
 test-adhan)
