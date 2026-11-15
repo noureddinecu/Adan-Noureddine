@@ -5,7 +5,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const Lv = G.Levels, Store = G.Store, Sfx = G.Sfx;
-  const VERSION = '1.0.0';
+  const VERSION = '2.0.0';
   const INK = '#2E2A30';
 
   /* ---------------- inline SVG icons ---------------- */
@@ -239,6 +239,7 @@
 
   const hooks = {
     onPhase(p, lv) {
+      if (G.Live && G.Live.active) return G.Live.onPhase(p, lv);
       if (!lv) return;
       if (p === 'closing') $('hIntro').classList.add('hide');
       if (p === 'running') refreshHint();
@@ -253,8 +254,8 @@
         setCard(txt, game.result.win ? 'ok question' : 'bad question');
       }
     },
-    onProgress(f) { $('hBar').style.width = (f * 100).toFixed(1) + '%'; },
-    onResult(r) { showResult(r); }
+    onProgress(f) { if (G.Live && G.Live.active) return G.Live.onProgress(f); $('hBar').style.width = (f * 100).toFixed(1) + '%'; },
+    onResult(r) { if (G.Live && G.Live.active) return G.Live.onResult(r); showResult(r); }
   };
 
   function showResult(r) {
@@ -386,7 +387,8 @@
 
   /* ---------------- confirm ---------------- */
   let confirmCb = null;
-  function confirmBox(title, text, cb) { $('cfTitle').textContent = title; $('cfText').textContent = text; confirmCb = cb; openModal('confirm'); }
+  function confirmBox(title, text, cb) { $('cfTitle').textContent = title; $('cfText').textContent = text; confirmCb = cb; $('cfNo').style.display = ''; $('cfYes').textContent = 'نعم'; $('cfYes').className = 'btn danger'; openModal('confirm'); }
+  function alertBox(title, text) { confirmBox(title, text, null); $('cfNo').style.display = 'none'; $('cfYes').textContent = 'مزيان'; $('cfYes').className = 'btn primary'; }
 
   /* ---------------- pause / lifecycle ---------------- */
   function pauseGame() {
@@ -404,14 +406,18 @@
   G.onAndroidBack = function () {
     Sfx.back();
     if (modal === 'pause') { resumeGame(); return true; }
-    if (modal === 'help' || modal === 'confirm') { closeModal(); return true; }
+    if (modal === 'help' || modal === 'confirm' || modal === 'liveGuide') { closeModal(); return true; }
+    if (G.Live && G.Live.active) return G.Live.onBack();
+    if (screen === 'control') { goMenu(); return true; }
     if (modal === 'result' || modal === 'chapter') { closeModal(); goLevels(); return true; }
     if (screen === 'hud') { pauseGame(); return true; }
     if (screen === 'levels' || screen === 'settings' || screen === 'achievements') { goMenu(); return true; }
     return false; // on main menu → exit app
   };
-  G.onAppPause = function () { pauseGame(); Sfx.stopRumble(); Sfx.suspend(); };
+  // During a LIVE session the game must keep running while the host is in TikTok.
+  G.onAppPause = function () { if (G.Live && G.Live.active) { G.Live.onAppPause(); return; } pauseGame(); Sfx.stopRumble(); Sfx.suspend(); };
   G.onAppResume = function () { Sfx.resume(); };
+  G.isLiveActive = function () { return !!(G.Live && G.Live.active); };
   document.addEventListener('visibilitychange', () => { if (document.hidden) G.onAppPause(); else G.onAppResume(); });
 
   function goLevels() { closeModal(); Sfx.stopRumble(); if (game.mode !== 'demo') game.startDemo(); buildLevelList(); show('levels'); }
@@ -425,6 +431,8 @@
       play(nextPlayable());
     });
     bind('mLevels', goLevels);
+    bind('mLive', () => G.Live.openPanel());
+    bind('guideOk', closeModal);
     bind('mAch', () => { buildAchList(); show('achievements'); });
     bind('mSettings', () => show('settings'));
     bind('mHelp', () => { $('helpOk').dataset.then = ''; openModal('help'); });
@@ -491,6 +499,12 @@
     $('splashLogo').innerHTML = LOGO;
     $('menuLogo').innerHTML = LOGO;
     game = new G.Game($('game'), hooks);
+    G.Live.init({
+      game, Sfx,
+      show, screen: () => screen, goMenu, openModal,
+      alert: alertBox, confirm: confirmBox,
+      toggleSound, soundOn: () => Store.data.settings.sound
+    });
     G.game = game; // debug handle
     wire();
     const fontsReady = (document.fonts && document.fonts.load)

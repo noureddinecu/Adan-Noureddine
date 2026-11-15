@@ -1,0 +1,17 @@
+{
+  "name": "goldrail-live-relay",
+  "version": "1.0.0",
+  "description": "Relays TikTok LIVE comments to the Gold Rail Android app over WebSocket",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "tiktok-live-connector": "2.5.0",
+    "ws": "8.18.3"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,15 @@
+# One-click deploy on Render (https://render.com) — works from a phone browser.
+services:
+  - type: web
+    name: goldrail-live-relay
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: node src/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: ACCESS_TOKEN
+        generateValue: true
+      - key: EULER_API_KEY
+        sync: false

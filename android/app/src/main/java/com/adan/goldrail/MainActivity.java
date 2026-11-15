@@ -2,7 +2,14 @@ package com.adan.goldrail;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.provider.Settings;
+import android.view.KeyEvent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +34,14 @@ import android.webkit.WebViewClient;
 public class MainActivity extends Activity {
 
     private WebView webView;
+    private volatile boolean liveMode = false;
+    private volatile boolean volumeKeys = true;
+    private static final String[] TIKTOK_PACKAGES = {
+            "com.zhiliaoapp.musically",      // TikTok (most regions)
+            "com.ss.android.ugc.trill",      // TikTok (some Asian regions)
+            "com.zhiliaoapp.musically.go",   // TikTok Lite
+            "com.tiktok.lite.go"
+    };
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -100,6 +115,21 @@ public class MainActivity extends Activity {
         if (hasFocus) hideSystemBars();
     }
 
+    /** Volume keys = invisible remote control while broadcasting (viewers see nothing). */
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int code = event.getKeyCode();
+        if (liveMode && volumeKeys && webView != null
+                && (code == KeyEvent.KEYCODE_VOLUME_UP || code == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                String k = code == KeyEvent.KEYCODE_VOLUME_UP ? "up" : "down";
+                webView.evaluateJavascript("window.onLiveKey && window.onLiveKey('" + k + "')", null);
+            }
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public void onBackPressed() {
@@ -115,7 +145,8 @@ public class MainActivity extends Activity {
         super.onPause();
         if (webView != null) {
             webView.evaluateJavascript("window.onAppPause && window.onAppPause()", null);
-            webView.onPause();
+            // During a LIVE session keep the WebView fully alive while the host is in TikTok.
+            if (!liveMode) webView.onPause();
         }
     }
 
@@ -131,6 +162,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        if (liveMode) LiveService.stop(this);
         if (webView != null) { webView.destroy(); webView = null; }
         super.onDestroy();
     }
@@ -154,5 +186,64 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public void exitApp() { runOnUiThread(MainActivity.this::finish); }
+
+        /** Called by the game when a LIVE session starts/ends. */
+        @JavascriptInterface
+        public void setLiveMode(boolean on) {
+            liveMode = on;
+            runOnUiThread(() -> {
+                if (on) {
+                    if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 11);
+                    }
+                    LiveService.start(MainActivity.this);
+                } else {
+                    LiveService.stop(MainActivity.this);
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void setVolumeKeys(boolean on) { volumeKeys = on; }
+
+        @JavascriptInterface
+        public boolean isLiveMode() { return liveMode; }
+
+        /** Opens the TikTok app (the host then starts LIVE → Mobile Gaming / screen share). */
+        @JavascriptInterface
+        public boolean openTikTok() {
+            PackageManager pm = getPackageManager();
+            for (String pkg : TIKTOK_PACKAGES) {
+                Intent i = pm.getLaunchIntentForPackage(pkg);
+                if (i != null) {
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    try { startActivity(i); return true; } catch (ActivityNotFoundException ignored) { }
+                }
+            }
+            return false;
+        }
+
+        /** Opens the system screen where the user can exclude the app from battery optimisation. */
+        @JavascriptInterface
+        public void openBatterySettings() {
+            runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+                } catch (Exception e) {
+                    try {
+                        startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName())));
+                    } catch (Exception ignored) { }
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public String memoryInfo() {
+            Runtime rt = Runtime.getRuntime();
+            long used = (rt.totalMemory() - rt.freeMemory()) / 1048576L;
+            android.os.Debug.MemoryInfo mi = new android.os.Debug.MemoryInfo();
+            android.os.Debug.getMemoryInfo(mi);
+            return "{\"javaMB\":" + used + ",\"pssMB\":" + (mi.getTotalPss() / 1024) + "}";
+        }
     }
 }

@@ -40,12 +40,25 @@
       this.mode = 'demo';
       this.paused = false;
       this.relaxed = false;
-      this.last = 0;
+      this.clock = performance.now();
+      this.lastDraw = 0;
+      this.fpsCap = 0;            // 0 = uncapped, 30 = battery saver
       this.resize();
       this.startDemo();
       window.addEventListener('resize', () => this.resize());
       canvas.addEventListener('pointerdown', e => this.onPointer(e));
       requestAnimationFrame(t => this.frame(t));
+      // When Android hides the WebView (host switched to TikTok) requestAnimationFrame stops.
+      // This interval keeps the round clock running so no round is frozen or lost.
+      setInterval(() => { if (performance.now() - this.clock > 300) this.tick(); }, 250);
+    }
+
+    tick() {
+      const now = performance.now();
+      let el = Math.min(180, (now - this.clock) / 1000);   // catch up at most 3 minutes
+      this.clock = now;
+      if (this.paused) return;
+      while (el > 0) { const d = Math.min(0.05, el); this.update(d); el -= d; }
     }
 
     /* ---------------- layout ---------------- */
@@ -58,13 +71,13 @@
       this.cv.style.height = vh + 'px';
       this.k = this.cv.width / W;
       this.H = this.cv.height / this.k;
-      this.cartY = Math.round(this.H * 0.64);
+      this.cartY = Math.round(this.H * (this.live ? 0.6 : 0.64));
       this.cssScale = vw / W;
     }
 
     setGeometry(L) {
       this.L = L;
-      this.sp = Math.min(118, 640 / L);
+      this.sp = this.live ? Math.min(138, 690 / L) : Math.min(118, 640 / L);
       const s = this.s = this.sp / 110;
       this.gauge = 34 * s; this.tieLen = 62 * s; this.tieH = 9 * s; this.tieGap = 22 * s;
       this.bandW = 80 * s; this.cw = 70 * s; this.ch = 88 * s;
@@ -76,6 +89,7 @@
     startDemo() {
       this.mode = 'demo';
       this.level = null;
+      this.live = false; this.resize();
       this.setGeometry(5);
       this.events = []; this.tunnels = [];
       this.base = [0, 1, 2, 3, 4]; this.firstEv = 0;
@@ -92,6 +106,10 @@
       opts = opts || {};
       this.mode = 'level';
       this.level = level;
+      this.live = !!opts.live;
+      this.answerTime = opts.answerTime || level.answerTime;
+      this.preview = opts.preview || level.preview;
+      this.resize();
       this.setGeometry(level.lanes);
       this.events = level.events.slice();
       this.tunnels = level.tunnels;
@@ -143,10 +161,8 @@
 
     /* ---------------- update ---------------- */
     frame(ts) {
-      const dt = this.last ? Math.min(0.05, (ts - this.last) / 1000) : 0.016;
-      this.last = ts;
-      if (!this.paused) this.update(dt);
-      this.draw();
+      this.tick();
+      if (!this.fpsCap || ts - this.lastDraw >= 1000 / this.fpsCap - 2) { this.lastDraw = ts; this.draw(); }
       requestAnimationFrame(t => this.frame(t));
     }
 
@@ -159,7 +175,7 @@
 
       switch (this.phase) {
         case 'intro':
-          if (this.phaseT >= lv.preview) this.setPhase('closing');
+          if (this.phaseT >= this.preview) this.setPhase('closing');
           break;
         case 'closing':
           this.lid = this.lid.map(() => clamp(this.phaseT / 0.55, 0, 1));
@@ -190,10 +206,10 @@
         }
         case 'question': {
           this.qTime += dt;
-          const left = lv.answerTime - this.qTime;
+          const left = this.answerTime - this.qTime;
           const sec = Math.ceil(left);
-          if (sec !== this.lastTick && sec <= 3 && sec > 0) { this.lastTick = sec; G.Sfx.tick(sec === 1); }
-          if (left <= 0) this.finish(false, true);
+          if (sec !== this.lastTick && sec <= (this.live ? 5 : 3) && sec > 0) { this.lastTick = sec; G.Sfx.tick(sec === 1); }
+          if (left <= 0) this.finish(this.live ? null : false, true);
           break;
         }
         case 'reveal':
@@ -218,7 +234,8 @@
       const lv = this.level;
       this.result = {
         win, timeout: !!timeout,
-        timeFrac: clamp(this.qTime / lv.answerTime, 0, 1),
+        live: this.live,
+        timeFrac: clamp(this.qTime / this.answerTime, 0, 1),
         answerSeconds: this.qTime,
         usedHint: this.usedHint,
         picks: this.picks.slice()
@@ -227,12 +244,26 @@
       this.setPhase('reveal');
       G.Sfx.open();
       const fin = this.finalLanes();
-      if (win) {
-        G.Sfx.win(); G.haptic && G.haptic(40);
+      if (win || this.live) {
+        G.Sfx.win(); if (!this.live && G.haptic) G.haptic(40);
         lv.golds.forEach(g => this.burst(this.laneX(fin[g]), this.cartY, C.gold, 26));
       } else {
         G.Sfx.lose(); G.haptic && G.haptic([60, 60, 60]);
       }
+    }
+
+    /** Live mode: the host ends the answer window right now. */
+    revealNow() {
+      if (this.mode !== 'level') return false;
+      if (this.phase === 'question') { this.finish(this.live ? null : false, true); return true; }
+      if (this.phase === 'running' || this.phase === 'intro' || this.phase === 'closing') {
+        // skip straight to the end of the track, then reveal
+        this.travel = this.level.endD; G.Sfx.stopRumble();
+        this.lid = this.lid.map(() => 1);
+        this.setPhase('question'); this.finish(this.live ? null : false, true);
+        return true;
+      }
+      return false;
     }
 
     prune() {
@@ -263,7 +294,7 @@
 
     /* ---------------- input ---------------- */
     onPointer(e) {
-      if (this.mode !== 'level' || this.paused || this.phase !== 'question') return;
+      if (this.mode !== 'level' || this.live || this.paused || this.phase !== 'question') return;
       const x = e.clientX / this.cssScale, y = e.clientY / this.cssScale;
       if (Math.abs(y - this.cartY) > this.ch * 0.9) return;
       const fin = this.finalLanes();
@@ -695,14 +726,14 @@
       }
       if (this.phase === 'question') {
         const lv = this.level;
-        const left = Math.max(0, lv.answerTime - this.qTime);
+        const left = Math.max(0, this.answerTime - this.qTime);
         const cx = W / 2, cy = this.cartY - this.ch / 2 - 190, r = 52;
         const pulse = left <= 3 ? 1 + 0.06 * Math.sin(this.qTime * 18) : 1;
         ctx.save(); ctx.translate(cx, cy); ctx.scale(pulse, pulse);
         ctx.beginPath(); ctx.arc(0, 5, r, 0, Math.PI * 2); ctx.fillStyle = C.ink; ctx.fill();
         ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
         ctx.lineWidth = 4; ctx.strokeStyle = C.ink; ctx.stroke();
-        ctx.beginPath(); ctx.arc(0, 0, r - 9, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (left / lv.answerTime));
+        ctx.beginPath(); ctx.arc(0, 0, r - 9, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (left / this.answerTime));
         ctx.strokeStyle = left <= 2 ? C.bad : C.lid; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.stroke(); ctx.lineCap = 'butt';
         ctx.font = '900 54px Cairo, sans-serif'; ctx.fillStyle = C.ink;
         ctx.fillText(String(Math.ceil(left)), 0, 4);

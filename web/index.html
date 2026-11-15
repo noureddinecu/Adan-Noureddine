@@ -31,6 +31,7 @@
       <div class="logo-cart" id="menuLogo"></div>
       <h1 class="title">عربة <span class="hl">الذهب</span></h1>
       <p class="subtitle">لعبة تتبّع وتركيز على السكك الحديدية</p>
+      <button class="btn live-btn" id="mLive"><span class="live-dot"></span>لوحة التحكم · TikTok LIVE</button>
       <button class="btn primary huge" id="mPlay"><span class="ico" data-i="play"></span><span>العب</span><small id="mPlayLvl">المرحلة 1</small></button>
       <div class="menu-grid">
         <button class="btn" id="mLevels"><span class="ico" data-i="grid"></span>المراحل</button>
@@ -98,6 +99,127 @@
       <p id="iSub">تابعه لين النهاية</p>
       <div class="tags" id="iTags"></div>
       <p class="tip" id="iTip"></p>
+    </div>
+  </section>
+
+  <!-- ============ LIVE BROADCAST (what viewers see) ============ -->
+  <section id="liveHud" class="screen overlay-pass">
+    <div id="lvHot" aria-hidden="true"></div>
+    <div class="lv-top card" id="lvTop">
+      <span class="ico gold" data-i="gold"></span>
+      <div class="lv-qbody"><b id="lvQ">الجولة غادي تبدا دابا…</b><small id="lvQs"></small>
+        <div class="bar slim" id="lvBarWrap"><i id="lvBar"></i></div></div>
+    </div>
+    <div class="lv-round" id="lvRound"></div>
+    <div class="lv-feed" id="lvFeed"></div>
+    <div class="lv-bottom" id="lvBottom">
+      <div class="lv-prompt" id="lvPrompt">كتب رقم العربة فالكومنتير 👇</div>
+      <div class="lv-chips" id="lvChips"></div>
+      <div class="lv-count" id="lvCount"></div>
+    </div>
+    <div class="lv-paused" id="lvPaused"></div>
+    <div class="lv-board" id="lvBoard"></div>
+  </section>
+
+  <!-- ============ CONTROL PANEL (host only, Darija) ============ -->
+  <section id="control" class="screen">
+    <div class="header">
+      <button class="icon-btn" id="cpClose" aria-label="close"><span class="ico" data-i="back"></span></button>
+      <h2>لوحة التحكم</h2>
+      <span class="cp-pill" id="cpStatus">ماشي متصل</span>
+    </div>
+    <div class="scroll">
+      <p class="cp-msg" id="cpStatusMsg"></p>
+
+      <div id="cpSetup">
+        <button class="btn primary big" id="cpStart"><span class="live-dot"></span>بدا جلسة TikTok LIVE</button>
+        <button class="btn" id="cpResume" style="display:none"></button>
+        <div class="cp-row2">
+          <button class="btn" id="cpGuide"><span class="ico" data-i="help"></span>كيفاش نبدا البث؟</button>
+          <button class="btn" id="cpTikTok">♪ حل TikTok</button>
+        </div>
+      </div>
+
+      <div id="cpLive" style="display:none">
+        <button class="btn primary big" id="cpBack">📺 رجع لشاشة البث</button>
+        <div class="cp-row2">
+          <button class="btn" id="cpTikTok2">♪ حل TikTok</button>
+          <button class="btn" id="cpGuide2"><span class="ico" data-i="help"></span>كيفاش نبدا البث؟</button>
+        </div>
+        <h3 class="cp-h">الجولة</h3>
+        <div class="cp-grid">
+          <button class="btn" id="cpNew">▶️ بدا جولة جديدة</button>
+          <button class="btn" id="cpPause">⏸️ وقّف / كمّل الجولة</button>
+          <button class="btn" id="cpReveal">👁️ بيّن فين الذهب</button>
+          <button class="btn" id="cpWin">🏆 وري الرابحين</button>
+          <button class="btn" id="cpHide">🙈 خبّي الرابحين</button>
+          <button class="btn" id="cpNext">⏭️ المرحلة الجاية</button>
+          <button class="btn" id="cpReplay">🔁 عاود الجولة</button>
+          <button class="btn" id="cpBoard">📊 الترتيب العام</button>
+          <button class="btn" id="cpSound">🔊 شعّل / طفّي الصوت</button>
+          <button class="btn danger" id="cpEnd">⏹️ سالي الجلسة</button>
+        </div>
+        <p class="cp-note">💡 أثناء البث: <b>زر الصوت +</b> = جولة جديدة / بيّن الذهب · <b>زر الصوت −</b> = وقّف/كمّل أو وري/خبّي الترتيب. المشاهدين ما كيشوفو والو. ضغطة طويلة فالركن الفوقاني كتحل هاد اللوحة (المشاهدين كيشوفوها).</p>
+      </div>
+
+      <h3 class="cp-h">إحصائيات</h3>
+      <div class="cp-stats" id="cpStats"></div>
+      <ol class="cp-top" id="cpTop"></ol>
+
+      <h3 class="cp-h">جواب يدوي</h3>
+      <div class="cp-manual card">
+        <input id="cpManName" placeholder="سمية المشارك" maxlength="40">
+        <input id="cpManNum" placeholder="رقم" inputmode="numeric" maxlength="2">
+        <button class="btn" id="cpManualAdd">زيد</button>
+      </div>
+      <p class="cp-note">إلا ما خدمش الربط الأوتوماتيكي، كتب الأسماء والأرقام اللي شفتي فالكومنتيرات وقت السؤال.</p>
+
+      <h3 class="cp-h">الإعدادات</h3>
+      <div class="card cp-form">
+        <label>مصدر التعليقات
+          <select id="cp_source">
+            <option value="relay">TikTok عبر السيرفر ديالي (مستحسن)</option>
+            <option value="euler">TikTok مباشرة عبر Euler Stream (تجريبي)</option>
+            <option value="sim">وضع التجربة (مشاهدين وهميين)</option>
+            <option value="manual">يدوي (أنا اللي كندخل الأجوبة)</option>
+          </select></label>
+        <label data-src="relay euler">الحساب ديالك فـ TikTok<input id="cp_user" placeholder="@username" autocapitalize="off" autocomplete="off"></label>
+        <label data-src="relay">رابط السيرفر<input id="cp_relayUrl" placeholder="goldrail-live-relay.onrender.com" autocapitalize="off" inputmode="url"></label>
+        <label data-src="relay">الكود السري (ACCESS_TOKEN)<input id="cp_token" type="password" autocomplete="off"></label>
+        <label data-src="euler">Euler Stream API key<input id="cp_eulerKey" type="password" autocomplete="off"></label>
+        <label data-src="sim">عدد المشاهدين الوهميين<input id="cp_simViewers" type="number" min="3" max="300"></label>
+        <label>وقت الجواب (ثواني)<input id="cp_qTime" type="number" min="8" max="60"></label>
+        <label>مدة عرض الرابحين (ثواني)<input id="cp_winnersTime" type="number" min="5" max="60"></label>
+        <label>المرحلة ديال البداية (1–100)<input id="cp_startLevel" type="number" min="1" max="100"></label>
+        <label>لغة الشاشة
+          <select id="cp_lang"><option value="ma">الدارجة المغربية</option><option value="ar">العربية الفصحى</option></select></label>
+        <div class="cp-sw"><span>تشغيل أوتوماتيكي (الجولات كيتبعو بوحدهم)</span><label class="switch"><input type="checkbox" id="cp_autopilot"><i></i></label></div>
+        <div class="cp-sw"><span>التحكم بأزرار الصوت</span><label class="switch"><input type="checkbox" id="cp_volKeys"><i></i></label></div>
+        <div class="cp-sw"><span>توفير البطارية (30 صورة/ثانية)</span><label class="switch"><input type="checkbox" id="cp_saver"><i></i></label></div>
+      </div>
+      <div class="cp-row2">
+        <button class="btn" id="cpBattery">🔋 إعدادات البطارية</button>
+        <button class="btn" id="cpReset">🗑️ مسح الترتيب</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LIVE GUIDE ============ -->
+  <section id="liveGuide" class="modal">
+    <div class="dialog card help">
+      <h2>البث من التيليفون</h2>
+      <ol>
+        <li>عمّر <b>الإعدادات</b> فلوحة التحكم: الحساب ديالك ورابط السيرفر (ولا جرّب بـ <b>وضع التجربة</b>).</li>
+        <li>شعّل <b>وضع عدم الإزعاج</b> باش ما يبانوش الإشعارات للمشاهدين.</li>
+        <li>ضغط <b>بدا جلسة TikTok LIVE</b> ← غادي تبان شاشة البث.</li>
+        <li>ضغط <b>حل TikTok</b> ← <b>+</b> ← <b>LIVE</b> ← اختار <b>Mobile Gaming / ألعاب الهاتف</b> (ولا «مشاركة الشاشة») ← ابدا البث.</li>
+        <li>رجع للعبة من زر التطبيقات الأخيرة. دابا المشاهدين كيشوفو اللعبة بملء الشاشة.</li>
+        <li>تحكّم بـ <b>زر الصوت +/−</b> بلا ما يبان والو، ولا خلّي التشغيل الأوتوماتيكي يخدم.</li>
+        <li>ملي تسالي: رجع لـ TikTok وسالي البث، ومن بعد «سالي الجلسة» فاللوحة.</li>
+      </ol>
+      <p class="cp-note">⚠️ خاصية Mobile Gaming / مشاركة الشاشة كيعطيها TikTok لبعض الحسابات فقط (غالباً 18+ وعدد معين ديال المتابعين، وكتختلف حسب البلد). إلا ما لقيتيهاش فحسابك، ما كاينش شي تطبيق يقدر يزيدها.</p>
+      <button class="btn" id="guideTikTok">♪ حل TikTok دابا</button>
+      <button class="btn primary" id="guideOk">فهمت</button>
     </div>
   </section>
 
@@ -179,6 +301,7 @@
   <script src="js/audio.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/game.js"></script>
+  <script src="js/live.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
