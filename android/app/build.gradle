@@ -1,0 +1,59 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Release signing: values come from android/keystore.properties (see README)
+def ksProps = new Properties()
+def ksFile = rootProject.file('keystore.properties')
+if (ksFile.exists()) { ksFile.withInputStream { ksProps.load(it) } }
+
+android {
+    namespace 'com.adan.goldrail'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.adan.goldrail'
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        release {
+            if (ksFile.exists()) {
+                storeFile rootProject.file(ksProps['storeFile'])
+                storePassword ksProps['storePassword']
+                keyAlias ksProps['keyAlias']
+                keyPassword ksProps['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            if (ksFile.exists()) signingConfig signingConfigs.release
+        }
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
+    }
+
+    // The game itself (HTML/CSS/JS/fonts) lives in ../../web and is bundled as assets.
+    sourceSets {
+        main { assets.srcDirs = ['../../web'] }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+// Name the outputs app-release.apk / app-debug.apk
+android.applicationVariants.configureEach { variant ->
+    variant.outputs.configureEach { outputFileName = "app-${variant.buildType.name}.apk" }
+}

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#F5F1E7">
+  <title>عربة الذهب</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- ============ SPLASH ============ -->
+  <section id="splash" class="screen active">
+    <div class="splash-inner">
+      <div class="logo-cart big" id="splashLogo"></div>
+      <h1 class="title">عربة <span class="hl">الذهب</span></h1>
+      <p class="subtitle">تابع الذهب لين النهاية!</p>
+      <div class="loader"><i></i></div>
+    </div>
+  </section>
+
+  <!-- ============ MAIN MENU ============ -->
+  <section id="menu" class="screen">
+    <div class="topbar">
+      <div class="chip"><span class="ico" data-i="star"></span><b id="mStars">0</b><small>/300</small></div>
+      <div class="chip"><span class="ico" data-i="coin"></span><b id="mPoints">0</b></div>
+      <button class="icon-btn" id="mSound" aria-label="sound"></button>
+    </div>
+    <div class="menu-body">
+      <div class="logo-cart" id="menuLogo"></div>
+      <h1 class="title">عربة <span class="hl">الذهب</span></h1>
+      <p class="subtitle">لعبة تتبّع وتركيز على السكك الحديدية</p>
+      <button class="btn primary huge" id="mPlay"><span class="ico" data-i="play"></span><span>العب</span><small id="mPlayLvl">المرحلة 1</small></button>
+      <div class="menu-grid">
+        <button class="btn" id="mLevels"><span class="ico" data-i="grid"></span>المراحل</button>
+        <button class="btn" id="mAch"><span class="ico" data-i="trophy"></span>الإنجازات</button>
+        <button class="btn" id="mSettings"><span class="ico" data-i="gear"></span>الإعدادات</button>
+        <button class="btn" id="mHelp"><span class="ico" data-i="help"></span>طريقة اللعب</button>
+      </div>
+      <div class="menu-progress card">
+        <div class="mp-row"><span id="mTier">الفصل 1 · أول الطريق</span><span id="mPct">0%</span></div>
+        <div class="bar"><i id="mBar"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEVEL SELECT ============ -->
+  <section id="levels" class="screen">
+    <div class="header">
+      <button class="icon-btn" data-back aria-label="back"><span class="ico" data-i="back"></span></button>
+      <h2>اختر المرحلة</h2>
+      <div class="chip"><span class="ico" data-i="star"></span><b id="lStars">0</b></div>
+    </div>
+    <div class="scroll" id="levelList"></div>
+  </section>
+
+  <!-- ============ ACHIEVEMENTS ============ -->
+  <section id="achievements" class="screen">
+    <div class="header">
+      <button class="icon-btn" data-back aria-label="back"><span class="ico" data-i="back"></span></button>
+      <h2>الإنجازات</h2>
+      <div class="chip"><span class="ico" data-i="trophy"></span><b id="aCount">0</b></div>
+    </div>
+    <div class="scroll" id="achList"></div>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section id="settings" class="screen">
+    <div class="header">
+      <button class="icon-btn" data-back aria-label="back"><span class="ico" data-i="back"></span></button>
+      <h2>الإعدادات</h2>
+      <span class="spacer"></span>
+    </div>
+    <div class="scroll">
+      <div class="card setting"><div><b>المؤثرات الصوتية</b><small>أصوات القطار والمفاتيح والفوز</small></div><label class="switch"><input type="checkbox" id="sSound"><i></i></label></div>
+      <div class="card setting"><div><b>الاهتزاز</b><small>اهتزاز خفيف عند الاختيار</small></div><label class="switch"><input type="checkbox" id="sVibrate"><i></i></label></div>
+      <div class="card setting"><div><b>الوضع المريح</b><small>العربات أبطأ بقليل لمن يريد التدرّب</small></div><label class="switch"><input type="checkbox" id="sRelaxed"><i></i></label></div>
+      <button class="card setting as-btn" id="sHelp"><div><b>طريقة اللعب</b><small>شرح القواعد والإشارات والأنفاق</small></div><span class="ico" data-i="help"></span></button>
+      <button class="card setting as-btn danger" id="sReset"><div><b>إعادة ضبط التقدم</b><small>حذف كل النجوم والنقاط والمراحل المفتوحة</small></div><span class="ico" data-i="trash"></span></button>
+      <p class="about">عربة الذهب · الإصدار <span id="ver">1.0.0</span><br>تعمل بدون إنترنت · يُحفظ تقدمك تلقائياً</p>
+    </div>
+  </section>
+
+  <!-- ============ IN-GAME HUD ============ -->
+  <section id="hud" class="screen overlay-pass">
+    <div class="hud-top">
+      <button class="icon-btn" id="hPause" aria-label="pause"><span class="ico" data-i="pause"></span></button>
+      <div class="hud-level"><b id="hLevel">المرحلة 1</b><small id="hTier">سهل</small></div>
+      <button class="icon-btn hint" id="hHint" aria-label="hint"><span class="ico" data-i="eye"></span><em id="hHints">3</em></button>
+    </div>
+    <div class="track-card card" id="hCard">
+      <span class="ico gold" data-i="gold"></span>
+      <div class="tc-body"><b id="hText">تابع الذهب</b><div class="bar slim"><i id="hBar"></i></div></div>
+    </div>
+    <div class="intro-card card" id="hIntro">
+      <h3 id="iTitle"><span class="hl">الذهب</span> في وحدة من العربات</h3>
+      <p id="iSub">تابعه لين النهاية</p>
+      <div class="tags" id="iTags"></div>
+      <p class="tip" id="iTip"></p>
+    </div>
+  </section>
+
+  <!-- ============ PAUSE ============ -->
+  <section id="pause" class="modal">
+    <div class="dialog card">
+      <h2>إيقاف مؤقت</h2>
+      <button class="btn primary" id="pResume"><span class="ico" data-i="play"></span>متابعة</button>
+      <button class="btn" id="pRestart"><span class="ico" data-i="retry"></span>إعادة المرحلة</button>
+      <button class="btn" id="pLevels"><span class="ico" data-i="grid"></span>المراحل</button>
+      <button class="btn" id="pHome"><span class="ico" data-i="home"></span>القائمة الرئيسية</button>
+      <div class="row-toggles"><button class="icon-btn" id="pSound"></button></div>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section id="result" class="modal">
+    <div class="dialog card result">
+      <h2 id="rTitle">أحسنت!</h2>
+      <div class="stars" id="rStars"><i></i><i></i><i></i></div>
+      <p class="r-sub" id="rSub">الذهب كان في</p>
+      <div class="r-cart"><span class="hl" id="rCart">العربة 4</span></div>
+      <canvas id="ladder" width="560" height="330"></canvas>
+      <div class="r-points" id="rPoints">+250 نقطة</div>
+      <div class="r-actions">
+        <button class="btn primary" id="rNext"><span class="ico" data-i="play"></span>التالي</button>
+        <button class="btn" id="rRetry"><span class="ico" data-i="retry"></span>إعادة</button>
+        <button class="btn square" id="rLevels" aria-label="levels"><span class="ico" data-i="grid"></span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHAPTER COMPLETE ============ -->
+  <section id="chapter" class="modal">
+    <div class="dialog card chapter">
+      <div class="rays"></div>
+      <div class="trophy-big" id="cTrophy"></div>
+      <h2 id="cTitle">أكملت الفصل 1!</h2>
+      <p id="cName">أول الطريق</p>
+      <div class="reward-grid">
+        <div><span class="ico" data-i="star"></span><b id="cStars">0/30</b><small>نجوم الفصل</small></div>
+        <div><span class="ico" data-i="coin"></span><b id="cPoints">+0</b><small>مكافأة</small></div>
+        <div><span class="ico" data-i="eye"></span><b id="cHints">+2</b><small>كاشف الذهب</small></div>
+      </div>
+      <p class="tip" id="cNext"></p>
+      <button class="btn primary" id="cGo"><span class="ico" data-i="play"></span>تابع</button>
+    </div>
+  </section>
+
+  <!-- ============ HELP ============ -->
+  <section id="help" class="modal">
+    <div class="dialog card help">
+      <h2>طريقة اللعب</h2>
+      <ol>
+        <li>في البداية تشوف <b>الذهب</b> داخل وحدة من العربات.</li>
+        <li>تنقفل العربات وتبدأ تمشي على السكك. عند <b>التقاطعات البنفسجية</b> تتبادل العربات أماكنها.</li>
+        <li><b>الأنفاق</b> تخفي العربات، راقب اتجاه السكة عند الدخول والخروج.</li>
+        <li><b>الإشارة الخضراء</b> تعني أن المفتاح يعمل، و<b>الحمراء</b> تعني أن العربة تكمل بخط مستقيم.</li>
+        <li>في النهاية اضغط على العربة اللي فيها الذهب قبل انتهاء الوقت.</li>
+        <li>اجمع <b>3 نجوم</b> بالإجابة الصحيحة السريعة من أول محاولة. زر <b>العين</b> يكشف الذهب لحظياً (يقلل النجوم إلى 2).</li>
+      </ol>
+      <button class="btn primary" id="helpOk">فهمت!</button>
+    </div>
+  </section>
+
+  <!-- ============ CONFIRM ============ -->
+  <section id="confirm" class="modal">
+    <div class="dialog card">
+      <h2 id="cfTitle">متأكد؟</h2>
+      <p id="cfText"></p>
+      <button class="btn danger" id="cfYes">نعم</button>
+      <button class="btn" id="cfNo">إلغاء</button>
+    </div>
+  </section>
+
+  <div id="toasts"></div>
+
+  <script src="js/levels.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
