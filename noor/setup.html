@@ -78,7 +78,20 @@ button:active{transform:scale(.97)}
   <div class="radar" id="radar"><i></i><i></i><i></i><img class="i3" data-k="antenna" alt=""></div>
   <div class="hero" style="margin-top:0"><h2 id="h1"></h2><p id="p1"></p></div>
   <div id="found"></div>
+  <div id="help1" class="hide">
+    <p class="err" id="helpP"></p>
+    <div class="how"><b>1</b><span data-t="how1"></span></div>
+    <div class="how"><b>2</b><span data-t="how2"></span></div>
+    <div class="how"><b>3</b><span data-t="how3"></span></div>
+  </div>
   <button class="sec" onclick="search()" data-t="again"></button>
+  <div style="margin-top:18px">
+    <p data-t="manualH" style="font-weight:700"></p>
+    <input id="ipIn" class="name" inputmode="decimal" dir="ltr" maxlength="15" autocomplete="off">
+    <button class="sec" onclick="manual()" data-t="connectB"></button>
+    <p class="err" id="ipErr"></p>
+    <p data-t="ipWhere" style="color:var(--dim);font-size:13px;line-height:1.7;margin-top:6px"></p>
+  </div>
 </section>
 
 <!-- 2: connecting -->
@@ -134,7 +147,11 @@ var L={ar:{title:'تجهيز التلفاز',h0:'جهّز تلفازك في دق
   how2:'ارجع إلى «خيارات المطوّر» وفعّل «تصحيح أخطاء USB» (و«تصحيح الأخطاء عبر الشبكة» إن وُجد).',
   how3:'تأكّد أن الهاتف والتلفاز على شبكة الواي فاي نفسها.',find:'ابحث عن التلفاز',again:'ابحث مرة أخرى',
   searching:'جارٍ البحث عن التلفاز…',searchingP:'يبحث الهاتف في شبكة الواي فاي.',foundH:'اختر التلفاز',foundP:'هذه الأجهزة جاهزة للاتصال.',noneH:'لم يتم العثور على تلفاز',
-  noneP:'تأكّد من تفعيل «تصحيح أخطاء USB» وأن الجهازين على الشبكة نفسها.',hasNoor:'فيه نور',noAdb:'التصحيح غير مفعّل',
+  noneP:'تأكّد من الخطوات التالية ثم ابحث مرة أخرى، أو اكتب عنوان التلفاز في الأسفل.',
+  debugOff:'وجدتُ التلفاز، لكن «تصحيح الأخطاء» غير مفعّل فيه. فعّله بهذه الخطوات ثم اضغط «ابحث مرة أخرى»:',
+  manualH:'أو اكتب عنوان التلفاز',connectB:'اتصال',ipBad:'العنوان غير صحيح. مثال: 192.168.1.40',
+  ipNone:'لا يجيب أي جهاز على هذا العنوان. تأكّد منه ومن أن التلفاز مشغّل وعلى الواي فاي نفسه.',
+  ipWhere:'تجد العنوان في التلفاز: الإعدادات ← الشبكة والإنترنت ← اسم شبكة الواي فاي ← «عنوان IP».',hasNoor:'فيه نور',noAdb:'التصحيح غير مفعّل',
   h2:'وافق على التلفاز',p2:'سيظهر على التلفاز سؤال «السماح بتصحيح الأخطاء؟» — اختر «السماح دائماً» ثم موافق.',retry:'حاول مرة أخرى',
   connErr:'تعذّر الاتصال. وافق على السؤال في التلفاز ثم حاول مرة أخرى.',
   testedB:'مجرَّب ✓',untestedB:'غير مجرَّب',testedP:'نستخدم قائمة مجرَّبة على هذا الطراز: ',untestedP:'هذا الطراز غير موجود في القوائم المجرَّبة، لذلك نعطّل تطبيقات التتبّع الآمنة فقط.',
@@ -152,7 +169,11 @@ var L={ar:{title:'تجهيز التلفاز',h0:'جهّز تلفازك في دق
   how2:'Vuelve a «Opciones de desarrollador» y activa «Depuración USB» (y «Depuración en red» si existe).',
   how3:'Comprueba que el móvil y la tele están en el mismo wifi.',find:'Buscar la tele',again:'Buscar otra vez',
   searching:'Buscando la tele…',searchingP:'El móvil busca en tu wifi.',foundH:'Elige la tele',foundP:'Estos aparatos están listos.',noneH:'No encontré ninguna tele',
-  noneP:'Activa «Depuración USB» y comprueba que los dos están en el mismo wifi.',hasNoor:'con Noor',noAdb:'sin depuración',
+  noneP:'Revisa estos pasos y busca otra vez, o escribe la dirección de la tele abajo.',
+  debugOff:'Encontré la tele, pero la «depuración» está apagada. Actívala así y pulsa «Buscar otra vez»:',
+  manualH:'O escribe la dirección de la tele',connectB:'Conectar',ipBad:'Dirección no válida. Ejemplo: 192.168.1.40',
+  ipNone:'Nada responde en esa dirección. Revísala y comprueba que la tele está encendida y en el mismo wifi.',
+  ipWhere:'La dirección está en la tele: Ajustes ← Red e Internet ← tu wifi ← «Dirección IP».',hasNoor:'con Noor',noAdb:'sin depuración',
   h2:'Acepta en la tele',p2:'En la tele saldrá «¿Permitir la depuración?»: elige «Permitir siempre» y acepta.',retry:'Intentar otra vez',
   connErr:'No pude conectar. Acepta la pregunta en la tele y vuelve a intentarlo.',
   testedB:'probado ✓',untestedB:'sin probar',testedP:'Usamos una lista probada en este modelo: ',untestedP:'Este modelo no está en las listas probadas, así que solo se desactivan las apps de seguimiento seguras.',
@@ -181,13 +202,21 @@ function show(n){page=n;document.querySelectorAll('.scr').forEach(function(s,i){
 function back(){if(page===4)return;if(page===0||page===5)Z.close();else show(page===3?1:page-1)}
 
 /* 1. search */
-function search(){show(1);$('radar').style.display='';$('h1').textContent=T('searching');$('p1').textContent=T('searchingP');$('found').innerHTML='';
+function help1(msg){$('help1').classList.remove('hide');$('helpP').textContent=msg}
+function manual(){var ip=$('ipIn').value.trim();$('ipErr').textContent='';
+  if(!/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)){$('ipErr').textContent=T('ipBad');return}
+  call('probe',ip).then(function(r){if(!r.ok){$('ipErr').textContent=T('ipBad');return}
+    if(!r.tv){$('ipErr').textContent=T('ipNone');return}
+    if(!r.adb){help1(T('debugOff'));$('help1').scrollIntoView({behavior:'smooth'});return}
+    connectTo(ip)})}
+function search(){show(1);$('radar').style.display='';$('h1').textContent=T('searching');$('p1').textContent=T('searchingP');$('found').innerHTML='';$('help1').classList.add('hide');$('ipIn').placeholder='192.168.1.40';
   call('scan').then(function(list){$('radar').style.display='none';list.sort(function(a,b){return(b.adb-a.adb)});
-    if(!list.length){$('h1').textContent=T('noneH');$('p1').textContent=T('noneP');return}
+    if(!list.length){$('h1').textContent=T('noneH');$('p1').textContent=T('noneP');help1('');return}
+    if(list.some(function(t){return !t.adb}))help1(T('debugOff'));
     $('h1').textContent=T('foundH');$('p1').textContent=T('foundP');
-    list.forEach(function(t){var b=document.createElement('button');b.className='tv';b.disabled=!t.adb;b.style.opacity=t.adb?1:.5;
+    list.forEach(function(t){var b=document.createElement('button');b.className='tv';b.style.opacity=t.adb?1:.6;
       b.innerHTML='<img class="i3" src="'+(ICONS.tv||'')+'"><div><b></b><small></small></div>';b.querySelector('b').textContent=t.ip;
-      b.querySelector('small').textContent=(t.noor?T('hasNoor'):'')+(t.adb?'':' · '+T('noAdb'));b.onclick=function(){connectTo(t.ip)};$('found').appendChild(b)})})}
+      b.querySelector('small').textContent=(t.noor?T('hasNoor'):'')+(t.adb?'':' · '+T('noAdb'));b.onclick=function(){if(t.adb)connectTo(t.ip);else{help1(T('debugOff'));$('help1').scrollIntoView({behavior:'smooth'})}};$('found').appendChild(b)})})}
 
 /* 2. connect and plan */
 function connectTo(ip){cur={ip:ip};show(2);$('err2').textContent='';$('retry2').classList.add('hide');

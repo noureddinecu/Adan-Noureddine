@@ -248,6 +248,36 @@ final class Tv {
         a.put(v);
     }
 
+    /**
+     * The first three parts of the phone's address on the home network ("192.168.1."), for the search. Looks at every
+     * network the phone has, Wi-Fi or Ethernet first: the "active" one can be mobile data (when the Wi-Fi has no
+     * internet, or data is on), which made the search look in the wrong place and find nothing. Private addresses only.
+     */
+    static String lanPrefix(Context c) {
+        try {
+            android.net.ConnectivityManager cm = c.getSystemService(android.net.ConnectivityManager.class);
+            String fallback = null;
+            for (android.net.Network n : cm.getAllNetworks()) {
+                android.net.LinkProperties lp = cm.getLinkProperties(n);
+                android.net.NetworkCapabilities nc = cm.getNetworkCapabilities(n);
+                if (lp == null) continue;
+                boolean lan = nc != null && (nc.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI)
+                        || nc.hasTransport(android.net.NetworkCapabilities.TRANSPORT_ETHERNET));
+                for (android.net.LinkAddress a : lp.getLinkAddresses()) {
+                    java.net.InetAddress ad = a.getAddress();
+                    if (!(ad instanceof java.net.Inet4Address) || !ad.isSiteLocalAddress()) continue;
+                    String ip = ad.getHostAddress();
+                    String prefix = ip.substring(0, ip.lastIndexOf('.') + 1);
+                    if (lan) return prefix;
+                    if (fallback == null) fallback = prefix;
+                }
+            }
+            return fallback;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     static String text(String url, int timeout) {
         try {
             HttpURLConnection h = (HttpURLConnection) new URL(url).openConnection();

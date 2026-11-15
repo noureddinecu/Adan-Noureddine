@@ -183,23 +183,6 @@ public class MainActivity extends Activity {
 
     // ---------- finding TVs on the Wi-Fi ----------
 
-    private String prefix() {
-        try {
-            ConnectivityManager cm = getSystemService(ConnectivityManager.class);
-            Network n = cm.getActiveNetwork();
-            LinkProperties lp = n == null ? null : cm.getLinkProperties(n);
-            if (lp == null) return null;
-            for (LinkAddress a : lp.getLinkAddresses()) {
-                if (a.getAddress() instanceof Inet4Address && !a.getAddress().isLoopbackAddress()) {
-                    String ip = a.getAddress().getHostAddress();
-                    return ip.substring(0, ip.lastIndexOf('.') + 1);
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        return null;
-    }
-
     /** Every Noor TV answering on the Wi-Fi (its page on 8080), with its id. Cached for a few seconds. */
     private List<String[]> lastScan;
     private long lastScanAt;
@@ -207,7 +190,7 @@ public class MainActivity extends Activity {
     private synchronized List<String[]> scanNoor() {
         if (lastScan != null && System.currentTimeMillis() - lastScanAt < 8000) return lastScan;
         List<String[]> out = Collections.synchronizedList(new ArrayList<>());
-        String prefix = prefix();
+        String prefix = Tv.lanPrefix(this);
         if (prefix != null) {
             ExecutorService pool = Executors.newFixedThreadPool(64);
             for (int i = 1; i < 255; i++) {

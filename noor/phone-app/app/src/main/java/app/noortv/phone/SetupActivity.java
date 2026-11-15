@@ -125,21 +125,25 @@ public class SetupActivity extends Activity {
     public void scan(int id) {
         async(() -> {
             JSONArray out = new JSONArray();
-            String prefix = prefix();
+            String prefix = Tv.lanPrefix(this);
             if (prefix != null) {
                 List<String> adb = java.util.Collections.synchronizedList(new ArrayList<>());
                 List<String> noor = java.util.Collections.synchronizedList(new ArrayList<>());
+                // An Android TV whose debugging is still off: its cast (8009) or remote (6466) service answers. It
+                // is listed so the owner sees the TV and what to switch on, instead of «no TV found».
+                List<String> tvs = java.util.Collections.synchronizedList(new ArrayList<>());
                 ExecutorService pool = Executors.newFixedThreadPool(64);
                 for (int i = 1; i < 255; i++) {
                     String ip = prefix + i;
                     pool.execute(() -> {
                         if (open(ip, 5555)) adb.add(ip);
+                        else if (open(ip, 8009) || open(ip, 6466)) tvs.add(ip);
                         if (open(ip, 8080) && Tv.text("http://" + ip + ":8080/ping", 1200).startsWith("zahhaf")) noor.add(ip);
                     });
                 }
                 pool.shutdown();
                 try {
-                    pool.awaitTermination(25, TimeUnit.SECONDS);
+                    pool.awaitTermination(40, TimeUnit.SECONDS);
                 } catch (InterruptedException ignored) {
                 }
                 synchronized (noorTvs) {
@@ -148,6 +152,7 @@ public class SetupActivity extends Activity {
                 }
                 Set<String> all = new HashSet<>(adb);
                 all.addAll(noor);
+                all.addAll(tvs);
                 for (String ip : all) {
                     try {
                         out.put(new JSONObject().put("ip", ip).put("adb", adb.contains(ip)).put("noor", noor.contains(ip)));
@@ -159,30 +164,29 @@ public class SetupActivity extends Activity {
         });
     }
 
-    private String prefix() {
-        try {
-            ConnectivityManager cm = getSystemService(ConnectivityManager.class);
-            Network n = cm.getActiveNetwork();
-            LinkProperties lp = n == null ? null : cm.getLinkProperties(n);
-            if (lp == null) return null;
-            for (LinkAddress a : lp.getLinkAddresses()) {
-                if (a.getAddress() instanceof Inet4Address && !a.getAddress().isLoopbackAddress()) {
-                    String ip = a.getAddress().getHostAddress();
-                    return ip.substring(0, ip.lastIndexOf('.') + 1);
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        return null;
-    }
-
     private static boolean open(String ip, int port) {
         try (java.net.Socket s = new java.net.Socket()) {
-            s.connect(new java.net.InetSocketAddress(ip, port), 600);
+            s.connect(new java.net.InetSocketAddress(ip, port), 900);
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    /** An address typed by hand: whether something answers there, and whether its debugging port is open. */
+    @JavascriptInterface
+    public void probe(int id, String ip) {
+        async(() -> {
+            JSONObject r = new JSONObject();
+            try {
+                boolean ok = ip.matches("(\\d{1,3}\\.){3}\\d{1,3}");
+                boolean adb = ok && open(ip, 5555);
+                boolean tv = ok && (adb || open(ip, 8009) || open(ip, 6466) || open(ip, 8080));
+                r.put("ok", ok).put("adb", adb).put("tv", tv).put("ip", ip);
+            } catch (Exception ignored) {
+            }
+            result(id, r);
+        });
     }
 
     // ---------- 2. connecting and recognising it ----------
