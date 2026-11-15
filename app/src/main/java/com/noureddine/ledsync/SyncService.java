@@ -335,6 +335,7 @@ public class SyncService extends Service {
         try { if (reader != null) reader.close(); } catch (Exception ignored) { }
         try { if (projection != null) projection.stop(); } catch (Exception ignored) { }
         if (thread != null) thread.quitSafely();
+        if (!MainActivity.visible && ble != null) ble.disconnect();
         super.onDestroy();
     }
 }

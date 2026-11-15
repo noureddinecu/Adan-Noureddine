@@ -45,6 +45,7 @@ public class MainActivity extends Activity {
     private final Map<String, String> found = new LinkedHashMap<>();
     private BluetoothLeScanner scanner;
     private boolean scanning;
+    static volatile boolean visible;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -88,6 +89,11 @@ public class MainActivity extends Activity {
         devices.setGravity(Gravity.CENTER_HORIZONTAL);
         root.addView(devices);
         button(root, "تجربة الألوان (أحمر، أخضر، أزرق، أبيض)", v -> test());
+        button(root, "قطع الاتصال (باش يخدم تطبيق الهاتف)", v -> {
+            if (SyncService.running) startService(new Intent(this, SyncService.class).setAction(SyncService.ACTION_STOP));
+            ble.disconnect();
+            ui.postDelayed(this::refresh, 400);
+        });
         protoBtn = button(root, "", v -> {
             cycle("proto", 0, 3);
             ble.protoOverride = prefs.getInt("proto", LedBle.AUTO);
@@ -107,6 +113,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        visible = true;
         ble.listener = s -> refresh();
         String mac = prefs.getString("mac", null);
         if (mac != null && !ble.ready && hasBtPerm()) ble.connect(mac);
@@ -117,7 +124,10 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         ble.listener = null;
+        visible = false;
         stopScan();
+        // Free the strip for the phone app when we are not syncing.
+        if (!SyncService.running) ble.disconnect();
     }
 
     private Button button(LinearLayout parent, String text, View.OnClickListener l) {
