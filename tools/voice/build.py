@@ -90,12 +90,15 @@ def main():
     anns = args or list(ANN)
     items = json.loads(subprocess.run(['node', os.path.join(ROOT, 'tools', 'voice', 'items.js')], capture_output=True, text=True, check=True).stdout)
     if opt.get('only'): items = [i for i in items if i['kind'] == opt['only']]
+    # sentences whose text changed but whose OLD recording was put back for now: record them again (overwrite)
+    rr_path = os.path.join(ROOT, 'tools', 'voice', 'rerecord.json')
+    rerecord = set(json.load(open(rr_path))) if os.path.exists(rr_path) else set()
     jobs = []
     for a in anns:
         os.makedirs(os.path.join(VOICE, a), exist_ok=True)
         for it in items:
             out = os.path.join(VOICE, a, it['key'] + '.ogg')
-            if not os.path.exists(out): jobs.append((a, it, out))
+            if not os.path.exists(out) or it['key'] in rerecord: jobs.append((a, it, out))
     if opt.get('limit'): jobs = jobs[:int(opt['limit'])]
     print(f'{len(jobs)} recordings to make', flush=True)
     done = [0]; errors = []
@@ -114,6 +117,9 @@ def main():
             else:
                 raise RuntimeError('recording too long (instructions read?)')
             encode(pcm, rate, out)
+            with LOCK:
+                if it['key'] in rerecord:
+                    rerecord.discard(it['key']); json.dump(sorted(rerecord), open(rr_path, 'w'))
         except Exception as e:
             errors.append((a, it['key'], str(e)[:120]))
         done[0] += 1
