@@ -191,9 +191,14 @@
     speak(text, interrupt) { this.say({ key: 'a_lobby_0', text: (L().lobby || [text])[0] }, interrupt); }
   };
   /** say a random sentence of a group */
+  const lastIdx = {};
   function say(group, interrupt) {
     const arr = L()[group]; if (!arr || !arr.length) return;
-    const i = (Math.random() * arr.length) | 0;
+    // prefer recorded sentences; never the same one twice in a row
+    const p = pack(), rec = p && cfg().voice !== 'tts' ? arr.map((_, k) => k).filter(k => p.keys.indexOf('a_' + group + '_' + k) >= 0) : arr.map((_, k) => k);
+    let pool = (rec.length ? rec : arr.map((_, k) => k)).filter(k => k !== lastIdx[group]);
+    if (!pool.length) pool = [lastIdx[group] || 0];
+    const i = pool[(Math.random() * pool.length) | 0]; lastIdx[group] = i;
     Voice.say({ key: 'a_' + group + '_' + i, text: arr[i] }, interrupt);
   }
   function sayCount(n) {
@@ -240,8 +245,8 @@
     if (alive().length < Math.max(1, num(cfg().minPlayers, 2))) {
       say('lobbyMore'); setPhase('lobby', 30000); return;
     }
-    setPhase('ready', 3500);
-    say('start', true);
+    setPhase('ready', 5500);
+    say('go', true);
   }
   function ask() {
     // bring back the players revived by a gift, everybody stands in the middle
@@ -304,7 +309,7 @@
     const now = Date.now();
     if (phase === 'lobby') {
       if (!st.lobbyWarn && phaseEnds - now <= 10000) { st.lobbyWarn = true; say('lobbyEnd'); }
-      else if (!Voice.speaking && now - Voice.last > 15000) say('lobby');
+      else if (!Voice.speaking && now - Voice.last > 7000) say('lobby');
       renderLobby();
     }
     if (phase === 'question') {
