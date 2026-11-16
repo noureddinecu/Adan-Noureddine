@@ -49,7 +49,8 @@ def too_long(pcm, rate, text):
     import re
     n = len(re.sub(r'[\u064B-\u0652\s\[\]a-z]', '', text))
     secs = (len(pcm) - (44 if rate == 'wav' else 0)) / (2 * (24000 if rate == 'wav' else rate))
-    return secs > 3.5 + n * 0.14
+    laughs = text.count('[laughs]')
+    return secs > 6 + n * 0.2 + laughs * 3        # generous: long rules and real laughter take time; reading the instructions takes far more
 
 def encode(pcm, rate, out):
     inp = ['-i', '-'] if rate == 'wav' else ['-f', 's16le', '-ar', str(rate), '-ac', '1', '-i', '-']

@@ -7,7 +7,7 @@
   <title>صح أم خطأ</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/tf.css">
-  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 20, grace: 10, lobbyTime: 120, gapTime: 10, giftHype: 5, musicVol: 0.3, tfVer: 3, minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'mohamed', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0 };</script>
+  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 20, grace: 10, lobbyTime: 120, gapTime: 10, giftHype: 5, musicVol: 0.3, tfVer: 3, rulesRead: 'once', minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'mohamed', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0 };</script>
 </head>
 <body class="tf-app">
   <!-- ============ SPLASH ============ -->
@@ -134,6 +134,8 @@
         <label>وقت الإجابة (بالثواني)<input id="cp_qTime" type="number" min="8" max="60"></label>
         <label>مدة التسجيل («العب») قبل الأسئلة
           <select id="cp_lobbyTime"><option value="60">دقيقة</option><option value="90">دقيقة ونصف</option><option value="120">دقيقتان · مستحسن</option><option value="180">3 دقائق</option></select></label>
+        <label>قراءة شروط وقواعد المسابقة أثناء التسجيل
+          <select id="cp_rulesRead"><option value="once">مرة واحدة في بداية التسجيل · مستحسن</option><option value="twice">مرتان (إذا كان التسجيل 3 دقائق)</option><option value="always">باستمرار (كل دقيقتين تقريباً)</option><option value="off">لا</option></select></label>
         <label>أقل عدد من اللاعبين لبدء الأسئلة
           <select id="cp_minPlayers"><option value="2">2 · مستحسن</option><option value="3">3</option><option value="5">5</option><option value="10">10</option></select></label>
         <label>العودة إلى اللعبة بهدية (لكل لاعب في الجولة)

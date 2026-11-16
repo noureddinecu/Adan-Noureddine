@@ -136,14 +136,14 @@
   const Voice = {
     busyUntil: 0, queue: [], cur: null, last: 0,
     native() { try { return window.AndroidBridge && window.AndroidBridge.speak ? window.AndroidBridge : null; } catch (e) { return null; } },
-    get speaking() { return !!this.cur || Date.now() < this.busyUntil; },
+    get speaking() { return !!this.cur || this.queue.length > 0 || Date.now() < this.busyUntil; },
     /** item = { key, text } */
     say(item, interrupt) {
       if (!item || cfg().voice === 'off') return;
       if (interrupt) this.queue.length = 0;             // never cut the sentence being said, just drop the waiting ones
       item.exp = Date.now() + (item.ttl || 9000);       // a sentence that waited too long is not said any more
       this.queue.push(item);
-      if (this.queue.length > 3) this.queue.splice(0, this.queue.length - 3);
+      if (this.queue.length > 9) this.queue.splice(0, this.queue.length - 9);
       if (!this.cur) this.next();
     },
     next() {
@@ -155,7 +155,7 @@
       if (p && cfg().voice !== 'tts' && p.keys.indexOf(item.key) >= 0) {
         const a = new Audio('voice/' + p.id + '/' + item.key + '.ogg');
         a.volume = 1; this.cur = a; this.duck(true);
-        const done = () => { if (this.cur === a) { this.cur = null; setTimeout(() => this.next(), 250); } };
+        const done = () => { if (this.cur === a) { this.cur = null; this.lastEnd = Date.now(); setTimeout(() => this.next(), 1000); } };   // a calm pause between sentences
         a.onended = done; a.onerror = () => { if (this.cur === a) { this.cur = null; this.tts(item); } };
         a.play().catch(() => { if (this.cur === a) { this.cur = null; this.tts(item); } });
         return;
@@ -261,7 +261,7 @@
     if (alive().length < Math.max(1, num(cfg().minPlayers, 2))) {
       say('lobbyMore'); setPhase('lobby', 30000); return;
     }
-    setPhase('ready', 5500);
+    setPhase('ready', 8000);
     say('go', true);
   }
   function ask() {
@@ -291,7 +291,7 @@
     before.forEach(u => { if (st.players[u].ans === right) st.players[u].rights = (st.players[u].rights || 0) + 1; });
     st.lastOut = out.length; st.lastSilent = silent;
     const s = S(); before.forEach(u => { const p = s && s.participants[u]; if (p && st.players[u].ans === right) { p.correct = (p.correct || 0) + 1; } });
-    setPhase('fall', 6500);
+    setPhase('fall', 8000);
     dropFloors(right, out);
     api.Sfx.lose();
     say(st.q.truth ? 'ansYes' : 'ansNo', true);
@@ -331,9 +331,11 @@
     const now = Date.now();
     if (phase === 'lobby') {
       if (!st.lobbyWarn && phaseEnds - now <= 10000) { st.lobbyWarn = true; say('lobbyEnd'); }
-      else if (!Voice.speaking && now - Voice.last > 7000) {
+      else if (!Voice.speaking && now - (Voice.lastEnd || 0) > 4500 && now - Voice.last > 8000) {
         st.lobbyTalks = (st.lobbyTalks || 0) + 1;
-        if (st.lobbyTalks === 2 || st.lobbyTalks === 12) sayRules();           // all the rules, in order
+        const rr = cfg().rulesRead || 'once', el = num(cfg().lobbyTime, 120) * 1000 - (phaseEnds - now);
+        const rulesDue = rr !== 'off' && ((!st.rulesSaid && st.lobbyTalks >= 2) || (rr === 'twice' && st.rulesSaid === 1 && now - st.rulesAt > 90000 && phaseEnds - now > 55000) || (rr === 'always' && st.rulesSaid && now - st.rulesAt > 100000));
+        if (rulesDue) { st.rulesSaid = (st.rulesSaid || 0) + 1; st.rulesAt = now; sayRules(); }  // all the rules, in order
         else if (st.lobbyTalks % 6 === 5) say('support');                     // «تابعونا… ما تنساوناش بالهدايا»
         else say('lobby');
       }
@@ -602,7 +604,7 @@
     const uid = g.u || p.n;
     showCard(`${personHead(p, uid)}<div><b>${esc(p.n)}</b><small>شكراً ❤️ ${giftIcon(g)}${g.gname ? ' ' + esc(g.gname) : ''}${g.count > 1 ? ' ×' + g.count : ''}</small></div>`, 'thx', 1000 * num(cfg().giftShow, 4));
     if (cfg().applause !== false) api.Sfx.applause();
-    if (!quiet && Math.random() < 0.5 && !Voice.speaking) say('thanks');
+    // thanks on screen only: no voice, so the announcer is never interrupted
   }
   function toast(p, g, kind, k, max) {
     const uid = g.u || p.n;
