@@ -62,7 +62,7 @@
     clack() { noise(0.05, 0.12, 0, 2600, 3); noise(0.05, 0.1, 0.07, 2300, 3); },
     switchSnd() { noise(0.08, 0.25, 0, 3500, 4); tone(900, 0.06, 'square', 0.06); },
     tunnel() { noise(0.6, 0.18, 0, 300, 0.6); },
-    tick(final) { tone(final ? 1046 : 784, 0.09, 'square', 0.12); },
+    tick(final) { tone(final ? 1046 : 784, 0.12, 'triangle', 0.4); tone(final ? 2093 : 1568, 0.06, 'sine', 0.12); },
     select() { tone(523, 0.08, 'triangle', 0.25); },
     hint() { [880, 1175, 1568].forEach((f, i) => tone(f, 0.18, 'sine', 0.18, i * 0.06)); },
     win() { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.25, 'triangle', 0.22, i * 0.09)); tone(1568, 0.5, 'sine', 0.1, 0.36); },
@@ -75,7 +75,7 @@
     // soft, short applause for gifts (does not break the players' focus)
     applause() {
       if (!enabled || !ensure()) return;
-      for (let i = 0; i < 14; i++) noise(0.05 + Math.random() * 0.04, 0.035 + Math.random() * 0.03, i * 0.045 + Math.random() * 0.03, 1400 + Math.random() * 1400, 1.4);
+      for (let i = 0; i < 22; i++) noise(0.05 + Math.random() * 0.05, 0.05 + Math.random() * 0.04, i * 0.05 + Math.random() * 0.04, 1300 + Math.random() * 1500, 1.4);
     },
     achievement() { [659, 880, 1318].forEach((f, i) => tone(f, 0.2, 'sine', 0.2, i * 0.08)); },
 
@@ -120,7 +120,8 @@
   ];
   const CHILL = { name: 'chill', bpm: 78, chords: [[65, 69, 72, 76], [64, 67, 71, 74], [62, 65, 69, 72], [60, 64, 67, 71]], bass: [41, 40, 38, 36], lead: 'keys', drums: 'lofi' };
   const hz = m => 440 * Math.pow(2, (m - 69) / 12);
-  let mGain = null, mOn = false, mMode = 'calm', mVol = 0.8, mEnabled = true, step = 0, nextT = 0, timer = null, rollStart = 0;
+  let ducked = false;
+  let mGain = null, mOn = false, mMode = 'calm', mVol = 0.5, mEnabled = true, step = 0, nextT = 0, timer = null, rollStart = 0;
   let songIdx = 0, songSince = Date.now(), rotateMs = 15 * 60000, autoRotate = false;
   const song = () => (mMode === 'chill' ? CHILL : SONGS[songIdx % SONGS.length]);
   const STEPDUR = () => 60 / song().bpm / 4;
@@ -232,7 +233,7 @@
   }
   function applyVol(fade) {
     if (!mGain || !ctx) return;
-    const v = mOn && mEnabled && enabled ? 0.85 * mVol : 0.0001;
+    const v = mOn && mEnabled && enabled ? 0.85 * mVol * (ducked ? 0.4 : 1) : 0.0001;
     mGain.gain.cancelScheduledValues(ctx.currentTime);
     mGain.gain.setValueAtTime(Math.max(0.0001, mGain.gain.value), ctx.currentTime);
     mGain.gain.linearRampToValueAtTime(v, ctx.currentTime + (fade || 0.6));
@@ -258,6 +259,8 @@
       if (target !== songIdx % SONGS.length) { songIdx = target; songSince = Date.now(); step = 0; }
     },
     get state() { return ctx ? ctx.state : 'none'; },
+    /** lower the music while the countdown ticks so players hear the timer */
+    duck(on) { if (ducked === !!on) return; ducked = !!on; applyVol(0.25); },
     nextSong() { songIdx++; songSince = Date.now(); step = 0; },
     get song() { return song().name; },
     setEnabled(v) { mEnabled = !!v; applyVol(0.4); },

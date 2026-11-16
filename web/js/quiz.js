@@ -306,11 +306,13 @@
   const grace = () => Math.max(0, Math.min(20, Number(cfg().grace == null ? 8 : cfg().grace)));
   function startCollect() {
     q.collecting = true;
+    if (G.Music) G.Music.duck(false);
     phaseEnds = Date.now() + grace() * 1000;
     render(); renderTimer();
   }
   function reveal() {
     if (!q || phase !== 'question') return;
+    if (G.Music) G.Music.duck(false);
     q.done = true;
     setPhase('reveal', 6500);
     api.Sfx.win();
@@ -327,7 +329,7 @@
     const now = Date.now();
     if (phase === 'question' && q) {
       const left = Math.max(0, Math.ceil((phaseEnds - now) / 1000));
-      if (left !== q.lastLeft && !q.collecting) { q.lastLeft = left; if (left <= 5 && left > 0) api.Sfx.tick(left === 1); if (left === 10) music(); renderTimer(); }
+      if (left !== q.lastLeft && !q.collecting) { q.lastLeft = left; if (left <= 5 && left > 0) api.Sfx.tick(left === 1); if (left === 10) music(); if (G.Music) G.Music.duck(left <= 5); renderTimer(); }
       if (!q.hint && now >= q.hintAt) { q.hint = true; renderHint(); }
     }
     if (phase === 'topic') renderRoulette();
@@ -424,6 +426,23 @@
   }
 
   /* ---------------- support (gifts) ---------------- */
+  const GIFT_DELAY = 7000, giftPending = new Map(), giftQueue = [];
+  let giftBusy = false;
+  function nextGiftCard() {
+    if (giftBusy || !giftQueue.length) return;
+    if (phase === 'idle') { giftQueue.length = 0; return; }
+    // shown only while a question is on screen, on top of the photo ring (never over the flag, map or leaderboard)
+    const host = $('qzArena');
+    if (phase !== 'question' || paused || !host || !host.offsetWidth) { setTimeout(nextGiftCard, 1000); return; }
+    const { p, count } = giftQueue.shift();
+    giftBusy = true;
+    const el = document.createElement('div'); el.className = 'qz-toast in-ring';
+    el.innerHTML = `<div class="gt-av">${avatar(p, '')}<i>🌹</i></div><b>${esc(p.n)}</b><span>${esc(T('thx', { n: '' }).trim())} ❤️</span><em>🌹${count > 1 ? ' ×' + count : ''}</em>`;
+    host.appendChild(el);
+    api.Sfx.applause();
+    setTimeout(() => el.classList.add('out'), 3300);
+    setTimeout(() => { el.remove(); giftBusy = false; nextGiftCard(); }, 3800);
+  }
   function supporters() {
     const s = S();
     return Object.keys(s.participants).filter(id => s.participants[id].coins > 0).sort((a, b) => s.participants[b].coins - s.participants[a].coins);
@@ -440,17 +459,14 @@
     const coins = Math.max(1, Number(g.coins) || 1) * Math.max(1, Number(g.count) || 1);
     p.coins = (p.coins || 0) + coins; p.gifts = (p.gifts || 0) + Math.max(1, Number(g.count) || 1);
     const s = S(); s.coins = (s.coins || 0) + coins; s.gifts = (s.gifts || 0) + Math.max(1, Number(g.count) || 1);
-    const box = $('qzToasts');
-    if (box && phase !== 'idle') {
-      // discreet: one small line in the bottom-left corner of the safe zone, 2.5 s, soft applause
-      box.innerHTML = '';
-      const el = document.createElement('div'); el.className = 'qz-toast';
-      el.innerHTML = avatar(p, 'sm') + `<span>${esc(T('thx', { n: p.n }))}</span><i>🌹${g.count > 1 ? '×' + g.count : ''}</i>`;
-      box.appendChild(el);
-      clearTimeout(box._t1); clearTimeout(box._t2);
-      box._t1 = setTimeout(() => el.classList.add('out'), 2500); box._t2 = setTimeout(() => el.remove(), 2900);
-      api.Sfx.applause();
-    }
+    // thank AFTER TikTok's own gift animation: wait 7 s after this viewer's last gift and
+    // merge a burst of gifts into one card; cards are shown one by one
+    const key = g.u || p.n;
+    const pend = giftPending.get(key) || { p, count: 0 };
+    pend.count += Math.max(1, Number(g.count) || 1); pend.p = p;
+    clearTimeout(pend.timer);
+    pend.timer = setTimeout(() => { giftPending.delete(key); giftQueue.push(pend); nextGiftCard(); }, GIFT_DELAY);
+    giftPending.set(key, pend);
     if (phase === 'support') renderSupport();
     return 'كادو 🌹 ' + coins;
   }
@@ -544,23 +560,24 @@
     if (box.dataset.q !== q.id + q.start) { box.dataset.q = q.id + q.start; box.innerHTML = '<div class="qb-count"><b>0</b><small>✓</small></div>'; }
     const BW = box.clientWidth || 300, BH = box.clientHeight || 140;
     const D = Math.min(BW, BH), R = D / 2, CX = BW / 2, CY = BH / 2;   // circle centred in the strip
-    const ids = q.correct.slice(0, 24), n = ids.length;
-    // biggest bubble size that still keeps the whole spiral inside the circle
-    // (×1.15 leaves room for the pop / float animation so nothing ever crosses the circle)
-    const fit = R / ((0.62 * Math.sqrt(Math.max(1, n) + 1.6) + 0.58) * 1.15);
-    const size = Math.max(18, Math.min(R * 0.4, fit));
+    // the LAST 8 correct answerers, big, on one ring around the counter (a newcomer takes the oldest spot,
+    // so everybody gets a moment with a big photo); the counter in the middle shows the total
+    const SHOW = 8, GAP = 5;
+    const ids = q.correct.slice(-SHOW), n = ids.length;
+    const fits = sz => { const rk = R - sz / 2 - 3; return 2 * Math.PI * rk >= SHOW * (sz + GAP) && rk - sz / 2 >= Math.max(30, sz * 0.9) / 2 + GAP; };
+    let size = 64;
+    while (size > 24 && !fits(size)) size -= 1;
+    const rk = R - size / 2 - 3;
+    const L = { cs: Math.max(30, size * 0.9), pos: ids.map((_, i) => { const th = -Math.PI / 2 + (i / SHOW) * 2 * Math.PI; return [rk * Math.cos(th), rk * Math.sin(th)]; }) };
     const cnt = box.querySelector('.qb-count');
-    const cs = Math.min(R * 0.62, Math.max(size * 1.25, 30));
+    const cs = L.cs;
     cnt.style.width = cnt.style.height = Math.round(cs) + 'px';
     cnt.querySelector('b').textContent = q.correct.length;
     box.classList.toggle('empty', !n);
     const have = new Map([...box.querySelectorAll('.qb')].map(el => [el.dataset.u, el]));
-    const inner = R - size * 0.62 - 4;                                // max distance of a bubble centre (pop scale included)
+    have.forEach((el, u) => { if (!ids.includes(u) && !el.classList.contains('leave')) { el.classList.add('leave'); setTimeout(() => el.remove(), 350); } });
     ids.forEach((id, i) => {
-      let r = size * 0.62 * Math.sqrt(i + 2.6);
-      r = Math.min(r, inner);
-      const th = i * GOLDEN - Math.PI / 2;
-      const x = CX + r * Math.cos(th), y = CY + r * Math.sin(th);
+      const x = CX + L.pos[i][0], y = CY + L.pos[i][1];
       let el = have.get(id);
       if (!el) {
         el = document.createElement('div'); el.className = 'qb pop'; el.dataset.u = id;

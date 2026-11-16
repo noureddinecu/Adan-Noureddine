@@ -724,3 +724,53 @@ html, body { background: #071A36; }
 #quizHud .qz-toast span { max-width: 28vw; color: #FFE4E6; }
 #quizHud .qz-toast i { color: #FDA4AF; font-weight: 900; font-size: 1em; }
 @keyframes toastSoft { from { opacity: 0; transform: translateX(-0.6em); } }
+
+/* =====================================================================
+ * v3.9 — bigger answer photos, gift side card, clear yellow roulette
+ * ===================================================================== */
+#quizHud .qz-arena { height: clamp(9em, 21vh, 13em); }
+.qb .qa { box-shadow: 0 0 0 0.14em #fff, 0 0 1.1em rgba(255, 201, 60, .55), 0 0.25em 0.6em rgba(0,0,0,.55); }
+/* gift: side card with a big photo (left side of the safe zone, away from the photo circle) */
+#quizHud .qz-toasts { left: 2.5vw; right: auto; bottom: calc(var(--free) + var(--sab) + 0.4em); max-width: 30vw; align-items: stretch; }
+#quizHud .qz-toast { flex-direction: column; align-items: center; text-align: center; gap: 0.15em; padding: 0.55em 0.6em 0.5em; border-radius: 1.1em;
+  font-size: 0.85em; width: 7.4em; opacity: 1;
+  background: linear-gradient(170deg, rgba(244, 63, 94, .92), rgba(124, 92, 255, .9)); border: 1px solid rgba(255,255,255,.5);
+  box-shadow: 0 0.5em 1.4em rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.55); animation: giftIn .55s cubic-bezier(.3,1.5,.5,1); }
+@keyframes giftIn { from { transform: translateX(-120%) rotate(-6deg); opacity: 0; } }
+#quizHud .qz-toast.out { opacity: 0; transform: translateX(-30%); }
+.gt-av { position: relative; }
+.gt-av .qa { width: 3.6em; height: 3.6em; font-size: 1em; box-shadow: 0 0 0 0.16em #fff, 0 0 1.3em rgba(255, 228, 230, .9); }
+.gt-av i { position: absolute; right: -0.35em; bottom: -0.2em; font-style: normal; font-size: 1.35em; animation: roseBeat 1.2s ease-in-out infinite; }
+#quizHud .qz-toast b { font-size: 0.95em; font-weight: 900; color: #fff; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#quizHud .qz-toast span { font-size: 0.85em; color: #FFE4E6; max-width: 100%; }
+#quizHud .qz-toast em { font-style: normal; font-weight: 900; color: #fff; font-size: 0.9em; }
+/* roulette: clear glass tiles, bright YELLOW highlight, picked tile gold + ✓ */
+#quizHud .qt { background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.05)); border: 1px solid rgba(255,255,255,.35); color: #fff; }
+#quizHud .qt small { color: #C9D8F2; }
+#quizHud .qt.hot { background: linear-gradient(180deg, #FFE27A, #F5A623); color: #3A2400; border-color: #FFF6CF; transform: scale(1.08);
+  box-shadow: 0 0 1.6em rgba(255, 201, 60, .9), inset 0 1px 0 rgba(255,255,255,.7); }
+#quizHud .qt.hot small { color: #6B4500; }
+#quizHud .qt.pick { position: relative; background: linear-gradient(180deg, #FFE27A, #F5A623); color: #3A2400; border: 2px solid #fff;
+  box-shadow: 0 0 0 0.25em rgba(255, 201, 60, .45), 0 0 2em rgba(255, 201, 60, 1), inset 0 1px 0 rgba(255,255,255,.7); z-index: 2; }
+#quizHud .qt.pick small { color: #6B4500; }
+#quizHud .qt.pick::after { content: '✓'; position: absolute; top: -0.45em; left: -0.45em; width: 1.4em; height: 1.4em; border-radius: 50%; background: #22C55E; color: #fff;
+  font-weight: 900; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; font-size: 0.9em; }
+#quizHud .qt.off { opacity: .2; }
+/* question + photos side by side */
+#quizHud .qz-row { flex: 1 1 auto; min-height: 0; display: flex; gap: 0.5em; align-items: stretch; direction: ltr; }
+#quizHud .qz-row .qz-visual { flex: 1 1 52%; min-width: 0; min-height: 0; max-height: none; height: auto; }
+#quizHud .qz-row .qz-arena { flex: 0 0 46%; height: auto; min-height: 0; }
+#quizHud #qzQuestion .qz-row .qz-visual { min-height: 0; }
+#quizHud .revealed .qz-row .qz-arena { display: none; }
+#quizHud .qz-row .qz-qtext { font-size: 1.25em; }
+#quizHud .qz-row .qz-big { font-size: 2em; }
+/* gift card: RIGHT side (TikTok shows its gift banners on the left), top of the photos column */
+#quizHud .qz-toasts { left: auto; right: 2.5vw; top: calc(var(--top) + 7.6em); bottom: auto; align-items: flex-end; }
+@keyframes giftIn { from { transform: translateX(120%) rotate(6deg); opacity: 0; } }
+#quizHud .qz-toast.out { opacity: 0; transform: translateX(30%); }
+.qb.leave { transition: transform .3s, opacity .3s; transform: scale(0); opacity: 0; }
+/* gift card centred on the photo ring (right column), during questions only */
+#quizHud .qz-arena .qz-toast.in-ring { position: absolute; left: 50%; top: 50%; z-index: 5; transform: translate(-50%, -50%); width: 7.6em;
+  animation: giftPop .5s cubic-bezier(.3,1.6,.5,1); }
+@keyframes giftPop { from { transform: translate(-50%, -50%) scale(.3); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+#quizHud .qz-arena .qz-toast.in-ring.out { opacity: 0; transform: translate(-50%, -50%) scale(.85); }

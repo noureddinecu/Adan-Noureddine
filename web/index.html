@@ -35,7 +35,6 @@
       <button class="btn home-btn" id="hDemo">🧪 جرّب المسابقة دابا (مشاهدين وهميين)</button>
       <button class="btn home-btn" id="hTestSound">🔊 جرّب الصوت والموسيقى</button>
       <button class="btn home-btn" id="hGuide">📖 كيفاش نبدا البث من التيليفون؟</button>
-      <button class="home-link" id="hTrain">🚂 لعبة القطار «تبع الذهب»</button>
     </div>
   </section>
 
@@ -163,11 +162,13 @@
 
     <div class="qz-pane" id="qzQuestion">
       <div class="qz-timer" id="qzTimerWrap"><span class="qz-cat" id="qzCat"></span><div class="qz-track"><i id="qzBar"></i></div><b id="qzSec">30</b></div>
-      <div class="qz-visual" id="qzVisual"></div>
+      <!-- question + photos of correct answers side by side, so both stay big -->
+      <div class="qz-row">
+        <div class="qz-visual" id="qzVisual"></div>
+        <div class="qz-arena" id="qzArena"><div class="qz-correct" id="qzCorrect"></div></div>
+      </div>
       <div class="qz-answer" id="qzAnswer"></div>
       <div class="qz-hint" id="qzHint"></div>
-      <!-- correct answers: a free round cluster of photos (no frame) under the question -->
-      <div class="qz-arena" id="qzArena"><div class="qz-correct" id="qzCorrect"></div></div>
       <div class="qz-fast" id="qzFast"></div>
     </div>
 
@@ -268,11 +269,7 @@
 
       <h3 class="cp-h">الإعدادات</h3>
       <div class="card cp-form">
-        <label>اللعبة
-          <select id="cp_game">
-            <option value="quiz">🧠 تحدي الثقافة (مسابقة)</option>
-            <option value="gold">🚂 تبع الذهب (القطار)</option>
-          </select></label>
+        <select id="cp_game" hidden><option value="quiz">🧠 تحدي الثقافة</option></select>
         <label>مصدر التعليقات
           <select id="cp_source">
             <option value="relay">TikTok عبر السيرفر ديالي (مستحسن)</option>
@@ -322,7 +319,7 @@
         <label data-game="quiz">تبديل الموسيقى (ملي تختار «تبدّل أوتوماتيكياً»)
           <select id="cp_musicRotate"><option value="15">كل 15 دقيقة</option><option value="20">كل 20 دقيقة</option><option value="30">كل 30 دقيقة</option></select></label>
         <label data-game="quiz">صوت الموسيقى
-          <select id="cp_musicVol"><option value="0.3">منخفض</option><option value="0.55">متوسط</option><option value="0.8">عالي</option><option value="1">عالي بزاف</option></select></label>
+          <select id="cp_musicVol"><option value="0.3">منخفض</option><option value="0.5">متوسط · مستحسن</option><option value="0.7">عالي</option><option value="0.9">عالي بزاف</option></select></label>
         <div class="cp-sw" data-game="quiz"><span>قبول الغلطات الصغيرة فالكتابة</span><label class="switch"><input type="checkbox" id="cp_fuzzy"><i></i></label></div>
         <div data-game="quiz"><span class="cp-lbl">المجالات</span><div class="cp-cats" id="cpCats"></div></div>
         <label>مدة عرض الرابحين (ثواني)<input id="cp_winnersTime" type="number" min="5" max="60"></label>

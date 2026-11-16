@@ -34,7 +34,7 @@ retries every 20 s, and it keeps the room open for 60 s after the last client le
 ## Tests
 ```
 npm test                  # unit + integration (fake TikTok upstream)
-node test/e2e-app.mjs     # full app ⇄ relay test in Chromium (needs playwright)
+node test/e2e-quiz.mjs    # full quiz ⇄ relay test in Chromium (needs playwright)
 ```
 
 ## Risks

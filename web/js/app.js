@@ -5,7 +5,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const Lv = G.Levels, Store = G.Store, Sfx = G.Sfx;
-  const VERSION = '3.8.0';
+  const VERSION = '3.9.0';
   const INK = '#2E2A30';
 
   /* ---------------- inline SVG icons ---------------- */
@@ -476,7 +476,6 @@
     bind('hLive', () => G.Live.openPanel('quiz'));
     bind('hDemo', () => G.Live.quickDemo());
     bind('hGuide', () => openModal('liveGuide'));
-    bind('hTrain', goTrain);
     bind('hSound', toggleSound, false);
     bind('hTestSound', () => G.testSound && G.testSound(), false);
     $('levelList').addEventListener('click', e => {

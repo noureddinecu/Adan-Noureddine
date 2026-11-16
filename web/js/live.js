@@ -73,7 +73,7 @@
     source: 'sim', user: '', relayUrl: '', token: '', eulerKey: '',
     qTime: 35, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
     simViewers: 40, startLevel: 1,
-    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.8, musicSong: 'arena', musicRotate: 15, grace: 8, supportEvery: 7, shareEvery: 2
+    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.5, musicSong: 'arena', cfgVer: 2, musicRotate: 15, grace: 8, supportEvery: 7, shareEvery: 2
   };
   let cfg = Object.assign({}, DEFAULT_CFG);
   let session = null;      // persisted
@@ -96,7 +96,12 @@
   function load() {
     try {
       const d = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (d) { cfg = Object.assign({}, DEFAULT_CFG, d.cfg || {}); return d; }
+      if (d) {
+        cfg = Object.assign({}, DEFAULT_CFG, d.cfg || {});
+        cfg.game = 'quiz';                                             // the train game is no longer part of the app
+        if (cfg.cfgVer !== 2) { cfg.musicVol = 0.5; cfg.cfgVer = 2; }  // quieter music so the countdown is heard
+        return d;
+      }
     } catch (e) { /* ignore */ }
     return null;
   }
