@@ -7,7 +7,7 @@
   <title>صح أم خطأ</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/tf.css">
-  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 20, grace: 10, lobbyTime: 120, gapTime: 10, giftHype: 5, musicVol: 0.3, tfVer: 3, rulesRead: 'once', minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'mohamed', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0 };</script>
+  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 20, grace: 10, lobbyTime: 120, gapTime: 10, giftHype: 5, musicVol: 0.3, tfVer: 3, rulesRead: 'once', readQ: true, minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'mohamed', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0 };</script>
 </head>
 <body class="tf-app">
   <!-- ============ SPLASH ============ -->
@@ -162,6 +162,7 @@
         <label>سرعة المذيع
           <select id="cp_voiceRate"><option value="0.9">هادئ</option><option value="1">عادي · مستحسن</option><option value="1.12">سريع</option></select></label>
         <div class="cp-sw" data-game="quiz"><span>🎵 موسيقى حماسية</span><label class="switch"><input type="checkbox" id="cp_music"><i></i></label></div>
+        <div class="cp-sw"><span>🎙️ المذيع يقرأ السؤال بصوته (إذا كان مسجّلاً)</span><label class="switch"><input type="checkbox" id="cp_readQ"><i></i></label></div>
         <label data-game="quiz">الموسيقى
           <select id="cp_musicSong">
             <option value="arena">⭐ Arena (الرئيسية)</option>
@@ -247,6 +248,8 @@
   <script src="js/quiz-bank.js"></script>
   <script src="js/tf-bank.js"></script>
   <script src="js/tf-pool.js"></script>
+  <script src="js/tf-extra.js"></script>
+  <script src="js/tf-tk.js"></script>
   <script src="js/tf-lines.js"></script>
   <script src="voice/manifest.js"></script>
   <script src="js/tf.js"></script>

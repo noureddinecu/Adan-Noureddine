@@ -12,7 +12,22 @@ ANN = {'mohamed': 'Sadachbia'}       # one announcer only (محمد)
 # each announcer has his own model: on the paid Tier 1 every TTS model allows ~100 requests a day,
 # so the 4 announcers can be recorded in parallel
 MODELS = {'mohamed': 'gemini-3.8-flash-tts'}   # one model only (~100 recordings a day on Tier 1)
-STOPPED = set()          # models that reached their daily limit during this run
+STOPPED = set()          # (key, model) pairs that reached their daily limit during this run
+# rotation: several keys (GEMINI_KEYS=k1,k2,…) × several models (TTS_MODELS=m1,m2,…), same voice; when a pair
+# reaches its daily limit the next pair is used
+import threading
+LOCK = threading.Lock()
+def pairs():
+    keys = [k for k in os.environ.get('GEMINI_KEYS', os.environ.get('GEMINI_KEY', '')).split(',') if k]
+    models = [m for m in os.environ.get('TTS_MODELS', '').split(',') if m]
+    return keys, models
+def current_pair(a):
+    keys, models = pairs()
+    if not models: models = [os.environ.get('TTS_MODEL_' + a.upper(), MODELS[a])]
+    for m in models:
+        for k in keys:
+            if (k, m) not in STOPPED: return k, m
+    return None, None
 # the same layout as the samples that worked: instructions, an explicit «do not read», a blank line, then the line
 STYLE_LINE = ("Read this as a real, funny Moroccan TV game-show host from Casablanca, in pure Moroccan Darija with a strong "
               "natural Moroccan accent. Very energetic, warm and playful, like a human talking live to his audience, never robotic. "
@@ -21,12 +36,12 @@ STYLE_Q = ("Read this as a real Moroccan TV game-show host from Casablanca with 
            "statement clearly with a little suspense, then ask the question at the end with energy, like a human, never robotic. "
            "Do not read these instructions, only the Arabic line below.\n\n")
 
-def tts(voice, text, model):
+def tts(voice, text, model, key=None):
     body = {"contents": [{"parts": [{"text": text}]}],
             "generationConfig": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}}}}
     req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
                                  data=json.dumps(body).encode(), method="POST",
-                                 headers={"Content-Type": "application/json", "x-goog-api-key": os.environ["GEMINI_KEY"]})
+                                 headers={"Content-Type": "application/json", "x-goog-api-key": key or os.environ["GEMINI_KEY"]})
     for attempt in range(6):
         try:
             with urllib.request.urlopen(req, timeout=180) as r:
@@ -38,7 +53,9 @@ def tts(voice, text, model):
             return base64.b64decode(part["data"]), rate                         # raw 16-bit PCM
         except urllib.error.HTTPError as e:
             msg = e.read().decode()[:300]
-            if 'per day' in msg.lower() or 'per_day' in msg.lower(): STOPPED.add(model); raise RuntimeError('DAILY LIMIT ' + model)
+            if 'per day' in msg.lower() or 'per_day' in msg.lower() or 'free_tier_requests' in msg:
+                with LOCK: STOPPED.add((key, model))
+                raise RuntimeError('DAILY LIMIT ' + model)
             if e.code in (429, 500, 503) and attempt < 5: time.sleep(10 * (attempt + 1)); continue
             raise RuntimeError(f"HTTP {e.code}: {msg}")
         except (KeyError, IndexError):
@@ -84,11 +101,15 @@ def main():
     done = [0]; errors = []
     def work(j):
         a, it, out = j
-        model = os.environ.get('TTS_MODEL_' + a.upper(), MODELS[a])
-        if model in STOPPED: return
         try:
-            for tries in range(2):
-                pcm, rate = tts(ANN[a], (STYLE_LINE if it['kind'] == 'line' else STYLE_Q) + it['text'], model)
+            for tries in range(4):
+                key, model = current_pair(a)
+                if not key: return                                   # every key × model reached its daily limit
+                try:
+                    pcm, rate = tts(ANN[a], (STYLE_LINE if it['kind'] == 'line' else STYLE_Q) + it['text'], model, key)
+                except RuntimeError as e:
+                    if 'DAILY LIMIT' in str(e): continue              # switch to the next key / model
+                    raise
                 if not too_long(pcm, rate, it['text']): break
             else:
                 raise RuntimeError('recording too long (instructions read?)')
@@ -102,7 +123,7 @@ def main():
     finally:
         print('recorded per announcer:', manifest(), flush=True)
         for e in errors[:6]: print('ERR', e)
-        if STOPPED: print('daily limit reached for:', sorted(STOPPED))
+        if STOPPED: print('daily limit reached for:', sorted(m + ' / key …' + k[-4:] for k, m in STOPPED))
 
 if __name__ == '__main__':
     main()

@@ -213,7 +213,11 @@
   // the question is NOT read aloud: the announcer invites the players to read it and think
   // if the question was recorded, the announcer reads it; otherwise he invites the players to read it
   // the questions are not read aloud: the announcer invites the players to read the question and think
-  function sayQuestion() { say('askRead', true); }
+  function sayQuestion(q) {
+    const p = pack(), key = window.TF_QKEY ? window.TF_QKEY(q.text) : '';
+    if (cfg().readQ !== false && p && key && cfg().voice !== 'tts' && p.keys.indexOf(key) >= 0) Voice.say({ key, text: q.text }, true);   // recorded (with diacritics)
+    else say('askRead', true);
+  }
 
   /* ---------------- state ---------------- */
   let phase = 'idle', phaseEnds = 0, paused = false, pausedLeft = 0, tickTimer = null;
@@ -500,7 +504,7 @@
     else if (phase === 'ready') card.innerHTML = `<div class="tf-lobby"><b>استعدّوا! 🔥</b><small>أجيبوا بـ «نعم» أو «لا» · أول إجابة هي النهائية</small></div>`;
     else if (st && st.q && (phase === 'question' || phase === 'collect' || phase === 'fall')) {
       const q = st.q;
-      card.innerHTML = `<div class="tf-q"><span class="tf-no">${st.qNo}</span><div class="tf-qt">${q.flag ? `<img class="tf-flag" src="flags/${q.flag}.svg" alt="">` : ''}<b>${esc(q.text)}</b></div>
+      card.innerHTML = `<div class="tf-q"><span class="tf-no">${st.qNo}</span><div class="tf-qt">${q.flag ? `<img class="tf-flag" src="flags/${q.flag}.svg" alt="">` : ''}<b>${esc((window.TF_TK && window.TF_TK[q.text]) || q.text)}</b></div>
         <span class="tf-timer" id="tfTimer"><i></i><em id="tfSec">${left()}</em></span></div>`;
       if (phase === 'collect') { big.className = 'tf-big on wait'; big.innerHTML = '<div class="tf-fix">⏳ نجمع الإجابات المتأخرة…</div>'; }
       if (phase === 'fall') {
