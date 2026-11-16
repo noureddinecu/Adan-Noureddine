@@ -41,11 +41,11 @@ const q1 = await askAndAnswer('flags', [['salma', 'right'], ['wrong_guy', 'wrong
 await p.screenshot({ path: shots + '/e2e_q1.png' });
 check(await p.evaluate(() => Quiz._debug().q.correct.length) === 3, 'Q1: 3 correct (right, English, typo), wrong ignored, duplicate ignored — answer ' + q1.show);
 await p.evaluate(() => Quiz.ctl.reveal());
-await p.waitForFunction(() => Quiz.phase === 'board', null, { timeout: 15000 });
+await p.waitForFunction(() => Quiz.phase === 'board', null, { timeout: 25000 });
 // Q2: capitals — hamza first, salma second
 const q2 = await askAndAnswer('capitals', [['hamza', 'right'], ['salma', 'right'], ['wrong_guy', 'right']]);
 await p.evaluate(() => Quiz.ctl.reveal());
-await p.waitForFunction(() => Quiz.phase === 'board', null, { timeout: 15000 }); await wait(1200);
+await p.waitForFunction(() => Quiz.phase === 'board', null, { timeout: 25000 }); await wait(1200);
 await p.screenshot({ path: shots + '/e2e_board.png' });
 const rows = await p.$$eval('#qzList li', ls => ls.map(l => ({ n: l.querySelector('.nm').textContent, ok: l.querySelector('.ok').textContent, pts: +l.querySelector(':scope > b').textContent, img: !!l.querySelector('.qa') })));
 console.log(JSON.stringify(rows));

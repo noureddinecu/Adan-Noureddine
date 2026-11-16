@@ -284,7 +284,7 @@
     const cat = forceCat || chooseCat();
     st.lastCat = cat;
     roulette = { target: CATS.findIndex(c => c.id === cat), start: Date.now(), dur: 5200, cat };
-    setPhase('topic', 6500);
+    setPhase('topic', 1000 * (Number(cfg().topicTime) || 6.5));
     // share reminder every N questions, during the roulette (never over a question)
     const every = Number(cfg().shareEvery == null ? 2 : cfg().shareEvery);
     if (every > 0 && st.asked > 0 && st.asked % every === 0) showShare();
@@ -314,7 +314,7 @@
     if (!q || phase !== 'question') return;
     if (G.Music) G.Music.duck(false);
     q.done = true;
-    setPhase('reveal', 6500);
+    setPhase('reveal', 1000 * (Number(cfg().revealTime) || 6.5));
     api.Sfx.win();
     api.save();
   }
@@ -341,7 +341,7 @@
     if (phase === 'support') return nextTopic();
     if (phase === 'board' || phase === 'final') {
       const every = Number(cfg().supportEvery == null ? 7 : cfg().supportEvery);
-      if (cfg().autopilot && phase === 'board' && every > 0 && st.asked > 0 && st.asked % every === 0 && st.lastSupport !== st.asked) { st.lastSupport = st.asked; return setPhase('support', 13000); }
+      if (cfg().autopilot && phase === 'board' && every > 0 && st.asked > 0 && st.asked % every === 0 && st.lastSupport !== st.asked) { st.lastSupport = st.asked; return setPhase('support', 1000 * (Number(cfg().supportTime) || 13)); }
       if (cfg().autopilot) return nextTopic();
       phaseEnds = 0;
     }
@@ -426,7 +426,8 @@
   }
 
   /* ---------------- support (gifts) ---------------- */
-  const GIFT_DELAY = 7000, giftPending = new Map(), giftQueue = [];
+  const giftDelay = () => 1000 * Math.max(0, Math.min(30, Number(cfg().giftDelay == null ? 7 : cfg().giftDelay)));
+  const giftPending = new Map(), giftQueue = [];
   let giftBusy = false;
   function nextGiftCard() {
     if (giftBusy || !giftQueue.length) return;
@@ -439,9 +440,10 @@
     const el = document.createElement('div'); el.className = 'qz-toast in-ring';
     el.innerHTML = `<div class="gt-av">${avatar(p, '')}<i>🌹</i></div><b>${esc(p.n)}</b><span>${esc(T('thx', { n: '' }).trim())} ❤️</span><em>🌹${count > 1 ? ' ×' + count : ''}</em>`;
     host.appendChild(el);
-    api.Sfx.applause();
-    setTimeout(() => el.classList.add('out'), 3300);
-    setTimeout(() => { el.remove(); giftBusy = false; nextGiftCard(); }, 3800);
+    if (cfg().applause !== false) api.Sfx.applause();
+    const dur = 1000 * Math.max(2, Math.min(10, Number(cfg().giftShow) || 4));
+    setTimeout(() => el.classList.add('out'), dur - 500);
+    setTimeout(() => { el.remove(); giftBusy = false; nextGiftCard(); }, dur);
   }
   function supporters() {
     const s = S();
@@ -461,11 +463,12 @@
     const s = S(); s.coins = (s.coins || 0) + coins; s.gifts = (s.gifts || 0) + Math.max(1, Number(g.count) || 1);
     // thank AFTER TikTok's own gift animation: wait 7 s after this viewer's last gift and
     // merge a burst of gifts into one card; cards are shown one by one
+    if (cfg().giftThanks === false) { if (phase === 'support') renderSupport(); return 'كادو 🌹 ' + coins; }
     const key = g.u || p.n;
     const pend = giftPending.get(key) || { p, count: 0 };
     pend.count += Math.max(1, Number(g.count) || 1); pend.p = p;
     clearTimeout(pend.timer);
-    pend.timer = setTimeout(() => { giftPending.delete(key); giftQueue.push(pend); nextGiftCard(); }, GIFT_DELAY);
+    pend.timer = setTimeout(() => { giftPending.delete(key); giftQueue.push(pend); nextGiftCard(); }, giftDelay());
     giftPending.set(key, pend);
     if (phase === 'support') renderSupport();
     return 'كادو 🌹 ' + coins;
@@ -560,15 +563,36 @@
     if (box.dataset.q !== q.id + q.start) { box.dataset.q = q.id + q.start; box.innerHTML = '<div class="qb-count"><b>0</b><small>✓</small></div>'; }
     const BW = box.clientWidth || 300, BH = box.clientHeight || 140;
     const D = Math.min(BW, BH), R = D / 2, CX = BW / 2, CY = BH / 2;   // circle centred in the strip
-    // the LAST 8 correct answerers, big, on one ring around the counter (a newcomer takes the oldest spot,
-    // so everybody gets a moment with a big photo); the counter in the middle shows the total
-    const SHOW = 8, GAP = 5;
-    const ids = q.correct.slice(-SHOW), n = ids.length;
-    const fits = sz => { const rk = R - sz / 2 - 3; return 2 * Math.PI * rk >= SHOW * (sz + GAP) && rk - sz / 2 >= Math.max(30, sz * 0.9) / 2 + GAP; };
-    let size = 64;
-    while (size > 24 && !fits(size)) size -= 1;
-    const rk = R - size / 2 - 3;
-    const L = { cs: Math.max(30, size * 0.9), pos: ids.map((_, i) => { const th = -Math.PI / 2 + (i / SHOW) * 2 * Math.PI; return [rk * Math.cos(th), rk * Math.sin(th)]; }) };
+    // the LAST N correct answerers (N from the settings), as BIG as possible, on oval rings around the counter
+    // (the strip under the question is wide and short, so the rings are stretched sideways to use the width);
+    // a newcomer takes the oldest spot so everybody gets a moment; the counter shows the total
+    const SHOW = Math.max(4, Math.min(30, Number(cfg().photoMax) || 10)), GAP = 5;
+    const RY = BH / 2, RXmax = BW / 2;
+    const layout = (sz, n) => {
+      const cs0 = Math.max(30, sz * 0.95), pos = [];
+      let k = 1;
+      while (pos.length < n) {
+        const ry = cs0 / 2 + GAP + sz * (k - 0.5) + (k - 1) * GAP;
+        if (ry + sz / 2 > RY - 2) return null;
+        const rx = Math.min(ry * 2.2, RXmax - sz / 2 - 2);
+        if (rx < ry) return null;
+        const per = 2 * Math.PI * Math.sqrt((rx * rx + ry * ry) / 2);
+        const cap = Math.max(1, Math.floor(per / (sz + GAP)));
+        const m = Math.min(cap, n - pos.length);
+        for (let j = 0; j < m; j++) { const th = -Math.PI / 2 + (j / m) * 2 * Math.PI + (k % 2 ? 0 : Math.PI / m); pos.push([rx * Math.cos(th), ry * Math.sin(th)]); }
+        k++;
+      }
+      return { pos, cs: cs0 };
+    };
+    let shown = Math.min(SHOW, q.correct.length), size = 64, L = null;
+    for (;;) {
+      size = 64;
+      while (size >= 24 && !(L = layout(size, shown))) size -= 1;
+      if (L || shown <= 1) break;
+      shown--;                                  // never stack photos: show fewer if they cannot fit
+    }
+    if (!L) { size = 24; L = { pos: [[0, 0]], cs: 30 }; shown = Math.min(1, shown); }
+    const ids = q.correct.slice(q.correct.length - shown), n = ids.length;
     const cnt = box.querySelector('.qb-count');
     const cs = L.cs;
     cnt.style.width = cnt.style.height = Math.round(cs) + 'px';
@@ -695,7 +719,7 @@
       else { paused = false; if (phaseEnds) phaseEnds = Date.now() + pausedLeft; }
       render(); music(); if (phase === 'question') renderTimer();
     },
-    support() { paused = false; setPhase('support', 13000); },
+    support() { paused = false; setPhase('support', 1000 * (Number(cfg().supportTime) || 13)); },
     share() { showShare(); },
     showBoard() { if (phase !== 'question') { setPhase('board', cfg().autopilot ? cfg().winnersTime * 1000 : 0); } },
     hideBoard() { if (phase === 'board' || phase === 'final') { phaseEnds = 0; nextTopic(); } },

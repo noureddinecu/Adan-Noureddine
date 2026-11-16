@@ -5,7 +5,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const Lv = G.Levels, Store = G.Store, Sfx = G.Sfx;
-  const VERSION = '3.9.0';
+  const VERSION = '3.10.0';
   const INK = '#2E2A30';
 
   /* ---------------- inline SVG icons ---------------- */

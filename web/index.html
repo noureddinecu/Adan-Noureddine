@@ -162,13 +162,11 @@
 
     <div class="qz-pane" id="qzQuestion">
       <div class="qz-timer" id="qzTimerWrap"><span class="qz-cat" id="qzCat"></span><div class="qz-track"><i id="qzBar"></i></div><b id="qzSec">30</b></div>
-      <!-- question + photos of correct answers side by side, so both stay big -->
-      <div class="qz-row">
-        <div class="qz-visual" id="qzVisual"></div>
-        <div class="qz-arena" id="qzArena"><div class="qz-correct" id="qzCorrect"></div></div>
-      </div>
+      <div class="qz-visual" id="qzVisual"></div>
       <div class="qz-answer" id="qzAnswer"></div>
       <div class="qz-hint" id="qzHint"></div>
+      <!-- correct answers: a free round cluster of BIG photos (no frame) under the question -->
+      <div class="qz-arena" id="qzArena"><div class="qz-correct" id="qzCorrect"></div></div>
       <div class="qz-fast" id="qzFast"></div>
     </div>
 
@@ -320,10 +318,23 @@
           <select id="cp_musicRotate"><option value="15">كل 15 دقيقة</option><option value="20">كل 20 دقيقة</option><option value="30">كل 30 دقيقة</option></select></label>
         <label data-game="quiz">صوت الموسيقى
           <select id="cp_musicVol"><option value="0.3">منخفض</option><option value="0.5">متوسط · مستحسن</option><option value="0.7">عالي</option><option value="0.9">عالي بزاف</option></select></label>
+        <label data-game="quiz">شحال من صورة كتبان تحت السؤال (قل = أكبر)
+          <select id="cp_photoMax"><option value="6">6 صور · كبار بزاف</option><option value="8">8 صور</option><option value="10">10 صور · مستحسن</option><option value="12">12 صورة</option><option value="16">16 صورة</option><option value="20">20 صورة · صغار</option></select></label>
+        <label data-game="quiz">مدة الروليت
+          <select id="cp_topicTime"><option value="4">4 ثواني</option><option value="6">6 ثواني · مستحسن</option><option value="8">8 ثواني</option><option value="10">10 ثواني</option></select></label>
+        <label data-game="quiz">مدة عرض الجواب الصحيح
+          <select id="cp_revealTime"><option value="5">5 ثواني</option><option value="7">7 ثواني · مستحسن</option><option value="10">10 ثواني</option></select></label>
+        <label data-game="quiz">مدة فقرة الدعم 🌹
+          <select id="cp_supportTime"><option value="8">8 ثواني</option><option value="13">13 ثانية · مستحسن</option><option value="20">20 ثانية</option></select></label>
+        <div class="cp-sw" data-game="quiz"><span>🎁 الشكر على الكادو (صورة كبيرة على اليمين)</span><label class="switch"><input type="checkbox" id="cp_giftThanks"><i></i></label></div>
+        <label data-game="quiz">الشكر كيبان من بعد الكادو بـ
+          <select id="cp_giftDelay"><option value="0">مباشرة</option><option value="3">3 ثواني</option><option value="7">7 ثواني · مستحسن</option><option value="10">10 ثواني</option><option value="15">15 ثانية</option></select></label>
+        <label data-game="quiz">مدة بقاء الشكر
+          <select id="cp_giftShow"><option value="3">3 ثواني</option><option value="4">4 ثواني · مستحسن</option><option value="6">6 ثواني</option><option value="8">8 ثواني</option></select></label>
+        <div class="cp-sw" data-game="quiz"><span>👏 تصفيق خفيف مع الشكر</span><label class="switch"><input type="checkbox" id="cp_applause"><i></i></label></div>
         <div class="cp-sw" data-game="quiz"><span>قبول الغلطات الصغيرة فالكتابة</span><label class="switch"><input type="checkbox" id="cp_fuzzy"><i></i></label></div>
         <div data-game="quiz"><span class="cp-lbl">المجالات</span><div class="cp-cats" id="cpCats"></div></div>
-        <label>مدة عرض الرابحين (ثواني)<input id="cp_winnersTime" type="number" min="5" max="60"></label>
-        <label data-game="gold">المرحلة ديال البداية (1–100)<input id="cp_startLevel" type="number" min="1" max="100"></label>
+        <label>مدة عرض الترتيب (ثواني)<input id="cp_winnersTime" type="number" min="5" max="60"></label>
         <label>لغة الشاشة
           <select id="cp_lang"><option value="ma">الدارجة المغربية</option><option value="ar">العربية الفصحى</option></select></label>
         <div class="cp-sw"><span>تشغيل أوتوماتيكي (الجولات كيتبعو بوحدهم)</span><label class="switch"><input type="checkbox" id="cp_autopilot"><i></i></label></div>

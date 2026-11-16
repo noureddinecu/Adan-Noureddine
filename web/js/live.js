@@ -72,7 +72,7 @@
   const DEFAULT_CFG = {
     source: 'sim', user: '', relayUrl: '', token: '', eulerKey: '',
     qTime: 35, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
-    simViewers: 40, startLevel: 1,
+    simViewers: 40, startLevel: 1, photoMax: 10, giftThanks: true, giftDelay: 7, giftShow: 4, applause: true, topicTime: 6, revealTime: 7, supportTime: 13,
     game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.5, musicSong: 'arena', cfgVer: 2, musicRotate: 15, grace: 8, supportEvery: 7, shareEvery: 2
   };
   let cfg = Object.assign({}, DEFAULT_CFG);
@@ -609,7 +609,7 @@
   /* =================================================================
    * CONTROL PANEL (host only)
    * ================================================================= */
-  const FIELDS = ['shareEvery', 'musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
+  const FIELDS = ['shareEvery', 'musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'photoMax', 'giftThanks', 'giftDelay', 'giftShow', 'applause', 'topicTime', 'revealTime', 'supportTime'];
   const isQuiz = () => cfg.game === 'quiz';
   function fillForm() {
     renderCats();
@@ -623,7 +623,7 @@
     FIELDS.forEach(f => {
       const el = $('cp_' + f); if (!el) return;
       if (el.type === 'checkbox') cfg[f] = el.checked;
-      else if (el.type === 'number' || el.tagName === 'SELECT' && /^\d+$/.test(el.value)) cfg[f] = Math.max(+el.min || 0, Math.min(+el.max || 9999, +el.value || DEFAULT_CFG[f]));
+      else if (el.type === 'number' || el.tagName === 'SELECT' && /^\d+$/.test(el.value)) cfg[f] = Math.max(+el.min || 0, Math.min(+el.max || 9999, el.value !== '' && isFinite(+el.value) ? +el.value : DEFAULT_CFG[f]));
       else cfg[f] = el.value.trim();
     });
     cfg.qTime = Math.max(8, Math.min(60, cfg.qTime | 0));
