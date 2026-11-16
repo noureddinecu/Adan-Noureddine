@@ -435,10 +435,13 @@
     // shown only while a question is on screen, on top of the photo ring (never over the flag, map or leaderboard)
     const host = $('qzArena');
     if (phase !== 'question' || paused || !host || !host.offsetWidth) { setTimeout(nextGiftCard, 1000); return; }
-    const { p, count } = giftQueue.shift();
+    const { p, count, coins, gname, gimg } = giftQueue.shift();
     giftBusy = true;
-    const el = document.createElement('div'); el.className = 'qz-toast in-ring';
-    el.innerHTML = `<div class="gt-av">${avatar(p, '')}<i>🌹</i></div><b>${esc(p.n)}</b><span>${esc(T('thx', { n: '' }).trim())} ❤️</span><em>🌹${count > 1 ? ' ×' + count : ''}</em>`;
+    // the REAL gift: its picture (from TikTok) and name; the card grows with the value of the gift
+    const tier = coins >= 100 ? 3 : coins >= 10 ? 2 : 1;
+    const icon = gimg && /^https:\/\//.test(gimg) ? `<img src="${esc(gimg)}" referrerpolicy="no-referrer" alt="" onerror="this.replaceWith('🎁')">` : (/rose/i.test(gname) ? '🌹' : '🎁');
+    const el = document.createElement('div'); el.className = 'qz-toast in-ring gt' + tier;
+    el.innerHTML = `<div class="gt-av">${avatar(p, '')}<i>${icon}</i></div><b>${esc(p.n)}</b><span>${esc(T('thx', { n: '' }).trim())} ❤️</span><em><span class="gi">${icon}</span>${gname ? ' ' + esc(gname) : ''}${count > 1 ? ' ×' + count : ''}</em>`;
     host.appendChild(el);
     if (cfg().applause !== false) api.Sfx.applause();
     const dur = 1000 * Math.max(2, Math.min(10, Number(cfg().giftShow) || 4));
@@ -464,9 +467,11 @@
     // thank AFTER TikTok's own gift animation: wait 7 s after this viewer's last gift and
     // merge a burst of gifts into one card; cards are shown one by one
     if (cfg().giftThanks === false) { if (phase === 'support') renderSupport(); return 'كادو 🌹 ' + coins; }
-    const key = g.u || p.n;
-    const pend = giftPending.get(key) || { p, count: 0 };
-    pend.count += Math.max(1, Number(g.count) || 1); pend.p = p;
+    // one card per viewer AND gift type (a burst of 5 Roses = one card «Rose ×5»)
+    const key = (g.u || p.n) + '|' + (g.gname || '');
+    const pend = giftPending.get(key) || { p, count: 0, coins: 0, gname: g.gname || '', gimg: g.gimg || '' };
+    pend.count += Math.max(1, Number(g.count) || 1); pend.coins += coins; pend.p = p;
+    if (g.gimg) pend.gimg = g.gimg;
     clearTimeout(pend.timer);
     pend.timer = setTimeout(() => { giftPending.delete(key); giftQueue.push(pend); nextGiftCard(); }, giftDelay());
     giftPending.set(key, pend);
@@ -526,6 +531,7 @@
       $('qzHint').textContent = '';
     }
     $('qzQuestion').classList.toggle('revealed', phase === 'reveal');
+    $('qzQuestion').classList.toggle('mapq', v.kind === 'shape' || v.kind === 'locate');
     $('qzTimerWrap').style.visibility = phase === 'question' ? 'visible' : 'hidden';
     renderTimer(); renderCorrect();
     const ans = $('qzAnswer');
@@ -631,7 +637,7 @@
     $('qzList').innerHTML = ids.length ? ids.map((id, i) => {
       const p = s.participants[id];
       const gain = p.lastQ === st.asked && p.last ? `<em>+${p.last}</em>` : '<em></em>';
-      return `<li class="${i < 3 ? 'm' + (i + 1) : ''}"><span class="rk">${i + 1}</span>${avatar(p, 'sm')}<span class="nm">${esc(p.n)}</span><span class="ok">✓ ${p.correct || 0}</span>${gain}<b>${p.pts}</b></li>`;
+      return `<li class="${i < 3 ? 'm' + (i + 1) : ''}"><span class="rk">${i + 1}</span>${avatar(p, 'sm')}<span class="nb"><span class="nm">${esc(p.n)}</span><small><span class="ok">✓ ${p.correct || 0}</span>${gain}</small></span><b>${p.pts}</b></li>`;
     }).join('') : `<li class="none">${esc(T('nobody'))}</li>`;
     renderSoon();
   }
@@ -674,32 +680,44 @@
     cv.width = w * dpr; cv.height = h * dpr; cv.style.width = w + 'px'; cv.style.height = h + 'px';
     const ctx = cv.getContext('2d');
     const target = ringsOf(v.code);
-    const bb = bboxOf(target);
+    // frame the main land of the country (+ the parts near it): far overseas territories
+    // (Alaska/Hawaii, French Guiana, Canary…) would otherwise zoom the map out to the whole world
+    const areaOf = r => { let a = 0; for (let i = 0, j = r.length - 1; i < r.length; j = i++) a += (r[j][0] + r[i][0]) * (r[j][1] - r[i][1]); return Math.abs(a / 2); };
+    const main = target.reduce((m, r) => areaOf(r) > areaOf(m) ? r : m, target[0] || []);
+    const mb = bboxOf([main]), mcx = (mb.x0 + mb.x1) / 2, mcy = (mb.y0 + mb.y1) / 2;
+    const reach = Math.max(8, (mb.x1 - mb.x0), (mb.y1 - mb.y0)) * 0.45;
+    const near = target.filter(r => { const b = bboxOf([r]); return Math.abs((b.x0 + b.x1) / 2 - mcx) < reach && Math.abs((b.y0 + b.y1) / 2 - mcy) < reach; });
+    const bb = bboxOf(near.length ? near : [main]);
     const cx = (bb.x0 + bb.x1) / 2, cy = (bb.y0 + bb.y1) / 2;
     const k = Math.cos(cy * Math.PI / 180) || 1;
-    // final view: the country (shape) or the country inside its region (locate)
-    const span = v.kind === 'shape' ? Math.max((bb.x1 - bb.x0) * k, bb.y1 - bb.y0) * 1.25
-      : Math.max(28, Math.max((bb.x1 - bb.x0) * k, bb.y1 - bb.y0) * 3.2);
-    const from = v.kind === 'locate' && !revealed ? Math.min(160, span * 3) : span;
-    const t0 = performance.now(), dur = v.kind === 'locate' && !revealed ? 1800 : 0;
+    // the WHOLE country always fits (width AND height), at about half of the frame, with its neighbours
+    // around it (no names) so viewers can place it; tiny countries get a minimum view of ~9° so neighbours show
+    const sx = Math.max(0.05, (bb.x1 - bb.x0) * k), sy = Math.max(0.05, bb.y1 - bb.y0);
+    const FILL = 0.58;
+    const fitScale = Math.min(w * FILL / sx, h * FILL / sy);
+    const minView = 5;                                            // degrees across the shorter side
+    const endScale = Math.min(fitScale, Math.min(w, h) / minView) * dpr;
+    const startScale = v.kind === 'locate' && !revealed ? endScale / 4 : endScale;
+    const t0 = performance.now(), dur = startScale !== endScale ? 1600 : 0;
     const frame = now => {
       const f = dur ? Math.min(1, (now - t0) / dur) : 1;
       const e = 1 - Math.pow(1 - f, 3);
-      const sp = from + (span - from) * e;
-      const scale = Math.min(w, h * 1.4) / sp * dpr;
+      const scale = startScale * Math.pow(endScale / startScale, e);
       const P = (x, y) => [(x - cx) * k * scale + cv.width / 2, (cy - y) * scale + cv.height / 2];
       ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.fillStyle = '#0B2447'; ctx.fillRect(0, 0, cv.width, cv.height);
-      const path = rs => { ctx.beginPath(); rs.forEach(r => { r.forEach(([x, y], i) => { const [px, py] = P(x, y); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }); ctx.closePath(); }); };
-      if (v.kind === 'locate') {
-        path(W().bg); ctx.fillStyle = '#F4E3B0'; ctx.fill('evenodd');
-        ctx.lineWidth = 0.8 * dpr; ctx.strokeStyle = 'rgba(11,36,71,.55)'; ctx.stroke();
-        path(target); ctx.fillStyle = revealed ? '#22C55E' : '#FFB703'; ctx.fill('evenodd');
-        ctx.lineWidth = 2 * dpr; ctx.strokeStyle = '#fff'; ctx.stroke();
-      } else {
-        path(target); ctx.fillStyle = revealed ? '#22C55E' : '#F4E3B0'; ctx.fill('evenodd');
-        ctx.lineWidth = 2.5 * dpr; ctx.strokeStyle = '#fff'; ctx.stroke();
-      }
+      const sea = ctx.createLinearGradient(0, 0, 0, cv.height); sea.addColorStop(0, '#1C5FA8'); sea.addColorStop(1, '#0E3F7A');
+      ctx.fillStyle = sea; ctx.fillRect(0, 0, cv.width, cv.height);
+      // dx: the world is drawn again shifted by ±360° so the land around a country across the date line shows;
+      // segments that jump across the date line are not drawn (no stripes over the map)
+      const path = (rs, dxs) => { ctx.beginPath(); (dxs || [0]).forEach(dx => rs.forEach(r => { let px0 = null; r.forEach(([x, y], i) => { const [px, py] = P(x + dx, y); if (i && Math.abs(x - r[i - 1][0]) < 180) ctx.lineTo(px, py); else ctx.moveTo(px, py); px0 = px; }); if (px0 !== null && Math.abs(r[0][0] - r[r.length - 1][0]) < 180) ctx.closePath(); })); };
+      // neighbours: light land with clear white borders
+      path(W().bg, [-360, 0, 360]); ctx.fillStyle = '#E9F1F7'; ctx.fill('evenodd');
+      ctx.lineWidth = 1.2 * dpr; ctx.strokeStyle = 'rgba(70, 110, 160, .9)'; ctx.stroke();
+      // the country of the question: bright, with a glow
+      path(target);
+      ctx.save(); ctx.shadowColor = revealed ? 'rgba(34,197,94,.9)' : 'rgba(255,183,3,.95)'; ctx.shadowBlur = 18 * dpr;
+      ctx.fillStyle = revealed ? '#22C55E' : '#FFB703'; ctx.fill('evenodd'); ctx.restore();
+      ctx.lineWidth = 2.4 * dpr; ctx.strokeStyle = '#fff'; ctx.stroke();
       if (f < 1) mapAnim = requestAnimationFrame(frame); else mapAnim = null;
     };
     clearAnim(); mapAnim = requestAnimationFrame(frame);

@@ -419,7 +419,7 @@
   /* ---------------- confirm ---------------- */
   let confirmCb = null;
   function confirmBox(title, text, cb) { $('cfTitle').textContent = title; $('cfText').textContent = text; confirmCb = cb; $('cfNo').style.display = ''; $('cfYes').textContent = 'نعم'; $('cfYes').className = 'btn danger'; openModal('confirm'); }
-  function alertBox(title, text) { confirmBox(title, text, null); $('cfNo').style.display = 'none'; $('cfYes').textContent = 'مزيان'; $('cfYes').className = 'btn primary'; }
+  function alertBox(title, text) { confirmBox(title, text, null); $('cfNo').style.display = 'none'; $('cfYes').textContent = 'حسناً'; $('cfYes').className = 'btn primary'; }
 
   /* ---------------- pause / lifecycle ---------------- */
   function pauseGame() {

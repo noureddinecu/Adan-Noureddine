@@ -71,9 +71,9 @@
   /* ---------------- config / persistence ---------------- */
   const DEFAULT_CFG = {
     source: 'sim', user: '', relayUrl: '', token: '', eulerKey: '',
-    qTime: 35, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
+    qTime: 35, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ar', saver: true,
     simViewers: 40, startLevel: 1, photoMax: 10, giftThanks: true, giftDelay: 7, giftShow: 4, applause: true, topicTime: 6, revealTime: 7, supportTime: 13,
-    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.5, musicSong: 'arena', cfgVer: 2, musicRotate: 15, grace: 8, supportEvery: 7, shareEvery: 2
+    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.5, musicSong: 'arena', cfgVer: 3, musicRotate: 15, grace: 8, supportEvery: 7, shareEvery: 2
   };
   let cfg = Object.assign({}, DEFAULT_CFG);
   let session = null;      // persisted
@@ -99,7 +99,8 @@
       if (d) {
         cfg = Object.assign({}, DEFAULT_CFG, d.cfg || {});
         cfg.game = 'quiz';                                             // the train game is no longer part of the app
-        if (cfg.cfgVer !== 2) { cfg.musicVol = 0.5; cfg.cfgVer = 2; }  // quieter music so the countdown is heard
+        if (cfg.cfgVer !== 2 && cfg.cfgVer !== 3) cfg.musicVol = 0.5;   // quieter music so the countdown is heard
+        if (cfg.cfgVer !== 3) { cfg.lang = 'ar'; cfg.cfgVer = 3; }        // v3.11: standard Arabic is the official language
         return d;
       }
     } catch (e) { /* ignore */ }
@@ -194,8 +195,8 @@
   function socketConnector(kind) {
     let ws = null, stopped = false, retry = 0, ping = null, keepAwake = null, rt = null;
     const EULER_CODES = {
-      4404: 'الحساب ماشي فـLIVE دابا — غادي نعاودو نحاولو', 4005: 'البث سالا', 4401: 'المفتاح (API key) غالط',
-      4403: 'ماعندكش الصلاحية لهاد الخدمة (ممكن خاصها اشتراك)', 4429: 'بزاف ديال الاتصالات فنفس الوقت', 4400: 'معلومات ناقصة'
+      4404: 'الحساب ليس في بث مباشر الآن — سنعيد المحاولة', 4005: 'انتهى البث', 4401: 'المفتاح (API key) غير صحيح',
+      4403: 'لا تملك صلاحية هذه الخدمة (قد تحتاج اشتراكاً)', 4429: 'اتصالات كثيرة في الوقت نفسه', 4400: 'معلومات ناقصة'
     };
     function url() {
       if (kind === 'relay') return relayUrls().ws;
@@ -205,11 +206,11 @@
     }
     function open() {
       if (stopped) return;
-      setConn('connecting', kind === 'relay' ? 'كنتصلو بالسيرفر…' : 'كنتصلو بـ Euler…');
-      try { ws = new WebSocket(url()); } catch (e) { setConn('error', 'رابط غالط'); return later(); }
+      setConn('connecting', kind === 'relay' ? 'جارٍ الاتصال بالخادم…' : 'جارٍ الاتصال بـ Euler…');
+      try { ws = new WebSocket(url()); } catch (e) { setConn('error', 'رابط غير صحيح'); return later(); }
       ws.onopen = () => {
         retry = 0;
-        setConn(kind === 'relay' ? 'server' : 'connected', kind === 'relay' ? 'متصل بالسيرفر، كنتسناو TikTok…' : 'متصل');
+        setConn(kind === 'relay' ? 'server' : 'connected', kind === 'relay' ? 'متصل بالخادم، في انتظار TikTok…' : 'متصل');
       };
       ws.onmessage = ev => {
         let d; try { d = JSON.parse(ev.data); } catch (e) { return; }
@@ -218,7 +219,7 @@
       ws.onclose = ev => {
         clearInterval(ping);
         if (stopped) return;
-        let m = kind === 'euler' ? (EULER_CODES[ev.code] || ('تقطع الاتصال (' + ev.code + ')')) : (ev.code === 4401 ? 'الكود السري (token) غالط' : 'تقطع الاتصال بالسيرفر');
+        let m = kind === 'euler' ? (EULER_CODES[ev.code] || ('انقطع الاتصال (' + ev.code + ')')) : (ev.code === 4401 ? 'الرمز السري (token) غير صحيح' : 'انقطع الاتصال بالخادم');
         setConn(ev.code === 4404 ? 'offline' : 'error', m);
         later(ev.code === 4404 ? 20000 : 0);
       };
@@ -235,7 +236,7 @@
       else if (d.t === 'gift') onGiftMsg(d);
       else if (d.t === 'viewers') onViewers(d.n);
       else if (d.t === 'status') {
-        const map = { connecting: 'كنتصلو بـ TikTok…', reconnecting: 'كنعاودو الاتصال بـ TikTok…', connected: 'متصل بـ TikTok LIVE ✓', offline: 'الحساب ماشي فـLIVE دابا — كنتسناو', error: 'مشكل: ' + (d.msg || '') };
+        const map = { connecting: 'جارٍ الاتصال بـ TikTok…', reconnecting: 'جارٍ إعادة الاتصال بـ TikTok…', connected: 'متصل بـ TikTok LIVE ✓', offline: 'الحساب ليس في بث مباشر الآن — كنتسناو', error: 'مشكل: ' + (d.msg || '') };
         setConn(d.state === 'connected' ? 'connected' : d.state, map[d.state] || d.msg);
       }
     }
@@ -298,7 +299,7 @@
     return {
       start() {
         people = Array.from({ length: Math.max(3, cfg.simViewers | 0) }, (_, i) => Object.assign(mk(i), { skill: Math.random() }));
-        setConn('connected', 'وضع التجربة: ' + people.length + ' مشاهد وهمي');
+        setConn('connected', 'وضع التجربة: ' + people.length + ' مشاهداً وهمياً');
         iv = setInterval(() => {
           onViewers(people.length + Math.round(Math.random() * 5));
           if (isQuiz()) {
@@ -342,7 +343,7 @@
     if (cfg.source === 'relay') return socketConnector('relay');
     if (cfg.source === 'euler') return socketConnector('euler');
     if (cfg.source === 'sim') return simConnector();
-    return { start() { setConn('manual', 'وضع يدوي: زيد الأجوبة من اللوحة'); }, stop() { setConn('off'); } };
+    return { start() { setConn('manual', 'الوضع اليدوي: أضف الإجابات من اللوحة'); }, stop() { setConn('off'); } };
   }
 
   /* =================================================================
@@ -565,15 +566,15 @@
    * SESSION LIFECYCLE
    * ================================================================= */
   function validate() {
-    if ((cfg.source === 'relay' || cfg.source === 'euler') && !cfg.user.replace(/^@/, '').trim()) return 'كتب اسم الحساب ديالك فـ TikTok (@username)';
-    if (cfg.source === 'relay' && !cfg.relayUrl.trim()) return 'حط رابط السيرفر ديالك (مثلاً goldrail-live-relay.onrender.com)';
+    if ((cfg.source === 'relay' || cfg.source === 'euler') && !cfg.user.replace(/^@/, '').trim()) return 'اكتب اسم حسابك على TikTok (@username)';
+    if (cfg.source === 'relay' && !cfg.relayUrl.trim()) return 'أدخل رابط خادمك (مثلاً adan-noureddine.onrender.com)';
     return '';
   }
 
   function startSession(resume) {
     readForm();
     const err = validate();
-    if (err) { api.alert('خاصك تكمّل الإعدادات', err); return; }
+    if (err) { api.alert('أكمل الإعدادات أولاً', err); return; }
     if (!resume || !session) session = newSession();
     active = true;
     conn && conn.stop();
@@ -644,12 +645,12 @@
     const quiz = g === 'quiz';
     const L = (id, txt) => { const el = $(id); if (el) el.textContent = txt; };
     L('cpNew', quiz ? '▶️ سؤال جديد' : '▶️ بدا جولة جديدة');
-    L('cpPause', quiz ? '⏸️ وقّف / كمّل' : '⏸️ وقّف / كمّل الجولة');
-    L('cpReveal', quiz ? '👁️ بيّن الجواب' : '👁️ بيّن فين الذهب');
-    L('cpNext', quiz ? '⏭️ دوز للجاي' : '⏭️ المرحلة الجاية');
-    L('cpReplay', quiz ? '🔁 تحدي جديد من 1' : '🔁 عاود الجولة');
+    L('cpPause', quiz ? '⏸️ إيقاف / متابعة' : '⏸️ وقّف / كمّل الجولة');
+    L('cpReveal', quiz ? '👁️ إظهار الإجابة' : '👁️ بيّن فين الذهب');
+    L('cpNext', quiz ? '⏭️ التالي' : '⏭️ المرحلة الجاية');
+    L('cpReplay', quiz ? '🔁 تحدٍّ جديد من 1' : '🔁 عاود الجولة');
     const man = $('cpManNum');
-    if (man) { man.placeholder = quiz ? 'الجواب' : 'رقم'; man.maxLength = quiz ? 40 : 2; man.classList.toggle('wide', quiz); }
+    if (man) { man.placeholder = quiz ? 'الإجابة' : 'رقم'; man.maxLength = quiz ? 40 : 2; man.classList.toggle('wide', quiz); }
   }
   function renderCats() {
     const box = $('cpCats'); if (!box || !G.Quiz) return;
@@ -665,7 +666,7 @@
   function renderPanelStatus() {
     const el = $('cpStatus'); if (!el) return;
     const st = connState.state;
-    const label = { off: 'ماشي متصل', connecting: 'كنتصلو…', server: 'متصل بالسيرفر', connected: 'متصل ✓', offline: 'ماشي LIVE', reconnecting: 'كنعاودو…', error: 'مشكل', manual: 'يدوي' }[st] || st;
+    const label = { off: 'غير متصل', connecting: 'جارٍ الاتصال…', server: 'متصل بالخادم', connected: 'متصل ✓', offline: 'ليس LIVE', reconnecting: 'إعادة الاتصال…', error: 'خطأ', manual: 'يدوي' }[st] || st;
     el.textContent = label;
     el.className = 'cp-pill ' + ({ connected: 'ok', manual: 'ok', server: 'mid', connecting: 'mid', reconnecting: 'mid', offline: 'bad', error: 'bad' }[st] || '');
     const m = $('cpStatusMsg'); if (m) m.textContent = connState.msg || '';
@@ -673,7 +674,7 @@
 
   let statTimer = null;
   function renderStats() {
-    if (!session) { $('cpStats').innerHTML = '<p class="muted">مازال ما بديتي حتى جلسة.</p>'; return; }
+    if (!session) { $('cpStats').innerHTML = '<p class="muted">لم تبدأ أي جلسة بعد.</p>'; return; }
     const parts = Object.keys(session.participants).length;
     const mins = Math.round((Date.now() - session.startedAt) / 60000);
     const last = session.rounds[session.rounds.length - 1];
@@ -681,22 +682,22 @@
     const N = Native();
     if (N && N.memoryInfo) try { const mi = JSON.parse(N.memoryInfo()); mem = mi.pssMB + ' MB'; } catch (e) { /* */ }
     const cells = isQuiz() ? [
-      ['الصوت 🔊', G.Music ? (G.Music.state === 'running' ? (G.Music.playing ? 'خدام ✓' : 'واقف') : 'مسدود (لمس الشاشة)') : '—'],
-      ['المشاركين', parts], ['التعليقات', session.comments], ...G.Quiz.stats(), ['الكادوات 🌹', (session.gifts || 0) + ' (' + (session.coins || 0) + ' كوينز)'],
-      ['المشاهدين دابا', viewers || '—'], ['أكبر عدد مشاهدين', session.peakViewers || '—'], ['مدة الجلسة', mins + ' د'], ['ذاكرة اللعبة', mem]
+      ['الصوت 🔊', G.Music ? (G.Music.state === 'running' ? (G.Music.playing ? 'يعمل ✓' : 'متوقف') : 'مقفل (المس الشاشة)') : '—'],
+      ['المشاركون', parts], ['التعليقات', session.comments], ...G.Quiz.stats(), ['الهدايا 🌹', (session.gifts || 0) + ' (' + (session.coins || 0) + ' عملة)'],
+      ['المشاهدون الآن', viewers || '—'], ['أعلى عدد مشاهدين', session.peakViewers || '—'], ['مدة الجلسة', mins + ' د'], ['ذاكرة اللعبة', mem]
     ] : [
-      ['المشاركين', parts], ['التعليقات', session.comments], ['الجولات', session.rounds.length],
+      ['المشاركون', parts], ['التعليقات', session.comments], ['الجولات', session.rounds.length],
       ['أجوبة هاد الجولة', round ? round.count : 0], ['جاوبو صح (آخر جولة)', last ? last.correct + '/' + last.total : '—'],
-      ['المشاهدين دابا', viewers || '—'], ['أكبر عدد مشاهدين', session.peakViewers || '—'], ['مدة الجلسة', mins + ' د'],
+      ['المشاهدون الآن', viewers || '—'], ['أعلى عدد مشاهدين', session.peakViewers || '—'], ['مدة الجلسة', mins + ' د'],
       ['المرحلة الجاية', session.level], ['ذاكرة اللعبة', mem]
     ];
     $('cpStats').innerHTML = cells.map(([k, v]) => `<div><small>${k}</small><b>${esc(v)}</b></div>`).join('');
     const top = Object.keys(session.participants).filter(id => session.participants[id].pts > 0)
       .sort((a, b) => session.participants[b].pts - session.participants[a].pts).slice(0, 5);
-    const ago = lastCommentAt ? Math.round((Date.now() - lastCommentAt) / 1000) + ' ث' : 'حتى تعليق مازال ما وصل';
-    $('cpRecent').innerHTML = `<li class="muted">آخر تعليق وصل: ${ago}</li>` + recent.map(r =>
+    const ago = lastCommentAt ? Math.round((Date.now() - lastCommentAt) / 1000) + ' ث' : 'لم يصل أي تعليق بعد';
+    $('cpRecent').innerHTML = `<li class="muted">آخر تعليق وصل منذ: ${ago}</li>` + recent.map(r =>
       `<li class="${r.ok ? 'ok' : ''}"><b>${esc(r.n)}:</b> «${esc(r.c)}» <em>${esc(r.why)}</em></li>`).join('');
-    $('cpTop').innerHTML = top.length ? top.map((id, i) => { const p = session.participants[id]; return `<li>${i + 1}. ${avatarHtml(p, 'sm')} ${esc(p.n)} <b>${p.pts}</b></li>`; }).join('') : '<li class="muted">حتى واحد مازال ما ربح</li>';
+    $('cpTop').innerHTML = top.length ? top.map((id, i) => { const p = session.participants[id]; return `<li>${i + 1}. ${avatarHtml(p, 'sm')} ${esc(p.n)} <b>${p.pts}</b></li>`; }).join('') : '<li class="muted">لا يوجد فائز بعد</li>';
   }
 
   let panelIdle = null;
@@ -706,7 +707,7 @@
     $('cpLive').style.display = active ? '' : 'none';
     $('cpSetup').style.display = active ? 'none' : '';
     $('cpResume').style.display = !active && saved && saved.active && saved.session ? '' : 'none';
-    if (saved && saved.session) $('cpResume').textContent = '▶ كمّل الجلسة اللي فاتت (' + Object.keys(saved.session.participants).length + ' مشارك)';
+    if (saved && saved.session) $('cpResume').textContent = '▶ متابعة الجلسة السابقة (' + Object.keys(saved.session.participants).length + ' مشارك)';
     api.show('control');
     clearInterval(statTimer); statTimer = setInterval(() => { if (api.screen() === 'control') renderStats(); }, 1000);
     bumpIdle();
@@ -725,7 +726,7 @@
     on('cpStart', () => startSession(false));
     on('cpResume', () => { session = saved.session; startSession(saved); });
     on('cpBack', () => { readForm(); goBroadcast(); });
-    on('cpEnd', () => api.confirm('تسالي الجلسة؟', 'غادي يوقف استقبال التعليقات والجولات. الترتيب كيبقى محفوظ.', endSession));
+    on('cpEnd', () => api.confirm('إنهاء الجلسة؟', 'سيتوقف استقبال التعليقات والأسئلة. يبقى الترتيب محفوظاً.', endSession));
     on('cpNew', () => { readForm(); actions.newRound(); goBroadcast(); });
     on('cpPause', () => { actions.togglePause(); goBroadcast(); });
     on('cpReveal', () => { actions.reveal(); goBroadcast(); });
@@ -742,7 +743,7 @@
     on('cpTikTok2', openTikTok);
     on('cpGuide2', () => api.openModal('liveGuide'));
     on('guideTikTok', openTikTok);
-    on('cpBattery', () => { const N = Native(); if (N && N.openBatterySettings) N.openBatterySettings(); else api.alert('إعدادات البطارية', 'هاد الزر كيخدم غير فالتطبيق ديال أندرويد.'); });
+    on('cpBattery', () => { const N = Native(); if (N && N.openBatterySettings) N.openBatterySettings(); else api.alert('إعدادات البطارية', 'هذا الزر يعمل فقط في تطبيق أندرويد.'); });
     on('cpManualAdd', () => {
       const name = $('cpManName').value.trim(), num = $('cpManNum').value.trim();
       if (!name || !num) return;
@@ -750,7 +751,7 @@
       $('cpManName').value = ''; $('cpManNum').value = '';
       renderStats();
     });
-    on('cpReset', () => api.confirm('تمسح الترتيب العام؟', 'النقاط ديال جميع المشاركين غادي يتمسحو.', () => { if (session) { session.participants = {}; session.rounds = []; saveNow(); renderStats(); } }));
+    on('cpReset', () => api.confirm('مسح الترتيب العام؟', 'ستُمسح نقاط جميع المشاركين.', () => { if (session) { session.participants = {}; session.rounds = []; saveNow(); renderStats(); } }));
     $('cp_source').addEventListener('change', () => { syncSourceRows(); readForm(); });
     $('cp_game').addEventListener('change', () => { syncSourceRows(); readForm(); });
     document.querySelectorAll('#control input, #control select').forEach(el => el.addEventListener('change', () => { readForm(); bumpIdle(); }));
@@ -790,7 +791,7 @@
     const N = Native();
     let ok = false;
     if (N && N.openTikTok) try { ok = N.openTikTok(); } catch (e) { /* */ }
-    if (!ok) api.alert('TikTok', 'ما لقيناش تطبيق TikTok فهاد التيليفون. تأكد أنه مثبت، ولا حلّو بيدك.');
+    if (!ok) api.alert('TikTok', 'لم نجد تطبيق TikTok على هذا الهاتف. تأكد من تثبيته أو افتحه يدوياً.');
   }
 
   /* ---------------- public API ---------------- */

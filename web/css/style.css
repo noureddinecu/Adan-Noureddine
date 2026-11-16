@@ -774,3 +774,31 @@ html, body { background: #071A36; }
 #quizHud .qz-arena .qz-toast.in-ring.out { opacity: 0; transform: translate(30%, -50%); }
 
 .modal { z-index: 60; }   /* confirm boxes always above the control panel */
+
+/* =====================================================================
+ * v3.11 — big map frame, leaderboard never overflows, real gift on the thanks card
+ * ===================================================================== */
+/* map questions: the frame takes most of the room, the photo strip shrinks */
+#quizHud #qzQuestion.mapq .qz-visual { flex: 3 1 auto; min-height: 0; padding: 0; }
+#quizHud #qzQuestion.mapq .qz-arena { height: clamp(4.6em, 8vh, 6.4em); }
+#quizHud #qzQuestion.mapq .qz-hint { display: none; }
+#quizHud #qzQuestion.mapq.revealed .qz-visual { flex: 2 1 auto; }
+/* leaderboard: two equal columns that can never push each other off the screen */
+#quizHud .qz-list { min-width: 0; width: 100%; }
+#quizHud.compact .qz-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#quizHud .qz-list li { min-width: 0; }
+#quizHud .qz-list .nb { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; line-height: 1.15; }
+#quizHud .qz-list .nb .nm { flex: none; display: block; min-width: 0; }
+#quizHud .qz-list .nb small { display: flex; gap: 0.4em; font-size: 0.78em; opacity: .95; }
+#quizHud .qz-list .nb small em { display: inline; min-width: 0; }
+#quizHud .qz-list b { min-width: 0; flex: none; }
+/* gift icon */
+.gt-av i img, .gi img { width: 1.25em; height: 1.25em; object-fit: contain; vertical-align: middle; }
+.gi { display: inline-flex; vertical-align: middle; }
+#quizHud .qz-toast.gt2 { box-shadow: 0 0 0 0.15em #FFE27A, 0 0 1.6em rgba(255, 201, 60, .9), 0 0.5em 1.4em rgba(0,0,0,.5); }
+#quizHud .qz-toast.gt3 { font-size: 1em; box-shadow: 0 0 0 0.2em #FFE27A, 0 0 2.4em rgba(255, 201, 60, 1), 0 0.5em 1.4em rgba(0,0,0,.5);
+  background: linear-gradient(170deg, rgba(245, 166, 35, .95), rgba(244, 63, 94, .92)); }
+/* map questions: the photo strip is short, so the gift card sits on its bottom edge and grows upward */
+#quizHud #qzQuestion.mapq .qz-arena .qz-toast.in-ring { top: auto; bottom: 0; transform: none; font-size: 0.75em; animation: giftUp .5s cubic-bezier(.3,1.5,.5,1); }
+#quizHud #qzQuestion.mapq .qz-arena .qz-toast.in-ring.out { transform: translateX(30%); }
+@keyframes giftUp { from { transform: translateX(120%); opacity: 0; } to { transform: none; opacity: 1; } }
