@@ -207,7 +207,12 @@
     if (C[n]) Voice.say({ key: 'n_' + n, text: C[n] });
   }
   // the question is NOT read aloud: the announcer invites the players to read it and think
-  function sayQuestion() { say('askRead', true); }
+  // if the question was recorded, the announcer reads it; otherwise he invites the players to read it
+  function sayQuestion(q) {
+    const p = pack(), key = window.TF_QKEY ? window.TF_QKEY(q.text) : '';
+    if (p && key && cfg().voice !== 'tts' && p.keys.indexOf(key) >= 0) Voice.say({ key, text: q.text }, true);
+    else say('askRead', true);
+  }
 
   /* ---------------- state ---------------- */
   let phase = 'idle', phaseEnds = 0, paused = false, pausedLeft = 0, tickTimer = null;
