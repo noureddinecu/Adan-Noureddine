@@ -33,11 +33,11 @@
 
 | الملف | الوصف |
 |---|---|
-| [`release/app-release.apk`](release/app-release.apk) | النسخة النهائية الموقّعة (Release) — هذه للتثبيت |
-| [`release/app-debug.apk`](release/app-debug.apk) | نسخة اختبار (Debug) — تُثبَّت بجانب النسخة النهائية |
+| [`release/ثقافة-v3.1.0.apk`](release/%D8%AB%D9%82%D8%A7%D9%81%D8%A9-v3.1.0.apk) | النسخة النهائية الموقّعة (Release) — هذه للتثبيت |
+| [`release/ثقافة-v3.1.0-debug.apk`](release/%D8%AB%D9%82%D8%A7%D9%81%D8%A9-v3.1.0-debug.apk) | نسخة اختبار (Debug) — تُثبَّت بجانب النسخة النهائية |
 
 ### طريقة التثبيت على الهاتف
-1. انقل `app-release.apk` إلى الهاتف (أو حمّله مباشرة من GitHub عبر زر **Download raw file**).
+1. انقل `ثقافة-v3.1.0.apk` إلى الهاتف (أو حمّله مباشرة من GitHub عبر زر **Download raw file**).
 2. افتح الملف من مدير الملفات.
 3. إذا ظهرت رسالة "تثبيت التطبيقات من مصادر غير معروفة" اضغط **الإعدادات** وفعّل **السماح من هذا المصدر**، ثم ارجع واضغط **تثبيت**.
 4. افتح **عربة الذهب** من قائمة التطبيقات. اللعبة تعمل بدون إنترنت.
@@ -95,8 +95,9 @@ CUSTOM_LEVELS[101] = {
 ```bash
 cd android
 echo "sdk.dir=/path/to/Android/Sdk" > local.properties
-./gradlew assembleRelease   # → app/build/outputs/apk/release/app-release.apk
-./gradlew assembleDebug     # → app/build/outputs/apk/debug/app-debug.apk
+export LC_ALL=C.UTF-8          # ضروري فـ Linux: سمية الملف فيها حروف عربية
+./gradlew assembleRelease   # → app/build/outputs/apk/release/ثقافة-v<النسخة>.apk
+./gradlew assembleDebug     # → app/build/outputs/apk/debug/ثقافة-v<النسخة>-debug.apk
 ```
 للتجربة السريعة في المتصفح افتح `web/index.html` مباشرة.
 
