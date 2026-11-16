@@ -53,7 +53,10 @@ android {
     }
 }
 
-// Name the outputs app-release.apk / app-debug.apk
+// Name the outputs ثقافة-v<version>.apk (release) and ثقافة-v<version>-debug.apk
 android.applicationVariants.configureEach { variant ->
-    variant.outputs.configureEach { outputFileName = "app-${variant.buildType.name}.apk" }
+    variant.outputs.configureEach {
+        def suffix = variant.buildType.name == 'release' ? '' : '-' + variant.buildType.name
+        outputFileName = "ثقافة-v${variant.versionName.replace('-debug', '')}${suffix}.apk"
+    }
 }
