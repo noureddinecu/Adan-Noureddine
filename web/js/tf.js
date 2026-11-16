@@ -203,6 +203,8 @@
     const i = pool[(Math.random() * pool.length) | 0]; lastIdx[group] = i;
     Voice.say({ key: 'a_' + group + '_' + i, text: arr[i] }, interrupt);
   }
+  /** the conditions and rules of the game, one sentence after the other */
+  function sayRules() { (L().rules || []).forEach((t, i) => Voice.say({ key: 'a_rules_' + i, text: t, ttl: 60000 })); }
   function sayCount(n) {
     const C = window.TF_COUNTS || {};
     if (n > 30) { if (C.many) Voice.say({ key: 'n_many', text: C.many }); return; }
@@ -210,11 +212,8 @@
   }
   // the question is NOT read aloud: the announcer invites the players to read it and think
   // if the question was recorded, the announcer reads it; otherwise he invites the players to read it
-  function sayQuestion(q) {
-    const p = pack(), key = window.TF_QKEY ? window.TF_QKEY(q.text) : '';
-    if (p && key && cfg().voice !== 'tts' && p.keys.indexOf(key) >= 0) Voice.say({ key, text: q.text }, true);
-    else say('askRead', true);
-  }
+  // the questions are not read aloud: the announcer invites the players to read the question and think
+  function sayQuestion() { say('askRead', true); }
 
   /* ---------------- state ---------------- */
   let phase = 'idle', phaseEnds = 0, paused = false, pausedLeft = 0, tickTimer = null;
@@ -334,7 +333,7 @@
       if (!st.lobbyWarn && phaseEnds - now <= 10000) { st.lobbyWarn = true; say('lobbyEnd'); }
       else if (!Voice.speaking && now - Voice.last > 7000) {
         st.lobbyTalks = (st.lobbyTalks || 0) + 1;
-        if (st.lobbyTalks === 3 || st.lobbyTalks === 9) say('rules');          // the rules (2 sentences)
+        if (st.lobbyTalks === 2 || st.lobbyTalks === 12) sayRules();           // all the rules, in order
         else if (st.lobbyTalks % 6 === 5) say('support');                     // «تابعونا… ما تنساوناش بالهدايا»
         else say('lobby');
       }
@@ -555,8 +554,8 @@
     if ($('tfRule').dataset.k !== String(k)) { $('tfRule').dataset.k = k; $('tfRule').innerHTML = items[k]; }
     renderCounts();
   }
-  const RULES = ['📜 اكتب «لعب» للدخول — المشاركة مجانية', '✅ أجب بـ «نعم» أو «لا» (yes / no)', '🔒 أول إجابة هي التي تُحتسب', '⏳ من لا يجيب يسقط',
-    '🌹 من سقط يعود بهدية (مرتين في الجولة)', '🔥 عندما يبقى 10: لا عودة، حتى بالهدية', '👑 آخر من يبقى هو البطل'];
+  const RULES = ['📜 اكتب «لعب» للدخول — المشاركة مجانية', '✅ أجب بـ «نعم» أو «لا» (yes / no)', '🔒 الإجابة الأولى هي التي تُحتسب، ولو كتبتها مرة أخرى',
+    '⏳ من لا يجيب يسقط', '🌹 من سقط يعود بهدية، مرتين فقط في الجولة', '🔥 عندما يبقى 10: لا عودة، حتى بالهدية', '👑 آخر من يبقى هو البطل'];
   function sessionTop() {
     const s = S(); if (!s) return '';
     const t = Object.keys(s.participants).filter(u => s.participants[u].wins).sort((a, b) => s.participants[b].wins - s.participants[a].wins).slice(0, 3);
