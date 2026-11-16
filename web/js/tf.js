@@ -66,7 +66,7 @@
     // capitals / flags (world data), opposites, translations, plurals, quick maths — true or false at random
     const truth = Math.random() < 0.5;
     const r = Math.random();
-    const cs = W().countries.filter(c => c.cap && c.cap.ar && (level === 1 ? c.tier === 1 : level === 2 ? c.tier <= 2 : true)
+    const cs = W().countries.filter(c => c.cap && c.cap.ar && (level <= 2 ? c.tier === 1 : level === 3 ? c.tier <= 2 : true)
       && !c.ar.some(n => norm(n) === norm(c.cap.ar)));
     if (r < 0.26 && cs.length > 4) {                        // «عاصمة روسيا هي كانبيرا»
       const c = rnd(cs), o = truth ? c : rnd(cs.filter(x => x.c !== c.c && norm(x.cap.ar) !== norm(c.cap.ar)));
@@ -83,28 +83,36 @@
       return { id: 'op:' + x[0] + ':' + ans, truth, text: 'ضدّ «' + x[0] + '» هو «' + ans + '»', fix: truth ? '' : 'ضدّ «' + x[0] + '» هو «' + x[1] + '»' };
     }
     if (r < 0.8 && WD.length > 4) {                         // «ترجمة cat هي كلب»
-      const x = rnd(WD), fr = level >= 2 && Math.random() < 0.45;
+      const x = rnd(WD), fr = level >= 3 && Math.random() < 0.5;
       const w = [].concat(fr ? x[3] : x[2])[0];
-      const o = truth ? x : rnd(WD.filter(y => y[0] !== x[0]));
+      // easy: any other word; hard: a word from the same group (colours, animals, family…) right next to it in the list
+      const i = WD.indexOf(x), nearW = WD.slice(Math.max(0, i - 3), i + 4).filter(y => y[0] !== x[0]);
+      const o = truth ? x : rnd(level >= 3 && nearW.length ? nearW : WD.filter(y => y[0] !== x[0]));
       return { id: 'tr:' + w + ':' + o[0], truth, text: 'ترجمة «' + w + '» ' + (fr ? 'من الفرنسية ' : '') + 'هي «' + o[0] + '»', fix: truth ? '' : 'ترجمة «' + w + '» هي «' + x[0] + '»' };
     }
     if (r < 0.88 && PL.length) {                            // plurals
       const x = rnd(PL), ans = truth ? x[1] : x[2];
       return { id: 'pl:' + x[0] + ':' + ans, truth, text: 'جمع «' + x[0] + '» هو «' + ans + '»', fix: truth ? '' : 'جمع «' + x[0] + '» هو «' + x[1] + '»' };
     }
-    // quick maths
+    // quick maths: harder numbers and closer wrong results as the level climbs
     let a, b, op, res;
-    if (level === 1) { a = 2 + ((Math.random() * 30) | 0); b = 2 + ((Math.random() * 30) | 0); op = '+'; res = a + b; }
-    else { a = 3 + ((Math.random() * 9) | 0); b = 3 + ((Math.random() * 9) | 0); op = '×'; res = a * b; }
-    const shown = truth ? res : res + rnd([-2, -1, 1, 2, 10, -10]);
+    if (level === 1) { a = 2 + ((Math.random() * 20) | 0); b = 2 + ((Math.random() * 20) | 0); op = '+'; res = a + b; }
+    else if (level === 2) { a = 20 + ((Math.random() * 60) | 0); b = 5 + ((Math.random() * 40) | 0); op = Math.random() < 0.5 ? '+' : '−'; if (op === '−' && b > a) [a, b] = [b, a]; res = op === '+' ? a + b : a - b; }
+    else if (level === 3) { a = 3 + ((Math.random() * 9) | 0); b = 3 + ((Math.random() * 9) | 0); op = '×'; res = a * b; }
+    else { a = 11 + ((Math.random() * 14) | 0); b = 3 + ((Math.random() * 9) | 0); op = '×'; res = a * b; }
+    const near = level >= 4 ? [-1, 1, -2, 2, 10, -10] : level === 3 ? [-2, 2, 3, -3, 10] : [-10, 10, -5, 5, 3];
+    const shown = truth ? res : res + rnd(near);
     return { id: 'm:' + a + op + b + '=' + shown, truth, text: a + ' ' + op + ' ' + b + ' = ' + shown, fix: truth ? '' : a + ' ' + op + ' ' + b + ' = ' + res };
   }
   function nextStatement(level) {
     const used = st.used;
     for (let k = 0; k < 40; k++) {
       let q = null;
-      if (Math.random() < 0.45) {
-        const pool = (window.TF_BANK || []).filter(x => x[0] === level && !used.has('b:' + x[2]));
+      if (Math.random() < (level >= 4 ? 0.6 : 0.45)) {
+        // levels 1–3 use the general bank (its levels 1, 2, 3), levels 4–5 mostly the traps (TF_HARD)
+        const src = level >= 4 && Math.random() < 0.7 ? (window.TF_HARD || []).filter(x => x[0] <= level)
+          : (window.TF_BANK || []).filter(x => x[0] === Math.min(3, level === 1 ? 1 : level === 2 ? 2 : 3));
+        const pool = src.filter(x => !used.has('b:' + x[2]));
         if (pool.length) { const x = rnd(pool); q = { id: 'b:' + x[2], truth: x[1], text: x[2], fix: x[3] || '' }; }
       }
       if (!q) q = generated(level);
@@ -170,7 +178,14 @@
     st = { round: (st ? st.round : 0) + 1, qNo: 0, used, players: {}, q: null, finalSaid: false, reviveHinted: false, hurry: false, lobbyWarn: false };
   }
   const alive = () => Object.keys(st.players).filter(u => st.players[u].alive);
-  const level = () => { const n = alive().length; const q = st.qNo; return n <= 10 || q >= 12 ? 3 : q >= 5 ? 2 : 1; };
+  // difficulty climbs with every question: 1-3 easy, 4-7, 8-12, 13-18, then the hardest (traps);
+  // in the final stage it is at least level 4
+  const level = () => {
+    const q = st.qNo, n = alive().length;
+    let L = q <= 3 ? 1 : q <= 7 ? 2 : q <= 12 ? 3 : q <= 18 ? 4 : 5;
+    if (n <= num(cfg().finalAt, 10)) L = Math.max(L, 4);
+    return L;
+  };
   function setPhase(p, ms) { phase = p; phaseEnds = ms ? Date.now() + ms : 0; music(); render(); }
 
   /* ---------------- rounds ---------------- */
