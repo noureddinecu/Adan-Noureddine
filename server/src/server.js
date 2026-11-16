@@ -19,6 +19,8 @@ const PORT = Number(process.env.PORT || 8080);
 const TOKEN = process.env.ACCESS_TOKEN || '';
 const EULER = process.env.EULER_API_KEY || '';
 const log = (...a) => console.log(new Date().toISOString(), ...a);
+// bump on every server change → visible at /health so the host can check what Render runs
+export const RELAY_VERSION = '2.1.2';
 
 export function startServer({ port = PORT, token = TOKEN, createConnection, events } = {}) {
   const relay = createRelay({
@@ -39,12 +41,12 @@ export function startServer({ port = PORT, token = TOKEN, createConnection, even
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (url.pathname === '/health') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      return res.end(JSON.stringify({ ok: true, rooms: relay.rooms.size, auth: !!token, time: Date.now() }));
+      return res.end(JSON.stringify({ ok: true, version: RELAY_VERSION, rooms: relay.rooms.size, auth: !!token, time: Date.now() }));
     }
     if (url.pathname === '/') {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end('<!doctype html><meta name=viewport content="width=device-width"><body style="font-family:sans-serif;text-align:center;padding:40px;background:#F5F1E7">'
-        + '<h1>🚂 عربة الذهب — سيرفر LIVE</h1><p>السيرفر خدّام ✓</p><p>حط هاد الرابط فالتطبيق: <b>' + (req.headers.host || '') + '</b></p>'
+        + '<h1>🚂 عربة الذهب — سيرفر LIVE</h1><p>السيرفر خدّام ✓ · النسخة ' + RELAY_VERSION + '</p><p>حط هاد الرابط فالتطبيق: <b>' + (req.headers.host || '') + '</b></p>'
         + (token ? '' : '<p style="color:#c00">⚠️ ACCESS_TOKEN ما متحطش</p>') + '</body>');
     }
     res.writeHead(404); res.end('not found');
@@ -73,7 +75,7 @@ export function startServer({ port = PORT, token = TOKEN, createConnection, even
   }, 25000);
 
   return new Promise(resolve => server.listen(port, () => {
-    log(`relay listening on :${server.address().port} auth=${!!token} euler=${!!EULER}`);
+    log(`relay v${RELAY_VERSION} listening on :${server.address().port} auth=${!!token} euler=${!!EULER}`);
     resolve({ server, wss, relay, port: server.address().port, close: () => { clearInterval(hb); relay.shutdown(); wss.close(); server.close(); } });
   }));
 }

@@ -41,7 +41,7 @@ export function chatToMessage(data, seq) {
   return {
     t: 'chat',
     id: (d.common && (d.common.msgId || d.common.messageId)) || `${Date.now()}-${seq}`,
-    u: String(handle || u.id || u.userId || u.nickname || ''),
+    u: String(handle || (u.id && u.id !== '0' ? u.id : '') || u.userId || u.nickname || ''),
     n: String(u.nickname || handle || ''),
     a: String(avatar),
     c: String(text).slice(0, 200),
@@ -84,7 +84,11 @@ export function createRelay(opts) {
       conn = opts.createConnection(room.id);
       room.conn = conn;
       let seq = 0;
-      conn.on(opts.events.CHAT, d => broadcast(room, chatToMessage(d, seq++)));
+      conn.on(opts.events.CHAT, d => {
+        const m = chatToMessage(d, seq++);
+        if (seq <= 20) log('chat', room.id, JSON.stringify({ n: m.n, c: m.c }));   // first 20 per connection, for debugging
+        broadcast(room, m);
+      });
       conn.on(opts.events.ROOM_USER, d => { const n = viewersOf(d); if (n != null) broadcast(room, { t: 'viewers', n }); });
       conn.on(opts.events.STREAM_END, () => { broadcast(room, { t: 'status', state: 'offline', msg: 'stream ended' }); schedule(room); });
       conn.on(opts.events.DISCONNECTED, () => { if (!room.closed) { broadcast(room, { t: 'status', state: 'reconnecting', msg: 'disconnected' }); schedule(room, 3000); } });
