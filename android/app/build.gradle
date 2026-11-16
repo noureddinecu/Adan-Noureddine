@@ -37,8 +37,8 @@ android {
         tf {
             dimension 'app'
             applicationId 'com.adan.sahkhata'
-            versionCode 9
-            versionName '1.8.0'
+            versionCode 10
+            versionName '1.9.0'
             buildConfigField 'String', 'START_PAGE', '"tf.html"'
             buildConfigField 'String', 'BG_COLOR', '"#1B1033"'
             buildConfigField 'boolean', 'USE_TTS', 'true'
