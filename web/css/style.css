@@ -531,3 +531,20 @@ input, select { font: inherit; font-size: 1em; border: 0.13em solid var(--ink); 
 #quizHud.compact .revealed .qz-visual { min-height: 6.5em; }
 #quizHud.tight .revealed .qz-fast-t { display: none; }
 #quizHud.tight .revealed .qz-answer small { display: none; }
+
+/* ---- correct answers: round bubble cloud ---- */
+#quizHud .qz-correct, #quizHud.compact .qz-correct {
+  position: relative; display: block; flex: 0 0 auto; height: clamp(5.5em, 14vh, 9.5em); min-height: 0; overflow: visible; }
+.qb-count { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;
+  background: radial-gradient(circle at 35% 30%, #7CFFE6, #12C2A0); color: #04291F; box-shadow: 0 0 1.4em rgba(46, 230, 197, .6), 0 0 0 0.15em rgba(255,255,255,.6); }
+.qb-count b { font-size: 1.35em; font-weight: 900; direction: ltr; }
+.qb-count small { font-size: 0.8em; font-weight: 900; }
+.qz-correct.empty .qb-count { opacity: .35; filter: grayscale(.6); }
+.qb { position: absolute; transition: left .5s cubic-bezier(.3,1.3,.5,1), top .5s cubic-bezier(.3,1.3,.5,1), width .4s, height .4s;
+  animation: qbFloat 3.2s ease-in-out infinite; }
+.qb.pop { animation: qbPop .55s cubic-bezier(.3,1.8,.5,1), qbFloat 3.2s ease-in-out .55s infinite; }
+.qb .qa { width: 100%; height: 100%; font-size: 0.8em; border-width: 0.12em; box-shadow: 0 0 0 0.12em rgba(46, 230, 197, .55), 0 0.15em 0.5em rgba(0,0,0,.45); }
+@keyframes qbPop { 0% { transform: scale(0); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+@keyframes qbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+#quizHud .qz-correct em { display: none; }

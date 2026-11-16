@@ -59,9 +59,27 @@
   }
   const stripAl = w => (w.length > 3 && w.startsWith('ال') ? w.slice(2) : w.length > 4 && /^(وال|بال|لل)/.test(w) ? w.slice(3) : w);
   const key = s => norm(s).split(' ').filter(Boolean).map(stripAl).join(' ');
+  // Arabic letters that differ only by their dots (the most common typing mistake) cost half an edit
+  const RASM = {};
+  ['بتثنيئ', 'جحخ', 'دذ', 'رز', 'سش', 'صض', 'طظ', 'عغ', 'فق', 'هة'].forEach((g, i) => [...g].forEach(ch => { RASM[ch] = i; }));
+  function wlev(a, b) {
+    a = [...a]; b = [...b];
+    if (Math.abs(a.length - b.length) > 3) return 9;
+    let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i];
+      for (let j = 1; j <= b.length; j++) {
+        const x = a[i - 1], y = b[j - 1];
+        const sub = x === y ? 0 : (RASM[x] != null && RASM[x] === RASM[y]) ? 0.5 : 1;
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + sub);
+      }
+      prev = cur;
+    }
+    return prev[b.length];
+  }
   function lev(a, b) {
     if (a === b) return 0;
-    if (Math.abs(a.length - b.length) > 2) return 9;
+    if (Math.abs(a.length - b.length) > 3) return 9;
     let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
     for (let i = 1; i <= a.length; i++) {
       const cur = [i];
@@ -70,7 +88,29 @@
     }
     return prev[b.length];
   }
-  /** true if the comment contains one of the accepted answers (whole words, small typo allowed) */
+  /* ---- phonetic "consonant skeleton": lets «rabat», «arribat», «rbat» match «الرباط»,
+          «lmaghrib» match «المغرب», and «باري» match «Paris» ---- */
+  const AR_SK = { 'ب': 'b', 'ت': 't', 'ث': 't', 'ج': 'j', 'ح': 'h', 'خ': 'k', 'د': 'd', 'ذ': 'd', 'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 's',
+    'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'd', 'غ': 'g', 'ف': 'f', 'ق': 'k', 'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n', 'ه': 'h', 'پ': 'b', 'ڤ': 'f', 'گ': 'g', 'چ': 's' };
+  function skeleton(word) {
+    let w = word;
+    if (/[؀-ۿ]/.test(w)) {
+      w = w.replace(/^(ال|لل)/, '').replace(/ه$/, '');        // article, final ta marbuta
+      return [...w].map(ch => AR_SK[ch] || '').join('').replace(/(.)\1+/g, '$1');
+    }
+    w = w.replace(/^(al|el|ar|er|as|es|at|et|an|en|ad|ed|l|le|la|les|the)[- ']?(?=\w{4,})/, '')
+      .replace(/ou/g, 'u').replace(/(sh|ch)/g, 's').replace(/kh/g, 'k').replace(/gh/g, 'g').replace(/th/g, 't').replace(/dh/g, 'd')
+      .replace(/dj/g, 'j').replace(/ph/g, 'f').replace(/ck|q|c/g, 'k').replace(/x/g, 'ks').replace(/p/g, 'b').replace(/v/g, 'f')
+      .replace(/7/g, 'h').replace(/9/g, 'k').replace(/[23]/g, '')
+      .replace(/h$/, '').replace(/[aeiouyw]/g, '');
+    return w.replace(/[^a-z]/g, '').replace(/(.)\1+/g, '$1');
+  }
+  const skel = phrase => phrase.split(' ').map(skeleton).join('');
+  // allowed edits: short words must be exact, longer words tolerate 1–2 letters (as the host asked: «الرياض»/«الراط» for «الرباط»)
+  const tolFor = len => (len <= 3 ? 0.5 : len === 4 ? 1.5 : len <= 7 ? 2 : 3);
+  const dedup = w => w.replace(/(.)\1+/g, '$1');
+
+  /** true if the comment contains one of the accepted answers (whole words, close spelling allowed) */
   function isCorrect(comment, answers, fuzzy) {
     const c = key(comment);
     if (!c) return false;
@@ -82,14 +122,29 @@
       if (/^\d+$/.test(a)) { if (nums.includes(a)) return true; continue; }
       if (c === a) return true;
       // anti-spam: a comment listing many guesses ("باريس روما لندن مدريد…") does not count
-      if (cTokens.length > a.split(' ').length + 3) continue;
+      const n = a.split(' ').length;
+      if (cTokens.length > n + 3) continue;
       if ((' ' + c + ' ').includes(' ' + a + ' ')) return true;
       if (c.replace(/ /g, '') === a.replace(/ /g, '')) return true;
-      if (!fuzzy || a.replace(/ /g, '').length < 4) continue;
-      const n = a.split(' ').length, tol = a.length >= 8 ? 2 : 1;
-      for (let i = 0; i + n <= cTokens.length; i++) {
-        const win = cTokens.slice(i, i + n).join(' ');
-        if (lev(win, a) <= tol) return true;
+      if (!fuzzy) continue;
+      const aFlat = a.replace(/ /g, '');
+      const tol = tolFor(aFlat.length);
+      const aSk = skel(a);
+      // try every window of the comment with the same number of words (±1 for "nahr nil" vs "nil")
+      for (let size = Math.max(1, n - 1); size <= n + 1; size++) {
+        for (let i = 0; i + size <= cTokens.length; i++) {
+          const win = cTokens.slice(i, i + size).join(' ');
+          const wFlat = win.replace(/ /g, '');
+          // 1) close spelling in the same alphabet
+          if (dedup(wFlat) === dedup(aFlat)) return true;                               // «الصيين», «parisss»
+          if (Math.abs(wFlat.length - aFlat.length) <= Math.ceil(tol) && wlev(wFlat, aFlat) <= tol) return true;
+          // 2) same sounds across alphabets (Arabic ⇄ Latin), consonants only
+          if (aSk.length >= 3) {
+            const wSk = skel(win);
+            if (wSk === aSk) return true;
+            if (aSk.length >= 4 && Math.abs(wSk.length - aSk.length) <= 1 && lev(wSk, aSk) <= 1) return true;
+          }
+        }
       }
     }
     return false;
@@ -262,7 +317,7 @@
     q.got[uid] = { pts, t };
     q.correct.push(uid);
     p.pts = (p.pts || 0) + pts; p.correct = (p.correct || 0) + 1; p.last = pts; p.lastQ = st.asked;
-    renderCorrect(true);
+    renderCorrect();
     api.Sfx.select();
     return 'صحيح ✓ +' + pts;
   }
@@ -355,7 +410,7 @@
     }
     $('qzQuestion').classList.toggle('revealed', phase === 'reveal');
     $('qzTimerWrap').style.visibility = phase === 'question' ? 'visible' : 'hidden';
-    renderTimer(); renderCorrect(false);
+    renderTimer(); renderCorrect();
     const ans = $('qzAnswer');
     if (phase === 'reveal') {
       ans.innerHTML = `<small>${esc(T('answer'))}</small><b>${esc(q.show.ar)}</b>${q.show.en && q.show.en !== q.show.ar ? `<i>${esc(q.show.en)}</i>` : ''}`;
@@ -379,13 +434,41 @@
     bar.classList.toggle('low', left < 6000);
     if (!paused) { void bar.offsetWidth; bar.style.transition = `width ${left}ms linear`; bar.style.width = '0%'; }
   }
-  function renderCorrect(pop) {
+  /* Correct answers as a round bubble cloud (sunflower / Vogel spiral around a counter bubble).
+     Existing bubbles keep their place; only newcomers pop in. Up to 40 photos, then just the counter grows. */
+  const GOLDEN = Math.PI * (3 - Math.sqrt(5));
+  function renderCorrect() {
     if (!q) return;
+    const box = $('qzCorrect'); if (!box) return;
     const s = S();
-    const ids = q.correct.slice(0, 24);
-    $('qzCorrect').innerHTML = ids.map((id, i) => avatar(s.participants[id], 'sm' + (pop && i === ids.length - 1 && q.correct.length <= 24 ? ' pop' : ''))).join('') +
-      `<em>✓ ${q.correct.length}</em>`;
-    $('qzCorrect').classList.toggle('empty', !q.correct.length);
+    if (box.dataset.q !== q.id + q.start) { box.dataset.q = q.id + q.start; box.innerHTML = '<div class="qb-count"><b>0</b><small>✓</small></div>'; }
+    const W = box.clientWidth || 300, H = box.clientHeight || 110;
+    const ids = q.correct.slice(0, 40), n = ids.length;
+    // bubble size shrinks as the cloud fills up, but stays readable
+    const size = Math.max(22, Math.min(44, Math.sqrt((W * H * 0.42) / (n + 5))));
+    const unit = i => size * 0.6 * Math.sqrt(i + 2.6);            // sunflower radius (counter sits in the middle)
+    const rmax = n ? unit(n - 1) : 1, Ry = H / 2 - size / 2, Rx = W / 2 - size / 2;
+    const ky = Math.min(1, Ry / rmax);                              // squeeze vertically only if needed…
+    const kx = Math.min(Rx / rmax, ky < 1 ? Math.min(2.6, 1 / ky) : 1); // …and spread sideways to compensate
+    const cnt = box.querySelector('.qb-count');
+    cnt.style.width = cnt.style.height = Math.round(size * 1.35) + 'px';
+    cnt.querySelector('b').textContent = q.correct.length;
+    box.classList.toggle('empty', !n);
+    const have = new Map([...box.querySelectorAll('.qb')].map(el => [el.dataset.u, el]));
+    ids.forEach((id, i) => {
+      const r = unit(i), th = i * GOLDEN;
+      let x = W / 2 + r * Math.cos(th) * kx, y = H / 2 + r * Math.sin(th) * ky;
+      x = Math.max(size / 2, Math.min(W - size / 2, x)); y = Math.max(size / 2, Math.min(H - size / 2, y));
+      let el = have.get(id);
+      if (!el) {
+        el = document.createElement('div'); el.className = 'qb pop'; el.dataset.u = id;
+        el.innerHTML = avatar(s.participants[id], '');
+        el.style.animationDelay = '0s, ' + (-Math.random() * 3).toFixed(2) + 's';
+        box.appendChild(el);
+      }
+      el.style.width = el.style.height = Math.round(size) + 'px';
+      el.style.left = Math.round(x - size / 2) + 'px'; el.style.top = Math.round(y - size / 2) + 'px';
+    });
   }
   function renderHint() {
     if (!q || !q.hint || phase !== 'question') return;
