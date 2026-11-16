@@ -30,9 +30,9 @@
   const CAT = {}; CATS.forEach(c => { CAT[c.id] = c; });
 
   const TXT = {
-    ma: { sp_t: 'دعمونا بوردة 🌹', sp_x: 'هاد المسابقة كتحرّك الدماغ وكتفيد 🧠 — إلا عجباتكم، دعمونا بالورود باش نكملو ونجيبو ليكم أسئلة جديدة وجوائز!', sp_none: 'كونو أول من يدعم المسابقة 🌹', sp_thx: 'شكراً لكل من دعمنا ❤️', thx: 'شكراً {n} على الدعم!', br_t: 'استراحة قصيرة ☕', br_s: 'نرجعو دابا… خليكم معانا 💙', br_top: 'المتصدرين دابا', br_tips: ['شاركو البث مع صحابكم باش يتحداو معانا 🔁', 'تفكرو فالمجال اللي بغيتو فالجولة الجاية 🧠', 'اللي فالترتيب، استعدو! المنافسة باقا ما سالاتش 🏆', 'تبعو الحساب باش ما يفوتكم حتى تحدي ⭐'], collect: '⏳ آخر فرصة! كنجمعو الأجوبة اللي جاية…', next: 'الموضوع الجاي…', nextEn: 'Next topic…', type: 'كتب الجواب فالكومنتير ✍️', hint: 'تلميح', answer: 'الجواب الصحيح', fastest: 'الأسرع ⚡',
+    ma: { sh_t: 'شاركو البث مع صحابكم 🔁', sh_s: 'باش يتحداو معانا ويربحو حتى هوما! ضغطو على «مشاركة» ↘', sp_t: 'دعمونا بوردة 🌹', sp_x: 'هاد المسابقة كتحرّك الدماغ وكتفيد 🧠 — إلا عجباتكم، دعمونا بالورود باش نكملو ونجيبو ليكم أسئلة جديدة وجوائز!', sp_none: 'كونو أول من يدعم المسابقة 🌹', sp_thx: 'شكراً لكل من دعمنا ❤️', thx: 'شكراً {n}', br_t: 'استراحة قصيرة ☕', br_s: 'نرجعو دابا… خليكم معانا 💙', br_top: 'المتصدرين دابا', br_tips: ['شاركو البث مع صحابكم باش يتحداو معانا 🔁', 'تفكرو فالمجال اللي بغيتو فالجولة الجاية 🧠', 'اللي فالترتيب، استعدو! المنافسة باقا ما سالاتش 🏆', 'تبعو الحساب باش ما يفوتكم حتى تحدي ⭐'], collect: '⏳ آخر فرصة! كنجمعو الأجوبة اللي جاية…', next: 'الموضوع الجاي…', nextEn: 'Next topic…', type: 'كتب الجواب فالكومنتير ✍️', hint: 'تلميح', answer: 'الجواب الصحيح', fastest: 'الأسرع ⚡',
       board: 'الترتيب العام 🏆', nobody: 'حتى واحد ما جابها هاد المرة 😅', paused: 'استراحة صغيرة… نرجعو دابا ⏸', final: 'بطل التحدي 👑', soon: 'السؤال الجاي بعد {s}…', ready: 'وجدو راسكم! التحدي غادي يبدا…', correct: 'جاوبو صح' },
-    ar: { sp_t: 'ادعمونا بوردة 🌹', sp_x: 'هذه المسابقة تنشّط العقل وتفيد 🧠 — إن أعجبتكم، ادعمونا بالورود لنستمر ونقدم لكم أسئلة جديدة وجوائز!', sp_none: 'كونوا أول من يدعم المسابقة 🌹', sp_thx: 'شكراً لكل من دعمنا ❤️', thx: 'شكراً {n} على الدعم!', br_t: 'استراحة قصيرة ☕', br_s: 'نعود حالاً… ابقوا معنا 💙', br_top: 'المتصدرون الآن', br_tips: ['شاركوا البث مع أصدقائكم ليتحدوا معنا 🔁', 'فكروا في المجال الذي تريدونه في الجولة القادمة 🧠', 'المتصدرون، استعدوا! المنافسة لم تنته بعد 🏆', 'تابعوا الحساب كي لا يفوتكم أي تحدٍ ⭐'], collect: '⏳ فرصة أخيرة! نجمع الإجابات المتأخرة…', next: 'الموضوع القادم…', nextEn: 'Next topic…', type: 'اكتب الجواب في التعليقات ✍️', hint: 'تلميح', answer: 'الإجابة الصحيحة', fastest: 'الأسرع ⚡',
+    ar: { sh_t: 'شاركوا البث مع أصدقائكم 🔁', sh_s: 'ليتحدّوا معنا ويربحوا أيضاً! اضغطوا «مشاركة» ↘', sp_t: 'ادعمونا بوردة 🌹', sp_x: 'هذه المسابقة تنشّط العقل وتفيد 🧠 — إن أعجبتكم، ادعمونا بالورود لنستمر ونقدم لكم أسئلة جديدة وجوائز!', sp_none: 'كونوا أول من يدعم المسابقة 🌹', sp_thx: 'شكراً لكل من دعمنا ❤️', thx: 'شكراً {n}', br_t: 'استراحة قصيرة ☕', br_s: 'نعود حالاً… ابقوا معنا 💙', br_top: 'المتصدرون الآن', br_tips: ['شاركوا البث مع أصدقائكم ليتحدوا معنا 🔁', 'فكروا في المجال الذي تريدونه في الجولة القادمة 🧠', 'المتصدرون، استعدوا! المنافسة لم تنته بعد 🏆', 'تابعوا الحساب كي لا يفوتكم أي تحدٍ ⭐'], collect: '⏳ فرصة أخيرة! نجمع الإجابات المتأخرة…', next: 'الموضوع القادم…', nextEn: 'Next topic…', type: 'اكتب الجواب في التعليقات ✍️', hint: 'تلميح', answer: 'الإجابة الصحيحة', fastest: 'الأسرع ⚡',
       board: 'الترتيب العام 🏆', nobody: 'لم يُجب أحد بشكل صحيح هذه المرة 😅', paused: 'استراحة قصيرة… نعود حالاً ⏸', final: 'بطل التحدي 👑', soon: 'السؤال التالي بعد {s}…', ready: 'استعدوا! التحدي سيبدأ…', correct: 'أجابوا بشكل صحيح' }
   };
 
@@ -285,6 +285,9 @@
     st.lastCat = cat;
     roulette = { target: CATS.findIndex(c => c.id === cat), start: Date.now(), dur: 5200, cat };
     setPhase('topic', 6500);
+    // share reminder every N questions, during the roulette (never over a question)
+    const every = Number(cfg().shareEvery == null ? 2 : cfg().shareEvery);
+    if (every > 0 && st.asked > 0 && st.asked % every === 0) showShare();
     api.save();
   }
 
@@ -389,6 +392,7 @@
     $('qzPaused').classList.remove('show');
     renderBreak();
     $('qzPaused').textContent = T('paused');
+    if (phase === 'question') { const sh = $('qzShare'); if (sh) sh.classList.remove('on'); }
     $('qzPrompt').textContent = q && q.collecting && phase === 'question' ? T('collect') : T('type');
     $('qzPrompt').classList.toggle('collect', !!(q && q.collecting && phase === 'question'));
     $('qzPrompt').classList.toggle('on', phase === 'question');
@@ -410,6 +414,15 @@
     $('qzTopics').innerHTML = CATS.map((c, i) => `<div class="qt" data-i="${i}"><i>${c.icon}</i><b>${esc(c.ar)}</b><small>${esc(c.en)}</small></div>`).join('');
     renderRoulette();
   }
+  /* ---------------- share reminder ---------------- */
+  let shareTimer = null;
+  function showShare() {
+    const el = $('qzShare'); if (!el) return;
+    $('shTitle').textContent = T('sh_t'); $('shSub').textContent = T('sh_s');
+    el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+    clearTimeout(shareTimer); shareTimer = setTimeout(() => el.classList.remove('on'), 6000);
+  }
+
   /* ---------------- support (gifts) ---------------- */
   function supporters() {
     const s = S();
@@ -429,12 +442,14 @@
     const s = S(); s.coins = (s.coins || 0) + coins; s.gifts = (s.gifts || 0) + Math.max(1, Number(g.count) || 1);
     const box = $('qzToasts');
     if (box && phase !== 'idle') {
+      // discreet: one small line in the bottom-left corner of the safe zone, 2.5 s, soft applause
+      box.innerHTML = '';
       const el = document.createElement('div'); el.className = 'qz-toast';
-      const img = g.gimg && /^https:\/\//.test(g.gimg) ? `<img src="${esc(g.gimg)}" referrerpolicy="no-referrer" onerror="this.remove()">` : '<i>🌹</i>';
-      el.innerHTML = avatar(p, 'sm') + `<span>${esc(T('thx', { n: p.n }))}</span>` + img + (g.count > 1 ? `<b>×${g.count}</b>` : '');
-      box.appendChild(el); while (box.children.length > 2) box.firstChild.remove();
-      setTimeout(() => el.classList.add('out'), 3200); setTimeout(() => el.remove(), 3700);
-      api.Sfx.achievement();
+      el.innerHTML = avatar(p, 'sm') + `<span>${esc(T('thx', { n: p.n }))}</span><i>🌹${g.count > 1 ? '×' + g.count : ''}</i>`;
+      box.appendChild(el);
+      clearTimeout(box._t1); clearTimeout(box._t2);
+      box._t1 = setTimeout(() => el.classList.add('out'), 2500); box._t2 = setTimeout(() => el.remove(), 2900);
+      api.Sfx.applause();
     }
     if (phase === 'support') renderSupport();
     return 'كادو 🌹 ' + coins;
@@ -664,6 +679,7 @@
       render(); music(); if (phase === 'question') renderTimer();
     },
     support() { paused = false; setPhase('support', 13000); },
+    share() { showShare(); },
     showBoard() { if (phase !== 'question') { setPhase('board', cfg().autopilot ? cfg().winnersTime * 1000 : 0); } },
     hideBoard() { if (phase === 'board' || phase === 'final') { phaseEnds = 0; nextTopic(); } },
     restart() { ensureState(); st.no = 0; st.game++; paused = false; nextTopic(); },

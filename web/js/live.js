@@ -73,7 +73,7 @@
     source: 'sim', user: '', relayUrl: '', token: '', eulerKey: '',
     qTime: 35, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
     simViewers: 40, startLevel: 1,
-    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.8, musicSong: 'arena', musicRotate: 15, grace: 8, supportEvery: 7
+    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.8, musicSong: 'arena', musicRotate: 15, grace: 8, supportEvery: 7, shareEvery: 2
   };
   let cfg = Object.assign({}, DEFAULT_CFG);
   let session = null;      // persisted
@@ -604,7 +604,7 @@
   /* =================================================================
    * CONTROL PANEL (host only)
    * ================================================================= */
-  const FIELDS = ['musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
+  const FIELDS = ['shareEvery', 'musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
   const isQuiz = () => cfg.game === 'quiz';
   function fillForm() {
     renderCats();

@@ -194,6 +194,8 @@
     <div class="qz-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="qz-paused" id="qzPaused"></div>
     <div class="qz-toasts" id="qzToasts"></div>
+    <!-- share reminder (shown during the topic roulette every N questions), points at TikTok's share button -->
+    <div class="qz-share" id="qzShare"><i class="sh-ico">🔁</i><div><b id="shTitle"></b><small id="shSub"></small></div><i class="sh-arrow">↘</i></div>
     <!-- break screen (volume − / pause): calm, outside the game frame -->
     <div class="qz-break" id="qzBreak">
       <div class="br-stars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -286,6 +288,8 @@
         <label>وقت الجواب (ثواني)<input id="cp_qTime" type="number" min="8" max="60"></label>
         <label data-game="quiz">وقت إضافي خفي للتأخير ديال البث
           <select id="cp_grace"><option value="0">بلا</option><option value="5">5 ثواني</option><option value="8">8 ثواني · مستحسن</option><option value="12">12 ثانية</option></select></label>
+        <label data-game="quiz">تذكير المشاركة 🔁
+          <select id="cp_shareEvery"><option value="0">بلا</option><option value="1">كل سؤال</option><option value="2">كل 2 أسئلة</option><option value="3">كل 3 أسئلة</option></select></label>
         <label data-game="quiz">فقرة الدعم 🌹
           <select id="cp_supportEvery"><option value="0">بلا</option><option value="5">كل 5 أسئلة</option><option value="7">كل 7 أسئلة</option><option value="10">كل 10 أسئلة</option></select></label>
         <label data-game="quiz">عدد الأسئلة فكل تحدي<input id="cp_qCount" type="number" min="5" max="100"></label>

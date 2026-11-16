@@ -675,3 +675,52 @@ html, body { background: #071A36; }
 .qz-toast span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40vw; }
 .qz-break .br-orb { width: 3.2em; height: 3.2em; font-size: 2.4em; }
 .qz-break .br-orb span { font-size: 0.75em; }
+
+/* =====================================================================
+ * v3.8 — everything inside TikTok's safe zone (between --top and --free)
+ * ===================================================================== */
+/* gift thank-you: bottom of the SAFE zone (not in TikTok's comment area) */
+#quizHud .qz-toasts { top: auto; bottom: calc(var(--free) + var(--sab) + 0.3em); left: 4vw; right: 4vw; align-items: center; max-width: none; }
+#quizHud .qz-toast span { max-width: 56vw; }
+/* share reminder: bottom of the safe zone, arrow towards TikTok's share button (bottom-right) */
+.qz-share { position: absolute; z-index: 6; left: 4vw; right: 4vw; bottom: calc(var(--free) + var(--sab) + 0.3em); display: none; align-items: center; gap: 0.6em;
+  padding: 0.5em 0.8em; border-radius: 1em; color: #fff;
+  background: linear-gradient(110deg, rgba(254, 44, 85, .95), rgba(37, 244, 238, .85)); box-shadow: 0 0.4em 1.2em rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.5); }
+.qz-share.on { display: flex; animation: shareIn .6s cubic-bezier(.3,1.5,.5,1); }
+@keyframes shareIn { from { transform: translateY(1em) scale(.9); opacity: 0; } }
+.qz-share div { flex: 1; min-width: 0; line-height: 1.3; }
+.qz-share b { display: block; font-size: 1.05em; font-weight: 900; }
+.qz-share small { display: block; font-size: 0.8em; opacity: .95; }
+.qz-share i { font-style: normal; flex: none; }
+.qz-share .sh-ico { font-size: 1.6em; animation: spin 3s linear infinite; }
+.qz-share .sh-arrow { font-size: 1.8em; font-weight: 900; animation: nudge 0.9s ease-in-out infinite; }
+@keyframes nudge { 50% { transform: translate(0.25em, 0.25em); } }
+/* break screen: compact so every element stays between TikTok's bars, even on small phones */
+#quizHud .qz-break { gap: 0.35em; justify-content: center; padding: calc(var(--top) + 0.5em) 1.2em calc(var(--free) + 0.5em); }
+#quizHud .qz-break .br-orb { width: 2.6em; height: 2.6em; font-size: 2.2em; }
+#quizHud .qz-break h2 { font-size: 1.6em; }
+#quizHud .qz-break p { font-size: 0.95em; }
+#quizHud .qz-break .br-top { margin-top: 0.3em; }
+#quizHud .qz-break .br-top .qa.md { width: 2.6em; height: 2.6em; }
+#quizHud .qz-break .br-tip { margin-top: 0.3em !important; font-size: 0.9em !important; }
+#quizHud.tight .qz-break .br-tip { display: none; }
+/* support segment: compact as well */
+#quizHud #qzSupport { gap: 0.3em; }
+#quizHud .sp-rose { font-size: 3em; }
+#quizHud #qzSupport h2 { font-size: 1.4em; }
+#quizHud #qzSupport p { font-size: 0.9em; line-height: 1.45; }
+#quizHud .sp-wall .qa.md { width: 2.5em; height: 2.5em; }
+#quizHud .sp-wall span { width: 3.6em; }
+#quizHud.tight .sp-wall span:nth-child(n+9) { display: none; }
+#quizHud.tight .sp-thanks { display: none; }
+#quizHud.tight .sp-rose { font-size: 2.4em; }
+#quizHud.tight .sp-wall span:nth-child(n+7) { display: none; }
+/* gift thanks: small & quiet, bottom-left corner of the safe zone */
+#quizHud .qz-toasts { left: 3vw; right: auto; align-items: flex-start; max-width: 44vw; bottom: calc(var(--free) + var(--sab) + 0.3em); }
+#quizHud .qz-toast { font-size: 0.72em; padding: 0.15em 0.6em 0.15em 0.2em; gap: 0.3em; opacity: .92;
+  background: rgba(7, 26, 54, .78); border: 1px solid rgba(253, 164, 175, .55); box-shadow: 0 0.2em 0.6em rgba(0,0,0,.35);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); animation: toastSoft .35s ease; }
+#quizHud .qz-toast .qa.sm { width: 1.8em; height: 1.8em; }
+#quizHud .qz-toast span { max-width: 28vw; color: #FFE4E6; }
+#quizHud .qz-toast i { color: #FDA4AF; font-weight: 900; font-size: 1em; }
+@keyframes toastSoft { from { opacity: 0; transform: translateX(-0.6em); } }

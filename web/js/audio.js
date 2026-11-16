@@ -72,6 +72,11 @@
       [392, 523, 659, 784, 659, 784, 1046].forEach((f, i) => tone(f, 0.22, 'triangle', 0.2, i * 0.11));
       noise(0.8, 0.08, 0.6, 5000, 0.5);
     },
+    // soft, short applause for gifts (does not break the players' focus)
+    applause() {
+      if (!enabled || !ensure()) return;
+      for (let i = 0; i < 14; i++) noise(0.05 + Math.random() * 0.04, 0.035 + Math.random() * 0.03, i * 0.045 + Math.random() * 0.03, 1400 + Math.random() * 1400, 1.4);
+    },
     achievement() { [659, 880, 1318].forEach((f, i) => tone(f, 0.2, 'sine', 0.2, i * 0.08)); },
 
     startRumble() {
