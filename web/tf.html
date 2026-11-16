@@ -7,7 +7,7 @@
   <title>صح أم خطأ</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/tf.css">
-  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 15, grace: 5, lobbyTime: 60, minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'on', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0 };</script>
+  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 15, grace: 5, lobbyTime: 60, minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'mohamed', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0 };</script>
 </head>
 <body class="tf-app">
   <!-- ============ SPLASH ============ -->
@@ -142,8 +142,8 @@
           <select id="cp_reviveMin"><option value="1">أي هدية (حتى الوردة) · مستحسن</option><option value="5">5 عملات أو أكثر</option><option value="10">10 عملات أو أكثر</option><option value="30">30 عملة أو أكثر</option><option value="100">100 عملة أو أكثر</option></select></label>
         <label>المرحلة النهائية (لا عودة، حتى بالهدية) عندما يبقى
           <select id="cp_finalAt"><option value="5">5 لاعبين</option><option value="10">10 لاعبين · مستحسن</option><option value="15">15 لاعباً</option><option value="20">20 لاعباً</option></select></label>
-        <label>صوت المذيع (يقرأ الأسئلة ويعلّق)
-          <select id="cp_voice"><option value="on">مفعّل · مستحسن</option><option value="off">متوقف</option></select></label>
+        <label>المذيع (يقرأ الأسئلة ويعلّق بالدارجة)
+          <select id="cp_voice"><option value="mohamed">🎙️ محمد</option><option value="houssine">🎙️ الحسين</option><option value="noureddine">🎙️ نور الدين</option><option value="youssef">🎙️ يوسف</option><option value="tts">📱 صوت الهاتف</option><option value="off">🔇 بدون مذيع</option></select></label>
         <label>سرعة المذيع
           <select id="cp_voiceRate"><option value="0.9">هادئ</option><option value="1">عادي · مستحسن</option><option value="1.12">سريع</option></select></label>
         <label data-game="quiz">وقت إضافي خفي لتأخّر البث
@@ -228,6 +228,9 @@
   <script src="data/world.js"></script>
   <script src="js/quiz-bank.js"></script>
   <script src="js/tf-bank.js"></script>
+  <script src="js/tf-pool.js"></script>
+  <script src="js/tf-lines.js"></script>
+  <script src="voice/manifest.js"></script>
   <script src="js/tf.js"></script>
   <script src="js/live.js"></script>
   <script src="js/tf-app.js"></script>

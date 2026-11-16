@@ -115,59 +115,94 @@
         const pool = src.filter(x => !used.has('b:' + x[2]));
         if (pool.length) { const x = rnd(pool); q = { id: 'b:' + x[2], truth: x[1], text: x[2], fix: x[3] || '' }; }
       }
-      if (!q) q = generated(level);
+      if (!q) {
+        // generated statements come from the fixed pool (recorded by the announcers); live generation only if it runs out
+        const pool = (window.TF_POOL || []).filter(x => x[0] === level && !used.has('p:' + x[2]));
+        if (pool.length) { const x = rnd(pool); q = { id: 'p:' + x[2], truth: x[1], text: x[2], fix: x[3] || '', flag: x[4] || undefined }; }
+        else q = generated(level);
+      }
       if (q && !used.has(q.id)) { used.add(q.id); if (used.size > 3000) used.clear(); return q; }
     }
     const x = rnd(window.TF_BANK); return { id: 'b:' + x[2], truth: x[1], text: x[2], fix: x[3] || '' };
   }
 
-  /* ---------------- announcer (voice) ---------------- */
-  const LINES = {
-    lobby: ['يلا يلا! اكتبوا «العب» في التعليقات باش تدخلو معانا!', 'مرحبا بكم في صح أم خطأ! اكتب «العب» باش تشارك!', 'العب، العب، العب! اكتبوها في التعليقات وادخلو معانا!'],
-    lobbyEnd: ['باقي غير عشر ثواني! اللي ما كتبش «العب» دابا غادي يبقى يتفرج!', 'آخر فرصة! اكتبوا «العب» دابا!'],
-    lobbyMore: ['مازال خاصنا لاعبين! اكتبوا «العب» باش نبداو!'],
-    start: ['يلا نبداو! ركزو معايا مزيان!', 'بسم الله، نبداو الجولة! جاوبوا بنعم ولا لا!', 'الجولة بدات! أول جواب هو اللي كيتحسب!'],
-    hurry: ['زرب زرب زرب!', 'يلا يلا، باقي خمس ثواني!', 'أسرع! الوقت غادي يسالي!'],
-    fallMany: ['أوووه! طاحو بالجملة! ما تقلقوش، إن شاء الله الجولة الجاية!', 'ههه طاح بزاف ديال الناس! صعيبة هادي!', 'يا سلام! نص اللاعبين طاحو!'],
-    fallFew: ['طاحو شي واحدين، مساكن!', 'خسارة! ما تقلقوش، إن شاء الله المرة الجاية!', 'أوه! كاين اللي طاح!'],
-    none: ['ما شاء الله عليكم! حتى واحد ما طاح!', 'عباقرة! كلكم جاوبتو صح!', 'برافو! حتى واحد ما طاح!'],
-    noAnswer: ['واللي ما جاوبش حتى هو طاح! الجواب واجب يا أصدقاء!'],
-    reviveHint: ['طحتي؟ ماشي مشكل! صيفط هدية وترجع للعبة!', 'اللي طاح وبغا يرجع، يصيفط هدية ويرجع معانا!'],
-    revived: ['مرحبا بيك من جديد {n}! رجعتي للعبة!', 'رجع {n} للساحة! مرحبا بيك!'],
-    final: ['بقاو غير {n}! بدات المرحلة النهائية! ما كاين رجوع دابا، حتى بالهدية!'],
-    finalGift: ['شكراً على الهدية {n}! ولكن فالمرحلة النهائية ما كاين رجوع. نتسناوك فالجولة الجاية!'],
-    maxRevive: ['شكراً على الهدية {n}! ولكن رجعتي ديجا مرتين فهاد الجولة.'],
-    three: ['بقاو غير ثلاثة! شكون فيكم البطل؟', 'ثلاثة بقاو! التوتر طالع!'],
-    two: ['بقاو غير جوج! واحد فيكم غادي يربح!'],
-    winner: ['مبروووك {n}! نتا هو البطل ديال هاد الجولة!', 'برافو {n}! البطل ديالنا! مبروك!'],
-    nowinner: ['أوووه! طاحو كاملين! ما كاين حتى فايز هاد المرة. نعاودو من جديد!', 'ههه حتى واحد ما بقا! نعاودو الجولة من الأول!'],
-    thanks: ['شكراً {n} على الهدية!', 'الله يخليك {n}، شكراً على الدعم!']
-  };
-  const line = (k, v) => { let t = rnd(LINES[k] || ['']); if (v) for (const x in v) t = t.split('{' + x + '}').join(v[x]); return t; };
+  /* ---------------- announcer (voice) ----------------
+   * 4 recorded announcers (voice/<id>/<key>.ogg, listed in voice/manifest.js) — chosen in the panel.
+   * A sentence that is not recorded (or «صوت الهاتف») is read by the phone's text-to-speech.
+   * Sentences are queued so they never cut each other (interrupt = drop the queue). */
+  const L = () => window.TF_LINES || {};
+  const strip = t => String(t || '').replace(/\[[^\]]*\]/g, '').replace(/\s+/g, ' ').trim();
+  const pack = () => { const v = cfg().voice || 'mohamed'; const m = window.TF_VOICE_PACK || {}; return m[v] ? { id: v, keys: m[v] } : null; };
   const Voice = {
-    busyUntil: 0,
+    busyUntil: 0, queue: [], cur: null, last: 0,
     native() { try { return window.AndroidBridge && window.AndroidBridge.speak ? window.AndroidBridge : null; } catch (e) { return null; } },
-    speak(text, interrupt) {
-      if (!text || cfg().voice === 'off') return;
+    get speaking() { return !!this.cur || Date.now() < this.busyUntil; },
+    /** item = { key, text } */
+    say(item, interrupt) {
+      if (!item || cfg().voice === 'off') return;
+      if (interrupt) this.stop();
+      this.queue.push(item);
+      if (this.queue.length > 3) this.queue.splice(0, this.queue.length - 3);
+      if (!this.cur) this.next();
+    },
+    next() {
+      const item = this.queue.shift();
+      if (!item) { this.cur = null; this.duck(false); return; }
+      this.last = Date.now();
+      const p = pack();
+      if (p && cfg().voice !== 'tts' && p.keys.indexOf(item.key) >= 0) {
+        const a = new Audio('voice/' + p.id + '/' + item.key + '.ogg');
+        a.volume = 1; this.cur = a; this.duck(true);
+        const done = () => { if (this.cur === a) { this.cur = null; setTimeout(() => this.next(), 250); } };
+        a.onended = done; a.onerror = () => { if (this.cur === a) { this.cur = null; this.tts(item); } };
+        a.play().catch(() => { if (this.cur === a) { this.cur = null; this.tts(item); } });
+        return;
+      }
+      this.tts(item);
+    },
+    tts(item) {
+      const text = strip(item.text);
       const rate = num(cfg().voiceRate, 1);
-      const ms = 900 + String(text).length * 75 / rate;
-      this.busyUntil = Date.now() + ms;
-      if (G.Music) { G.Music.duck(true); clearTimeout(this._t); this._t = setTimeout(() => { if (Date.now() >= this.busyUntil && G.Music) G.Music.duck(phase === 'question' && left() <= 5); }, ms); }
+      const ms = 900 + text.length * 75 / rate;
+      this.cur = { tts: true }; this.duck(true);
+      const tok = this.cur;
+      setTimeout(() => { if (this.cur === tok) { this.cur = null; this.next(); } }, ms);
       const N = this.native();
-      if (N) { try { N.speak(String(text), rate, !!interrupt); } catch (e) { /* */ } return; }
+      if (N) { try { N.speak(text, rate, false); } catch (e) { /* */ } return; }
       if (!window.speechSynthesis) return;
       try {
-        if (interrupt) speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(String(text));
+        const u = new SpeechSynthesisUtterance(text);
         const vs = speechSynthesis.getVoices();
         u.voice = vs.find(v => /ar[-_]MA/i.test(v.lang)) || vs.find(v => /^ar/i.test(v.lang)) || null;
         u.lang = u.voice ? u.voice.lang : 'ar-SA'; u.rate = rate;
         speechSynthesis.speak(u);
       } catch (e) { /* */ }
     },
-    stop() { const N = this.native(); if (N && N.stopSpeaking) try { N.stopSpeaking(); } catch (e) { /* */ } if (window.speechSynthesis) try { speechSynthesis.cancel(); } catch (e) { /* */ } }
+    duck(on) { if (G.Music) G.Music.duck(on || (phase === 'question' && left() <= 5)); },
+    stop() {
+      this.queue.length = 0;
+      if (this.cur && this.cur.pause) try { this.cur.pause(); } catch (e) { /* */ }
+      this.cur = null;
+      const N = this.native(); if (N && N.stopSpeaking) try { N.stopSpeaking(); } catch (e) { /* */ }
+      if (window.speechSynthesis) try { speechSynthesis.cancel(); } catch (e) { /* */ }
+    },
+    // compatibility with the home screen «test the voice» button
+    speak(text, interrupt) { this.say({ key: 'a_lobby_0', text: (L().lobby || [text])[0] }, interrupt); }
   };
-  const say = (k, v, interrupt) => Voice.speak(line(k, v), interrupt);
+  /** say a random sentence of a group */
+  function say(group, interrupt) {
+    const arr = L()[group]; if (!arr || !arr.length) return;
+    const i = (Math.random() * arr.length) | 0;
+    Voice.say({ key: 'a_' + group + '_' + i, text: arr[i] }, interrupt);
+  }
+  function sayCount(n) {
+    const C = window.TF_COUNTS || {};
+    if (n > 30) { if (C.many) Voice.say({ key: 'n_many', text: C.many }); return; }
+    if (C[n]) Voice.say({ key: 'n_' + n, text: C[n] });
+  }
+  function sayQuestion(q) {
+    Voice.say({ key: window.TF_QKEY ? window.TF_QKEY(q.text) : 'q', text: q.text + '… إِيهْ وْلَّا لَا؟' }, true);
+  }
 
   /* ---------------- state ---------------- */
   let phase = 'idle', phaseEnds = 0, paused = false, pausedLeft = 0, tickTimer = null;
@@ -192,7 +227,7 @@
   function lobby() {
     clearStage(); freshRound();
     setPhase('lobby', num(cfg().lobbyTime, 60) * 1000);
-    say('lobby', null, true);
+    say('lobby', true);
   }
   function join(uid, p, quiet) {
     if (st.players[uid]) return false;
@@ -206,7 +241,7 @@
       say('lobbyMore'); setPhase('lobby', 30000); return;
     }
     setPhase('ready', 3500);
-    say('start', null, true);
+    say('start', true);
   }
   function ask() {
     // bring back the players revived by a gift, everybody stands in the middle
@@ -218,7 +253,7 @@
     st.q = nextStatement(level());
     st.q.start = Date.now();
     setPhase('question', num(cfg().qTime, 15) * 1000);
-    Voice.speak(st.q.text + '… نعم ولا لا؟', true);
+    sayQuestion(st.q); st.hyped = false;
   }
   function close() {
     // grace: answers that were written before the end but arrive late through the stream delay
@@ -237,6 +272,7 @@
     setPhase('fall', 4200);
     dropFloors(right, out);
     api.Sfx.lose();
+    say(st.q.truth ? 'ansYes' : 'ansNo', true);
     setTimeout(() => {
       if (!out.length) say('none');
       else if (out.length === before.length) { /* everybody: said at the end */ }
@@ -246,19 +282,20 @@
   }
   function afterFall() {
     const n = alive().length;
-    if (n === 0) { setPhase('nowinner', 7000); say('nowinner', null, true); api.Sfx.lose(); return; }
+    if (n === 0) { setPhase('nowinner', 7000); say('nowinner', true); api.Sfx.lose(); return; }
     if (n === 1) {
       const u = alive()[0], pl = st.players[u];
       const s = S(); const p = s && s.participants[u]; if (p) { p.wins = (p.wins || 0) + 1; p.pts = (p.pts || 0) + 100; }
       st.winner = u; setPhase('winner', 10000);
-      say('winner', { n: pl.n }, true); api.Sfx.fanfare(); setTimeout(() => api.Sfx.applause(), 400);
+      say('winner', true); api.Sfx.fanfare(); setTimeout(() => api.Sfx.applause(), 400);
       return;
     }
     const finalAt = num(cfg().finalAt, 10);
-    if (n <= finalAt && !st.finalAnnounced) { st.finalAnnounced = true; setPhase('final', 4500); say('final', { n }, true); return; }
+    if (n <= finalAt && !st.finalAnnounced) { st.finalAnnounced = true; setPhase('final', 4500); say('final', true); return; }
     if (n === 3 && !st.said3) { st.said3 = true; say('three'); }
     else if (n === 2 && !st.said2) { st.said2 = true; say('two'); }
-    else if (st.lastOut && !st.reviveHinted && num(cfg().reviveMax, 2) > 0 && n > finalAt) { st.reviveHinted = true; setTimeout(() => say('reviveHint'), 300); }
+    else if (st.lastOut && !st.reviveHinted && num(cfg().reviveMax, 2) > 0 && n > finalAt) { st.reviveHinted = true; say('reviveHint'); }
+    else if (Math.random() < 0.75) sayCount(n);          // «بقاو دابا عندنا 15 داللعّابة!»
     setPhase('gap', 2500);
   }
 
@@ -267,13 +304,15 @@
     const now = Date.now();
     if (phase === 'lobby') {
       if (!st.lobbyWarn && phaseEnds - now <= 10000) { st.lobbyWarn = true; say('lobbyEnd'); }
+      else if (!Voice.speaking && now - Voice.last > 15000) say('lobby');
       renderLobby();
     }
     if (phase === 'question') {
       const l = left();
       if (l <= 5 && !st.hurry) { st.hurry = true; say('hurry'); }
+      if (!st.hyped && l > 7 && l < num(cfg().qTime, 15) - 6 && !Voice.speaking) { st.hyped = true; if (Math.random() < 0.6) say('hype'); }
       if (l <= 5 && l > 0 && st.lastTick !== l) { st.lastTick = l; api.Sfx.tick(l <= 3); }
-      if (G.Music) G.Music.duck(l <= 5 || Date.now() < Voice.busyUntil);
+      if (G.Music) G.Music.duck(l <= 5 || Voice.speaking);
       renderTimer();
     }
     if (!phaseEnds || now < phaseEnds) return;
@@ -328,13 +367,13 @@
     if (pl.alive || pl.reviveNext) { giftThanks(p, g); return 'هدية (لاعب في اللعبة)'; }
     // a spectator: comes back at the next question, if allowed
     const max = num(cfg().reviveMax, 2), min = num(cfg().reviveMin, 1);
-    if (alive().length <= num(cfg().finalAt, 10)) { say('finalGift', { n: p.n }); giftThanks(p, g, true); return 'لا عودة في المرحلة النهائية'; }
+    if (alive().length <= num(cfg().finalAt, 10)) { say('finalGift'); giftThanks(p, g, true); return 'لا عودة في المرحلة النهائية'; }
     if (max <= 0) { giftThanks(p, g); return 'العودة متوقفة'; }
-    if (pl.revives >= max) { say('maxRevive', { n: p.n }); giftThanks(p, g, true); return 'استعمل كل العودات'; }
+    if (pl.revives >= max) { say('maxRevive'); giftThanks(p, g, true); return 'استعمل كل العودات'; }
     if (coins < min) { giftThanks(p, g); return 'هدية أقل من الحد'; }
     pl.revives++; pl.reviveNext = true;
     toast(p, g, 'revive', pl.revives, max);
-    say('revived', { n: p.n });
+    say('revived');
     api.Sfx.win();
     if (phase === 'gap' || phase === 'final' || phase === 'ready') { /* will be placed at ask() */ }
     return 'سيعود في السؤال القادم 🌹 (' + pl.revives + '/' + max + ')';
@@ -507,7 +546,7 @@
     const uid = g.u || p.n;
     showCard(`${personHead(p, uid)}<div><b>${esc(p.n)}</b><small>شكراً ❤️ ${giftIcon(g)}${g.gname ? ' ' + esc(g.gname) : ''}${g.count > 1 ? ' ×' + g.count : ''}</small></div>`, 'thx', 1000 * num(cfg().giftShow, 4));
     if (cfg().applause !== false) api.Sfx.applause();
-    if (!quiet && Math.random() < 0.5) say('thanks', { n: p.n });
+    if (!quiet && Math.random() < 0.5 && !Voice.speaking) say('thanks');
   }
   function toast(p, g, kind, k, max) {
     const uid = g.u || p.n;
