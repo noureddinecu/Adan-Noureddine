@@ -85,6 +85,8 @@
   let sched = null;        // {at, fn, label}
   let boardShown = null;   // 'round' | 'session' | null
   let lastSave = 0, saveTimer = null;
+  const recent = [];       // last comments received (host diagnostics)
+  let lastCommentAt = 0;
 
   function newSession() {
     return { id: Date.now(), startedAt: Date.now(), comments: 0, participants: {}, rounds: [], roundsPlayed: 0,
@@ -133,16 +135,24 @@
     if (!p) { p = session.participants[uid] = { n: c.n || uid, a: c.a || '', pts: 0, wins: 0, correct: 0, answers: 0 }; }
     if (c.n) p.n = String(c.n).slice(0, 40);
     if (c.a) p.a = c.a;
-    if (round && round.open && !round.answers[uid]) {
-      const num = parseAnswer(c.c, round.lanes);
-      if (num != null) {
-        round.answers[uid] = { num, ms: Date.now() - round.qStart };
-        round.count++;
-        p.answers++;
-        feedChip(p);
-        renderCounter();
-      }
+    // why was (or wasn't) this comment counted? → shown to the host in the panel
+    let why;
+    const num = parseAnswer(c.c, round ? round.lanes : 6);
+    if (num == null) why = 'ماشي رقم';
+    else if (!round || round.done) why = 'ما كايناش جولة';
+    else if (!round.open) why = 'قبل السؤال';
+    else if (round.answers[uid]) why = 'جاوب من قبل';
+    else {
+      round.answers[uid] = { num, ms: Date.now() - round.qStart };
+      round.count++;
+      p.answers++;
+      feedChip(p);
+      renderCounter();
+      why = 'تحسب ✓ (' + num + ')';
     }
+    recent.unshift({ n: p.n, c: String(c.c || '').slice(0, 40), t: Date.now(), why, ok: why.startsWith('تحسب') });
+    if (recent.length > 8) recent.pop();
+    lastCommentAt = Date.now();
     if (session.comments % 50 === 0) trimParticipants(20000);
     save();
   }
@@ -600,6 +610,9 @@
     $('cpStats').innerHTML = cells.map(([k, v]) => `<div><small>${k}</small><b>${esc(v)}</b></div>`).join('');
     const top = Object.keys(session.participants).filter(id => session.participants[id].pts > 0)
       .sort((a, b) => session.participants[b].pts - session.participants[a].pts).slice(0, 5);
+    const ago = lastCommentAt ? Math.round((Date.now() - lastCommentAt) / 1000) + ' ث' : 'حتى تعليق مازال ما وصل';
+    $('cpRecent').innerHTML = `<li class="muted">آخر تعليق وصل: ${ago}</li>` + recent.map(r =>
+      `<li class="${r.ok ? 'ok' : ''}"><b>${esc(r.n)}:</b> «${esc(r.c)}» <em>${esc(r.why)}</em></li>`).join('');
     $('cpTop').innerHTML = top.length ? top.map((id, i) => { const p = session.participants[id]; return `<li>${i + 1}. ${avatarHtml(p, 'sm')} ${esc(p.n)} <b>${p.pts}</b></li>`; }).join('') : '<li class="muted">حتى واحد مازال ما ربح</li>';
   }
 
