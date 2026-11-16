@@ -104,11 +104,21 @@
    *   play  : full groove (question)
    *   hot   : + 16th hats, arpeggio up, riser (last 10 seconds)
    * ===================================================================== */
-  const BPM = 124, STEP = 60 / BPM / 4;
-  const CHORDS = [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]];   // MIDI: Am, F, C, G
-  const BASS = [45, 41, 48, 43];
+  /* Four songs that rotate during a long LIVE (every 15/20 min) + a chill song for breaks.
+     Each song: bpm, chords (MIDI triads per bar), bass roots, a lead scale and a drum style. */
+  const SONGS = [
+    { name: 'arena', bpm: 124, chords: [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]], bass: [45, 41, 48, 43], lead: 'square', drums: 'four' },
+    { name: 'oriental', bpm: 108, chords: [[62, 66, 69], [55, 58, 62], [60, 63, 67], [62, 66, 69]], bass: [38, 43, 36, 38], lead: 'oud', drums: 'maqsum',
+      scale: [62, 63, 66, 67, 69, 70, 72, 74] },                                                     // D Hijaz
+    { name: 'synth', bpm: 116, chords: [[64, 67, 71], [60, 64, 67], [55, 59, 62], [62, 66, 69]], bass: [40, 36, 43, 38], lead: 'saw', drums: 'four' },
+    { name: 'funk', bpm: 128, chords: [[60, 63, 67], [65, 68, 72], [56, 60, 63], [55, 59, 62]], bass: [36, 41, 44, 43], lead: 'square', drums: 'funk' }
+  ];
+  const CHILL = { name: 'chill', bpm: 78, chords: [[65, 69, 72, 76], [64, 67, 71, 74], [62, 65, 69, 72], [60, 64, 67, 71]], bass: [41, 40, 38, 36], lead: 'keys', drums: 'lofi' };
   const hz = m => 440 * Math.pow(2, (m - 69) / 12);
   let mGain = null, mOn = false, mMode = 'calm', mVol = 0.5, mEnabled = true, step = 0, nextT = 0, timer = null, rollStart = 0;
+  let songIdx = 0, songSince = Date.now(), rotateMs = 15 * 60000;
+  const song = () => (mMode === 'chill' ? CHILL : SONGS[songIdx % SONGS.length]);
+  const STEPDUR = () => 60 / song().bpm / 4;
 
   function mOut() {
     if (!ensure()) return null;
@@ -116,10 +126,15 @@
     return mGain;
   }
   function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
-  function kick(t, v) {
+  function kick(t, v, f0) {
     const o = ctx.createOscillator(), g = ctx.createGain();
-    o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.13);
+    o.frequency.setValueAtTime(f0 || 150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.13);
     env(g, t, 0.003, v, 0.28); o.connect(g); g.connect(mGain); o.start(t); o.stop(t + 0.35);
+  }
+  function tom(t, v, f) {                           // darbuka "doum"
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.setValueAtTime(f * 1.6, t); o.frequency.exponentialRampToValueAtTime(f, t + 0.06);
+    env(g, t, 0.002, v, 0.3); o.connect(g); g.connect(mGain); o.start(t); o.stop(t + 0.35);
   }
   function noiseHit(t, v, type, f, d, q) {
     if (!noiseBuf) { noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate); const dd = noiseBuf.getChannelData(0); for (let i = 0; i < dd.length; i++) dd[i] = Math.random() * 2 - 1; }
@@ -127,21 +142,23 @@
     src.buffer = noiseBuf; fl.type = type; fl.frequency.value = f; fl.Q.value = q || 0.8;
     env(g, t, 0.002, v, d); src.connect(fl); fl.connect(g); g.connect(mGain); src.start(t, Math.random() * 0.5); src.stop(t + d + 0.05);
   }
-  function synth(t, freq, v, d, type, cutoff) {
+  function synth(t, freq, v, d, type, cutoff, vib) {
     const o = ctx.createOscillator(), fl = ctx.createBiquadFilter(), g = ctx.createGain();
     o.type = type; o.frequency.value = freq; fl.type = 'lowpass'; fl.frequency.value = cutoff; fl.Q.value = 2;
+    if (vib) { const l = ctx.createOscillator(), lg = ctx.createGain(); l.frequency.value = 6; lg.gain.value = freq * 0.012; l.connect(lg); lg.connect(o.frequency); l.start(t); l.stop(t + d + 0.05); }
     env(g, t, 0.008, v, d); o.connect(fl); fl.connect(g); g.connect(mGain); o.start(t); o.stop(t + d + 0.05);
   }
-  function pad(t, chord, v, d) {
+  function pad(t, chord, v, d, cutoff) {
     chord.forEach(m => [-6, 6].forEach(det => {
       const o = ctx.createOscillator(), fl = ctx.createBiquadFilter(), g = ctx.createGain();
-      o.type = 'sawtooth'; o.frequency.value = hz(m); o.detune.value = det; fl.type = 'lowpass'; fl.frequency.value = 900;
+      o.type = 'sawtooth'; o.frequency.value = hz(m); o.detune.value = det; fl.type = 'lowpass'; fl.frequency.value = cutoff || 900;
       g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + 0.4); g.gain.linearRampToValueAtTime(0.0001, t + d);
       o.connect(fl); fl.connect(g); g.connect(mGain); o.start(t); o.stop(t + d + 0.05);
     }));
   }
   function playStep(t) {
-    const s16 = step % 16, bar = Math.floor(step / 16) % 4, chord = CHORDS[bar], root = BASS[bar];
+    const S = song(), STEP = STEPDUR();
+    const s16 = step % 16, bar = Math.floor(step / 16) % 4, chord = S.chords[bar], root = S.bass[bar];
     const hot = mMode === 'hot', full = mMode === 'play' || hot;
     if (mMode === 'roll') {                          // drum-roll that builds up
       const k = Math.min(1, (ctx.currentTime - rollStart) / 5);
@@ -150,18 +167,44 @@
       if (s16 === 0) pad(t, chord, 0.02, STEP * 16);
       return;
     }
-    // drums
-    if (full ? s16 % 4 === 0 : s16 % 8 === 0) kick(t, hot ? 0.95 : 0.8);
-    if (s16 === 4 || s16 === 12) noiseHit(t, full ? 0.38 : 0.22, 'bandpass', 1800, 0.16, 0.9);
-    if (s16 % 4 === 2) noiseHit(t, 0.16, 'highpass', 7500, 0.05);
-    if (hot && s16 % 2 === 1) noiseHit(t, 0.08, 'highpass', 9000, 0.03);
-    // bass (8ths, octave pops)
-    if (s16 % 2 === 0) synth(t, hz(root + (s16 % 8 === 6 ? 12 : 0)), full ? 0.22 : 0.14, STEP * 1.7, 'sawtooth', full ? 520 : 320);
-    // arpeggio
-    if (full) { const n = chord[(s16 >> 0) % 3] + 12 + (hot ? 12 : 0) + (s16 % 6 === 5 ? 12 : 0); synth(t, hz(n), hot ? 0.07 : 0.05, STEP * 0.9, 'square', hot ? 3200 : 2200); }
-    // pad
+    if (S.drums === 'lofi') {                        // relaxed break music
+      if (s16 === 0 || s16 === 10) kick(t, 0.45, 110);
+      if (s16 === 8) noiseHit(t, 0.12, 'bandpass', 2400, 0.08, 2);
+      if (s16 % 4 === 2) noiseHit(t, 0.05, 'highpass', 8000, 0.04);
+      if (s16 % 2 === 1) noiseHit(t, 0.012, 'highpass', 5000, 0.02);          // vinyl crackle
+      if (s16 === 0 || s16 === 8) chord.forEach((m, i) => synth(t + i * 0.012, hz(m), 0.045, STEP * 7, 'triangle', 1400));
+      if (s16 === 0 || s16 === 6 || s16 === 10) synth(t, hz(root), 0.16, STEP * 4, 'sine', 400);
+      return;
+    }
+    // ---- drums ----
+    if (S.drums === 'maqsum') {                      // doum-tek pattern (darbuka)
+      if (s16 === 0 || s16 === 8) tom(t, full ? 0.75 : 0.5, 85);
+      if (s16 === 2 || s16 === 6 || s16 === 12) noiseHit(t, full ? 0.32 : 0.2, 'bandpass', 3200, 0.06, 1.5);
+      if (hot && s16 % 2 === 1) noiseHit(t, 0.07, 'highpass', 9000, 0.05);  // riq jingles
+      if (full && (s16 === 14)) noiseHit(t, 0.2, 'bandpass', 3200, 0.05, 1.5);
+    } else if (S.drums === 'funk') {
+      if (s16 === 0 || s16 === 7 || s16 === 10) kick(t, full ? 0.85 : 0.6);
+      if (s16 === 4 || s16 === 12) noiseHit(t, full ? 0.4 : 0.25, 'bandpass', 1600, 0.14, 0.9);
+      if (full ? true : s16 % 2 === 0) noiseHit(t, s16 % 4 === 2 ? 0.14 : 0.07, 'highpass', 8000, 0.04);
+    } else {
+      if (full ? s16 % 4 === 0 : s16 % 8 === 0) kick(t, hot ? 0.95 : 0.8);
+      if (s16 === 4 || s16 === 12) noiseHit(t, full ? 0.38 : 0.22, 'bandpass', 1800, 0.16, 0.9);
+      if (s16 % 4 === 2) noiseHit(t, 0.16, 'highpass', 7500, 0.05);
+      if (hot && s16 % 2 === 1) noiseHit(t, 0.08, 'highpass', 9000, 0.03);
+    }
+    // ---- bass ----
+    if (S.drums === 'funk') { if ([0, 3, 6, 8, 10, 14].includes(s16)) synth(t, hz(root + (s16 === 10 ? 12 : 0)), full ? 0.24 : 0.16, STEP * 1.4, 'square', 600); }
+    else if (s16 % 2 === 0) synth(t, hz(root + (s16 % 8 === 6 ? 12 : 0)), full ? 0.22 : 0.14, STEP * 1.7, 'sawtooth', full ? 520 : 320);
+    // ---- lead ----
+    if (full) {
+      if (S.lead === 'oud') {                        // maqam run
+        if (s16 % 2 === 0) { const sc = S.scale, i = (s16 / 2 + bar * 3) % sc.length; synth(t, hz(sc[i] + (hot ? 12 : 0)), hot ? 0.09 : 0.07, STEP * 1.6, 'triangle', 2600, true); }
+      } else {
+        const n = chord[s16 % 3] + 12 + (hot ? 12 : 0) + (s16 % 6 === 5 ? 12 : 0);
+        synth(t, hz(n), hot ? 0.07 : 0.05, STEP * 0.9, S.lead === 'saw' ? 'sawtooth' : 'square', hot ? 3200 : 2200);
+      }
+    }
     if (s16 === 0) pad(t, chord, full ? 0.022 : 0.032, STEP * 16);
-    // riser in the hot mode
     if (hot && s16 === 0) { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sawtooth'; o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(880, t + STEP * 16); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.03, t + STEP * 15); g.gain.linearRampToValueAtTime(0.0001, t + STEP * 16); o.connect(g); g.connect(mGain); o.start(t); o.stop(t + STEP * 16 + 0.05); }
   }
   function scheduler() {
@@ -169,7 +212,11 @@
     // when the app is in the background timers slow down → schedule further ahead
     const ahead = document.hidden ? 1.6 : 0.2;
     if (nextT < ctx.currentTime) nextT = ctx.currentTime + 0.05;
-    while (nextT < ctx.currentTime + ahead) { playStep(nextT); nextT += STEP; step++; }
+    while (nextT < ctx.currentTime + ahead) {
+      // change song every N minutes, on a bar line (not during the break music)
+      if (step % 16 === 0 && mMode !== 'chill' && Date.now() - songSince > rotateMs) { songIdx++; songSince = Date.now(); step = 0; }
+      playStep(nextT); nextT += STEPDUR(); step++;
+    }
   }
   function applyVol(fade) {
     if (!mGain || !ctx) return;
@@ -188,7 +235,10 @@
       applyVol(1.2);
     },
     stop() { if (!mOn) return; mOn = false; applyVol(0.5); setTimeout(() => { if (!mOn) clearInterval(timer); }, 600); },
-    mode(m) { if (m === mMode) return; mMode = m; if (m === 'roll' && ctx) rollStart = ctx.currentTime; },
+    mode(m) { if (m === mMode) return; const wasChill = mMode === 'chill' || m === 'chill'; mMode = m; if (wasChill) step = 0; if (m === 'roll' && ctx) rollStart = ctx.currentTime; },
+    rotateEvery(min) { rotateMs = Math.max(1, +min || 15) * 60000; },
+    nextSong() { songIdx++; songSince = Date.now(); step = 0; },
+    get song() { return song().name; },
     setEnabled(v) { mEnabled = !!v; applyVol(0.4); },
     setVolume(v) { mVol = Math.max(0, Math.min(1, +v || 0)); applyVol(0.3); },
     refresh() { applyVol(0.3); },                 // call after the global sound switch changes

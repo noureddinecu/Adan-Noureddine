@@ -30,9 +30,9 @@
   const CAT = {}; CATS.forEach(c => { CAT[c.id] = c; });
 
   const TXT = {
-    ma: { next: 'الموضوع الجاي…', nextEn: 'Next topic…', type: 'كتب الجواب فالكومنتير ✍️', hint: 'تلميح', answer: 'الجواب الصحيح', fastest: 'الأسرع ⚡',
+    ma: { sp_t: 'دعمونا بوردة 🌹', sp_x: 'هاد المسابقة كتحرّك الدماغ وكتفيد 🧠 — إلا عجباتكم، دعمونا بالورود باش نكملو ونجيبو ليكم أسئلة جديدة وجوائز!', sp_none: 'كونو أول من يدعم المسابقة 🌹', sp_thx: 'شكراً لكل من دعمنا ❤️', thx: 'شكراً {n} على الدعم!', br_t: 'استراحة قصيرة ☕', br_s: 'نرجعو دابا… خليكم معانا 💙', br_top: 'المتصدرين دابا', br_tips: ['شاركو البث مع صحابكم باش يتحداو معانا 🔁', 'تفكرو فالمجال اللي بغيتو فالجولة الجاية 🧠', 'اللي فالترتيب، استعدو! المنافسة باقا ما سالاتش 🏆', 'تبعو الحساب باش ما يفوتكم حتى تحدي ⭐'], collect: '⏳ آخر فرصة! كنجمعو الأجوبة اللي جاية…', next: 'الموضوع الجاي…', nextEn: 'Next topic…', type: 'كتب الجواب فالكومنتير ✍️', hint: 'تلميح', answer: 'الجواب الصحيح', fastest: 'الأسرع ⚡',
       board: 'الترتيب العام 🏆', nobody: 'حتى واحد ما جابها هاد المرة 😅', paused: 'استراحة صغيرة… نرجعو دابا ⏸', final: 'بطل التحدي 👑', soon: 'السؤال الجاي بعد {s}…', ready: 'وجدو راسكم! التحدي غادي يبدا…', correct: 'جاوبو صح' },
-    ar: { next: 'الموضوع القادم…', nextEn: 'Next topic…', type: 'اكتب الجواب في التعليقات ✍️', hint: 'تلميح', answer: 'الإجابة الصحيحة', fastest: 'الأسرع ⚡',
+    ar: { sp_t: 'ادعمونا بوردة 🌹', sp_x: 'هذه المسابقة تنشّط العقل وتفيد 🧠 — إن أعجبتكم، ادعمونا بالورود لنستمر ونقدم لكم أسئلة جديدة وجوائز!', sp_none: 'كونوا أول من يدعم المسابقة 🌹', sp_thx: 'شكراً لكل من دعمنا ❤️', thx: 'شكراً {n} على الدعم!', br_t: 'استراحة قصيرة ☕', br_s: 'نعود حالاً… ابقوا معنا 💙', br_top: 'المتصدرون الآن', br_tips: ['شاركوا البث مع أصدقائكم ليتحدوا معنا 🔁', 'فكروا في المجال الذي تريدونه في الجولة القادمة 🧠', 'المتصدرون، استعدوا! المنافسة لم تنته بعد 🏆', 'تابعوا الحساب كي لا يفوتكم أي تحدٍ ⭐'], collect: '⏳ فرصة أخيرة! نجمع الإجابات المتأخرة…', next: 'الموضوع القادم…', nextEn: 'Next topic…', type: 'اكتب الجواب في التعليقات ✍️', hint: 'تلميح', answer: 'الإجابة الصحيحة', fastest: 'الأسرع ⚡',
       board: 'الترتيب العام 🏆', nobody: 'لم يُجب أحد بشكل صحيح هذه المرة 😅', paused: 'استراحة قصيرة… نعود حالاً ⏸', final: 'بطل التحدي 👑', soon: 'السؤال التالي بعد {s}…', ready: 'استعدوا! التحدي سيبدأ…', correct: 'أجابوا بشكل صحيح' }
   };
 
@@ -261,8 +261,10 @@
   // background music follows the game: drum-roll on the roulette, groove on the question, "hot" in the last 10 s
   function music() {
     const M = G.Music; if (!M) return;
-    if (phase === 'idle' || paused || cfg().music === false) { M.stop(); return; }
+    if (phase === 'idle' || cfg().music === false) { M.stop(); return; }
     M.setVolume(cfg().musicVol == null ? 0.5 : cfg().musicVol);
+    M.rotateEvery(cfg().musicRotate || 15);
+    if (paused) { M.start('chill'); return; }                     // the break keeps a calm music
     const mode = phase === 'topic' ? 'roll' : phase === 'question' ? ((phaseEnds - Date.now()) <= 10500 ? 'hot' : 'play') : 'calm';
     M.start(mode);
   }
@@ -295,6 +297,14 @@
     api.save();
   }
 
+  /* TikTok LIVE lag: viewers see the question a few seconds late and their comments arrive late,
+     so after the visible timer ends we keep accepting answers for a short hidden "grace" time. */
+  const grace = () => Math.max(0, Math.min(20, Number(cfg().grace == null ? 8 : cfg().grace)));
+  function startCollect() {
+    q.collecting = true;
+    phaseEnds = Date.now() + grace() * 1000;
+    render(); renderTimer();
+  }
   function reveal() {
     if (!q || phase !== 'question') return;
     q.done = true;
@@ -313,16 +323,19 @@
     const now = Date.now();
     if (phase === 'question' && q) {
       const left = Math.max(0, Math.ceil((phaseEnds - now) / 1000));
-      if (left !== q.lastLeft) { q.lastLeft = left; if (left <= 5 && left > 0) api.Sfx.tick(left === 1); if (left === 10) music(); renderTimer(); }
+      if (left !== q.lastLeft && !q.collecting) { q.lastLeft = left; if (left <= 5 && left > 0) api.Sfx.tick(left === 1); if (left === 10) music(); renderTimer(); }
       if (!q.hint && now >= q.hintAt) { q.hint = true; renderHint(); }
     }
     if (phase === 'topic') renderRoulette();
     if (!phaseEnds || now < phaseEnds) return;
     if (phase === 'ready') return nextTopic();
     if (phase === 'topic') return askQuestion();
-    if (phase === 'question') return reveal();
+    if (phase === 'question') return q && !q.collecting && grace() > 0 ? startCollect() : reveal();
     if (phase === 'reveal') return afterReveal();
+    if (phase === 'support') return nextTopic();
     if (phase === 'board' || phase === 'final') {
+      const every = Number(cfg().supportEvery == null ? 7 : cfg().supportEvery);
+      if (cfg().autopilot && phase === 'board' && every > 0 && st.asked > 0 && st.asked % every === 0 && st.lastSupport !== st.asked) { st.lastSupport = st.asked; return setPhase('support', 13000); }
       if (cfg().autopilot) return nextTopic();
       phaseEnds = 0;
     }
@@ -355,7 +368,7 @@
     const img = p.a && /^https:\/\//.test(p.a) ? `<img src="${esc(p.a)}" referrerpolicy="no-referrer" alt="" onerror="this.remove()">` : '';
     return `<span class="qa ${cls || ''}" style="background:${col}"><b>${initial}</b>${img}</span>`;
   }
-  function show(id) { ['qzReady', 'qzTopic', 'qzQuestion', 'qzBoard', 'qzFinal'].forEach(x => $(x).classList.toggle('on', x === id)); }
+  function show(id) { ['qzReady', 'qzTopic', 'qzQuestion', 'qzBoard', 'qzFinal', 'qzSupport'].forEach(x => $(x).classList.toggle('on', x === id)); }
 
   // keep the bottom of the screen free so TikTok's comment overlay does not cover the game
   function applyLayout() {
@@ -372,9 +385,11 @@
     const hud = $('quizHud'); if (!hud) return;
     applyLayout();
     $('qzCounter').innerHTML = `<b>${st ? st.no : 0}</b><small>/${cfg().qCount}</small>`;
-    $('qzPaused').classList.toggle('show', paused);
+    $('qzPaused').classList.remove('show');
+    renderBreak();
     $('qzPaused').textContent = T('paused');
-    $('qzPrompt').textContent = T('type');
+    $('qzPrompt').textContent = q && q.collecting && phase === 'question' ? T('collect') : T('type');
+    $('qzPrompt').classList.toggle('collect', !!(q && q.collecting && phase === 'question'));
     $('qzPrompt').classList.toggle('on', phase === 'question');
     const ar = $('qzArena'); if (ar) ar.classList.toggle('on', phase === 'question' || phase === 'reveal');
     if (phase === 'ready') { show('qzReady'); $('qzReadyText').textContent = T('ready'); setTitle(T('next'), T('nextEn')); renderWall(); }
@@ -382,6 +397,7 @@
     if (phase === 'question' || phase === 'reveal') { show('qzQuestion'); renderQuestion(); }
     if (phase === 'board') { show('qzBoard'); setTitle(T('board'), 'Leaderboard'); renderBoard(); }
     if (phase === 'final') { show('qzFinal'); setTitle(T('final'), 'Champion'); renderFinal(); }
+    if (phase === 'support') { show('qzSupport'); setTitle(T('sp_t'), 'Support us'); renderSupport(); }
   }
   function setTitle(ar, en, pts) {
     $('qzTitle').innerHTML = `<b>${esc(ar)}</b><small>${esc(en || '')}</small>`;
@@ -393,6 +409,48 @@
     $('qzTopics').innerHTML = CATS.map((c, i) => `<div class="qt" data-i="${i}"><i>${c.icon}</i><b>${esc(c.ar)}</b><small>${esc(c.en)}</small></div>`).join('');
     renderRoulette();
   }
+  /* ---------------- support (gifts) ---------------- */
+  function supporters() {
+    const s = S();
+    return Object.keys(s.participants).filter(id => s.participants[id].coins > 0).sort((a, b) => s.participants[b].coins - s.participants[a].coins);
+  }
+  function renderSupport() {
+    $('spTitle').textContent = T('sp_t'); $('spText').textContent = T('sp_x');
+    const s = S(), ids = supporters().slice(0, 12);
+    $('spWall').innerHTML = ids.length ? ids.map(id => { const p = s.participants[id]; return `<span>${avatar(p, 'md')}<b>${esc(p.n)}</b><em>🌹 ${p.coins}</em></span>`; }).join('') : `<div class="sp-none">${esc(T('sp_none'))}</div>`;
+    $('spThanks').textContent = ids.length ? T('sp_thx') : '';
+    api.Sfx.hint();
+  }
+  /** a gift arrived (from the relay): remember the supporter and thank them on screen */
+  function onGift(g, p) {
+    const coins = Math.max(1, Number(g.coins) || 1) * Math.max(1, Number(g.count) || 1);
+    p.coins = (p.coins || 0) + coins; p.gifts = (p.gifts || 0) + Math.max(1, Number(g.count) || 1);
+    const s = S(); s.coins = (s.coins || 0) + coins; s.gifts = (s.gifts || 0) + Math.max(1, Number(g.count) || 1);
+    const box = $('qzToasts');
+    if (box && phase !== 'idle') {
+      const el = document.createElement('div'); el.className = 'qz-toast';
+      const img = g.gimg && /^https:\/\//.test(g.gimg) ? `<img src="${esc(g.gimg)}" referrerpolicy="no-referrer" onerror="this.remove()">` : '<i>🌹</i>';
+      el.innerHTML = avatar(p, 'sm') + `<span>${esc(T('thx', { n: p.n }))}</span>` + img + (g.count > 1 ? `<b>×${g.count}</b>` : '');
+      box.appendChild(el); while (box.children.length > 2) box.firstChild.remove();
+      setTimeout(() => el.classList.add('out'), 3200); setTimeout(() => el.remove(), 3700);
+      api.Sfx.achievement();
+    }
+    if (phase === 'support') renderSupport();
+    return 'كادو 🌹 ' + coins;
+  }
+
+  function renderBreak() {
+    const b = $('qzBreak'); if (!b) return;
+    b.classList.toggle('on', paused && phase !== 'idle');
+    if (!paused) return;
+    $('brTitle').textContent = T('br_t'); $('brSub').textContent = T('br_s');
+    const s = S();
+    const ids = Object.keys(s.participants).filter(id => s.participants[id].pts > 0).sort((a, b2) => s.participants[b2].pts - s.participants[a].pts).slice(0, 3);
+    $('brTop').innerHTML = ids.length ? `<small>${esc(T('br_top'))}</small><div>` + ids.map((id, i) => { const p = s.participants[id]; return `<span class="m${i + 1}">${avatar(p, 'md')}<b>${esc(p.n)}</b><em>${p.pts}</em></span>`; }).join('') + '</div>' : '';
+    const tips = (TXT[cfg().lang] || TXT.ma).br_tips;
+    $('brTip').textContent = tips[Math.floor(Date.now() / 8000) % tips.length];
+  }
+  setInterval(() => { if (paused) renderBreak(); }, 4000);
   function renderRoulette() {
     if (!roulette) return;
     const tiles = document.querySelectorAll('#qzTopics .qt');
@@ -450,6 +508,7 @@
   }
   function renderTimer() {
     if (!q || phase !== 'question') return;
+    if (q.collecting) { $('qzSec').textContent = '⏳'; const bar = $('qzBar'); bar.style.transition = 'none'; bar.style.width = '0%'; return; }
     const total = cfg().qTime * 1000;
     const left = Math.max(0, paused ? pausedLeft : phaseEnds - Date.now());
     $('qzSec').textContent = Math.ceil(left / 1000);
@@ -467,7 +526,8 @@
     const box = $('qzCorrect'); if (!box) return;
     const s = S();
     if (box.dataset.q !== q.id + q.start) { box.dataset.q = q.id + q.start; box.innerHTML = '<div class="qb-count"><b>0</b><small>✓</small></div>'; }
-    const D = Math.min(box.clientWidth, box.clientHeight) || 160, R = D / 2;
+    const BW = box.clientWidth || 300, BH = box.clientHeight || 140;
+    const D = Math.min(BW, BH), R = D / 2, CX = BW / 2, CY = BH / 2;   // circle centred in the strip
     const ids = q.correct.slice(0, 24), n = ids.length;
     // biggest bubble size that still keeps the whole spiral inside the circle
     // (×1.15 leaves room for the pop / float animation so nothing ever crosses the circle)
@@ -484,7 +544,7 @@
       let r = size * 0.62 * Math.sqrt(i + 2.6);
       r = Math.min(r, inner);
       const th = i * GOLDEN - Math.PI / 2;
-      const x = R + r * Math.cos(th), y = R + r * Math.sin(th);
+      const x = CX + r * Math.cos(th), y = CY + r * Math.sin(th);
       let el = have.get(id);
       if (!el) {
         el = document.createElement('div'); el.className = 'qb pop'; el.dataset.u = id;
@@ -592,21 +652,23 @@
    * HOST CONTROLS
    * ================================================================= */
   const ctl = {
-    next() { paused = false; if (phase === 'question') reveal(); else if (phase === 'topic') askQuestion(); else nextTopic(); },
+    next() { paused = false; if (phase === 'question') (q && !q.collecting && grace() > 0 ? startCollect() : reveal()); else if (phase === 'topic') askQuestion(); else nextTopic(); },
     newTopic(cat) { paused = false; nextTopic(cat && CAT[cat] ? cat : undefined); },
-    reveal() { if (phase === 'question') { paused = false; reveal(); } else if (phase === 'topic') { askQuestion(); } },
+    // first press: stop the timer but still collect late answers; second press: reveal now
+    reveal() { if (phase === 'question') { paused = false; if (q && !q.collecting && grace() > 0) startCollect(); else reveal(); } else if (phase === 'topic') { askQuestion(); } },
     togglePause() {
-      if (phase === 'idle' || phase === 'ready') return;
+      if (phase === 'idle') return;
       if (!paused) { paused = true; pausedLeft = Math.max(0, phaseEnds - Date.now()); }
       else { paused = false; if (phaseEnds) phaseEnds = Date.now() + pausedLeft; }
       render(); music(); if (phase === 'question') renderTimer();
     },
+    support() { paused = false; setPhase('support', 13000); },
     showBoard() { if (phase !== 'question') { setPhase('board', cfg().autopilot ? cfg().winnersTime * 1000 : 0); } },
     hideBoard() { if (phase === 'board' || phase === 'final') { phaseEnds = 0; nextTopic(); } },
     restart() { ensureState(); st.no = 0; st.game++; paused = false; nextTopic(); },
     replayQuestion() {
       if (!q) return;
-      const again = Object.assign({}, q, { correct: [], got: {}, start: Date.now(), hint: false, done: false });
+      const again = Object.assign({}, q, { correct: [], got: {}, start: Date.now(), hint: false, done: false, collecting: false });
       again.hintAt = again.start + cfg().qTime * 500;
       q = again; $('qzVisual').dataset.q = ''; setPhase('question', cfg().qTime * 1000);
     }
@@ -622,7 +684,7 @@
     CATS,
     init(a) { api = a; },
     applyLayout, music,
-    start, stop, onChat, ctl, simTarget,
+    start, stop, onChat, onGift, ctl, simTarget,
     isCorrect, key,
     get phase() { return phase; },
     get paused() { return paused; },

@@ -165,6 +165,8 @@
       <div class="qz-visual" id="qzVisual"></div>
       <div class="qz-answer" id="qzAnswer"></div>
       <div class="qz-hint" id="qzHint"></div>
+      <!-- correct answers: a free round cluster of photos (no frame) under the question -->
+      <div class="qz-arena" id="qzArena"><div class="qz-correct" id="qzCorrect"></div></div>
       <div class="qz-fast" id="qzFast"></div>
     </div>
 
@@ -175,14 +177,31 @@
       <div class="qz-soon" id="qzSoon"></div>
     </div>
 
+    <!-- support segment: invites viewers to support a "brain" quiz with roses -->
+    <div class="qz-pane" id="qzSupport">
+      <div class="sp-rose">🌹</div>
+      <h2 id="spTitle"></h2>
+      <p id="spText"></p>
+      <div class="sp-wall" id="spWall"></div>
+      <p class="sp-thanks" id="spThanks"></p>
+    </div>
+
     <div class="qz-pane" id="qzFinal">
       <div id="qzFinalBody"></div>
     </div>
 
-    <!-- correct answers: round glass arena in the free bottom-right corner (TikTok comments use the left side) -->
-    <div class="qz-arena" id="qzArena"><div class="qz-correct" id="qzCorrect"></div></div>
     <div class="qz-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="qz-paused" id="qzPaused"></div>
+    <div class="qz-toasts" id="qzToasts"></div>
+    <!-- break screen (volume − / pause): calm, outside the game frame -->
+    <div class="qz-break" id="qzBreak">
+      <div class="br-stars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="br-orb"><span>☕</span></div>
+      <h2 id="brTitle">استراحة قصيرة</h2>
+      <p id="brSub">نرجعو دابا… خليكم معانا 💙</p>
+      <div class="br-top" id="brTop"></div>
+      <p class="br-tip" id="brTip"></p>
+    </div>
     <!-- optional overlay showing where TikTok draws its own UI (host preview only) -->
     <div class="qz-guides" id="qzGuides"><div class="g-top">واجهة TikTok (الاسم، المشاهدين، ✕)</div><div class="g-bottom">تعليقات TikTok 💬 + خانة الكتابة + 🎁</div></div>
   </section>
@@ -222,10 +241,11 @@
           <button class="btn" id="cpNext">⏭️ المرحلة الجاية</button>
           <button class="btn" id="cpReplay">🔁 عاود الجولة</button>
           <button class="btn" id="cpBoard">📊 الترتيب العام</button>
+          <button class="btn" id="cpSupport">🌹 فقرة الدعم</button>
           <button class="btn" id="cpSound">🔊 شعّل / طفّي الصوت</button>
           <button class="btn danger" id="cpEnd">⏹️ سالي الجلسة</button>
         </div>
-        <p class="cp-note">💡 أثناء البث: <b>زر الصوت +</b> = جولة جديدة / بيّن الذهب · <b>زر الصوت −</b> = وقّف/كمّل أو وري/خبّي الترتيب. المشاهدين ما كيشوفو والو. ضغطة طويلة فالركن الفوقاني كتحل هاد اللوحة (المشاهدين كيشوفوها).</p>
+        <p class="cp-note">💡 أثناء البث: <b>زر الصوت +</b> = الجاي / بيّن الجواب · <b>زر الصوت −</b> = استراحة ☕ / رجوع. المشاهدين ما كيشوفو والو. ضغطة طويلة فالركن الفوقاني ولا زر الرجوع كيحل هاد اللوحة (المشاهدين كيشوفوها).</p>
       </div>
 
       <h3 class="cp-h">إحصائيات</h3>
@@ -263,6 +283,10 @@
         <label data-src="euler">Euler Stream API key<input id="cp_eulerKey" type="password" autocomplete="off"></label>
         <label data-src="sim">عدد المشاهدين الوهميين<input id="cp_simViewers" type="number" min="3" max="300"></label>
         <label>وقت الجواب (ثواني)<input id="cp_qTime" type="number" min="8" max="60"></label>
+        <label data-game="quiz">وقت إضافي خفي للتأخير ديال البث
+          <select id="cp_grace"><option value="0">بلا</option><option value="5">5 ثواني</option><option value="8">8 ثواني · مستحسن</option><option value="12">12 ثانية</option></select></label>
+        <label data-game="quiz">فقرة الدعم 🌹
+          <select id="cp_supportEvery"><option value="0">بلا</option><option value="5">كل 5 أسئلة</option><option value="7">كل 7 أسئلة</option><option value="10">كل 10 أسئلة</option></select></label>
         <label data-game="quiz">عدد الأسئلة فكل تحدي<input id="cp_qCount" type="number" min="5" max="100"></label>
         <label data-game="quiz">مساحة واجهة TikTok فالفوق
           <select id="cp_topSpace">
@@ -281,6 +305,8 @@
           </select></label>
         <div class="cp-sw" data-game="quiz"><span>بيّن حدود TikTok فوق اللعبة (للتجربة، طفيها قبل البث)</span><label class="switch"><input type="checkbox" id="cp_showGuides"><i></i></label></div>
         <div class="cp-sw" data-game="quiz"><span>🎵 موسيقى حماسية</span><label class="switch"><input type="checkbox" id="cp_music"><i></i></label></div>
+        <label data-game="quiz">تبديل الموسيقى
+          <select id="cp_musicRotate"><option value="15">كل 15 دقيقة</option><option value="20">كل 20 دقيقة</option><option value="30">كل 30 دقيقة</option></select></label>
         <label data-game="quiz">صوت الموسيقى
           <select id="cp_musicVol"><option value="0.25">منخفض</option><option value="0.5">متوسط</option><option value="0.8">عالي</option></select></label>
         <div class="cp-sw" data-game="quiz"><span>قبول الغلطات الصغيرة فالكتابة</span><label class="switch"><input type="checkbox" id="cp_fuzzy"><i></i></label></div>

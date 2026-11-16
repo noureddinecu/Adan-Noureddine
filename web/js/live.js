@@ -71,9 +71,9 @@
   /* ---------------- config / persistence ---------------- */
   const DEFAULT_CFG = {
     source: 'sim', user: '', relayUrl: '', token: '', eulerKey: '',
-    qTime: 30, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
+    qTime: 35, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
     simViewers: 40, startLevel: 1,
-    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.5
+    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.5, musicRotate: 15, grace: 8, supportEvery: 7
   };
   let cfg = Object.assign({}, DEFAULT_CFG);
   let session = null;      // persisted
@@ -158,6 +158,18 @@
     if (session.comments % 50 === 0) trimParticipants(20000);
     save();
   }
+  function onGiftMsg(g) {
+    if (!session || !g) return;
+    const uid = String(g.u || g.n || '').slice(0, 64); if (!uid) return;
+    let p = session.participants[uid];
+    if (!p) p = session.participants[uid] = { n: g.n || uid, a: g.a || '', pts: 0, wins: 0, correct: 0, answers: 0 };
+    if (g.n) p.n = String(g.n).slice(0, 40);
+    if (g.a) p.a = g.a;
+    const why = isQuiz() ? G.Quiz.onGift(g, p) : 'كادو';
+    recent.unshift({ n: p.n, c: '🎁 ' + (g.gname || '') + (g.count > 1 ? ' ×' + g.count : ''), t: Date.now(), why, ok: true });
+    if (recent.length > 8) recent.pop();
+    save();
+  }
   function onViewers(n) {
     viewers = n | 0;
     if (session) session.peakViewers = Math.max(session.peakViewers || 0, viewers);
@@ -215,6 +227,7 @@
     }
     function handleRelay(d) {
       if (d.t === 'chat') onChat(d);
+      else if (d.t === 'gift') onGiftMsg(d);
       else if (d.t === 'viewers') onViewers(d.n);
       else if (d.t === 'status') {
         const map = { connecting: 'كنتصلو بـ TikTok…', reconnecting: 'كنعاودو الاتصال بـ TikTok…', connected: 'متصل بـ TikTok LIVE ✓', offline: 'الحساب ماشي فـLIVE دابا — كنتسناو', error: 'مشكل: ' + (d.msg || '') };
@@ -296,6 +309,7 @@
               });
             }
             if (Math.random() < 0.06) { const p = people[(Math.random() * people.length) | 0]; onChat({ u: p.u, n: p.n, a: p.a, c: CHAT[(Math.random() * CHAT.length) | 0] }); }
+            if (Math.random() < 0.012) { const p = people[(Math.random() * people.length) | 0]; const big = Math.random() < 0.15; onGiftMsg({ u: p.u, n: p.n, a: p.a, gname: big ? 'Perfume' : 'Rose', coins: big ? 20 : 1, count: big ? 1 : 1 + ((Math.random() * 5) | 0), gimg: '' }); }
             return;
           }
           if (Math.random() < 0.08) { const p = people[(Math.random() * people.length) | 0]; onChat({ u: p.u, n: p.n, a: p.a, c: CHAT[(Math.random() * CHAT.length) | 0] }); }
@@ -528,10 +542,8 @@
   G.onLiveKey = function (k) {
     if (!active || !cfg.volKeys) return false;
     if (isQuiz()) {
-      const ph = G.Quiz.phase;
-      if (k === 'up') Q().next();
-      else if (ph === 'question' || ph === 'topic') Q().togglePause();
-      else if (ph === 'board' || ph === 'final') Q().hideBoard(); else Q().showBoard();
+      // + : next / reveal      − : break (pause) on/off, from any screen
+      if (k === 'up') Q().next(); else Q().togglePause();
       return true;
     }
     if (k === 'up') {
@@ -589,7 +601,7 @@
   /* =================================================================
    * CONTROL PANEL (host only)
    * ================================================================= */
-  const FIELDS = ['music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
+  const FIELDS = ['supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
   const isQuiz = () => cfg.game === 'quiz';
   function fillForm() {
     renderCats();
@@ -661,7 +673,7 @@
     const N = Native();
     if (N && N.memoryInfo) try { const mi = JSON.parse(N.memoryInfo()); mem = mi.pssMB + ' MB'; } catch (e) { /* */ }
     const cells = isQuiz() ? [
-      ['المشاركين', parts], ['التعليقات', session.comments], ...G.Quiz.stats(),
+      ['المشاركين', parts], ['التعليقات', session.comments], ...G.Quiz.stats(), ['الكادوات 🌹', (session.gifts || 0) + ' (' + (session.coins || 0) + ' كوينز)'],
       ['المشاهدين دابا', viewers || '—'], ['أكبر عدد مشاهدين', session.peakViewers || '—'], ['مدة الجلسة', mins + ' د'], ['ذاكرة اللعبة', mem]
     ] : [
       ['المشاركين', parts], ['التعليقات', session.comments], ['الجولات', session.rounds.length],
@@ -713,6 +725,7 @@
     on('cpNext', () => { readForm(); actions.nextLevel(); goBroadcast(); });
     on('cpReplay', () => { readForm(); actions.replay(); goBroadcast(); });
     on('cpBoard', () => { actions.showSession(); goBroadcast(); });
+    on('cpSupport', () => { if (active && isQuiz()) G.Quiz.ctl.support(); goBroadcast(); });
     on('cpSound', () => { actions.toggleSound(); $('cpSound').classList.toggle('off', !api.soundOn()); });
     on('cpGuide', () => api.openModal('liveGuide'));
     on('cpTikTok', openTikTok);
@@ -774,6 +787,7 @@
     },
     onAppPause() { saveNow(); },
     parseAnswer, walkEuler, normChat, actions,
+    _feed: c => onChat(c), _gift: g => onGiftMsg(g),       // test hooks (same path as TikTok comments / gifts)
     _debug: () => ({ cfg, session, round, connState, sched })
   };
 })(window);
