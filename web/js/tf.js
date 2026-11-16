@@ -63,26 +63,47 @@
   /* ---------------- statements ---------------- */
   const W = () => window.QUIZ_WORLD || { countries: [] };
   function generated(level) {
-    // capitals and flags from the world data: level 1 = well-known countries (tier 1), 3 = all
+    // capitals / flags (world data), opposites, translations, plurals, quick maths — true or false at random
+    const truth = Math.random() < 0.5;
+    const r = Math.random();
     const cs = W().countries.filter(c => c.cap && c.cap.ar && (level === 1 ? c.tier === 1 : level === 2 ? c.tier <= 2 : true)
       && !c.ar.some(n => norm(n) === norm(c.cap.ar)));
-    if (cs.length < 4) return null;
-    const c = rnd(cs);
-    const truth = Math.random() < 0.5;
-    if (Math.random() < 0.35) {           // flag
-      const o = truth ? c : rnd(cs.filter(x => x.c !== c.c));
-      return { id: 'flag:' + c.c + (truth ? '' : ':' + o.c), truth, text: 'هذا علم ' + o.ar[0], flag: c.c.toLowerCase(),
-        fix: truth ? '' : 'هذا علم ' + c.ar[0] };
+    if (r < 0.26 && cs.length > 4) {                        // «عاصمة روسيا هي كانبيرا»
+      const c = rnd(cs), o = truth ? c : rnd(cs.filter(x => x.c !== c.c && norm(x.cap.ar) !== norm(c.cap.ar)));
+      return { id: 'cap:' + c.c + (truth ? '' : ':' + o.c), truth, text: 'عاصمة ' + c.ar[0] + ' هي ' + o.cap.ar,
+        fix: truth ? '' : 'عاصمة ' + c.ar[0] + ' هي ' + c.cap.ar };
     }
-    const o = truth ? c : rnd(cs.filter(x => x.c !== c.c && x.cap && x.cap.ar && norm(x.cap.ar) !== norm(c.cap.ar)));
-    return { id: 'cap:' + c.c + (truth ? '' : ':' + o.c), truth, text: o.cap.ar + ' عاصمة ' + c.ar[0],
-      fix: truth ? '' : 'عاصمة ' + c.ar[0] + ' هي ' + c.cap.ar };
+    if (r < 0.44 && cs.length > 4) {                        // flag picture
+      const c = rnd(cs), o = truth ? c : rnd(cs.filter(x => x.c !== c.c));
+      return { id: 'flag:' + c.c + (truth ? '' : ':' + o.c), truth, text: 'هذا علم ' + o.ar[0], flag: c.c.toLowerCase(), fix: truth ? '' : 'هذا علم ' + c.ar[0] };
+    }
+    const OP = window.TF_OPPOSITES || [], WD = window.QUIZ_WORDS || [], PL = window.TF_PLURALS || [];
+    if (r < 0.62 && OP.length) {                            // «ضد سريع هو مسرع»
+      const x = rnd(OP), ans = truth ? x[1] : rnd(x[2]);
+      return { id: 'op:' + x[0] + ':' + ans, truth, text: 'ضدّ «' + x[0] + '» هو «' + ans + '»', fix: truth ? '' : 'ضدّ «' + x[0] + '» هو «' + x[1] + '»' };
+    }
+    if (r < 0.8 && WD.length > 4) {                         // «ترجمة cat هي كلب»
+      const x = rnd(WD), fr = level >= 2 && Math.random() < 0.45;
+      const w = [].concat(fr ? x[3] : x[2])[0];
+      const o = truth ? x : rnd(WD.filter(y => y[0] !== x[0]));
+      return { id: 'tr:' + w + ':' + o[0], truth, text: 'ترجمة «' + w + '» ' + (fr ? 'من الفرنسية ' : '') + 'هي «' + o[0] + '»', fix: truth ? '' : 'ترجمة «' + w + '» هي «' + x[0] + '»' };
+    }
+    if (r < 0.88 && PL.length) {                            // plurals
+      const x = rnd(PL), ans = truth ? x[1] : x[2];
+      return { id: 'pl:' + x[0] + ':' + ans, truth, text: 'جمع «' + x[0] + '» هو «' + ans + '»', fix: truth ? '' : 'جمع «' + x[0] + '» هو «' + x[1] + '»' };
+    }
+    // quick maths
+    let a, b, op, res;
+    if (level === 1) { a = 2 + ((Math.random() * 30) | 0); b = 2 + ((Math.random() * 30) | 0); op = '+'; res = a + b; }
+    else { a = 3 + ((Math.random() * 9) | 0); b = 3 + ((Math.random() * 9) | 0); op = '×'; res = a * b; }
+    const shown = truth ? res : res + rnd([-2, -1, 1, 2, 10, -10]);
+    return { id: 'm:' + a + op + b + '=' + shown, truth, text: a + ' ' + op + ' ' + b + ' = ' + shown, fix: truth ? '' : a + ' ' + op + ' ' + b + ' = ' + res };
   }
   function nextStatement(level) {
     const used = st.used;
     for (let k = 0; k < 40; k++) {
       let q = null;
-      if (Math.random() < 0.6) {
+      if (Math.random() < 0.45) {
         const pool = (window.TF_BANK || []).filter(x => x[0] === level && !used.has('b:' + x[2]));
         if (pool.length) { const x = rnd(pool); q = { id: 'b:' + x[2], truth: x[1], text: x[2], fix: x[3] || '' }; }
       }
@@ -539,6 +560,7 @@
     yesNo, isJoin,
     get phase() { return phase; },
     get paused() { return paused; },
+    _sample: level => generated(level),
     _debug: () => ({ st, phase, phaseEnds, Voice })
   };
 })(window);
