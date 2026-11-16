@@ -193,18 +193,23 @@
     speak(text, interrupt) { this.say({ key: 'a_lobby_0', text: (L().lobby || [text])[0] }, interrupt); }
   };
   /** say a random sentence of a group */
+  // TikTok suspends gifts for «mechanically, automatically or non-interactively soliciting Gifts»:
+  // the automated announcer never asks for (or talks about) gifts. Only the host, live, may do it.
+  const NO_GIFT_TALK = /a_(reviveHint|final|finalRemind|finalGift|maxRevive|support|thanks)_|a_rules_[56]$|a_revived_2$/;
   const lastIdx = {};
   function say(group, interrupt) {
     const arr = L()[group]; if (!arr || !arr.length) return;
+    const ok = arr.map((_, k) => k).filter(k => !NO_GIFT_TALK.test('a_' + group + '_' + k));
+    if (!ok.length) return;
     // prefer recorded sentences; never the same one twice in a row
-    const p = pack(), rec = p && cfg().voice !== 'tts' ? arr.map((_, k) => k).filter(k => p.keys.indexOf('a_' + group + '_' + k) >= 0) : arr.map((_, k) => k);
-    let pool = (rec.length ? rec : arr.map((_, k) => k)).filter(k => k !== lastIdx[group]);
-    if (!pool.length) pool = [lastIdx[group] || 0];
+    const p = pack(), rec = p && cfg().voice !== 'tts' ? ok.filter(k => p.keys.indexOf('a_' + group + '_' + k) >= 0) : ok;
+    let pool = (rec.length ? rec : ok).filter(k => k !== lastIdx[group]);
+    if (!pool.length) pool = ok;
     const i = pool[(Math.random() * pool.length) | 0]; lastIdx[group] = i;
     Voice.say({ key: 'a_' + group + '_' + i, text: arr[i] }, interrupt);
   }
   /** the conditions and rules of the game, one sentence after the other */
-  function sayRules() { (L().rules || []).forEach((t, i) => Voice.say({ key: 'a_rules_' + i, text: t, ttl: 60000 })); }
+  function sayRules() { (L().rules || []).forEach((t, i) => { if (!NO_GIFT_TALK.test('a_rules_' + i)) Voice.say({ key: 'a_rules_' + i, text: t, ttl: 60000 }); }); }
   function sayCount(n) {
     const C = window.TF_COUNTS || {};
     if (n > 30) { if (C.many) Voice.say({ key: 'n_many', text: C.many }); return; }
@@ -345,7 +350,7 @@
         const rr = cfg().rulesRead || 'once', el = num(cfg().lobbyTime, 120) * 1000 - (phaseEnds - now);
         const rulesDue = rr !== 'off' && ((!st.rulesSaid && st.lobbyTalks >= 2) || (rr === 'twice' && st.rulesSaid === 1 && now - st.rulesAt > 90000 && phaseEnds - now > 55000) || (rr === 'always' && st.rulesSaid && now - st.rulesAt > 100000));
         if (rulesDue) { st.rulesSaid = (st.rulesSaid || 0) + 1; st.rulesAt = now; sayRules(); }  // all the rules, in order
-        else if (st.lobbyTalks % 6 === 5) say('support');                     // «تابعونا… ما تنساوناش بالهدايا»
+        else if (st.lobbyTalks % 6 === 5) say('hype');                        // «شاركو اللايف مع صحابكم» (never gifts)
         else say('lobby');
       }
       renderLobby();
@@ -364,7 +369,7 @@
     if (phase === 'question') return close();
     if (phase === 'collect') return fall();
     if (phase === 'fall') return afterFall();
-    if (phase === 'gap' && st.supportNext) { st.supportNext = false; setPhase('supportBreak', 12000); say('support'); return; }
+    if (phase === 'gap' && st.supportNext) { st.supportNext = false; setPhase('supportBreak', 8000); say('hype'); return; }   // «شاركو اللايف» — never gifts
     if (phase === 'final' || phase === 'gap' || phase === 'supportBreak') return ask();
     if (phase === 'winner') { setPhase('podium', 14000); say('podium'); return; }
     if (phase === 'podium' || phase === 'nowinner') return lobby();
@@ -520,10 +525,10 @@
       }
       renderTimer();
     } else if (phase === 'final') {
-      card.innerHTML = `<div class="tf-lobby final"><b>🔥 المرحلة النهائية</b><small>بقي ${alive().length} · لا عودة بعد الآن، حتى بالهدية</small></div>`;
+      card.innerHTML = `<div class="tf-lobby final"><b>🔥 المرحلة النهائية</b><small>بقي ${alive().length} · لا عودة بعد الآن</small></div>`;
     } else if (phase === 'supportBreak') {
-      card.innerHTML = `<div class="tf-lobby final"><b>🌹 لا تنسونا بالدعم والمتابعة</b><small>ألعاب حصرية للذكاء وتنمية الذكاء · السؤال التالي بعد قليل</small></div>`;
-      big.className = 'tf-big on sup'; big.innerHTML = `<div class="tf-sup"><i>🌹</i><b>شكراً لكل من يدعمنا ❤️</b><small>تابعوا الصفحة لمزيد من الألعاب الحصرية</small></div>`;
+      card.innerHTML = `<div class="tf-lobby final"><b>⭐ تابعونا وشاركوا اللايف مع أصدقائكم</b><small>ألعاب حصرية للذكاء وتنمية الذكاء · السؤال التالي بعد قليل</small></div>`;
+      big.className = 'tf-big on sup'; big.innerHTML = `<div class="tf-sup"><i>🔁</i><b>شاركوا اللايف مع أصدقائكم</b><small>وتابعوا الصفحة لمزيد من الألعاب الحصرية</small></div>`;
     } else if (phase === 'gap') {
       card.innerHTML = `<div class="tf-lobby"><b>بقي ${players(alive().length)}</b><small>السؤال التالي…</small></div>`;
     } else if (phase === 'winner') {
@@ -566,7 +571,7 @@
     renderCounts();
   }
   const RULES = ['📜 اكتب «لعب» للدخول — المشاركة مجانية', '✅ أجب بـ «نعم» أو «لا» (yes / no)', '🔒 الإجابة الأولى هي التي تُحتسب، ولو كتبتها مرة أخرى',
-    '⏳ من لا يجيب يسقط', '🌹 من سقط يعود بهدية، مرتين فقط في الجولة', '🔥 عندما يبقى 10: لا عودة، حتى بالهدية', '👑 آخر من يبقى هو البطل'];
+    '⏳ من لا يجيب يسقط',  '🔥 عندما يبقى 10: لا عودة، حتى بالهدية', '👑 آخر من يبقى هو البطل'];
   function sessionTop() {
     const s = S(); if (!s) return '';
     const t = Object.keys(s.participants).filter(u => s.participants[u].wins).sort((a, b) => s.participants[b].wins - s.participants[a].wins).slice(0, 3);
@@ -589,7 +594,7 @@
     b.innerHTML = phase === 'lobby'
       ? `<span class="tb mid">🎮 ${players(Object.keys(st.players).length)}</span>`
       : `<span class="tb no">لا ✗ ${no}</span><span class="tb mid">؟ ${al.length - yes - no}</span><span class="tb yes">نعم ✓ ${yes}</span>`
-        + `<span class="tb left">باقٍ ${al.length}</span>${fin ? '<span class="tb fin">🔥 لا عودة</span>' : ''}`;
+        + `<span class="tb left">باقٍ ${al.length}</span>${fin ? '<span class="tb fin">🔥 المرحلة النهائية</span>' : ''}`;
   }
 
   /* ---------------- gift cards ---------------- */
