@@ -8,8 +8,11 @@ from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 VOICE = os.path.join(ROOT, 'web', 'voice')
-ANN = {'mohamed': 'Sadachbia', 'houssine': 'Fenrir', 'noureddine': 'Puck', 'youssef': 'Achird'}
-MODEL = os.environ.get('TTS_MODEL', 'gemini-3.8-flash-tts')
+ANN = {'mohamed': 'Sadachbia'}       # one announcer only (محمد)
+# each announcer has his own model: on the paid Tier 1 every TTS model allows ~100 requests a day,
+# so the 4 announcers can be recorded in parallel
+MODELS = {'mohamed': 'gemini-3.8-flash-tts'}   # one model only (~100 recordings a day on Tier 1)
+STOPPED = set()          # models that reached their daily limit during this run
 STYLE_LINE = ("You are a real, funny Moroccan TV game-show host from Casablanca, presenting a live quiz on TikTok. "
               "Say the following line in pure Moroccan Darija with a natural Moroccan accent, energetic, warm and playful, "
               "like a human talking live to his audience, never robotic. Laugh for real where you see [laughs]. "
@@ -18,10 +21,10 @@ STYLE_Q = ("You are a real Moroccan TV game-show host from Casablanca. Read this
            "with a Moroccan accent (the statement is in Arabic), with a little suspense, then ask «إِيهْ وْلَّا لَا؟» "
            "with energy, like a human presenter, never robotic. Only say the text:\n")
 
-def tts(voice, text):
+def tts(voice, text, model):
     body = {"contents": [{"parts": [{"text": text}]}],
             "generationConfig": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}}}}
-    req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent",
+    req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
                                  data=json.dumps(body).encode(), method="POST",
                                  headers={"Content-Type": "application/json", "x-goog-api-key": os.environ["GEMINI_KEY"]})
     for attempt in range(6):
@@ -29,11 +32,13 @@ def tts(voice, text):
             with urllib.request.urlopen(req, timeout=180) as r:
                 d = json.load(r)
             part = d["candidates"][0]["content"]["parts"][0]["inlineData"]
-            rate = int(part.get("mimeType", "rate=24000").split("rate=")[-1].split(";")[0] or 24000)
-            return base64.b64decode(part["data"]), rate
+            mt = part.get("mimeType", "")
+            if 'wav' in mt: return base64.b64decode(part["data"]), 'wav'        # complete WAV file
+            rate = int(mt.split("rate=")[-1].split(";")[0]) if "rate=" in mt else 24000
+            return base64.b64decode(part["data"]), rate                         # raw 16-bit PCM
         except urllib.error.HTTPError as e:
             msg = e.read().decode()[:300]
-            if 'per day' in msg.lower() or 'PerDay' in msg: raise SystemExit('DAILY QUOTA: ' + msg)
+            if 'per day' in msg.lower() or 'per_day' in msg.lower(): STOPPED.add(model); raise RuntimeError('DAILY LIMIT ' + model)
             if e.code in (429, 500, 503) and attempt < 5: time.sleep(10 * (attempt + 1)); continue
             raise RuntimeError(f"HTTP {e.code}: {msg}")
         except (KeyError, IndexError):
@@ -41,7 +46,8 @@ def tts(voice, text):
             raise RuntimeError('no audio in the answer')
 
 def encode(pcm, rate, out):
-    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 's16le', '-ar', str(rate), '-ac', '1', '-i', '-',
+    inp = ['-i', '-'] if rate == 'wav' else ['-f', 's16le', '-ar', str(rate), '-ac', '1', '-i', '-']
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', *inp,
                     '-af', 'silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.05,areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.15,areverse,loudnorm=I=-16:TP=-1.5',
                     '-ar', '24000', '-c:a', 'libopus', '-b:a', '28k', out], input=pcm, check=True)
 
@@ -67,15 +73,15 @@ def main():
             out = os.path.join(VOICE, a, it['key'] + '.ogg')
             if not os.path.exists(out): jobs.append((a, it, out))
     if opt.get('limit'): jobs = jobs[:int(opt['limit'])]
-    print(f'{len(jobs)} recordings to make ({MODEL})', flush=True)
+    print(f'{len(jobs)} recordings to make', flush=True)
     done = [0]; errors = []
     def work(j):
         a, it, out = j
+        model = os.environ.get('TTS_MODEL_' + a.upper(), MODELS[a])
+        if model in STOPPED: return
         try:
-            pcm, rate = tts(ANN[a], (STYLE_LINE if it['kind'] == 'line' else STYLE_Q) + it['text'])
+            pcm, rate = tts(ANN[a], (STYLE_LINE if it['kind'] == 'line' else STYLE_Q) + it['text'], model)
             encode(pcm, rate, out)
-        except SystemExit as e:
-            raise
         except Exception as e:
             errors.append((a, it['key'], str(e)[:120]))
         done[0] += 1
@@ -84,7 +90,8 @@ def main():
         with ThreadPoolExecutor(int(opt.get('workers', 4))) as ex: list(ex.map(work, jobs))
     finally:
         print('recorded per announcer:', manifest(), flush=True)
-        for e in errors[:10]: print('ERR', e)
+        for e in errors[:6]: print('ERR', e)
+        if STOPPED: print('daily limit reached for:', sorted(STOPPED))
 
 if __name__ == '__main__':
     main()

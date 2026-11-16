@@ -5,10 +5,7 @@
  * Each line has a fixed key (a_<group>_<index>, n_<count>) → voice/<announcer>/<key>.ogg
  * ========================================================================= */
 window.TF_ANNOUNCERS = [
-  { id: 'mohamed', name: 'محمد', voice: 'Sadachbia' },
-  { id: 'houssine', name: 'الحسين', voice: 'Fenrir' },
-  { id: 'noureddine', name: 'نور الدين', voice: 'Puck' },
-  { id: 'youssef', name: 'يوسف', voice: 'Achird' }
+  { id: 'mohamed', name: 'محمد', voice: 'Sadachbia' }
 ];
 window.TF_LINES = {
   lobby: [
