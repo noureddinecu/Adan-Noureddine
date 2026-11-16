@@ -13,13 +13,13 @@ ANN = {'mohamed': 'Sadachbia'}       # one announcer only (محمد)
 # so the 4 announcers can be recorded in parallel
 MODELS = {'mohamed': 'gemini-3.8-flash-tts'}   # one model only (~100 recordings a day on Tier 1)
 STOPPED = set()          # models that reached their daily limit during this run
-STYLE_LINE = ("You are a real, funny Moroccan TV game-show host from Casablanca, presenting a live quiz on TikTok. "
-              "Say the following line in pure Moroccan Darija with a natural Moroccan accent, energetic, warm and playful, "
-              "like a human talking live to his audience, never robotic. Laugh for real where you see [laughs]. "
-              "Only say the line:\n")
-STYLE_Q = ("You are a real Moroccan TV game-show host from Casablanca. Read this quiz statement clearly and naturally "
-           "with a Moroccan accent (the statement is in Arabic), with a little suspense, then ask «إِيهْ وْلَّا لَا؟» "
-           "with energy, like a human presenter, never robotic. Only say the text:\n")
+# the same layout as the samples that worked: instructions, an explicit «do not read», a blank line, then the line
+STYLE_LINE = ("Read this as a real, funny Moroccan TV game-show host from Casablanca, in pure Moroccan Darija with a strong "
+              "natural Moroccan accent. Very energetic, warm and playful, like a human talking live to his audience, never robotic. "
+              "Where you see [laughs], laugh out loud for real. Do not read these instructions, only the Darija line below.\n\n")
+STYLE_Q = ("Read this as a real Moroccan TV game-show host from Casablanca with a natural Moroccan accent: say the quiz "
+           "statement clearly with a little suspense, then ask the question at the end with energy, like a human, never robotic. "
+           "Do not read these instructions, only the Arabic line below.\n\n")
 
 def tts(voice, text, model):
     body = {"contents": [{"parts": [{"text": text}]}],
@@ -44,6 +44,12 @@ def tts(voice, text, model):
         except (KeyError, IndexError):
             if attempt < 5: time.sleep(3); continue
             raise RuntimeError('no audio in the answer')
+
+def too_long(pcm, rate, text):
+    import re
+    n = len(re.sub(r'[\u064B-\u0652\s\[\]a-z]', '', text))
+    secs = (len(pcm) - (44 if rate == 'wav' else 0)) / (2 * (24000 if rate == 'wav' else rate))
+    return secs > 3.5 + n * 0.14
 
 def encode(pcm, rate, out):
     inp = ['-i', '-'] if rate == 'wav' else ['-f', 's16le', '-ar', str(rate), '-ac', '1', '-i', '-']
@@ -80,7 +86,11 @@ def main():
         model = os.environ.get('TTS_MODEL_' + a.upper(), MODELS[a])
         if model in STOPPED: return
         try:
-            pcm, rate = tts(ANN[a], (STYLE_LINE if it['kind'] == 'line' else STYLE_Q) + it['text'], model)
+            for tries in range(2):
+                pcm, rate = tts(ANN[a], (STYLE_LINE if it['kind'] == 'line' else STYLE_Q) + it['text'], model)
+                if not too_long(pcm, rate, it['text']): break
+            else:
+                raise RuntimeError('recording too long (instructions read?)')
             encode(pcm, rate, out)
         except Exception as e:
             errors.append((a, it['key'], str(e)[:120]))
