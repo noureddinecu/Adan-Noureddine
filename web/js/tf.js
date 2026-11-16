@@ -373,6 +373,16 @@
     const hud = $('quizHud'); if (!hud) return;
     applyLayout();
     hud.dataset.phase = phase;
+    // camera: a slow left/right sway all the time (CSS), plus a "shot" per moment of the game
+    const cam = $('tfCam');
+    if (cam) {
+      let shot = 'wide';
+      if (phase === 'question' || phase === 'collect') shot = 'q';
+      if (phase === 'fall' && st && st.q) shot = st.q.truth ? 'fall-no' : 'fall-yes';   // the wrong floor drops: look at it
+      if (phase === 'winner') shot = 'win';
+      if (phase === 'lobby') shot = 'lobby';
+      cam.dataset.shot = shot;
+    }
     hud.classList.toggle('paused', paused);
     const card = $('tfCard'), big = $('tfBig');
     big.className = 'tf-big'; big.innerHTML = '';
