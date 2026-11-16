@@ -12,7 +12,7 @@
 (function (G) {
   'use strict';
   const $ = id => document.getElementById(id);
-  const KEY = 'goldrail.live.v1';
+  const KEY = window.APP_KEY || 'goldrail.live.v1';          // each app (quiz / yes-no) keeps its own settings
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const Native = () => window.AndroidBridge || null;
 
@@ -75,6 +75,7 @@
     simViewers: 40, startLevel: 1, photoMax: 10, giftThanks: true, giftDelay: 7, giftShow: 4, applause: true, topicTime: 6, revealTime: 7, supportTime: 13,
     game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.5, musicSong: 'arena', cfgVer: 3, musicRotate: 15, grace: 8, supportEvery: 7, shareEvery: 2
   };
+  Object.assign(DEFAULT_CFG, window.APP_DEFAULTS || {});        // per-app defaults (e.g. «صح أم خطأ»)
   let cfg = Object.assign({}, DEFAULT_CFG);
   let session = null;      // persisted
   let round = null;        // current round (persisted while open)
@@ -91,7 +92,7 @@
 
   function newSession() {
     return { id: Date.now(), startedAt: Date.now(), comments: 0, participants: {}, rounds: [], roundsPlayed: 0,
-      level: Math.max(1, Math.min(cfg.startLevel | 0, G.Levels.LEVEL_COUNT)), peakViewers: 0 };
+      level: G.Levels ? Math.max(1, Math.min(cfg.startLevel | 0, G.Levels.LEVEL_COUNT)) : 1, peakViewers: 0 };
   }
   function load() {
     try {
@@ -610,7 +611,7 @@
   /* =================================================================
    * CONTROL PANEL (host only)
    * ================================================================= */
-  const FIELDS = ['shareEvery', 'musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'photoMax', 'giftThanks', 'giftDelay', 'giftShow', 'applause', 'topicTime', 'revealTime', 'supportTime'];
+  const FIELDS = ['shareEvery', 'musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'lobbyTime', 'reviveMax', 'reviveMin', 'finalAt', 'voice', 'voiceRate', 'minPlayers', 'photoMax', 'giftThanks', 'giftDelay', 'giftShow', 'applause', 'topicTime', 'revealTime', 'supportTime'];
   const isQuiz = () => cfg.game === 'quiz';
   function fillForm() {
     renderCats();
@@ -649,6 +650,7 @@
     L('cpReveal', quiz ? '👁️ إظهار الإجابة' : '👁️ بيّن فين الذهب');
     L('cpNext', quiz ? '⏭️ التالي' : '⏭️ المرحلة الجاية');
     L('cpReplay', quiz ? '🔁 تحدٍّ جديد من 1' : '🔁 عاود الجولة');
+    if (G.Quiz && G.Quiz.LABELS) Object.keys(G.Quiz.LABELS).forEach(id => L(id, G.Quiz.LABELS[id]));
     const man = $('cpManNum');
     if (man) { man.placeholder = quiz ? 'الإجابة' : 'رقم'; man.maxLength = quiz ? 40 : 2; man.classList.toggle('wide', quiz); }
   }

@@ -40,7 +40,7 @@ public class LiveService extends Service {
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && nm != null) {
             NotificationChannel ch = new NotificationChannel(CHANNEL, "جلسة LIVE", NotificationManager.IMPORTANCE_LOW);
-            ch.setDescription("كتبقى ظاهرة ملي تكون جلسة TikTok LIVE خدامة");
+            ch.setDescription("يبقى ظاهراً ما دامت جلسة TikTok LIVE تعمل");
             ch.setShowBadge(false);
             nm.createNotificationChannel(ch);
         }
@@ -50,8 +50,8 @@ public class LiveService extends Service {
         Notification.Builder b = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 ? new Notification.Builder(this, CHANNEL) : new Notification.Builder(this);
         Notification n = b.setSmallIcon(R.drawable.ic_stat_live)
-                .setContentTitle("تحدي الثقافة · جلسة LIVE خدامة")
-                .setContentText("اللعبة كتستقبل التعليقات. اضغط هنا باش ترجع للعبة.")
+                .setContentTitle(getString(R.string.app_name) + " · جلسة LIVE تعمل")
+                .setContentText("اللعبة تستقبل التعليقات. اضغط هنا للعودة إلى اللعبة.")
                 .setContentIntent(pi)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)

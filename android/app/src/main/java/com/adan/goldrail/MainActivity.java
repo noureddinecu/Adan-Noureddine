@@ -26,6 +26,8 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.speech.tts.TextToSpeech;
+import java.util.Locale;
 
 /**
  * Hosts the game (bundled in assets/) inside a full-screen WebView.
@@ -36,6 +38,9 @@ public class MainActivity extends Activity {
     private WebView webView;
     private volatile boolean liveMode = false;
     private volatile boolean volumeKeys = true;
+    // announcer voice («صح أم خطأ»): Android's own text-to-speech, Arabic (Moroccan if the phone has it)
+    private TextToSpeech tts;
+    private volatile boolean ttsReady = false;
     private static final String[] TIKTOK_PACKAGES = {
             "com.zhiliaoapp.musically",      // TikTok (most regions)
             "com.ss.android.ugc.trill",      // TikTok (some Asian regions)
@@ -53,7 +58,7 @@ public class MainActivity extends Activity {
         w.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         webView = new WebView(this);
-        webView.setBackgroundColor(Color.parseColor("#071A36"));
+        webView.setBackgroundColor(Color.parseColor(BuildConfig.BG_COLOR));
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         webView.setVerticalScrollBarEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
@@ -82,7 +87,18 @@ public class MainActivity extends Activity {
         setContentView(webView);
         setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC);
         hideSystemBars();
-        webView.loadUrl("file:///android_asset/index.html");
+        webView.loadUrl("file:///android_asset/" + BuildConfig.START_PAGE);
+        if (BuildConfig.USE_TTS) initTts();
+    }
+
+    private void initTts() {
+        tts = new TextToSpeech(this, status -> {
+            if (status != TextToSpeech.SUCCESS || tts == null) return;
+            int r = tts.setLanguage(new Locale("ar", "MA"));
+            if (r == TextToSpeech.LANG_MISSING_DATA || r == TextToSpeech.LANG_NOT_SUPPORTED) r = tts.setLanguage(new Locale("ar"));
+            ttsReady = r != TextToSpeech.LANG_MISSING_DATA && r != TextToSpeech.LANG_NOT_SUPPORTED;
+            tts.setPitch(1.0f);
+        });
     }
 
     @SuppressWarnings("deprecation")
@@ -164,6 +180,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         if (liveMode) LiveService.stop(this);
+        if (tts != null) { tts.stop(); tts.shutdown(); tts = null; }
         if (webView != null) { webView.destroy(); webView = null; }
         super.onDestroy();
     }
@@ -223,6 +240,21 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public boolean isLiveMode() { return liveMode; }
+
+        /** Reads a sentence aloud (announcer). interrupt = cut the current sentence. */
+        @JavascriptInterface
+        public boolean speak(String text, float rate, boolean interrupt) {
+            if (tts == null || !ttsReady || text == null) return false;
+            tts.setSpeechRate(Math.max(0.6f, Math.min(1.6f, rate)));
+            tts.speak(text, interrupt ? TextToSpeech.QUEUE_FLUSH : TextToSpeech.QUEUE_ADD, null, "a" + System.nanoTime());
+            return true;
+        }
+
+        @JavascriptInterface
+        public void stopSpeaking() { if (tts != null) tts.stop(); }
+
+        @JavascriptInterface
+        public boolean hasVoice() { return ttsReady; }
 
         /** Opens the TikTok app (the host then starts LIVE → Mobile Gaming / screen share). */
         @JavascriptInterface

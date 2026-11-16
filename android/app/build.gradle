@@ -15,8 +15,34 @@ android {
         applicationId 'com.adan.goldrail'
         minSdk 24
         targetSdk 35
-        versionCode 15
-        versionName '3.10.0'
+        versionCode 16
+        versionName '3.11.0'
+    }
+
+    buildFeatures { buildConfig true }
+
+    // Two separate apps from the same code: the quiz «تحدي الثقافة» and the yes/no game «صح أم خطأ».
+    // Different applicationId = installed side by side, each with its own settings.
+    flavorDimensions 'app'
+    productFlavors {
+        quiz {
+            dimension 'app'
+            applicationId 'com.adan.goldrail'
+            versionCode 16
+            versionName '3.11.0'
+            buildConfigField 'String', 'START_PAGE', '"index.html"'
+            buildConfigField 'String', 'BG_COLOR', '"#071A36"'
+            buildConfigField 'boolean', 'USE_TTS', 'false'
+        }
+        tf {
+            dimension 'app'
+            applicationId 'com.adan.sahkhata'
+            versionCode 1
+            versionName '1.0.0'
+            buildConfigField 'String', 'START_PAGE', '"tf.html"'
+            buildConfigField 'String', 'BG_COLOR', '"#1B1033"'
+            buildConfigField 'boolean', 'USE_TTS', 'true'
+        }
     }
 
     signingConfigs {
@@ -53,10 +79,11 @@ android {
     }
 }
 
-// Name the outputs ثقافة-v<version>.apk (release) and ثقافة-v<version>-debug.apk
+// Name the outputs ثقافة-v<version>.apk / صح-أم-خطأ-v<version>.apk (+ -debug)
 android.applicationVariants.configureEach { variant ->
     variant.outputs.configureEach {
         def suffix = variant.buildType.name == 'release' ? '' : '-' + variant.buildType.name
-        outputFileName = "ثقافة-v${variant.versionName.replace('-debug', '')}${suffix}.apk"
+        def base = variant.flavorName == 'tf' ? 'صح-أم-خطأ' : 'ثقافة'
+        outputFileName = "${base}-v${variant.versionName.replace('-debug', '')}${suffix}.apk"
     }
 }
