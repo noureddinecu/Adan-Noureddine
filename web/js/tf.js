@@ -320,9 +320,10 @@
     else if (st.lastOut && !st.reviveHinted && num(cfg().reviveMax, 2) > 0 && n > finalAt) { st.reviveHinted = true; say('reviveHint'); }
     else if (n <= finalAt && st.finalReminds < 2 && st.qNo - st.lastRemindQ >= 2) { st.finalReminds++; st.lastRemindQ = st.qNo; say('finalRemind'); }
     else if (Math.random() < 0.6) sayCount(n);           // «بقاو دابا عندنا 15 داللعّابة!»
-    const every = num(cfg().giftHype, 4);
-    if (every > 0 && st.qNo % every === 0) say('support');  // «ما تنساوناش بالهدايا…»
     say('next');                                           // «هادو اللي بقاو معانا… يلاه ندوزو للسؤال الجاي!»
+    // every N questions (5 by default) a short support break: «ما تنساوناش بالدعم ديالكم وما تنساوش المتابعة…»
+    const every = num(cfg().giftHype, 5);
+    if (every > 0 && st.qNo % every === 0 && n > 1) { st.supportNext = true; }
     setPhase('gap', 1000 * Math.max(4, num(cfg().gapTime, 10)));
   }
 
@@ -353,7 +354,8 @@
     if (phase === 'question') return close();
     if (phase === 'collect') return fall();
     if (phase === 'fall') return afterFall();
-    if (phase === 'final' || phase === 'gap') return ask();
+    if (phase === 'gap' && st.supportNext) { st.supportNext = false; setPhase('supportBreak', 12000); say('support'); return; }
+    if (phase === 'final' || phase === 'gap' || phase === 'supportBreak') return ask();
     if (phase === 'winner') { setPhase('podium', 14000); say('podium'); return; }
     if (phase === 'podium' || phase === 'nowinner') return lobby();
   }
@@ -509,6 +511,9 @@
       renderTimer();
     } else if (phase === 'final') {
       card.innerHTML = `<div class="tf-lobby final"><b>🔥 المرحلة النهائية</b><small>بقي ${alive().length} · لا عودة بعد الآن، حتى بالهدية</small></div>`;
+    } else if (phase === 'supportBreak') {
+      card.innerHTML = `<div class="tf-lobby final"><b>🌹 لا تنسونا بالدعم والمتابعة</b><small>ألعاب حصرية للذكاء وتنمية الذكاء · السؤال التالي بعد قليل</small></div>`;
+      big.className = 'tf-big on sup'; big.innerHTML = `<div class="tf-sup"><i>🌹</i><b>شكراً لكل من يدعمنا ❤️</b><small>تابعوا الصفحة لمزيد من الألعاب الحصرية</small></div>`;
     } else if (phase === 'gap') {
       card.innerHTML = `<div class="tf-lobby"><b>بقي ${players(alive().length)}</b><small>السؤال التالي…</small></div>`;
     } else if (phase === 'winner') {
@@ -625,7 +630,7 @@
       if (phase === 'lobby') return startQuestions();
       if (phase === 'question') return close();
       if (phase === 'collect') return fall();
-      if (phase === 'ready' || phase === 'gap' || phase === 'final') return ask();
+      if (phase === 'ready' || phase === 'gap' || phase === 'final' || phase === 'supportBreak') return ask();
       if (phase === 'winner') { setPhase('podium', 14000); return; }
       if (phase === 'podium' || phase === 'nowinner') return lobby();
     },
@@ -648,7 +653,7 @@
       api = a;
       // one-time new defaults for apps installed before (quieter music, 10 s extra time, 2 min to join, 20 s to answer)
       const c = cfg();
-      if (c.tfVer !== 2) { c.tfVer = 2; c.musicVol = 0.3; c.grace = 10; c.lobbyTime = 120; c.qTime = Math.max(20, num(c.qTime, 20)); c.gapTime = 10; c.giftHype = 4; if (api.save) api.save(); }
+      if (c.tfVer !== 3) { c.tfVer = 3; c.musicVol = 0.3; c.grace = 10; c.lobbyTime = 120; c.qTime = Math.max(20, num(c.qTime, 20)); c.gapTime = 10; c.giftHype = 5; if (api.save) api.save(); }
     },
     applyLayout, music,
     start() {

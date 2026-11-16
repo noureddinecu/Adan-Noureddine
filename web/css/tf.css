@@ -267,3 +267,8 @@ body.tf-app { background: #1B1033; }
 .tf-top li .tf-ph { width: 1.8em; height: 1.8em; font-size: 0.7em; }
 .tf-top li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 900; }
 .tf-top li em { font-style: normal; color: #16A34A; font-weight: 900; direction: ltr; }
+/* support break */
+.tf-sup { display: inline-flex; flex-direction: column; align-items: center; gap: 0.2em; background: linear-gradient(135deg, rgba(244,63,94,.95), rgba(139,92,246,.95)); color: #fff;
+  border-radius: 1.2em; padding: 0.7em 1.2em; border: 0.12em solid #fff; box-shadow: 0 0.8em 2em rgba(0,0,0,.45); }
+.tf-sup i { font-style: normal; font-size: 2.6em; line-height: 1; animation: tfCrown 1.2s ease-in-out infinite; }
+.tf-sup b { font-size: 1.15em; font-weight: 900; } .tf-sup small { font-size: 0.85em; opacity: .95; }
