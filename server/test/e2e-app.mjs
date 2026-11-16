@@ -17,6 +17,7 @@ let ok = true; const check = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m
 
 await p.goto('file:///home/user/Adan-Noureddine/web/index.html'); await wait(2300);
 await p.tap('#mLive'); await wait(300);
+await p.selectOption('#cp_game', 'gold');
 await p.selectOption('#cp_source', 'relay');
 await p.fill('#cp_user', '@my_live_account');
 await p.fill('#cp_relayUrl', `ws://127.0.0.1:${srv.port}`);

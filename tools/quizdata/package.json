@@ -1,0 +1,13 @@
+{
+  "name": "quiz-data-builder",
+  "private": true,
+  "type": "module",
+  "description": "Builds web/data/world.js and web/data/shapes.js + copies flags for the quiz game",
+  "scripts": { "build": "node build.mjs" },
+  "dependencies": {
+    "flag-icons": "7.6.0",
+    "i18n-iso-countries": "7.14.0",
+    "topojson-client": "3.1.0",
+    "world-atlas": "2.0.2"
+  }
+}

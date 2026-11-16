@@ -161,6 +161,7 @@
 
     /* ---------------- update ---------------- */
     frame(ts) {
+      if (this.hidden) { this.clock = performance.now(); requestAnimationFrame(t => this.frame(t)); return; }   // quiz on screen: save battery
       this.tick();
       if (!this.fpsCap || ts - this.lastDraw >= 1000 / this.fpsCap - 2) { this.lastDraw = ts; this.draw(); }
       requestAnimationFrame(t => this.frame(t));

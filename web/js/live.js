@@ -71,8 +71,9 @@
   /* ---------------- config / persistence ---------------- */
   const DEFAULT_CFG = {
     source: 'sim', user: '', relayUrl: '', token: '', eulerKey: '',
-    qTime: 20, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
-    simViewers: 40, startLevel: 1
+    qTime: 30, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
+    simViewers: 40, startLevel: 1,
+    game: 'quiz', qCount: 30, fuzzy: true, quizOff: ''
   };
   let cfg = Object.assign({}, DEFAULT_CFG);
   let session = null;      // persisted
@@ -137,8 +138,9 @@
     if (c.a) p.a = c.a;
     // why was (or wasn't) this comment counted? → shown to the host in the panel
     let why;
-    const num = parseAnswer(c.c, round ? round.lanes : 6);
-    if (num == null) why = 'ماشي رقم';
+    const num = isQuiz() ? null : parseAnswer(c.c, round ? round.lanes : 6);
+    if (isQuiz()) why = G.Quiz.onChat(c, p, uid);
+    else if (num == null) why = 'ماشي رقم';
     else if (!round || round.done) why = 'ما كايناش جولة';
     else if (!round.open) why = 'قبل السؤال';
     else if (round.answers[uid]) why = 'جاوب من قبل';
@@ -150,7 +152,7 @@
       renderCounter();
       why = 'تحسب ✓ (' + num + ')';
     }
-    recent.unshift({ n: p.n, c: String(c.c || '').slice(0, 40), t: Date.now(), why, ok: why.startsWith('تحسب') });
+    recent.unshift({ n: p.n, c: String(c.c || '').slice(0, 40), t: Date.now(), why, ok: why.startsWith('تحسب') || why.startsWith('صحيح') });
     if (recent.length > 8) recent.pop();
     lastCommentAt = Date.now();
     if (session.comments % 50 === 0) trimParticipants(20000);
@@ -281,6 +283,21 @@
         setConn('connected', 'وضع التجربة: ' + people.length + ' مشاهد وهمي');
         iv = setInterval(() => {
           onViewers(people.length + Math.round(Math.random() * 5));
+          if (isQuiz()) {
+            const tg = G.Quiz.simTarget();
+            if (tg && seenRound !== tg.id) {
+              seenRound = tg.id;
+              people.forEach(p => {
+                if (Math.random() < 0.25) return;
+                const right = Math.random() < 0.3 + p.skill * 0.55;
+                const delay = 1200 + Math.random() * cfg.qTime * 750;
+                if (!right || Math.random() < 0.3) setTimeout(() => { const t2 = G.Quiz.simTarget(); if (t2 && t2.id === tg.id) onChat({ u: p.u, n: p.n, a: p.a, c: t2.wrong }); }, delay * 0.6);
+                if (right) setTimeout(() => { const t2 = G.Quiz.simTarget(); if (t2 && t2.id === tg.id) onChat({ u: p.u, n: p.n, a: p.a, c: t2.right }); }, delay);
+              });
+            }
+            if (Math.random() < 0.06) { const p = people[(Math.random() * people.length) | 0]; onChat({ u: p.u, n: p.n, a: p.a, c: CHAT[(Math.random() * CHAT.length) | 0] }); }
+            return;
+          }
           if (Math.random() < 0.08) { const p = people[(Math.random() * people.length) | 0]; onChat({ u: p.u, n: p.n, a: p.a, c: CHAT[(Math.random() * CHAT.length) | 0] }); }
           if (round && round.open && seenRound !== round.no) {
             seenRound = round.no;
@@ -481,31 +498,42 @@
   /* =================================================================
    * HOST ACTIONS (panel + volume keys)
    * ================================================================= */
+  const Q = () => G.Quiz.ctl;
   const actions = {
-    newRound() { if (!active) return; setPausedCard(false); api.game.pause(false); startRound(); },
+    newRound() { if (isQuiz()) return active && Q().newTopic(); return actions._newRound(); },
+    _newRound() { if (!active) return; setPausedCard(false); api.game.pause(false); startRound(); },
     togglePause() {
+      if (isQuiz()) return active && Q().togglePause();
       if (!active || !round || round.done) return;
       const v = !api.game.paused;
       api.game.pause(v); setPausedCard(v);
       if (v) api.Sfx.stopRumble(); else if (api.game.phase === 'running') api.Sfx.startRumble();
       if (v) clearSched();
     },
-    reveal() { if (!active || !round || round.done) return; api.game.pause(false); setPausedCard(false); api.game.revealNow(); },
-    showWinners() { if (!active) return; showBoard(round && round.done ? 'round' : 'session'); },
-    showSession() { if (!active) return; showBoard('session'); },
-    hideWinners() { clearSched(); hideBoard(); },
+    reveal() { if (isQuiz()) return active && Q().reveal(); if (!active || !round || round.done) return; api.game.pause(false); setPausedCard(false); api.game.revealNow(); },
+    showWinners() { if (!active) return; if (isQuiz()) return Q().showBoard(); showBoard(round && round.done ? 'round' : 'session'); },
+    showSession() { if (!active) return; if (isQuiz()) return Q().showBoard(); showBoard('session'); },
+    hideWinners() { if (isQuiz()) return active && Q().hideBoard(); clearSched(); hideBoard(); },
     nextLevel() {
       if (!active) return;
+      if (isQuiz()) return Q().next();
       if (round && !round.done) session.level = round.level % G.Levels.LEVEL_COUNT + 1;
       round = null; startRound();
     },
-    replay() { if (!active) return; const n = round ? round.level : session.level; round = null; startRound(n); },
+    replay() { if (!active) return; if (isQuiz()) return Q().restart(); const n = round ? round.level : session.level; round = null; startRound(n); },
     toggleSound() { api.toggleSound(); }
   };
 
   // Android volume keys → invisible remote control during the broadcast
   G.onLiveKey = function (k) {
     if (!active || !cfg.volKeys) return false;
+    if (isQuiz()) {
+      const ph = G.Quiz.phase;
+      if (k === 'up') Q().next();
+      else if (ph === 'question' || ph === 'topic') Q().togglePause();
+      else if (ph === 'board' || ph === 'final') Q().hideBoard(); else Q().showBoard();
+      return true;
+    }
     if (k === 'up') {
       if (!round || round.done) actions.newRound();
       else if (round.open || api.game.phase === 'running') actions.reveal();
@@ -536,6 +564,8 @@
     const N = Native(); if (N && N.setLiveMode) try { N.setLiveMode(true); N.setVolumeKeys(!!cfg.volKeys); } catch (e) { /* */ }
     api.game.fpsCap = cfg.saver ? 30 : 0;
     goBroadcast();
+    api.game.hidden = isQuiz();
+    if (isQuiz()) { G.Quiz.start(); saveNow(); return; }
     setHud('wait');
     $('lvRound').textContent = '';
     if (resume && resume.round) { round = null; schedule(4000, () => startRound(resume.round.level), 'start'); }
@@ -547,19 +577,22 @@
     active = false; clearSched();
     conn && conn.stop(); conn = null;
     round = null; hideBoard(); setPausedCard(false);
+    G.Quiz.stop(); api.game.hidden = false;
     const N = Native(); if (N && N.setLiveMode) try { N.setLiveMode(false); } catch (e) { /* */ }
     api.game.fpsCap = 0;
     saveNow();
     api.goMenu();
   }
 
-  function goBroadcast() { api.show('liveHud'); }
+  function goBroadcast() { api.show(isQuiz() ? 'quizHud' : 'liveHud'); }
 
   /* =================================================================
    * CONTROL PANEL (host only)
    * ================================================================= */
-  const FIELDS = ['source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
+  const FIELDS = ['game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
+  const isQuiz = () => cfg.game === 'quiz';
   function fillForm() {
+    renderCats();
     FIELDS.forEach(f => {
       const el = $('cp_' + f); if (!el) return;
       if (el.type === 'checkbox') el.checked = !!cfg[f]; else el.value = cfg[f];
@@ -575,6 +608,7 @@
     });
     cfg.qTime = Math.max(8, Math.min(60, cfg.qTime | 0));
     cfg.winnersTime = Math.max(5, Math.min(60, cfg.winnersTime | 0));
+    cfg.qCount = Math.max(5, Math.min(100, cfg.qCount | 0 || 30));
     if (api && api.game) api.game.fpsCap = active && cfg.saver ? 30 : 0;
     const N = Native(); if (N && N.setVolumeKeys) try { N.setVolumeKeys(!!cfg.volKeys); } catch (e) { /* */ }
     save();
@@ -582,6 +616,27 @@
   function syncSourceRows() {
     const s = $('cp_source').value;
     document.querySelectorAll('[data-src]').forEach(el => { el.style.display = el.dataset.src.split(' ').includes(s) ? '' : 'none'; });
+    const g = $('cp_game').value;
+    document.querySelectorAll('[data-game]').forEach(el => { el.style.display = el.dataset.game === g ? '' : 'none'; });
+    const quiz = g === 'quiz';
+    const L = (id, txt) => { const el = $(id); if (el) el.textContent = txt; };
+    L('cpNew', quiz ? '▶️ سؤال جديد' : '▶️ بدا جولة جديدة');
+    L('cpPause', quiz ? '⏸️ وقّف / كمّل' : '⏸️ وقّف / كمّل الجولة');
+    L('cpReveal', quiz ? '👁️ بيّن الجواب' : '👁️ بيّن فين الذهب');
+    L('cpNext', quiz ? '⏭️ دوز للجاي' : '⏭️ المرحلة الجاية');
+    L('cpReplay', quiz ? '🔁 تحدي جديد من 1' : '🔁 عاود الجولة');
+    const man = $('cpManNum');
+    if (man) { man.placeholder = quiz ? 'الجواب' : 'رقم'; man.maxLength = quiz ? 40 : 2; man.classList.toggle('wide', quiz); }
+  }
+  function renderCats() {
+    const box = $('cpCats'); if (!box || !G.Quiz) return;
+    const off = new Set((cfg.quizOff || '').split(',').filter(Boolean));
+    box.innerHTML = G.Quiz.CATS.map(c => `<label><input type="checkbox" data-cat="${c.id}" ${off.has(c.id) ? '' : 'checked'}>${c.icon} ${esc(c.ar)}</label>`).join('');
+    box.querySelectorAll('input').forEach(i => i.addEventListener('change', () => {
+      const offNow = [...box.querySelectorAll('input')].filter(x => !x.checked).map(x => x.dataset.cat);
+      if (offNow.length === G.Quiz.CATS.length) { i.checked = true; return; }   // keep at least one
+      cfg.quizOff = offNow.join(','); save();
+    }));
   }
 
   function renderPanelStatus() {
@@ -602,7 +657,10 @@
     let mem = performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) + ' MB' : '—';
     const N = Native();
     if (N && N.memoryInfo) try { const mi = JSON.parse(N.memoryInfo()); mem = mi.pssMB + ' MB'; } catch (e) { /* */ }
-    const cells = [
+    const cells = isQuiz() ? [
+      ['المشاركين', parts], ['التعليقات', session.comments], ...G.Quiz.stats(),
+      ['المشاهدين دابا', viewers || '—'], ['أكبر عدد مشاهدين', session.peakViewers || '—'], ['مدة الجلسة', mins + ' د'], ['ذاكرة اللعبة', mem]
+    ] : [
       ['المشاركين', parts], ['التعليقات', session.comments], ['الجولات', session.rounds.length],
       ['أجوبة هاد الجولة', round ? round.count : 0], ['جاوبو صح (آخر جولة)', last ? last.correct + '/' + last.total : '—'],
       ['المشاهدين دابا', viewers || '—'], ['أكبر عدد مشاهدين', session.peakViewers || '—'], ['مدة الجلسة', mins + ' د'],
@@ -623,7 +681,7 @@
     $('cpLive').style.display = active ? '' : 'none';
     $('cpSetup').style.display = active ? 'none' : '';
     $('cpResume').style.display = !active && saved && saved.active && saved.session ? '' : 'none';
-    if (saved && saved.session) $('cpResume').textContent = '▶ كمّل الجلسة اللي فاتت (' + saved.session.rounds.length + ' جولات · ' + Object.keys(saved.session.participants).length + ' مشارك)';
+    if (saved && saved.session) $('cpResume').textContent = '▶ كمّل الجلسة اللي فاتت (' + Object.keys(saved.session.participants).length + ' مشارك)';
     api.show('control');
     clearInterval(statTimer); statTimer = setInterval(() => { if (api.screen() === 'control') renderStats(); }, 1000);
     bumpIdle();
@@ -667,14 +725,17 @@
     });
     on('cpReset', () => api.confirm('تمسح الترتيب العام؟', 'النقاط ديال جميع المشاركين غادي يتمسحو.', () => { if (session) { session.participants = {}; session.rounds = []; saveNow(); renderStats(); } }));
     $('cp_source').addEventListener('change', () => { syncSourceRows(); readForm(); });
+    $('cp_game').addEventListener('change', () => { syncSourceRows(); readForm(); });
     document.querySelectorAll('#control input, #control select').forEach(el => el.addEventListener('change', () => { readForm(); bumpIdle(); }));
     $('control').addEventListener('pointerdown', bumpIdle);
 
     // hidden long-press zone on the broadcast screen (top corner) → open panel
-    const hot = $('lvHot');
-    let lp = null;
-    hot.addEventListener('pointerdown', () => { lp = setTimeout(() => { api.Sfx.click(); openPanel(); }, 700); });
-    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => hot.addEventListener(ev, () => clearTimeout(lp)));
+    ['lvHot', 'qzHot'].forEach(hid => {
+      const hot = $(hid); if (!hot) return;
+      let lp = null;
+      hot.addEventListener('pointerdown', () => { lp = setTimeout(() => { api.Sfx.click(); openPanel(); }, 700); });
+      ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => hot.addEventListener(ev, () => clearTimeout(lp)));
+    });
   }
 
   function openTikTok() {
@@ -689,6 +750,7 @@
     init(a) {
       api = a;
       saved = load();
+      G.Quiz.init({ cfg: () => cfg, session: () => session, save, Sfx: a.Sfx });
       if (saved && saved.savedAt && Date.now() - saved.savedAt > 12 * 3600e3) saved = null;
       wire();
     },
