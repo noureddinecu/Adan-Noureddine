@@ -509,7 +509,7 @@
     else if (phase === 'ready') card.innerHTML = `<div class="tf-lobby"><b>استعدّوا! 🔥</b><small>أجيبوا بـ «نعم» أو «لا» · أول إجابة هي النهائية</small></div>`;
     else if (st && st.q && (phase === 'question' || phase === 'collect' || phase === 'fall')) {
       const q = st.q;
-      card.innerHTML = `<div class="tf-q"><span class="tf-no">${st.qNo}</span><div class="tf-qt">${q.flag ? `<img class="tf-flag" src="flags/${q.flag}.svg" alt="">` : ''}<b>${esc((window.TF_TK && window.TF_TK[q.text]) || q.text)}</b></div>
+      card.innerHTML = `<div class="tf-q"><span class="tf-no">${st.qNo}</span><div class="tf-qt">${q.flag ? `<img class="tf-flag" src="flags/${q.flag}.svg" alt="">` : ''}<b>${esc(q.text)}</b></div>
         <span class="tf-timer" id="tfTimer"><i></i><em id="tfSec">${left()}</em></span></div>`;
       if (phase === 'collect') { big.className = 'tf-big on wait'; big.innerHTML = '<div class="tf-fix">⏳ نجمع الإجابات…</div>'; }
       if (phase === 'fall') {
