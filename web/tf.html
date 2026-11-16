@@ -7,7 +7,7 @@
   <title>صح أم خطأ</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/tf.css">
-  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 20, grace: 10, lobbyTime: 120, gapTime: 10, giftHype: 5, musicVol: 0.3, tfVer: 3, rulesRead: 'once', readQ: true, minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'mohamed', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0 };</script>
+  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 20, grace: 10, lobbyTime: 120, gapTime: 10, giftHype: 5, musicVol: 0.3, tfVer: 3, rulesRead: 'once', readQ: true, minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'mohamed', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0, qSet: 'auto' };</script>
 </head>
 <body class="tf-app">
   <!-- ============ SPLASH ============ -->
@@ -134,6 +134,9 @@
         <label data-src="sim">عدد المشاهدين الوهميين<input id="cp_simViewers" type="number" min="3" max="300"></label>
       </div>
       <div class="cp-group"><h4 class="cp-gh"><i>🎮</i>قواعد اللعبة</h4>
+        <label>مجموعة الأسئلة التي يبدأ بها البث <small id="cpSetNow" style="opacity:.7"></small>
+          <select id="cp_qSet"><option value="auto">متابعة تلقائياً من حيث توقفت · مستحسن</option><option value="1">المجموعة 1</option><option value="2">المجموعة 2</option><option value="3">المجموعة 3</option><option value="4">المجموعة 4</option><option value="5">المجموعة 5</option><option value="6">المجموعة 6</option><option value="7">المجموعة 7</option><option value="8">المجموعة 8</option><option value="9">المجموعة 9</option><option value="10">المجموعة 10</option></select>
+          <small style="opacity:.7;font-weight:400">10 مجموعات مختلفة، في كل واحدة أسئلة سهلة ثم متوسطة ثم صعبة. عندما تنتهي المجموعة ينتقل البث تلقائياً إلى التي بعدها.</small></label>
         <label>مدة التسجيل («العب») قبل الأسئلة
           <select id="cp_lobbyTime"><option value="60">دقيقة</option><option value="90">دقيقة ونصف</option><option value="120">دقيقتان · مستحسن</option><option value="180">3 دقائق</option></select></label>
         <label>قراءة شروط وقواعد المسابقة أثناء التسجيل
@@ -247,8 +250,7 @@
   <script src="data/world.js"></script>
   <script src="js/quiz-bank.js"></script>
   <script src="js/tf-bank.js"></script>
-  <script src="js/tf-pool.js"></script>
-  <script src="js/tf-extra.js"></script>
+  <script src="js/tf-sets.js"></script>
   <script src="js/tf-lines.js"></script>
   <script src="voice/manifest.js"></script>
   <script src="js/tf.js"></script>

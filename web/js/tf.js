@@ -104,27 +104,57 @@
     const shown = truth ? res : res + rnd(near);
     return { id: 'm:' + a + op + b + '=' + shown, truth, text: a + ' ' + op + ' ' + b + ' = ' + shown, fix: truth ? '' : a + ' ' + op + ' ' + b + ' = ' + res };
   }
-  function nextStatement(level) {
-    const used = st.used;
-    for (let k = 0; k < 40; k++) {
-      let q = null;
-      if (Math.random() < (level >= 4 ? 0.6 : 0.45)) {
-        // levels 1–3 use the general bank (its levels 1, 2, 3), levels 4–5 mostly the traps (TF_HARD)
-        const src = level >= 4 && Math.random() < 0.7 ? (window.TF_HARD || []).filter(x => x[0] <= level)
-          : (window.TF_BANK || []).filter(x => x[0] === Math.min(3, level === 1 ? 1 : level === 2 ? 2 : 3));
-        const pool = src.filter(x => !used.has('b:' + x[2]));
-        if (pool.length) { const x = rnd(pool); q = { id: 'b:' + x[2], truth: x[1], text: x[2], fix: x[3] || '' }; }
-      }
-      if (!q) {
-        // generated statements come from the fixed pool (recorded by the announcers); live generation only if it runs out
-        const pool = (window.TF_POOL || []).filter(x => x[0] === level && !used.has('p:' + x[2]));
-        if (pool.length) { const x = rnd(pool); q = { id: 'p:' + x[2], truth: x[1], text: x[2], fix: x[3] || '', flag: x[4] || undefined }; }
-        else q = generated(level);
-      }
-      if (q && !used.has(q.id)) { used.add(q.id); if (used.size > 3000) used.clear(); return q; }
-    }
-    const x = rnd(window.TF_BANK); return { id: 'b:' + x[2], truth: x[1], text: x[2], fix: x[3] || '' };
+  /* ---------------- question groups ----------------
+   * TF_SETS (tf-sets.js): 10 groups, each with its own easy / medium / hard questions (no question is in two groups).
+   * The host picks the group the broadcast starts with (panel: «مجموعة الأسئلة»); when a group is used up the game
+   * moves on to the next one by itself. Progress is kept on the phone, so leaving and reopening the app does not
+   * replay the same questions. */
+  const SETS_KEY = 'sahkhata.sets.v1';
+  const SETS = () => window.TF_SETS || [];
+  let prog = null;
+  function loadProg() {
+    if (prog) return prog;
+    try { prog = JSON.parse(localStorage.getItem(SETS_KEY) || 'null'); } catch (e) { prog = null; }
+    if (!prog || typeof prog.set !== 'number') prog = { set: 0, used: {} };
+    if (!prog.used) prog.used = {};
+    return prog;
   }
+  function saveProg() { try { localStorage.setItem(SETS_KEY, JSON.stringify(prog)); } catch (e) { /* */ } }
+  const usedOf = i => (loadProg().used[i] = loadProg().used[i] || []);
+  const leftIn = (i, s) => { const g = SETS()[i]; if (!g) return 0; const u = new Set(usedOf(i)); return (g[s] || []).filter(x => !u.has(x[2])).length; };
+  const leftAll = i => leftIn(i, 0) + leftIn(i, 1) + leftIn(i, 2);
+  function gotoSet(i) { const n = SETS().length || 1; prog.set = ((i % n) + n) % n; prog.used[prog.set] = []; saveProg(); }
+  /** called when a broadcast starts: a group picked in the panel is applied once (from its first question),
+   *  then the panel goes back to «continue» so reopening the app never replays it */
+  function applyPick() {
+    loadProg();
+    const pick = cfg().qSet == null ? 'auto' : String(cfg().qSet);
+    if (pick !== 'auto' && SETS().length) { gotoSet((+pick || 1) - 1); cfg().qSet = 'auto'; if (api.save) api.save(); }
+  }
+  /** at the start of every round: a group with too few questions left gives way to the next one */
+  function checkSet() { loadProg(); if (SETS().length && (leftIn(prog.set, 0) < 4 || leftAll(prog.set) < 12)) gotoSet(prog.set + 1); }
+  // stage of the question: 0 easy, 1 medium, 2 hard (the hard part also borrows medium when it runs out)
+  function nextStatement(level) {
+    const sets = SETS();
+    if (!sets.length) { const q = generated(Math.min(3, level)); return q; }
+    loadProg();
+    const want = level <= 1 ? 0 : level === 2 ? 1 : 2;
+    const order = want === 0 ? [0, 1, 2] : want === 1 ? [1, 2, 0] : [2, 1, 0];
+    for (let pass = 0; pass < 2; pass++) {
+      const g = sets[prog.set], used = usedOf(prog.set), u = new Set(used);
+      for (const s of order) {
+        let pool = (g[s] || []).filter(x => !u.has(x[2]));
+        if (s === 2) { const top = pool.filter(x => x[0] >= 4); if (level >= 4 && top.length) pool = top; else if (level < 4 && pool.length > top.length) pool = pool.filter(x => x[0] < 4); }
+        if (pool.length) {
+          const x = rnd(pool); used.push(x[2]); saveProg();
+          return { id: 's:' + x[2], truth: x[1], text: x[2], fix: x[3] || '', set: prog.set + 1 };
+        }
+      }
+      gotoSet(prog.set + 1);
+    }
+    return generated(Math.min(3, level));
+  }
+  G.TfSets = { get current() { return loadProg().set + 1; }, left: () => leftAll(loadProg().set), count: () => SETS().length, reset() { prog = { set: 0, used: {} }; saveProg(); } };
 
   /* ---------------- announcer (voice) ----------------
    * 4 recorded announcers (voice/<id>/<key>.ogg, listed in voice/manifest.js) — chosen in the panel.
@@ -233,12 +263,12 @@
     st = { round: (st ? st.round : 0) + 1, qNo: 0, used, players: {}, q: null, finalSaid: false, reviveHinted: false, hurry: false, lobbyWarn: false };
   }
   const alive = () => Object.keys(st.players).filter(u => st.players[u].alive);
-  // difficulty climbs with every question: 1-3 easy, 4-7, 8-12, 13-18, then the hardest (traps);
-  // in the final stage it is at least level 4
+  // difficulty climbs every 4 questions: 1-4 easy, 5-8 medium, 9-12 hard, 13+ the hardest of the group;
+  // in the final stage it is at least «hard»
   const level = () => {
     const q = st.qNo, n = alive().length;
-    let L = q <= 3 ? 1 : q <= 7 ? 2 : q <= 12 ? 3 : q <= 18 ? 4 : 5;
-    if (n <= num(cfg().finalAt, 10)) L = Math.max(L, 4);
+    let L = q <= 4 ? 1 : q <= 8 ? 2 : q <= 12 ? 3 : 4;
+    if (n <= num(cfg().finalAt, 10) && q > 4) L = Math.max(L, 3);   // a small game still starts easy
     return L;
   };
   function setPhase(p, ms) { phase = p; phaseEnds = ms ? Date.now() + ms : 0; music(); render(); }
@@ -255,7 +285,7 @@
 
   /* ---------------- rounds ---------------- */
   function lobby() {
-    clearStage(); freshRound();
+    clearStage(); freshRound(); checkSet();
     setPhase('lobby', num(cfg().lobbyTime, 60) * 1000);
     say('lobby', true);
   }
@@ -672,7 +702,7 @@
     },
     applyLayout, music,
     start() {
-      paused = false; st = null;
+      paused = false; st = null; applyPick();
       clearInterval(tickTimer); tickTimer = setInterval(tick, 200);
       lobby();
     },
@@ -687,7 +717,7 @@
     stats() {
       if (!st) return [['الجولة', '—']];
       const all = Object.keys(st.players).length;
-      return [['الجولة', st.round], ['السؤال', st.qNo], ['اللاعبون (باقٍ / الكل)', alive().length + ' / ' + all]];
+      return [['الجولة', st.round], ['السؤال', st.qNo], ['مجموعة الأسئلة', G.TfSets.current + ' / ' + G.TfSets.count() + ' (بقي ' + G.TfSets.left() + ')'], ['اللاعبون (باقٍ / الكل)', alive().length + ' / ' + all]];
     },
     yesNo, isJoin,
     get phase() { return phase; },

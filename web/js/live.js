@@ -611,7 +611,7 @@
   /* =================================================================
    * CONTROL PANEL (host only)
    * ================================================================= */
-  const FIELDS = ['shareEvery', 'musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'lobbyTime', 'reviveMax', 'reviveMin', 'finalAt', 'voice', 'voiceRate', 'minPlayers', 'gapTime', 'giftHype', 'rulesRead', 'readQ', 'photoMax', 'giftThanks', 'giftDelay', 'giftShow', 'applause', 'topicTime', 'revealTime', 'supportTime'];
+  const FIELDS = ['shareEvery', 'musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'lobbyTime', 'reviveMax', 'reviveMin', 'finalAt', 'voice', 'voiceRate', 'minPlayers', 'gapTime', 'giftHype', 'rulesRead', 'readQ', 'qSet', 'photoMax', 'giftThanks', 'giftDelay', 'giftShow', 'applause', 'topicTime', 'revealTime', 'supportTime'];
   const isQuiz = () => cfg.game === 'quiz';
   function fillForm() {
     renderCats();
@@ -619,6 +619,7 @@
       const el = $('cp_' + f); if (!el) return;
       if (el.type === 'checkbox') el.checked = !!cfg[f]; else el.value = cfg[f];
     });
+    const sn = $('cpSetNow'); if (sn && G.TfSets && G.TfSets.count()) sn.textContent = '(الحالية: ' + G.TfSets.current + '، بقي فيها ' + G.TfSets.left() + ' سؤالاً)';
     syncSourceRows();
   }
   function readForm() {
