@@ -79,3 +79,34 @@ test('relay waits for an offline creator and connects when they go live', async 
   assert.equal(got[got.length - 1].c, '2');
   relay.shutdown();
 });
+
+test('gift tracker counts streaks once (growing repeatCount + repeatEnd) and plain gifts per event', async () => {
+  const { createGiftTracker } = await import('../src/relay.js');
+  const t = createGiftTracker();
+  const ev = (repeatCount, repeatEnd, combo = true, msgId = String(Math.random())) => t({ common: { msgId }, giftId: '1', groupId: 'a', repeatCount, repeatEnd,
+    user: { displayId: 'yassine', nickname: 'Yassine' }, gift: { name: 'Rose', diamondCount: 1, combo, type: combo ? 1 : 0 } }, 0);
+  const counts = [ev(1, 0), ev(3, 0), ev(5, 0), ev(5, 1)].map(m => m && m.count);
+  assert.deepEqual(counts, [1, 2, 2, null]);
+  const big = t({ common: { msgId: 'x1' }, giftId: '2', repeatCount: 1, user: { displayId: 'salma' }, gift: { name: 'Lion', diamondCount: 29999, combo: false, type: 0 } }, 0);
+  assert.equal(big.coins, 29999); assert.equal(big.count, 1); assert.equal(big.gname, 'Lion');
+  assert.equal(t({ common: { msgId: 'x1' }, giftId: '2', repeatCount: 1, user: { displayId: 'salma' }, gift: { diamondCount: 29999 } }, 0), null, 'duplicate msgId ignored');
+});
+
+test('relay forwards gifts, likes and follows', async () => {
+  const factory = makeFactory();
+  const srv = await startServer({ port: 0, token: 't', createConnection: factory, events: EVENTS });
+  try {
+    const a = await client(srv.port, 'user=x&token=t');
+    await wait(150);
+    const up = factory.made[0];
+    up.gift('yassine', { coins: 1, repeats: [1, 4, 10] });
+    up.gift('salma', { name: 'Galaxy', coins: 1000, combo: false });
+    up.like('hamza', 15); up.follow('nour');
+    await wait(150);
+    const gifts = a.msgs.filter(m => m.t === 'gift');
+    assert.deepEqual(gifts.map(g => [g.u, g.count, g.coins]), [['yassine', 1, 1], ['yassine', 3, 1], ['yassine', 6, 1], ['salma', 1, 1000]]);
+    assert.ok(a.msgs.some(m => m.t === 'like' && m.count === 15 && m.u === 'hamza'));
+    assert.ok(a.msgs.some(m => m.t === 'follow' && m.u === 'nour'));
+    a.close();
+  } finally { srv.close(); }
+});

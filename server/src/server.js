@@ -20,7 +20,7 @@ const TOKEN = process.env.ACCESS_TOKEN || '';
 const EULER = process.env.EULER_API_KEY || '';
 const log = (...a) => console.log(new Date().toISOString(), ...a);
 // bump on every server change → visible at /health so the host can check what Render runs
-export const RELAY_VERSION = '2.1.2';
+export const RELAY_VERSION = '3.0.0';
 
 export function startServer({ port = PORT, token = TOKEN, createConnection, events } = {}) {
   const relay = createRelay({
@@ -32,6 +32,7 @@ export function startServer({ port = PORT, token = TOKEN, createConnection, even
     })),
     events: events || {
       CHAT: WebcastEvent.CHAT, ROOM_USER: WebcastEvent.ROOM_USER, STREAM_END: WebcastEvent.STREAM_END,
+      GIFT: WebcastEvent.GIFT, LIKE: WebcastEvent.LIKE, FOLLOW: WebcastEvent.FOLLOW, SHARE: WebcastEvent.SHARE,
       DISCONNECTED: ControlEvent.DISCONNECTED, ERROR: ControlEvent.ERROR
     }
   });

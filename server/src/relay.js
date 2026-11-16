@@ -8,6 +8,9 @@
  *   {t:'status', state:'connecting'|'connected'|'offline'|'reconnecting'|'error', msg}
  *   {t:'chat', id, u:uniqueId, n:nickname, a:avatarUrl, c:comment, ts}
  *   {t:'viewers', n}
+ *   {t:'gift', id, u, n, a, gid, gname, gimg, coins, count, ts}   (count = NEW units only; streaks are de-duplicated)
+ *   {t:'like', u, n, a, count, ts}
+ *   {t:'follow'|'share', u, n, a, ts}
  *
  * NOTE: reading TikTok LIVE comments uses an UNOFFICIAL reverse-engineered
  * protocol (tiktok-live-connector + Euler Stream signing). No TikTok password or
@@ -46,6 +49,54 @@ export function chatToMessage(data, seq) {
     a: String(avatar),
     c: String(text).slice(0, 200),
     ts: Date.now()
+  };
+}
+
+/** Common user fields (v3 + v2). */
+export function userOf(d) {
+  const u = (d && d.user) || {};
+  const handle = u.displayId || u.uniqueId || '';
+  return {
+    u: String(handle || (u.id && u.id !== '0' ? u.id : '') || u.userId || u.nickname || ''),
+    n: String(u.nickname || handle || ''),
+    a: String(firstUrl(u.avatarThumb) || firstUrl(u.profilePicture) || firstUrl(u.avatarMedium) || u.profilePictureUrl || '')
+  };
+}
+
+/**
+ * Turns TikTok gift events into "new units sent" messages.
+ * Streakable gifts (combo) arrive many times with a growing repeatCount and a
+ * final repeatEnd=1 event; we only forward the increase, so nothing is counted twice.
+ */
+export function createGiftTracker() {
+  const streaks = new Map();   // user|gift|group -> last repeatCount
+  const seen = new Set();      // recent msgIds
+  return function (d, seq) {
+    if (!d) return null;
+    const msgId = d.common && (d.common.msgId || d.common.messageId);
+    if (msgId) { if (seen.has(msgId)) return null; seen.add(msgId); if (seen.size > 2000) seen.delete(seen.values().next().value); }
+    const g = d.gift || d.giftDetails || {};
+    const ext = d.extendedGiftInfo || {};
+    const who = userOf(d);
+    const gid = String(d.giftId || g.id || ext.id || '');
+    const coins = Number(g.diamondCount || g.diamond_count || ext.diamond_count || ext.diamondCount || 0) || 0;
+    const repeat = Math.max(1, Number(d.repeatCount || d.comboCount || 1) || 1);
+    const combo = !!(g.combo || g.type === 1 || g.giftType === 1);
+    const ended = Number(d.repeatEnd) === 1 || d.repeatEnd === true;
+    let count;
+    if (combo) {
+      const key = who.u + '|' + gid + '|' + (d.groupId || '');
+      const prev = streaks.get(key) || 0;
+      count = Math.max(0, repeat - prev);
+      if (ended) streaks.delete(key); else streaks.set(key, Math.max(prev, repeat));
+      if (streaks.size > 5000) streaks.delete(streaks.keys().next().value);
+    } else count = repeat;
+    if (count <= 0) return null;
+    return {
+      t: 'gift', id: msgId || `${Date.now()}-g${seq}`, ...who, gid,
+      gname: String(g.name || g.giftName || ext.name || ''), gimg: String(firstUrl(g.image) || firstUrl(g.icon) || ''),
+      coins, count, ts: Date.now()
+    };
   };
 }
 
@@ -89,6 +140,14 @@ export function createRelay(opts) {
         if (seq <= 20) log('chat', room.id, JSON.stringify({ n: m.n, c: m.c }));   // first 20 per connection, for debugging
         broadcast(room, m);
       });
+      const giftOf = createGiftTracker();
+      if (opts.events.GIFT) conn.on(opts.events.GIFT, d => {
+        const m = giftOf(d, seq++);
+        if (m) { log('gift', room.id, JSON.stringify({ n: m.n, g: m.gname, coins: m.coins, count: m.count })); broadcast(room, m); }
+      });
+      if (opts.events.LIKE) conn.on(opts.events.LIKE, d => broadcast(room, { t: 'like', ...userOf(d), count: Math.max(1, Number(d && d.count) || 1), ts: Date.now() }));
+      if (opts.events.FOLLOW) conn.on(opts.events.FOLLOW, d => broadcast(room, { t: 'follow', ...userOf(d), ts: Date.now() }));
+      if (opts.events.SHARE) conn.on(opts.events.SHARE, d => broadcast(room, { t: 'share', ...userOf(d), ts: Date.now() }));
       conn.on(opts.events.ROOM_USER, d => { const n = viewersOf(d); if (n != null) broadcast(room, { t: 'viewers', n }); });
       conn.on(opts.events.STREAM_END, () => { broadcast(room, { t: 'status', state: 'offline', msg: 'stream ended' }); schedule(room); });
       conn.on(opts.events.DISCONNECTED, () => { if (!room.closed) { broadcast(room, { t: 'status', state: 'reconnecting', msg: 'disconnected' }); schedule(room, 3000); } });
