@@ -155,7 +155,7 @@
       if (p && cfg().voice !== 'tts' && p.keys.indexOf(item.key) >= 0) {
         const a = new Audio('voice/' + p.id + '/' + item.key + '.ogg');
         a.volume = 1; this.cur = a; this.duck(true);
-        const done = () => { if (this.cur === a) { this.cur = null; this.lastEnd = Date.now(); setTimeout(() => this.next(), 1000); } };   // a calm pause between sentences
+        const done = () => { if (this.cur === a) { this.cur = null; this.lastEnd = Date.now(); setTimeout(() => this.next(), item.fast ? 40 : 1000); } };   // a calm pause between sentences (not inside the countdown)
         a.onended = done; a.onerror = () => { if (this.cur === a) { this.cur = null; this.tts(item); } };
         a.play().catch(() => { if (this.cur === a) { this.cur = null; this.tts(item); } });
         return;
@@ -334,8 +334,13 @@
     if (phase === 'idle' || paused) return;
     const now = Date.now();
     if (phase === 'lobby') {
-      if (!st.lobbyWarn && phaseEnds - now <= 10000) { st.lobbyWarn = true; say('lobbyEnd'); }
-      else if (!Voice.speaking && now - (Voice.lastEnd || 0) > 4500 && now - Voice.last > 8000) {
+      if (!st.lobbyWarn && phaseEnds - now <= 13000) { st.lobbyWarn = true; say('lobbyEnd', true); }
+      else if (phaseEnds - now <= 5200 && Object.keys(st.players).length >= Math.max(1, num(cfg().minPlayers, 2))) {
+        // «خمسة… ربعة… تلاتة… جوج… واحد!» — one number a second
+        const c = Math.ceil((phaseEnds - now) / 1000);
+        if (c >= 1 && c <= 5 && st.countSaid !== c) { st.countSaid = c; Voice.say({ key: 'a_countdown_' + (5 - c), text: L().countdown[5 - c], ttl: 1200, fast: true }); api.Sfx.tick(c <= 3); }
+      }
+      else if (phaseEnds - now > 14000 && !Voice.speaking && now - (Voice.lastEnd || 0) > 4500 && now - Voice.last > 8000) {
         st.lobbyTalks = (st.lobbyTalks || 0) + 1;
         const rr = cfg().rulesRead || 'once', el = num(cfg().lobbyTime, 120) * 1000 - (phaseEnds - now);
         const rulesDue = rr !== 'off' && ((!st.rulesSaid && st.lobbyTalks >= 2) || (rr === 'twice' && st.rulesSaid === 1 && now - st.rulesAt > 90000 && phaseEnds - now > 55000) || (rr === 'always' && st.rulesSaid && now - st.rulesAt > 100000));
@@ -506,7 +511,7 @@
       const q = st.q;
       card.innerHTML = `<div class="tf-q"><span class="tf-no">${st.qNo}</span><div class="tf-qt">${q.flag ? `<img class="tf-flag" src="flags/${q.flag}.svg" alt="">` : ''}<b>${esc((window.TF_TK && window.TF_TK[q.text]) || q.text)}</b></div>
         <span class="tf-timer" id="tfTimer"><i></i><em id="tfSec">${left()}</em></span></div>`;
-      if (phase === 'collect') { big.className = 'tf-big on wait'; big.innerHTML = '<div class="tf-fix">⏳ نجمع الإجابات المتأخرة…</div>'; }
+      if (phase === 'collect') { big.className = 'tf-big on wait'; big.innerHTML = '<div class="tf-fix">⏳ نجمع الإجابات…</div>'; }
       if (phase === 'fall') {
         big.className = 'tf-big on ' + (q.truth ? 'yes' : 'no');
         const fell = st.lastOut;
