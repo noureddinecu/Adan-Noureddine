@@ -468,3 +468,38 @@ input, select { font: inherit; font-size: 1em; border: 0.13em solid var(--ink); 
 #home .btn.primary .live-dot { margin-inline-end: 0.2em; }
 .home-btn { width: 100%; background: #0E2A55; color: #EAF2FF; border-color: #2D6BD8; box-shadow: 0 0.22em 0 #04101F; font-size: 1em; }
 .home-link { color: #6F86AA; font-size: 0.9em; text-decoration: underline; margin-top: 0.4em; padding: 0.4em; }
+
+/* ---- quiz: leave the bottom of the screen for TikTok's comment overlay ---- */
+#quizHud { --free: 38vh; padding-bottom: calc(var(--free) + var(--sab)); }
+#quizHud::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: var(--free); pointer-events: none;
+  background: linear-gradient(180deg, rgba(4, 14, 32, 0) 0%, rgba(4, 14, 32, .55) 35%, rgba(4, 14, 32, .8) 100%); }
+#quizHud.compact { gap: 0.4em; }
+#quizHud.compact .qz-head { margin-top: 1.6em; }
+#quizHud.compact .qz-title b { font-size: 1.15em; }
+#quizHud.compact #qzQuestion .qz-visual { flex: 1 1 auto; min-height: 0; max-height: none; }
+#quizHud.compact .qz-qtext { font-size: 1.4em; }
+#quizHud.compact .qz-big { font-size: 2.2em; }
+#quizHud.compact .qz-math { font-size: 2.8em; }
+#quizHud.compact .qz-answer b { font-size: 1.6em; }
+#quizHud.compact .qz-correct { min-height: 2em; flex-wrap: nowrap; overflow: hidden; }
+#quizHud.compact .qz-correct .qa.sm { width: 2.1em; height: 2.1em; }
+#quizHud.compact .qz-hint { min-height: 1.2em; }
+#quizHud.compact .qz-prompt { font-size: 1.1em; padding: 0.3em; }
+#quizHud.compact .qz-topics { gap: 0.35em; padding: 0.45em; }
+#quizHud.compact .qt { aspect-ratio: auto; padding: 0.35em 0.1em; }
+#quizHud.compact .qt i { font-size: 1.6em; }
+#quizHud.compact .qt small { display: none; }
+#quizHud.compact #qzTopic .qz-wall { overflow: hidden; }
+#quizHud.compact .qz-logo { font-size: 3.5em; }
+/* leaderboard: two columns so the top 10 fits in the upper part */
+#quizHud.compact .qz-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3em; flex: 0 1 auto; }
+#quizHud.compact .qz-list li { padding: 0.25em 0.4em; font-size: 0.85em; gap: 0.3em; }
+#quizHud.compact .qz-list li em { display: none; }
+#quizHud.compact .qz-list .qa.sm { width: 2em; height: 2em; }
+#quizHud.compact .qz-list .rk { width: 1.4em; height: 1.4em; }
+#quizHud.compact .qz-fast-row .qa.md { width: 2.7em; height: 2.7em; }
+#quizHud.compact .qf { width: 3.8em; }
+#quizHud.compact .qz-board-ans b { font-size: 1.3em; }
+#quizHud.compact .qz-fast-t { margin-bottom: 0.1em; }
+#quizHud.compact .qa.xl { width: 4.2em; height: 4.2em; }
+#quizHud.compact .qp.gold .step { height: 3.4em; } #quizHud.compact .qp.silver .step { height: 2.5em; } #quizHud.compact .qp.bronze .step { height: 1.9em; }

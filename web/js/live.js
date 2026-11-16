@@ -73,7 +73,7 @@
     source: 'sim', user: '', relayUrl: '', token: '', eulerKey: '',
     qTime: 30, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
     simViewers: 40, startLevel: 1,
-    game: 'quiz', qCount: 30, fuzzy: true, quizOff: ''
+    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 38
   };
   let cfg = Object.assign({}, DEFAULT_CFG);
   let session = null;      // persisted
@@ -589,7 +589,7 @@
   /* =================================================================
    * CONTROL PANEL (host only)
    * ================================================================= */
-  const FIELDS = ['game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
+  const FIELDS = ['freeSpace', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
   const isQuiz = () => cfg.game === 'quiz';
   function fillForm() {
     renderCats();
@@ -609,6 +609,7 @@
     cfg.qTime = Math.max(8, Math.min(60, cfg.qTime | 0));
     cfg.winnersTime = Math.max(5, Math.min(60, cfg.winnersTime | 0));
     cfg.qCount = Math.max(5, Math.min(100, cfg.qCount | 0 || 30));
+    if (G.Quiz && G.Quiz.applyLayout) G.Quiz.applyLayout();
     if (api && api.game) api.game.fpsCap = active && cfg.saver ? 30 : 0;
     const N = Native(); if (N && N.setVolumeKeys) try { N.setVolumeKeys(!!cfg.volKeys); } catch (e) { /* */ }
     save();

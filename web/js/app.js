@@ -5,7 +5,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const Lv = G.Levels, Store = G.Store, Sfx = G.Sfx;
-  const VERSION = '3.1.0';
+  const VERSION = '3.2.0';
   const INK = '#2E2A30';
 
   /* ---------------- inline SVG icons ---------------- */
@@ -47,15 +47,22 @@
     </g>
     <path d="M80 36q0 9 9 9q-9 0-9 9q0-9-9-9q9 0 9-9z" fill="${INK}"/>
   </svg>`;
+  // Logo: a globe rising from an open book (culture & knowledge)
   const QUIZ_LOGO = `<svg viewBox="0 0 120 120"><defs>
       <radialGradient id="qlg" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#2D6BD8"/><stop offset="1" stop-color="#0B2447"/></radialGradient>
       <linearGradient id="qlq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE07A"/><stop offset="1" stop-color="#F5A623"/></linearGradient></defs>
-    <circle cx="60" cy="60" r="52" fill="url(#qlg)" stroke="#2EE6C5" stroke-width="5"/>
-    <circle cx="60" cy="60" r="44" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="2" stroke-dasharray="4 6"/>
-    <path d="M44 46c0-10 7.5-17 17-17s17 6 17 15c0 7-4 10.5-9 13.5-4 2.4-5.5 4.2-5.5 8.5v3" fill="none" stroke="url(#qlq)" stroke-width="11" stroke-linecap="round"/>
-    <circle cx="63.5" cy="88" r="6.5" fill="url(#qlq)"/>
-    <path d="M92 26l2.6 6.4 6.4 2.6-6.4 2.6L92 44l-2.6-6.4-6.4-2.6 6.4-2.6z" fill="#2EE6C5"/>
-    <path d="M27 78l1.8 4.2 4.2 1.8-4.2 1.8L27 90l-1.8-4.2-4.2-1.8 4.2-1.8z" fill="#FFC93C"/>
+    <circle cx="60" cy="60" r="54" fill="url(#qlg)" stroke="#2EE6C5" stroke-width="4"/>
+    <g transform="translate(60 47)">
+      <circle r="21" fill="#0E7C86" stroke="#2EE6C5" stroke-width="3"/>
+      <ellipse rx="9" ry="21" fill="none" stroke="#9FF5E6" stroke-width="2"/>
+      <path d="M-21 0H21M-18 -10H18M-18 10H18M0 -21V21" stroke="#9FF5E6" stroke-width="2" fill="none"/>
+      <path d="M-12 -12c5 3 9 1 12 4s-1 8 3 10 6 7 2 10" fill="none" stroke="#FFE07A" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+    <path d="M20 74c14-6 27-5 40 3c13-8 26-9 40-3v20c-14-6-27-5-40 3c-13-8-26-9-40-3z" fill="url(#qlq)" stroke="#7A4A00" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M60 77v20" stroke="#7A4A00" stroke-width="2.5"/>
+    <path d="M27 79c9-3 18-3 27 1M27 85c9-3 18-3 27 1M66 80c9-4 18-4 27-1M66 86c9-4 18-4 27-1" stroke="#B8770F" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M95 22l2.4 5.6 5.6 2.4-5.6 2.4L95 38l-2.4-5.6L87 30l5.6-2.4z" fill="#2EE6C5"/>
+    <path d="M24 30l1.6 3.8 3.8 1.6-3.8 1.6L24 41l-1.6-4L18.6 35.4l3.8-1.6z" fill="#FFC93C"/>
   </svg>`;
   const TROPHY = `<svg viewBox="0 0 120 120"><g stroke="${INK}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
     <path d="M36 18h48v26a24 24 0 0 1-48 0z" fill="#FFD23A"/><path d="M36 26H20a16 16 0 0 0 18 20M84 26h16a16 16 0 0 1-18 20" fill="none"/>

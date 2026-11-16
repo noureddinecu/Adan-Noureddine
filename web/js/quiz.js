@@ -279,8 +279,16 @@
   }
   function show(id) { ['qzReady', 'qzTopic', 'qzQuestion', 'qzBoard', 'qzFinal'].forEach(x => $(x).classList.toggle('on', x === id)); }
 
+  // keep the bottom of the screen free so TikTok's comment overlay does not cover the game
+  function applyLayout() {
+    const hud = $('quizHud'); if (!hud) return;
+    const free = Math.max(0, Math.min(55, Number(cfg().freeSpace == null ? 38 : cfg().freeSpace)));
+    hud.style.setProperty('--free', free + 'vh');
+    hud.classList.toggle('compact', free >= 30);
+  }
   function render() {
     const hud = $('quizHud'); if (!hud) return;
+    applyLayout();
     $('qzCounter').innerHTML = `<b>${st ? st.no : 0}</b><small>/${cfg().qCount}</small>`;
     $('qzPaused').classList.toggle('show', paused);
     $('qzPaused').textContent = T('paused');
@@ -500,6 +508,7 @@
   G.Quiz = {
     CATS,
     init(a) { api = a; },
+    applyLayout,
     start, stop, onChat, ctl, simTarget,
     isCorrect, key,
     get phase() { return phase; },

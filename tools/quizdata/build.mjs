@@ -87,7 +87,7 @@ for (const [a2, [capAr, capEn, tier, capExtra, nameExtra]] of Object.entries(CAP
   countries.push({
     c: a2, tier,
     ar: uniq([...names, ...nameExtra.filter(x => /[؀-ۿ]/.test(x))]),
-    en: uniq([...arr(en[a2]), ...arr(fr[a2]), ...nameExtra.filter(x => !/[؀-ۿ]/.test(x))]),
+    en: uniq([...arr(en[a2]).sort((a, b) => ((a.length <= 3) - (b.length <= 3)) || a.length - b.length), ...arr(fr[a2]), ...nameExtra.filter(x => !/[؀-ۿ]/.test(x))]),
     cap: { ar: capAr, en: capEn, al: uniq([capAr, capEn, ...capExtra]) },
     area: Math.round(ar2 * 10) / 10
   });
