@@ -140,13 +140,15 @@
     /** item = { key, text } */
     say(item, interrupt) {
       if (!item || cfg().voice === 'off') return;
-      if (interrupt) this.stop();
+      if (interrupt) this.queue.length = 0;             // never cut the sentence being said, just drop the waiting ones
+      item.exp = Date.now() + (item.ttl || 9000);       // a sentence that waited too long is not said any more
       this.queue.push(item);
       if (this.queue.length > 3) this.queue.splice(0, this.queue.length - 3);
       if (!this.cur) this.next();
     },
     next() {
-      const item = this.queue.shift();
+      let item = this.queue.shift();
+      while (item && item.exp && Date.now() > item.exp) item = this.queue.shift();
       if (!item) { this.cur = null; this.duck(false); return; }
       this.last = Date.now();
       const p = pack();
@@ -233,6 +235,16 @@
   };
   function setPhase(p, ms) { phase = p; phaseEnds = ms ? Date.now() + ms : 0; music(); render(); }
 
+  /** players of the round from the champion down: who stayed longest, then who answered right most often */
+  function ranking() {
+    return Object.keys(st.players).filter(u => st.players[u].alive || st.players[u].outQ)
+      .sort((a, b) => {
+        const A = st.players[a], B = st.players[b];
+        const qa = A.alive ? 1e9 : A.outQ, qb = B.alive ? 1e9 : B.outQ;
+        return (qb - qa) || ((B.rights || 0) - (A.rights || 0));
+      });
+  }
+
   /* ---------------- rounds ---------------- */
   function lobby() {
     clearStage(); freshRound();
@@ -267,8 +279,8 @@
   }
   function close() {
     // grace: answers that were written before the end but arrive late through the stream delay
-    const g = Math.max(0, Math.min(10, num(cfg().grace, 3)));
-    if (g > 0 && !st.q.collecting) { st.q.collecting = true; setPhase('collect', g * 1000); return; }
+    const g = Math.max(0, Math.min(20, num(cfg().grace, 10)));
+    if (g > 0 && !st.q.collecting) { st.q.collecting = true; setPhase('collect', g * 1000); if (g >= 6) say('collect'); return; }
     fall();
   }
   function fall() {
@@ -277,9 +289,10 @@
     const out = before.filter(u => st.players[u].ans !== right);
     const silent = before.filter(u => !st.players[u].ans).length;
     out.forEach(u => { st.players[u].alive = false; st.players[u].outQ = st.qNo; });
+    before.forEach(u => { if (st.players[u].ans === right) st.players[u].rights = (st.players[u].rights || 0) + 1; });
     st.lastOut = out.length; st.lastSilent = silent;
     const s = S(); before.forEach(u => { const p = s && s.participants[u]; if (p && st.players[u].ans === right) { p.correct = (p.correct || 0) + 1; } });
-    setPhase('fall', 4200);
+    setPhase('fall', 6500);
     dropFloors(right, out);
     api.Sfx.lose();
     say(st.q.truth ? 'ansYes' : 'ansNo', true);
@@ -296,17 +309,21 @@
     if (n === 1) {
       const u = alive()[0], pl = st.players[u];
       const s = S(); const p = s && s.participants[u]; if (p) { p.wins = (p.wins || 0) + 1; p.pts = (p.pts || 0) + 100; }
-      st.winner = u; setPhase('winner', 10000);
+      st.winner = u; st.ranking = ranking(); setPhase('winner', 9000);
       say('winner', true); api.Sfx.fanfare(); setTimeout(() => api.Sfx.applause(), 400);
       return;
     }
     const finalAt = num(cfg().finalAt, 10);
-    if (n <= finalAt && !st.finalAnnounced) { st.finalAnnounced = true; setPhase('final', 4500); say('final', true); return; }
+    if (n <= finalAt && !st.finalAnnounced) { st.finalAnnounced = true; st.finalReminds = 0; st.lastRemindQ = st.qNo; setPhase('final', 7000); say('final'); return; }
     if (n === 3 && !st.said3) { st.said3 = true; say('three'); }
     else if (n === 2 && !st.said2) { st.said2 = true; say('two'); }
     else if (st.lastOut && !st.reviveHinted && num(cfg().reviveMax, 2) > 0 && n > finalAt) { st.reviveHinted = true; say('reviveHint'); }
-    else if (Math.random() < 0.75) sayCount(n);          // «بقاو دابا عندنا 15 داللعّابة!»
-    setPhase('gap', 2500);
+    else if (n <= finalAt && st.finalReminds < 2 && st.qNo - st.lastRemindQ >= 2) { st.finalReminds++; st.lastRemindQ = st.qNo; say('finalRemind'); }
+    else if (Math.random() < 0.6) sayCount(n);           // «بقاو دابا عندنا 15 داللعّابة!»
+    const every = num(cfg().giftHype, 4);
+    if (every > 0 && st.qNo % every === 0) say('support');  // «ما تنساوناش بالهدايا…»
+    say('next');                                           // «هادو اللي بقاو معانا… يلاه ندوزو للسؤال الجاي!»
+    setPhase('gap', 1000 * Math.max(4, num(cfg().gapTime, 10)));
   }
 
   function tick() {
@@ -314,7 +331,12 @@
     const now = Date.now();
     if (phase === 'lobby') {
       if (!st.lobbyWarn && phaseEnds - now <= 10000) { st.lobbyWarn = true; say('lobbyEnd'); }
-      else if (!Voice.speaking && now - Voice.last > 7000) say('lobby');
+      else if (!Voice.speaking && now - Voice.last > 7000) {
+        st.lobbyTalks = (st.lobbyTalks || 0) + 1;
+        if (st.lobbyTalks === 3 || st.lobbyTalks === 9) say('rules');          // the rules (2 sentences)
+        else if (st.lobbyTalks % 6 === 5) say('support');                     // «تابعونا… ما تنساوناش بالهدايا»
+        else say('lobby');
+      }
       renderLobby();
     }
     if (phase === 'question') {
@@ -332,7 +354,8 @@
     if (phase === 'collect') return fall();
     if (phase === 'fall') return afterFall();
     if (phase === 'final' || phase === 'gap') return ask();
-    if (phase === 'winner' || phase === 'nowinner') return lobby();
+    if (phase === 'winner') { setPhase('podium', 14000); say('podium'); return; }
+    if (phase === 'podium' || phase === 'nowinner') return lobby();
   }
 
   /* ---------------- comments & gifts ---------------- */
@@ -351,7 +374,6 @@
     if (pl.ans) return 'أجاب من قبل (' + (pl.ans === 'yes' ? 'نعم' : 'لا') + ')';
     const a = yesNo(text);
     if (!a) return 'ليس نعم / لا';
-    if (phase === 'collect' && (c.ts && c.ts > st.q.start + num(cfg().qTime, 15) * 1000)) return 'متأخر';
     pl.ans = a;
     moveTo(uid, a);
     renderCounts();
@@ -377,9 +399,9 @@
     if (pl.alive || pl.reviveNext) { giftThanks(p, g); return 'هدية (لاعب في اللعبة)'; }
     // a spectator: comes back at the next question, if allowed
     const max = num(cfg().reviveMax, 2), min = num(cfg().reviveMin, 1);
-    if (alive().length <= num(cfg().finalAt, 10)) { say('finalGift'); giftThanks(p, g, true); return 'لا عودة في المرحلة النهائية'; }
+    if (alive().length <= num(cfg().finalAt, 10)) { if (!st.finalGiftSaid) { st.finalGiftSaid = true; say('finalGift'); } giftThanks(p, g, true); return 'لا عودة في المرحلة النهائية'; }
     if (max <= 0) { giftThanks(p, g); return 'العودة متوقفة'; }
-    if (pl.revives >= max) { say('maxRevive'); giftThanks(p, g, true); return 'استعمل كل العودات'; }
+    if (pl.revives >= max) { if (!pl.maxSaid) { pl.maxSaid = true; say('maxRevive'); } giftThanks(p, g, true); return 'استعمل كل العودات'; }
     if (coins < min) { giftThanks(p, g); return 'هدية أقل من الحد'; }
     pl.revives++; pl.reviveNext = true;
     toast(p, g, 'revive', pl.revives, max);
@@ -477,6 +499,7 @@
       const q = st.q;
       card.innerHTML = `<div class="tf-q"><span class="tf-no">${st.qNo}</span><div class="tf-qt">${q.flag ? `<img class="tf-flag" src="flags/${q.flag}.svg" alt="">` : ''}<b>${esc(q.text)}</b></div>
         <span class="tf-timer" id="tfTimer"><i></i><em id="tfSec">${left()}</em></span></div>`;
+      if (phase === 'collect') { big.className = 'tf-big on wait'; big.innerHTML = '<div class="tf-fix">⏳ نجمع الإجابات المتأخرة…</div>'; }
       if (phase === 'fall') {
         big.className = 'tf-big on ' + (q.truth ? 'yes' : 'no');
         const fell = st.lastOut;
@@ -493,6 +516,13 @@
       card.innerHTML = `<div class="tf-lobby final"><b>👑 بطل الجولة</b></div>`;
       big.className = 'tf-big on win';
       big.innerHTML = `<div class="tf-win"><div class="tf-crown">👑</div><div class="tf-wphoto">${personHead(pl, st.winner)}</div><div class="tf-wname">${esc(pl.n)}</div><div class="tf-confetti">${'<i></i>'.repeat(18)}</div></div>`;
+    } else if (phase === 'podium') {
+      const r = st.ranking || [], P = u => st.players[u];
+      const medal = ['👑', '🥈', '🥉', '4'];
+      card.innerHTML = `<div class="tf-lobby final"><b>🏆 أبطال الجولة</b></div>`;
+      big.className = 'tf-big on pod';
+      big.innerHTML = `<div class="tf-pod">${r.slice(0, 4).map((u, i) => `<div class="pd p${i + 1}"><i>${medal[i]}</i>${personHead(P(u), u)}<span>${esc(P(u).n)}</span><em>${i === 0 ? 'البطل' : i === 1 ? 'الوصيف' : 'المركز ' + (i + 1)}</em></div>`).join('')}</div>`
+        + (r.length > 4 ? `<ol class="tf-top" start="5">${r.slice(4, 10).map(u => `<li>${personHead(P(u), u)}<span>${esc(P(u).n)}</span><em>✓ ${P(u).rights || 0}</em></li>`).join('')}</ol>` : '');
     } else if (phase === 'nowinner') {
       card.innerHTML = `<div class="tf-lobby"><b>سقط الجميع! 😅</b><small>لا يوجد فائز هذه المرة · نعيد الجولة</small></div>`;
       big.className = 'tf-big on none'; big.innerHTML = `<div class="tf-ans">لا يوجد فائز</div><div class="tf-fix">جولة جديدة بعد قليل…</div>`;
@@ -511,9 +541,21 @@
     if (phase !== 'lobby') return;
     const n = Object.keys(st.players).length;
     // build the card once, then only update the numbers (rebuilding would restart its animation)
-    if (!$('tfLobN')) $('tfCard').innerHTML = `<div class="tf-lobby"><b>اكتب «العب» في التعليقات للمشاركة 🎮</b><small>المسجّلون: <span class="tf-cnt" id="tfLobN"></span> · تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</small></div>`;
+    if (!$('tfLobN')) $('tfCard').innerHTML = `<div class="tf-lobby"><b>اكتب «لعب» في التعليقات للمشاركة 🎮</b><small>المسجّلون: <span class="tf-cnt" id="tfLobN"></span> · تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</small><div class="tf-rule" id="tfRule"></div></div>`;
     $('tfLobN').textContent = n; $('tfLobT').textContent = left();
+    // the rules, one at a time (and the champions of the session) while waiting
+    const items = RULES.slice(), top = sessionTop();
+    if (top) items.push(top);
+    const k = Math.floor(Date.now() / 6000) % items.length;
+    if ($('tfRule').dataset.k !== String(k)) { $('tfRule').dataset.k = k; $('tfRule').innerHTML = items[k]; }
     renderCounts();
+  }
+  const RULES = ['📜 اكتب «لعب» للدخول — المشاركة مجانية', '✅ أجب بـ «نعم» أو «لا» (yes / no)', '🔒 أول إجابة هي التي تُحتسب', '⏳ من لا يجيب يسقط',
+    '🌹 من سقط يعود بهدية (مرتين في الجولة)', '🔥 عندما يبقى 10: لا عودة، حتى بالهدية', '👑 آخر من يبقى هو البطل'];
+  function sessionTop() {
+    const s = S(); if (!s) return '';
+    const t = Object.keys(s.participants).filter(u => s.participants[u].wins).sort((a, b) => s.participants[b].wins - s.participants[a].wins).slice(0, 3);
+    return t.length ? '🏅 أبطال البث: ' + t.map(u => esc(s.participants[u].n) + ' (' + s.participants[u].wins + ')').join(' · ') : '';
   }
   function renderTimer() {
     const t = $('tfTimer'); if (!t || !st || !st.q) return;
@@ -584,7 +626,8 @@
       if (phase === 'question') return close();
       if (phase === 'collect') return fall();
       if (phase === 'ready' || phase === 'gap' || phase === 'final') return ask();
-      if (phase === 'winner' || phase === 'nowinner') return lobby();
+      if (phase === 'winner') { setPhase('podium', 14000); return; }
+      if (phase === 'podium' || phase === 'nowinner') return lobby();
     },
     newTopic() { paused = false; lobby(); },
     reveal() { if (phase === 'question') close(); else if (phase === 'collect') fall(); },
@@ -601,7 +644,12 @@
   G.Quiz = {
     CATS: [],
     LABELS: { cpNew: '▶️ جولة جديدة («العب»)', cpPause: '⏸️ إيقاف / متابعة', cpReveal: '👁️ إنهاء الوقت الآن', cpNext: '⏭️ التالي', cpReplay: '🔁 جولة جديدة' },
-    init(a) { api = a; },
+    init(a) {
+      api = a;
+      // one-time new defaults for apps installed before (quieter music, 10 s extra time, 2 min to join, 20 s to answer)
+      const c = cfg();
+      if (c.tfVer !== 2) { c.tfVer = 2; c.musicVol = 0.3; c.grace = 10; c.lobbyTime = 120; c.qTime = Math.max(20, num(c.qTime, 20)); c.gapTime = 10; c.giftHype = 4; if (api.save) api.save(); }
+    },
     applyLayout, music,
     start() {
       paused = false; st = null;

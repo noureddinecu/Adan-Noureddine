@@ -6,7 +6,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const Sfx = G.Sfx;
-  const VERSION = '1.9.0';
+  const VERSION = '2.0.0';
   const SKEY = 'sahkhata.app.v1';
 
   // Logo: a green ✓ and a red ✗ on two floors, a little player in the middle

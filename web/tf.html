@@ -7,7 +7,7 @@
   <title>صح أم خطأ</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/tf.css">
-  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 20, grace: 5, lobbyTime: 60, minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'mohamed', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0 };</script>
+  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 20, grace: 10, lobbyTime: 120, gapTime: 10, giftHype: 4, musicVol: 0.3, tfVer: 2, minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'mohamed', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0 };</script>
 </head>
 <body class="tf-app">
   <!-- ============ SPLASH ============ -->
@@ -133,7 +133,7 @@
         <label data-src="sim">عدد المشاهدين الوهميين<input id="cp_simViewers" type="number" min="3" max="300"></label>
         <label>وقت الإجابة (بالثواني)<input id="cp_qTime" type="number" min="8" max="60"></label>
         <label>مدة التسجيل («العب») قبل الأسئلة
-          <select id="cp_lobbyTime"><option value="30">30 ثانية</option><option value="60">دقيقة · مستحسن</option><option value="120">دقيقتان</option><option value="180">3 دقائق</option></select></label>
+          <select id="cp_lobbyTime"><option value="60">دقيقة</option><option value="90">دقيقة ونصف</option><option value="120">دقيقتان · مستحسن</option><option value="180">3 دقائق</option></select></label>
         <label>أقل عدد من اللاعبين لبدء الأسئلة
           <select id="cp_minPlayers"><option value="2">2 · مستحسن</option><option value="3">3</option><option value="5">5</option><option value="10">10</option></select></label>
         <label>العودة إلى اللعبة بهدية (لكل لاعب في الجولة)
@@ -147,7 +147,11 @@
         <label>سرعة المذيع
           <select id="cp_voiceRate"><option value="0.9">هادئ</option><option value="1">عادي · مستحسن</option><option value="1.12">سريع</option></select></label>
         <label data-game="quiz">وقت إضافي خفي لتأخّر البث
-          <select id="cp_grace"><option value="0">بدون</option><option value="5">5 ثوانٍ</option><option value="8">8 ثوانٍ · مستحسن</option><option value="12">12 ثانية</option></select></label>
+          <select id="cp_grace"><option value="5">5 ثوانٍ</option><option value="8">8 ثوانٍ</option><option value="10">10 ثوانٍ · مستحسن</option><option value="15">15 ثانية</option></select></label>
+        <label>وقت الضحك والتعليق بعد السقوط (قبل السؤال التالي)
+          <select id="cp_gapTime"><option value="6">6 ثوانٍ</option><option value="10">10 ثوانٍ · مستحسن</option><option value="14">14 ثانية</option></select></label>
+        <label>المذيع يشجّع على المتابعة والهدايا
+          <select id="cp_giftHype"><option value="0">أبداً</option><option value="3">كل 3 أسئلة</option><option value="4">كل 4 أسئلة · مستحسن</option><option value="6">كل 6 أسئلة</option></select></label>
         <label data-game="quiz">مساحة واجهة TikTok في الأعلى
           <select id="cp_topSpace">
             <option value="0">بدون</option>

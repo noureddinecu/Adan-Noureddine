@@ -245,3 +245,25 @@ body.tf-app { background: #1B1033; }
 .tf-pit .w.t { top: 0; left: 0; right: 0; height: var(--pit); transform-origin: 50% 0; transform: rotateX(-90deg); }
 .tf-pit .w.b { bottom: 0; left: 0; right: 0; height: var(--pit); transform-origin: 50% 100%; transform: rotateX(90deg);
   background: linear-gradient(0deg, color-mix(in srgb, var(--edge) 70%, #120A24), #0B0616); }
+
+/* rules line in the waiting card */
+.tf-rule { margin-top: 0.3em; font-size: 0.92em; font-weight: 900; color: #7C3AED; min-height: 1.3em; animation: tfPop .4s ease; }
+/* «نجمع الإجابات» */
+.tf-big.wait .tf-fix { background: #FFF7D6; }
+/* podium: champion, runner-up, 3rd, 4th + top 10 of the round */
+.tf-pod { display: flex; justify-content: center; align-items: flex-end; gap: 0.5em; direction: rtl; }
+.tf-pod .pd { display: flex; flex-direction: column; align-items: center; gap: 0.15em; background: rgba(255,255,255,.94); color: var(--ink); border-radius: 1em; padding: 0.45em 0.4em 0.4em;
+  min-width: 0; width: 22%; box-shadow: 0 0.5em 1.2em rgba(0,0,0,.35); }
+.tf-pod .pd i { font-style: normal; font-size: 1.3em; line-height: 1; }
+.tf-pod .pd .tf-ph { width: 3.2em; height: 3.2em; font-size: 0.9em; }
+.tf-pod .pd span { font-weight: 900; font-size: 0.8em; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tf-pod .pd em { font-style: normal; font-size: 0.7em; color: #6B5B95; font-weight: 800; }
+.tf-pod .pd.p1 { width: 28%; background: linear-gradient(#FFE27A, #F5A623); order: 2; padding-top: 0.6em; }
+.tf-pod .pd.p1 .tf-ph { width: 4.4em; height: 4.4em; box-shadow: 0 0 0 0.12em #fff, 0 0 1.4em rgba(255,201,60,1); }
+.tf-pod .pd.p2 { order: 1; } .tf-pod .pd.p3 { order: 3; } .tf-pod .pd.p4 { order: 4; opacity: .95; }
+.tf-top { list-style: none; margin: 0.45em auto 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.25em; max-width: 96%; direction: rtl; counter-reset: r 4; }
+.tf-top li { counter-increment: r; display: flex; align-items: center; gap: 0.35em; background: rgba(255,255,255,.9); color: var(--ink); border-radius: 0.7em; padding: 0.2em 0.45em; min-width: 0; font-size: 0.8em; }
+.tf-top li::before { content: counter(r); font-weight: 900; color: #7C3AED; min-width: 1em; }
+.tf-top li .tf-ph { width: 1.8em; height: 1.8em; font-size: 0.7em; }
+.tf-top li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 900; }
+.tf-top li em { font-style: normal; color: #16A34A; font-weight: 900; direction: ltr; }

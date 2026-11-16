@@ -611,7 +611,7 @@
   /* =================================================================
    * CONTROL PANEL (host only)
    * ================================================================= */
-  const FIELDS = ['shareEvery', 'musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'lobbyTime', 'reviveMax', 'reviveMin', 'finalAt', 'voice', 'voiceRate', 'minPlayers', 'photoMax', 'giftThanks', 'giftDelay', 'giftShow', 'applause', 'topicTime', 'revealTime', 'supportTime'];
+  const FIELDS = ['shareEvery', 'musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'lobbyTime', 'reviveMax', 'reviveMin', 'finalAt', 'voice', 'voiceRate', 'minPlayers', 'gapTime', 'giftHype', 'photoMax', 'giftThanks', 'giftDelay', 'giftShow', 'applause', 'topicTime', 'revealTime', 'supportTime'];
   const isQuiz = () => cfg.game === 'quiz';
   function fillForm() {
     renderCats();

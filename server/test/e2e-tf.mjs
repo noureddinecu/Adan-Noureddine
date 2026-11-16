@@ -19,10 +19,11 @@ await p.goto('file:///home/user/Adan-Noureddine/web/tf.html'); await wait(2000);
 await p.tap('#hLive'); await wait(300);
 await p.selectOption('#cp_source', 'relay');
 await p.fill('#cp_user', '@my_live'); await p.fill('#cp_relayUrl', `ws://127.0.0.1:${srv.port}`); await p.fill('#cp_token', 'tf');
-await p.fill('#cp_qTime', '30'); await p.selectOption('#cp_grace', '0'); await p.selectOption('#cp_finalAt', '5');
+await p.fill('#cp_qTime', '30'); await p.selectOption('#cp_finalAt', '5');
 await p.dispatchEvent('#cp_qTime', 'change');
 await p.tap('#cpStart');
 await p.waitForFunction(() => Live._debug().connState.state === 'connected', null, { timeout: 20000 });
+await p.evaluate(() => { Live._debug().cfg.grace = 0; });      // no hidden extra time in the test
 const up = () => factory.made.at(-1);
 const st = () => p.evaluate(() => { const s = Quiz._debug().st; return { phase: Quiz.phase, q: s.qNo, players: Object.fromEntries(Object.entries(s.players).map(([u, x]) => [u, { alive: x.alive, ans: x.ans, rev: x.revives, next: !!x.reviveNext }])) }; });
 
@@ -101,6 +102,13 @@ await p.screenshot({ path: shots + '/tf_winner.png' });
 check(await p.evaluate(() => Quiz._debug().st.winner) === 'salma', 'the last one standing wins (salma), big photo shown');
 check(await p.evaluate(() => !!document.querySelector('.tf-win .tf-ph')), 'winner card with the photo');
 
+// --- podium: champion, runner-up (fell last; among equals the one with more right answers), top of the round
+await p.evaluate(() => Quiz.ctl.next());
+await p.waitForFunction(() => Quiz.phase === 'podium', null, { timeout: 10000 }); await wait(900);
+await p.screenshot({ path: shots + '/tf_podium.png' });
+const rk = await p.evaluate(() => Quiz._debug().st.ranking);
+check(rk[0] === 'salma' && rk[1] === 'hamza', 'podium: champion salma, runner-up hamza (fell last, more right answers than amine) — ' + rk.slice(0, 4).join(','));
+check(await p.evaluate(() => document.querySelectorAll('.tf-pod .pd').length) === 4, 'podium shows the last four');
 // --- next round: everybody falls → no winner
 await p.evaluate(() => Quiz.ctl.next());
 await p.waitForFunction(() => Quiz.phase === 'lobby', null, { timeout: 10000 });
