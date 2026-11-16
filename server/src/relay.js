@@ -25,19 +25,36 @@ export function normaliseUniqueId(raw) {
     .slice(0, 40);
 }
 
+const firstUrl = img => (img && ((img.urlList && img.urlList[0]) || (img.url && img.url[0]) || (img.urls && img.urls[0]))) || '';
+
+/**
+ * Normalise a chat event. Supports both TikTok webcast schemas:
+ *  - v3 (used by tiktok-live-connector >= 2.5): data.content, user.displayId, user.avatarThumb.urlList
+ *  - v1/v2 (older):                             data.comment, user.uniqueId,  user.profilePicture.url
+ */
 export function chatToMessage(data, seq) {
-  const u = (data && data.user) || {};
-  const pic = u.profilePicture || {};
-  const avatar = (pic.url && pic.url[0]) || (pic.urls && pic.urls[0]) || u.profilePictureUrl || '';
+  const d = data || {};
+  const u = d.user || {};
+  const avatar = firstUrl(u.avatarThumb) || firstUrl(u.profilePicture) || firstUrl(u.avatarMedium) || u.profilePictureUrl || '';
+  const text = [d.content, d.comment].find(x => typeof x === 'string' && x.length) || '';
+  const handle = u.displayId || u.uniqueId || '';
   return {
     t: 'chat',
-    id: (data && data.common && data.common.msgId) || `${Date.now()}-${seq}`,
-    u: String(u.uniqueId || u.userId || ''),
-    n: String(u.nickname || u.uniqueId || ''),
+    id: (d.common && (d.common.msgId || d.common.messageId)) || `${Date.now()}-${seq}`,
+    u: String(handle || u.id || u.userId || u.nickname || ''),
+    n: String(u.nickname || handle || ''),
     a: String(avatar),
-    c: String((data && data.comment) || '').slice(0, 200),
+    c: String(text).slice(0, 200),
     ts: Date.now()
   };
+}
+
+/** Viewer count from a room-user event (v3: total as string, v2: viewerCount). */
+export function viewersOf(d) {
+  if (!d) return null;
+  const v = d.viewerCount != null ? d.viewerCount : (d.total != null ? d.total : d.totalUser);
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
 }
 
 /**
@@ -68,7 +85,7 @@ export function createRelay(opts) {
       room.conn = conn;
       let seq = 0;
       conn.on(opts.events.CHAT, d => broadcast(room, chatToMessage(d, seq++)));
-      conn.on(opts.events.ROOM_USER, d => { if (d && d.viewerCount != null) broadcast(room, { t: 'viewers', n: Number(d.viewerCount) }); });
+      conn.on(opts.events.ROOM_USER, d => { const n = viewersOf(d); if (n != null) broadcast(room, { t: 'viewers', n }); });
       conn.on(opts.events.STREAM_END, () => { broadcast(room, { t: 'status', state: 'offline', msg: 'stream ended' }); schedule(room); });
       conn.on(opts.events.DISCONNECTED, () => { if (!room.closed) { broadcast(room, { t: 'status', state: 'reconnecting', msg: 'disconnected' }); schedule(room, 3000); } });
       conn.on(opts.events.ERROR, e => log('upstream error', room.id, e && (e.message || e.info || e)));

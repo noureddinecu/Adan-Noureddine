@@ -24,6 +24,14 @@ test('chatToMessage extracts name, avatar and text', () => {
   assert.equal(m.t, 'chat'); assert.equal(m.u, 'u1'); assert.equal(m.n, 'Nour'); assert.equal(m.a, 'https://a/b.jpg'); assert.equal(m.c, 'العربة 3');
 });
 
+test('chatToMessage reads the v3 schema used by tiktok-live-connector 2.5 (content / displayId / avatarThumb)', async () => {
+  const { viewersOf } = await import('../src/relay.js');
+  const m = chatToMessage({ content: '3', user: { id: '7123', displayId: 'mohssin_1', nickname: 'mohssin', avatarThumb: { urlList: ['https://p16/av.webp'] } } }, 0);
+  assert.equal(m.c, '3'); assert.equal(m.u, 'mohssin_1'); assert.equal(m.n, 'mohssin'); assert.equal(m.a, 'https://p16/av.webp');
+  assert.equal(viewersOf({ total: '57' }), 57);
+  assert.equal(viewersOf({ viewerCount: 9 }), 9);
+});
+
 test('relay forwards chats to every app client, rejects bad tokens', async () => {
   const factory = makeFactory();
   const srv = await startServer({ port: 0, token: 's3cret', createConnection: factory, events: EVENTS });
@@ -39,7 +47,7 @@ test('relay forwards chats to every app client, rejects bad tokens', async () =>
     const up = factory.made[0];
     assert.equal(up.id, 'streamer');
     up.chat('viewer1', '3'); up.chat('viewer2', 'أظن 5');
-    up.emit('roomUser', { viewerCount: 42 });
+    up.emit('roomUser', { total: '42' });
     await wait(150);
     for (const ws of [a, b]) {
       const chats = ws.msgs.filter(m => m.t === 'chat');

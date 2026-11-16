@@ -244,7 +244,8 @@
     const u = d.user || d.author || d.sender || {};
     const pic = u.profilePicture || u.avatarThumb || u.avatar || {};
     const uid = u.uniqueId || u.unique_id || u.displayId || u.userId || u.id || d.uniqueId || d.userId;
-    const text = d.comment != null ? d.comment : (d.content != null ? d.content : d.text);
+    // v3 schema uses `content`, older ones `comment` → take the first non-empty one
+    const text = [d.content, d.comment, d.text].find(x => typeof x === 'string' && x.length);
     if (!uid || text == null) return null;
     return {
       u: String(uid), n: String(u.nickname || u.nickName || d.nickname || uid),
@@ -258,10 +259,10 @@
     if (typeof o !== 'object') return;
     const type = String(o.type || o.event || o.method || '');
     const data = (o.data && typeof o.data === 'object') ? o.data : o;
-    if (/chat/i.test(type) || (data.comment != null && (data.user || data.uniqueId))) {
+    if (/chat/i.test(type) || ((data.comment != null || data.content != null) && (data.user || data.uniqueId))) {
       const c = normChat(data); if (c) out.push(c); return;
     }
-    if (/roomuser/i.test(type) && data.viewerCount != null) { onViewers(+data.viewerCount); return; }
+    if (/roomuser/i.test(type)) { const v = data.viewerCount != null ? data.viewerCount : data.total; if (v != null) onViewers(+v); return; }
     for (const k of ['messages', 'events', 'data', 'payload']) if (o[k] && typeof o[k] === 'object' && o[k] !== o) walkEuler(o[k], out, depth + 1);
   }
 

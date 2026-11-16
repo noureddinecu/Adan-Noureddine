@@ -44,7 +44,7 @@ for (const [i, u] of correctOrder.entries()) {
   await wait(120);
 }
 up().chat('salma_ma', String(wrong), 'salma ma');  // second answer from same viewer is ignored
-up().emit('roomUser', { viewerCount: 321 });
+up().emit('roomUser', { total: '321' });
 await wait(800);
 await p.screenshot({ path: shots + '/e2e_question.png' });
 check(await p.evaluate(() => Live._debug().round.count) === correctOrder.length + 1, 'answers counted once per viewer, pre-question comment ignored');
