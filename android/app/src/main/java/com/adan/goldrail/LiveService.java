@@ -50,7 +50,7 @@ public class LiveService extends Service {
         Notification.Builder b = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 ? new Notification.Builder(this, CHANNEL) : new Notification.Builder(this);
         Notification n = b.setSmallIcon(R.drawable.ic_stat_live)
-                .setContentTitle("عربة الذهب · جلسة LIVE خدامة")
+                .setContentTitle("تحدي الثقافة · جلسة LIVE خدامة")
                 .setContentText("اللعبة كتستقبل التعليقات. اضغط هنا باش ترجع للعبة.")
                 .setContentIntent(pi)
                 .setOngoing(true)

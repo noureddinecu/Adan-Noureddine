@@ -5,7 +5,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const Lv = G.Levels, Store = G.Store, Sfx = G.Sfx;
-  const VERSION = '3.0.0';
+  const VERSION = '3.1.0';
   const INK = '#2E2A30';
 
   /* ---------------- inline SVG icons ---------------- */
@@ -46,6 +46,16 @@
       <path d="M44 81h8M66 81h8M55 68h8" stroke="#FFF0A6" stroke-width="2.5"/>
     </g>
     <path d="M80 36q0 9 9 9q-9 0-9 9q0-9-9-9q9 0 9-9z" fill="${INK}"/>
+  </svg>`;
+  const QUIZ_LOGO = `<svg viewBox="0 0 120 120"><defs>
+      <radialGradient id="qlg" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#2D6BD8"/><stop offset="1" stop-color="#0B2447"/></radialGradient>
+      <linearGradient id="qlq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE07A"/><stop offset="1" stop-color="#F5A623"/></linearGradient></defs>
+    <circle cx="60" cy="60" r="52" fill="url(#qlg)" stroke="#2EE6C5" stroke-width="5"/>
+    <circle cx="60" cy="60" r="44" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="2" stroke-dasharray="4 6"/>
+    <path d="M44 46c0-10 7.5-17 17-17s17 6 17 15c0 7-4 10.5-9 13.5-4 2.4-5.5 4.2-5.5 8.5v3" fill="none" stroke="url(#qlq)" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="63.5" cy="88" r="6.5" fill="url(#qlq)"/>
+    <path d="M92 26l2.6 6.4 6.4 2.6-6.4 2.6L92 44l-2.6-6.4-6.4-2.6 6.4-2.6z" fill="#2EE6C5"/>
+    <path d="M27 78l1.8 4.2 4.2 1.8-4.2 1.8L27 90l-1.8-4.2-4.2-1.8 4.2-1.8z" fill="#FFC93C"/>
   </svg>`;
   const TROPHY = `<svg viewBox="0 0 120 120"><g stroke="${INK}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
     <path d="M36 18h48v26a24 24 0 0 1-48 0z" fill="#FFD23A"/><path d="M36 26H20a16 16 0 0 0 18 20M84 26h16a16 16 0 0 1-18 20" fill="none"/>
@@ -105,7 +115,7 @@
 
   function refreshSoundBtns() {
     const on = Store.data.settings.sound;
-    ['mSound', 'pSound'].forEach(id => { const b = $(id); b.innerHTML = ico(on ? 'soundOn' : 'soundOff'); b.classList.toggle('off', !on); });
+    ['mSound', 'pSound', 'hSound'].forEach(id => { const b = $(id); b.innerHTML = ico(on ? 'soundOn' : 'soundOff'); b.classList.toggle('off', !on); });
     $('sSound').checked = on;
   }
   function toggleSound() {
@@ -114,10 +124,21 @@
     refreshSoundBtns();
   }
 
+  // Home = the quiz app (تحدي الثقافة)
   function goMenu() {
     closeModal();
     Sfx.stopRumble();
     if (game.mode !== 'demo') game.startDemo();
+    game.hidden = true;
+    refreshSoundBtns();
+    show('home');
+  }
+  // the older train game keeps its own menu
+  function goTrain() {
+    closeModal();
+    Sfx.stopRumble();
+    if (game.mode !== 'demo') game.startDemo();
+    game.hidden = false;
     refreshMenu();
     show('menu');
   }
@@ -224,6 +245,7 @@
     $('hBar').style.width = '0%';
     refreshHint();
     show('hud');
+    game.hidden = false;
     game.startLevel(cur, { relaxed: Store.data.settings.relaxed });
   }
 
@@ -411,8 +433,9 @@
     if (screen === 'control') { goMenu(); return true; }
     if (modal === 'result' || modal === 'chapter') { closeModal(); goLevels(); return true; }
     if (screen === 'hud') { pauseGame(); return true; }
-    if (screen === 'levels' || screen === 'settings' || screen === 'achievements') { goMenu(); return true; }
-    return false; // on main menu → exit app
+    if (screen === 'levels' || screen === 'settings' || screen === 'achievements') { goTrain(); return true; }
+    if (screen === 'menu') { goMenu(); return true; }
+    return false; // on home → exit app
   };
   // During a LIVE session the game must keep running while the host is in TikTok.
   G.onAppPause = function () { if (G.Live && G.Live.active) { G.Live.onAppPause(); return; } pauseGame(); Sfx.stopRumble(); Sfx.suspend(); };
@@ -420,7 +443,7 @@
   G.isLiveActive = function () { return !!(G.Live && G.Live.active); };
   document.addEventListener('visibilitychange', () => { if (document.hidden) G.onAppPause(); else G.onAppResume(); });
 
-  function goLevels() { closeModal(); Sfx.stopRumble(); if (game.mode !== 'demo') game.startDemo(); buildLevelList(); show('levels'); }
+  function goLevels() { closeModal(); Sfx.stopRumble(); if (game.mode !== 'demo') game.startDemo(); game.hidden = false; buildLevelList(); show('levels'); }
 
   /* ---------------- wiring ---------------- */
   function bind(id, fn, snd) { $(id).addEventListener('click', e => { Sfx.unlock(); if (snd !== false) Sfx.click(); fn(e); }); }
@@ -440,7 +463,12 @@
     bind('helpOk', () => { const t = $('helpOk').dataset.then; closeModal(); if (t === 'play') play(nextPlayable()); });
     bind('mSound', toggleSound, false);
     bind('pSound', toggleSound, false);
-    document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { Sfx.back(); goMenu(); }));
+    document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => { Sfx.back(); goTrain(); }));
+    bind('hLive', () => G.Live.openPanel('quiz'));
+    bind('hDemo', () => G.Live.quickDemo());
+    bind('hGuide', () => openModal('liveGuide'));
+    bind('hTrain', goTrain);
+    bind('hSound', toggleSound, false);
     $('levelList').addEventListener('click', e => {
       const b = e.target.closest('.lvl'); if (!b) return;
       Sfx.unlock();
@@ -465,7 +493,7 @@
     bind('pResume', resumeGame);
     bind('pRestart', () => { closeModal(); attempts++; Store.data.stats.streak = 0; Store.save(); play(cur.n, true); });
     bind('pLevels', goLevels);
-    bind('pHome', goMenu);
+    bind('pHome', goTrain);
 
     bind('rNext', () => {
       if (pendingChapter) { const c = pendingChapter; pendingChapter = null; showChapter(c); return; }
@@ -496,7 +524,12 @@
     $('sRelaxed').checked = st.relaxed;
     $('ver').textContent = VERSION;
     fillIcons();
-    $('splashLogo').innerHTML = LOGO;
+    // each copy needs its own gradient ids, otherwise a hidden copy "owns" them and the visible one renders empty
+    const logo = sfx => QUIZ_LOGO.replace(/qlg/g, 'qlg' + sfx).replace(/qlq/g, 'qlq' + sfx);
+    $('splashLogo').innerHTML = logo('s');
+    $('homeLogo').innerHTML = logo('h');
+    $('homeVer').textContent = 'v' + VERSION;
+    $('homeCats').innerHTML = (G.Quiz ? G.Quiz.CATS : []).map(c => `<span title="${c.ar}">${c.icon}</span>`).join('');
     $('menuLogo').innerHTML = LOGO;
     game = new G.Game($('game'), hooks);
     G.Live.init({
@@ -511,7 +544,7 @@
       ? Promise.all([document.fonts.load('900 20px Cairo', 'الذهب 1'), document.fonts.load('700 20px Cairo', 'الذهب 1')]).catch(() => 0)
       : Promise.resolve();
     const minSplash = new Promise(r => setTimeout(r, 1600));
-    Promise.all([fontsReady, minSplash]).then(() => { refreshMenu(); show('menu'); });
+    Promise.all([fontsReady, minSplash]).then(() => { refreshMenu(); goMenu(); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

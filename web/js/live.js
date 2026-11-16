@@ -676,7 +676,8 @@
   }
 
   let panelIdle = null;
-  function openPanel() {
+  function openPanel(forceGame) {
+    if (typeof forceGame === 'string' && !active) { cfg.game = forceGame; save(); }
     fillForm(); renderPanelStatus(); renderStats();
     $('cpLive').style.display = active ? '' : 'none';
     $('cpSetup').style.display = active ? 'none' : '';
@@ -756,6 +757,12 @@
     },
     get active() { return active; },
     openPanel, closePanel,
+    /** Home button: start a quiz session right away with fake viewers (to see the game) */
+    quickDemo() {
+      if (active) return goBroadcast();
+      cfg.game = 'quiz'; cfg.source = 'sim';
+      fillForm(); startSession(false);
+    },
     onPhase, onProgress, onResult,
     onBack() {
       if (!active) return false;

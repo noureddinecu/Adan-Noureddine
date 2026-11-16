@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
         w.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         webView = new WebView(this);
-        webView.setBackgroundColor(Color.parseColor("#F5F1E7"));
+        webView.setBackgroundColor(Color.parseColor("#071A36"));
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         webView.setVerticalScrollBarEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);

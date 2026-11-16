@@ -14,7 +14,7 @@ const b = await chromium.launch();
 const p = await (await b.newContext({ ...devices['Pixel 7'] })).newPage();
 const errs = []; p.on('pageerror', e => errs.push(e.message));
 await p.goto('file:///home/user/Adan-Noureddine/web/index.html'); await wait(2300);
-await p.tap('#mLive'); await wait(300);
+await p.tap('#hLive'); await wait(300);
 await p.selectOption('#cp_game', 'quiz');
 await p.selectOption('#cp_source', 'relay');
 await p.fill('#cp_user', '@my_live'); await p.fill('#cp_relayUrl', `ws://127.0.0.1:${srv.port}`); await p.fill('#cp_token', 'qz');

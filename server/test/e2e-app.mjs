@@ -16,7 +16,7 @@ const errs = []; p.on('pageerror', e => errs.push(e.message));
 let ok = true; const check = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) ok = false; };
 
 await p.goto('file:///home/user/Adan-Noureddine/web/index.html'); await wait(2300);
-await p.tap('#mLive'); await wait(300);
+await p.tap('#hLive'); await wait(300);
 await p.selectOption('#cp_game', 'gold');
 await p.selectOption('#cp_source', 'relay');
 await p.fill('#cp_user', '@my_live_account');
