@@ -8,5 +8,5 @@ const out = [], seen = new Set();
 const add = (key, text, kind) => { if (seen.has(key)) return; seen.add(key); out.push({ key, text, kind }); };
 for (const [g, arr] of Object.entries(window.TF_LINES)) arr.forEach((t, i) => add('a_' + g + '_' + i, t, 'line'));
 for (const [n, t] of Object.entries(window.TF_COUNTS)) add('n_' + n, t, 'line');
-for (const x of [...window.TF_BANK, ...window.TF_HARD, ...window.TF_POOL]) add(window.TF_QKEY(x[2]), x[2] + '… إِيهْ وْلَّا لَا؟', 'q');
+// the questions are not read aloud (the announcer only comments), so they are not recorded
 process.stdout.write(JSON.stringify(out));

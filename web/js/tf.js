@@ -158,6 +158,7 @@
         a.play().catch(() => { if (this.cur === a) { this.cur = null; this.tts(item); } });
         return;
       }
+      if (cfg().voice !== 'tts') { this.cur = null; this.next(); return; }   // not recorded yet: say nothing (no robot voice)
       this.tts(item);
     },
     tts(item) {
@@ -200,9 +201,8 @@
     if (n > 30) { if (C.many) Voice.say({ key: 'n_many', text: C.many }); return; }
     if (C[n]) Voice.say({ key: 'n_' + n, text: C[n] });
   }
-  function sayQuestion(q) {
-    Voice.say({ key: window.TF_QKEY ? window.TF_QKEY(q.text) : 'q', text: q.text + '… إِيهْ وْلَّا لَا؟' }, true);
-  }
+  // the question is NOT read aloud: the announcer invites the players to read it and think
+  function sayQuestion() { say('askRead', true); }
 
   /* ---------------- state ---------------- */
   let phase = 'idle', phaseEnds = 0, paused = false, pausedLeft = 0, tickTimer = null;
