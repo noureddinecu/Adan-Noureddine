@@ -115,14 +115,21 @@
   ];
   const CHILL = { name: 'chill', bpm: 78, chords: [[65, 69, 72, 76], [64, 67, 71, 74], [62, 65, 69, 72], [60, 64, 67, 71]], bass: [41, 40, 38, 36], lead: 'keys', drums: 'lofi' };
   const hz = m => 440 * Math.pow(2, (m - 69) / 12);
-  let mGain = null, mOn = false, mMode = 'calm', mVol = 0.5, mEnabled = true, step = 0, nextT = 0, timer = null, rollStart = 0;
-  let songIdx = 0, songSince = Date.now(), rotateMs = 15 * 60000;
+  let mGain = null, mOn = false, mMode = 'calm', mVol = 0.8, mEnabled = true, step = 0, nextT = 0, timer = null, rollStart = 0;
+  let songIdx = 0, songSince = Date.now(), rotateMs = 15 * 60000, autoRotate = false;
   const song = () => (mMode === 'chill' ? CHILL : SONGS[songIdx % SONGS.length]);
   const STEPDUR = () => 60 / song().bpm / 4;
 
   function mOut() {
     if (!ensure()) return null;
-    if (!mGain) { mGain = ctx.createGain(); mGain.gain.value = 0; mGain.connect(ctx.destination); }
+    if (!mGain) {
+      // music → compressor → makeup gain → speaker (keeps it loud & clear on phone speakers)
+      mGain = ctx.createGain(); mGain.gain.value = 0;
+      const comp = ctx.createDynamicsCompressor();
+      comp.threshold.value = -20; comp.knee.value = 12; comp.ratio.value = 4; comp.attack.value = 0.005; comp.release.value = 0.2;
+      const makeup = ctx.createGain(); makeup.gain.value = 1.9;
+      mGain.connect(comp); comp.connect(makeup); makeup.connect(ctx.destination);
+    }
     return mGain;
   }
   function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
@@ -214,7 +221,7 @@
     if (nextT < ctx.currentTime) nextT = ctx.currentTime + 0.05;
     while (nextT < ctx.currentTime + ahead) {
       // change song every N minutes, on a bar line (not during the break music)
-      if (step % 16 === 0 && mMode !== 'chill' && Date.now() - songSince > rotateMs) { songIdx++; songSince = Date.now(); step = 0; }
+      if (autoRotate && step % 16 === 0 && mMode !== 'chill' && Date.now() - songSince > rotateMs) { songIdx++; songSince = Date.now(); step = 0; }
       playStep(nextT); nextT += STEPDUR(); step++;
     }
   }
@@ -237,6 +244,15 @@
     stop() { if (!mOn) return; mOn = false; applyVol(0.5); setTimeout(() => { if (!mOn) clearInterval(timer); }, 600); },
     mode(m) { if (m === mMode) return; const wasChill = mMode === 'chill' || m === 'chill'; mMode = m; if (wasChill) step = 0; if (m === 'roll' && ctx) rollStart = ctx.currentTime; },
     rotateEvery(min) { rotateMs = Math.max(1, +min || 15) * 60000; },
+    /** 'arena' (main), 'oriental', 'synth', 'funk' or 'auto' (rotate every N minutes) */
+    setSong(name) {
+      autoRotate = name === 'auto';
+      if (autoRotate) return;
+      const i = SONGS.findIndex(x => x.name === name);
+      const target = i < 0 ? 0 : i;
+      if (target !== songIdx % SONGS.length) { songIdx = target; songSince = Date.now(); step = 0; }
+    },
+    get state() { return ctx ? ctx.state : 'none'; },
     nextSong() { songIdx++; songSince = Date.now(); step = 0; },
     get song() { return song().name; },
     setEnabled(v) { mEnabled = !!v; applyVol(0.4); },

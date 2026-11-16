@@ -80,6 +80,7 @@ public class MainActivity extends Activity {
         });
 
         setContentView(webView);
+        setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC);
         hideSystemBars();
         webView.loadUrl("file:///android_asset/index.html");
     }
@@ -205,6 +206,20 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public void setVolumeKeys(boolean on) { volumeKeys = on; }
+
+        /** Volume keys drive the game during LIVE, so raise a too-low media volume to 60% first. */
+        @JavascriptInterface
+        public void ensureMediaVolume() {
+            try {
+                android.media.AudioManager am = (android.media.AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                if (am == null) return;
+                int max = am.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC);
+                int cur = am.getStreamVolume(android.media.AudioManager.STREAM_MUSIC);
+                if (cur < max * 0.4) {
+                    am.setStreamVolume(android.media.AudioManager.STREAM_MUSIC, Math.round(max * 0.6f), android.media.AudioManager.FLAG_SHOW_UI);
+                }
+            } catch (Exception ignored) { }
+        }
 
         @JavascriptInterface
         public boolean isLiveMode() { return liveMode; }

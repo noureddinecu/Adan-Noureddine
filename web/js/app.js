@@ -5,7 +5,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const Lv = G.Levels, Store = G.Store, Sfx = G.Sfx;
-  const VERSION = '3.6.0';
+  const VERSION = '3.7.0';
   const INK = '#2E2A30';
 
   /* ---------------- inline SVG icons ---------------- */
@@ -139,11 +139,13 @@
     game.hidden = true;
     refreshSoundBtns();
     show('home');
+    if (G.homeMusic) G.homeMusic(true);
   }
   // the older train game keeps its own menu
   function goTrain() {
     closeModal();
     Sfx.stopRumble();
+    if (G.homeMusic) G.homeMusic(false);
     if (game.mode !== 'demo') game.startDemo();
     game.hidden = false;
     refreshMenu();
@@ -476,6 +478,7 @@
     bind('hGuide', () => openModal('liveGuide'));
     bind('hTrain', goTrain);
     bind('hSound', toggleSound, false);
+    bind('hTestSound', () => G.testSound && G.testSound(), false);
     $('levelList').addEventListener('click', e => {
       const b = e.target.closest('.lvl'); if (!b) return;
       Sfx.unlock();
@@ -518,8 +521,11 @@
       play(cur.n + 1);
     });
 
-    // first touch unlocks audio on Android WebView
-    window.addEventListener('pointerdown', () => Sfx.unlock(), { once: true });
+    // every touch (re)unlocks audio on Android WebView; the first one also starts the home music
+    window.addEventListener('pointerdown', () => {
+      Sfx.unlock();
+      if (screen === 'home' && G.Music && !G.Music.playing && G.homeMusic) G.homeMusic(true);
+    });
   }
 
   /* ---------------- boot ---------------- */

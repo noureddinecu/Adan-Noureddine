@@ -33,6 +33,7 @@
       <div class="home-cats" id="homeCats"></div>
       <button class="btn primary huge" id="hLive"><span class="live-dot"></span><span>بدا بث TikTok LIVE</span><small>لوحة التحكم والإعدادات</small></button>
       <button class="btn home-btn" id="hDemo">🧪 جرّب المسابقة دابا (مشاهدين وهميين)</button>
+      <button class="btn home-btn" id="hTestSound">🔊 جرّب الصوت والموسيقى</button>
       <button class="btn home-btn" id="hGuide">📖 كيفاش نبدا البث من التيليفون؟</button>
       <button class="home-link" id="hTrain">🚂 لعبة القطار «تبع الذهب»</button>
     </div>
@@ -305,10 +306,19 @@
           </select></label>
         <div class="cp-sw" data-game="quiz"><span>بيّن حدود TikTok فوق اللعبة (للتجربة، طفيها قبل البث)</span><label class="switch"><input type="checkbox" id="cp_showGuides"><i></i></label></div>
         <div class="cp-sw" data-game="quiz"><span>🎵 موسيقى حماسية</span><label class="switch"><input type="checkbox" id="cp_music"><i></i></label></div>
-        <label data-game="quiz">تبديل الموسيقى
+        <label data-game="quiz">الموسيقى
+          <select id="cp_musicSong">
+            <option value="arena">⭐ Arena (الرئيسية)</option>
+            <option value="oriental">🪘 شرقية (دربوكة)</option>
+            <option value="synth">🎹 Synth</option>
+            <option value="funk">🕺 Funk</option>
+            <option value="auto">🔄 تبدّل أوتوماتيكياً</option>
+          </select></label>
+        <button class="btn" id="cpTestSound" type="button">🔊 جرّب الصوت</button>
+        <label data-game="quiz">تبديل الموسيقى (ملي تختار «تبدّل أوتوماتيكياً»)
           <select id="cp_musicRotate"><option value="15">كل 15 دقيقة</option><option value="20">كل 20 دقيقة</option><option value="30">كل 30 دقيقة</option></select></label>
         <label data-game="quiz">صوت الموسيقى
-          <select id="cp_musicVol"><option value="0.25">منخفض</option><option value="0.5">متوسط</option><option value="0.8">عالي</option></select></label>
+          <select id="cp_musicVol"><option value="0.3">منخفض</option><option value="0.55">متوسط</option><option value="0.8">عالي</option><option value="1">عالي بزاف</option></select></label>
         <div class="cp-sw" data-game="quiz"><span>قبول الغلطات الصغيرة فالكتابة</span><label class="switch"><input type="checkbox" id="cp_fuzzy"><i></i></label></div>
         <div data-game="quiz"><span class="cp-lbl">المجالات</span><div class="cp-cats" id="cpCats"></div></div>
         <label>مدة عرض الرابحين (ثواني)<input id="cp_winnersTime" type="number" min="5" max="60"></label>

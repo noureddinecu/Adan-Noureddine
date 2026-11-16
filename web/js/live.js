@@ -73,7 +73,7 @@
     source: 'sim', user: '', relayUrl: '', token: '', eulerKey: '',
     qTime: 35, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
     simViewers: 40, startLevel: 1,
-    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.5, musicRotate: 15, grace: 8, supportEvery: 7
+    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false, music: true, musicVol: 0.8, musicSong: 'arena', musicRotate: 15, grace: 8, supportEvery: 7
   };
   let cfg = Object.assign({}, DEFAULT_CFG);
   let session = null;      // persisted
@@ -574,6 +574,9 @@
     conn && conn.stop();
     conn = makeConnector(); conn.start();
     const N = Native(); if (N && N.setLiveMode) try { N.setLiveMode(true); N.setVolumeKeys(!!cfg.volKeys); } catch (e) { /* */ }
+    // volume keys now drive the game, so make sure the phone's media volume is audible first
+    if (N && N.ensureMediaVolume) try { N.ensureMediaVolume(); } catch (e) { /* */ }
+    api.Sfx.unlock();
     api.game.fpsCap = cfg.saver ? 30 : 0;
     goBroadcast();
     api.game.hidden = isQuiz();
@@ -601,7 +604,7 @@
   /* =================================================================
    * CONTROL PANEL (host only)
    * ================================================================= */
-  const FIELDS = ['supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
+  const FIELDS = ['musicSong', 'supportEvery', 'musicRotate', 'grace', 'music', 'musicVol', 'freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
   const isQuiz = () => cfg.game === 'quiz';
   function fillForm() {
     renderCats();
@@ -622,7 +625,7 @@
     cfg.winnersTime = Math.max(5, Math.min(60, cfg.winnersTime | 0));
     cfg.qCount = Math.max(5, Math.min(100, cfg.qCount | 0 || 30));
     if (G.Quiz && G.Quiz.applyLayout) G.Quiz.applyLayout();
-    cfg.musicVol = Math.max(0, Math.min(1, parseFloat(cfg.musicVol)));
+    cfg.musicVol = Math.max(0, Math.min(1, isFinite(parseFloat(cfg.musicVol)) ? parseFloat(cfg.musicVol) : 0.8));
     if (active && G.Quiz && G.Quiz.music) G.Quiz.music();
     if (api && api.game) api.game.fpsCap = active && cfg.saver ? 30 : 0;
     const N = Native(); if (N && N.setVolumeKeys) try { N.setVolumeKeys(!!cfg.volKeys); } catch (e) { /* */ }
@@ -673,6 +676,7 @@
     const N = Native();
     if (N && N.memoryInfo) try { const mi = JSON.parse(N.memoryInfo()); mem = mi.pssMB + ' MB'; } catch (e) { /* */ }
     const cells = isQuiz() ? [
+      ['الصوت 🔊', G.Music ? (G.Music.state === 'running' ? (G.Music.playing ? 'خدام ✓' : 'واقف') : 'مسدود (لمس الشاشة)') : '—'],
       ['المشاركين', parts], ['التعليقات', session.comments], ...G.Quiz.stats(), ['الكادوات 🌹', (session.gifts || 0) + ' (' + (session.coins || 0) + ' كوينز)'],
       ['المشاهدين دابا', viewers || '—'], ['أكبر عدد مشاهدين', session.peakViewers || '—'], ['مدة الجلسة', mins + ' د'], ['ذاكرة اللعبة', mem]
     ] : [
@@ -725,6 +729,7 @@
     on('cpNext', () => { readForm(); actions.nextLevel(); goBroadcast(); });
     on('cpReplay', () => { readForm(); actions.replay(); goBroadcast(); });
     on('cpBoard', () => { actions.showSession(); goBroadcast(); });
+    on('cpTestSound', () => testSound());
     on('cpSupport', () => { if (active && isQuiz()) G.Quiz.ctl.support(); goBroadcast(); });
     on('cpSound', () => { actions.toggleSound(); $('cpSound').classList.toggle('off', !api.soundOn()); });
     on('cpGuide', () => api.openModal('liveGuide'));
@@ -754,6 +759,27 @@
       ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => hot.addEventListener(ev, () => clearTimeout(lp)));
     });
   }
+
+  /** plays the selected music for a few seconds so the host can check the phone's sound */
+  function testSound() {
+    api.Sfx.unlock();
+    const N = Native(); if (N && N.ensureMediaVolume) try { N.ensureMediaVolume(); } catch (e) { /* */ }
+    const M = G.Music; if (!M) return;
+    M.setSong(cfg.musicSong === 'auto' ? 'arena' : (cfg.musicSong || 'arena'));
+    M.setVolume(cfg.musicVol); M.setEnabled(true);
+    const was = M.playing;
+    M.start('play');
+    if (!was && !active) setTimeout(() => { if (!active) M.start('calm'); }, 5000);
+    setTimeout(renderStats, 600);
+  }
+  G.testSound = testSound;
+  /** main music on the home screen (Arena by default) — needs one touch first on Android */
+  G.homeMusic = function (on) {
+    const M = G.Music; if (!M) return;
+    if (!on || active || cfg.music === false) { if (!active) M.stop(); return; }
+    M.setSong(cfg.musicSong === 'auto' ? 'arena' : (cfg.musicSong || 'arena'));
+    M.setVolume(cfg.musicVol); M.start('calm');
+  };
 
   function openTikTok() {
     const N = Native();

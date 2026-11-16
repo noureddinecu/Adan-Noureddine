@@ -262,8 +262,9 @@
   function music() {
     const M = G.Music; if (!M) return;
     if (phase === 'idle' || cfg().music === false) { M.stop(); return; }
-    M.setVolume(cfg().musicVol == null ? 0.5 : cfg().musicVol);
+    M.setVolume(isFinite(parseFloat(cfg().musicVol)) ? parseFloat(cfg().musicVol) : 0.8);
     M.rotateEvery(cfg().musicRotate || 15);
+    M.setSong(cfg().musicSong || 'arena');
     if (paused) { M.start('chill'); return; }                     // the break keeps a calm music
     const mode = phase === 'topic' ? 'roll' : phase === 'question' ? ((phaseEnds - Date.now()) <= 10500 ? 'hot' : 'play') : 'calm';
     M.start(mode);
