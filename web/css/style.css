@@ -548,3 +548,68 @@ input, select { font: inherit; font-size: 1em; border: 0.13em solid var(--ink); 
 @keyframes qbPop { 0% { transform: scale(0); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
 @keyframes qbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 #quizHud .qz-correct em { display: none; }
+/* no ghost of the train game: the canvas starts invisible and the body is navy */
+canvas#game { visibility: hidden; }
+html, body { background: #071A36; }
+#splash.active, #home.active, #quizHud.active { animation: none; }
+#control { background: #F5F1E7; }
+
+/* =====================================================================
+ * v3.5 — glass / 3D polish + round answer arena
+ * ===================================================================== */
+/* soft moving lights behind everything (cheap: transforms only) */
+.qz-aurora { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.qz-aurora i { position: absolute; width: 70vw; height: 70vw; border-radius: 50%; opacity: .45; filter: blur(0); }
+.qz-aurora i:nth-child(1) { background: radial-gradient(circle, rgba(46, 230, 197, .35), transparent 65%); top: 8%; left: -25%; animation: aur1 18s ease-in-out infinite alternate; }
+.qz-aurora i:nth-child(2) { background: radial-gradient(circle, rgba(124, 92, 255, .35), transparent 65%); top: 25%; right: -30%; animation: aur2 22s ease-in-out infinite alternate; }
+.qz-aurora i:nth-child(3) { background: radial-gradient(circle, rgba(255, 201, 60, .22), transparent 65%); bottom: -20%; left: 10%; animation: aur1 26s ease-in-out infinite alternate-reverse; }
+@keyframes aur1 { to { transform: translate(18vw, 6vh) scale(1.15); } }
+@keyframes aur2 { to { transform: translate(-16vw, 10vh) scale(0.9); } }
+#quizHud > .qz-head, #quizHud > .qz-prompt, #quizHud > .qz-pane { position: relative; z-index: 1; }
+
+/* glass surfaces */
+#quizHud .qz-title, #quizHud .qz-visual, #quizHud .qz-topics, #quizHud .qz-list li, #quizHud .qz-cat {
+  background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.04) 45%, rgba(10, 30, 70, .35));
+  -webkit-backdrop-filter: blur(14px) saturate(150%); backdrop-filter: blur(14px) saturate(150%);
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 -1px 0 rgba(0,0,0,.25), 0 0.6em 1.6em rgba(0, 0, 0, .35);
+}
+#quizHud .qz-title { clip-path: none; border-radius: 1em; }
+/* 3D: the question card leans slightly back, with depth shadow */
+#quizHud .qz-visual { transform: perspective(900px) rotateX(5deg); transform-origin: 50% 100%; border-radius: 1.1em;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 1.2em 2em -0.6em rgba(0,0,0,.6), 0 0 0 1px rgba(46, 230, 197, .15); }
+/* shine sweep when a new question / the answer appears */
+#quizHud .qz-visual::after { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.28) 48%, transparent 60%); transform: translateX(-120%); animation: shine 3.5s ease-in-out infinite; }
+@keyframes shine { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+/* glossy badges */
+#quizHud .qz-counter, #quizHud .qz-pts, #quizHud .qz-prompt { position: relative; overflow: hidden; }
+#quizHud .qz-counter::after, #quizHud .qz-pts::after, #quizHud .qz-prompt::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 48%;
+  background: linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,.08)); border-radius: inherit; pointer-events: none; }
+/* 3D topic tiles */
+#quizHud .qt { background: linear-gradient(180deg, rgba(40, 90, 170, .75), rgba(12, 35, 71, .9)); border: 1px solid rgba(255,255,255,.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 0.25em 0 rgba(0,0,0,.45), 0 0.5em 0.9em rgba(0,0,0,.35); }
+#quizHud .qt.pick { animation: qzFlip .7s ease, qzPulse 0.8s ease-in-out .7s infinite; }
+@keyframes qzFlip { from { transform: rotateY(180deg) scale(1.1); } to { transform: rotateY(0) scale(1.1); } }
+#quizHud .qz-topics { display: flex; flex-wrap: wrap; justify-content: center; }
+#quizHud .qz-topics .qt { width: calc(25% - 0.4em); }
+#quizHud .qz-track { box-shadow: inset 0 1px 3px rgba(0,0,0,.5); }
+#quizHud .qz-track i { position: relative; }
+#quizHud .qz-track i::after { content: ''; position: absolute; inset: 0 0 50% 0; background: rgba(255,255,255,.35); border-radius: 1em; }
+
+/* round arena for correct answers — bottom-right, inside the free area */
+.qz-arena { display: none; right: 3vw; bottom: calc(var(--sab) + var(--free) * 0.2); width: min(42vw, calc(var(--free) * 0.72), 15em); aspect-ratio: 1; z-index: 3; }
+.qz-arena.on { display: block; animation: qzPopIn .45s cubic-bezier(.3,1.5,.5,1); }
+#quizHud:not(.compact) .qz-arena { bottom: calc(var(--sab) + 2vh); width: min(36vw, 22vh); }
+.qz-arena::before { content: ''; position: absolute; inset: -4%; border-radius: 50%;
+  background: conic-gradient(from 0deg, #2EE6C5, #7C5CFF, #FFC93C, #2EE6C5); animation: spin 8s linear infinite; opacity: .9; }
+.qz-arena #qzCorrect { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 35% 30%, rgba(40, 90, 170, .85), rgba(7, 26, 54, .95) 70%);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  box-shadow: inset 0 0.3em 0.8em rgba(255,255,255,.18), inset 0 -0.4em 1em rgba(0,0,0,.5), 0 0.8em 1.8em rgba(0,0,0,.5); }
+#quizHud .qz-arena .qz-correct { display: block; min-height: 0; flex: none; }
+.qz-arena { width: min(46vw, calc(var(--free) * 0.8), 17em); }
+@keyframes qbPop { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes qbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+#quizHud .qz-arena { position: absolute; }
+#quizHud .qz-arena #qzCorrect { position: absolute; inset: 0; width: 100%; height: 100%; flex: none; }

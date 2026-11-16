@@ -32,8 +32,13 @@
   }
 
   class Game {
+    // hidden = the train canvas is not shown at all (quiz app / home / panel): no ghost image, no drawing
+    get hidden() { return this._hidden; }
+    set hidden(v) { this._hidden = !!v; if (this.cv) this.cv.style.visibility = v ? 'hidden' : 'visible'; }
+
     constructor(canvas, hooks) {
       this.cv = canvas;
+      this.hidden = true;
       this.ctx = canvas.getContext('2d', { alpha: false });
       this.hooks = hooks || {};
       this.H = 1280;

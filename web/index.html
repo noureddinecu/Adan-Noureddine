@@ -165,7 +165,6 @@
       <div class="qz-visual" id="qzVisual"></div>
       <div class="qz-answer" id="qzAnswer"></div>
       <div class="qz-hint" id="qzHint"></div>
-      <div class="qz-correct" id="qzCorrect"></div>
       <div class="qz-fast" id="qzFast"></div>
     </div>
 
@@ -180,6 +179,9 @@
       <div id="qzFinalBody"></div>
     </div>
 
+    <!-- correct answers: round glass arena in the free bottom-right corner (TikTok comments use the left side) -->
+    <div class="qz-arena" id="qzArena"><div class="qz-correct" id="qzCorrect"></div></div>
+    <div class="qz-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="qz-paused" id="qzPaused"></div>
     <!-- optional overlay showing where TikTok draws its own UI (host preview only) -->
     <div class="qz-guides" id="qzGuides"><div class="g-top">واجهة TikTok (الاسم، المشاهدين، ✕)</div><div class="g-bottom">تعليقات TikTok 💬 + خانة الكتابة + 🎁</div></div>
@@ -278,6 +280,9 @@
             <option value="45">كبيرة (45%)</option>
           </select></label>
         <div class="cp-sw" data-game="quiz"><span>بيّن حدود TikTok فوق اللعبة (للتجربة، طفيها قبل البث)</span><label class="switch"><input type="checkbox" id="cp_showGuides"><i></i></label></div>
+        <div class="cp-sw" data-game="quiz"><span>🎵 موسيقى حماسية</span><label class="switch"><input type="checkbox" id="cp_music"><i></i></label></div>
+        <label data-game="quiz">صوت الموسيقى
+          <select id="cp_musicVol"><option value="0.25">منخفض</option><option value="0.5">متوسط</option><option value="0.8">عالي</option></select></label>
         <div class="cp-sw" data-game="quiz"><span>قبول الغلطات الصغيرة فالكتابة</span><label class="switch"><input type="checkbox" id="cp_fuzzy"><i></i></label></div>
         <div data-game="quiz"><span class="cp-lbl">المجالات</span><div class="cp-cats" id="cpCats"></div></div>
         <label>مدة عرض الرابحين (ثواني)<input id="cp_winnersTime" type="number" min="5" max="60"></label>

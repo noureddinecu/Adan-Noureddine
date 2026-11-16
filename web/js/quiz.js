@@ -23,7 +23,8 @@
     { id: 'science', ar: 'العلوم', en: 'Science', icon: '🔬' },
     { id: 'landmarks', ar: 'المعالم', en: 'Landmarks', icon: '🗼' },
     { id: 'films', ar: 'أفلام ومسلسلات', en: 'Films & Series', icon: '🎬' },
-    { id: 'languages', ar: 'اللغات', en: 'Languages', icon: '🗣️' },
+    { id: 'english', ar: 'الإنجليزية ⇄ العربية', en: 'English', icon: '🇬🇧' },
+    { id: 'french', ar: 'الفرنسية ⇄ العربية', en: 'Français', icon: '🇫🇷' },
     { id: 'morocco', ar: 'المغرب', en: 'Morocco', icon: '🇲🇦' }
   ];
   const CAT = {}; CATS.forEach(c => { CAT[c.id] = c; });
@@ -60,8 +61,14 @@
   const stripAl = w => (w.length > 3 && w.startsWith('ال') ? w.slice(2) : w.length > 4 && /^(وال|بال|لل)/.test(w) ? w.slice(3) : w);
   const key = s => norm(s).split(' ').filter(Boolean).map(stripAl).join(' ');
   // Arabic letters that differ only by their dots (the most common typing mistake) cost half an edit
-  const RASM = {};
-  ['بتثنيئ', 'جحخ', 'دذ', 'رز', 'سش', 'صض', 'طظ', 'عغ', 'فق', 'هة'].forEach((g, i) => [...g].forEach(ch => { RASM[ch] = i; }));
+  // …and so do letters that SOUND alike (common spelling confusions)
+  const NEAR = [
+    'بتثنيئ', 'جحخ', 'دذ', 'رز', 'سش', 'صض', 'طظ', 'عغ', 'فق', 'هة',          // same shape, different dots
+    'سصث', 'تط', 'دض', 'ذزظ', 'قك', 'هحة', 'اأإآءعى', 'وؤ', 'يئى'           // same / close sound
+  ].map(g => new Set([...g]));
+  const near = (x, y) => NEAR.some(g => g.has(x) && g.has(y));
+  const LATIN_NEAR = ['ie', 'ou', 'ck', 'sz', 'ao', 'yi'].map(g => new Set([...g]));
+  const nearL = (x, y) => LATIN_NEAR.some(g => g.has(x) && g.has(y));
   function wlev(a, b) {
     a = [...a]; b = [...b];
     if (Math.abs(a.length - b.length) > 3) return 9;
@@ -70,7 +77,7 @@
       const cur = [i];
       for (let j = 1; j <= b.length; j++) {
         const x = a[i - 1], y = b[j - 1];
-        const sub = x === y ? 0 : (RASM[x] != null && RASM[x] === RASM[y]) ? 0.5 : 1;
+        const sub = x === y ? 0 : (near(x, y) || nearL(x, y)) ? 0.5 : 1;
         cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + sub);
       }
       prev = cur;
@@ -98,7 +105,7 @@
       w = w.replace(/^(ال|لل)/, '').replace(/ه$/, '');        // article, final ta marbuta
       return [...w].map(ch => AR_SK[ch] || '').join('').replace(/(.)\1+/g, '$1');
     }
-    w = w.replace(/^(al|el|ar|er|as|es|at|et|an|en|ad|ed|l|le|la|les|the)[- ']?(?=\w{4,})/, '')
+    w = w.replace(/^(al|el|ar|er|as|es|at|et|an|en|ad|ed|le|la|les|the)[- ']?(?=\w{4,})/, '').replace(/^l'?(?=[^aeiouy'\s]\w{3,})/, '')
       .replace(/ou/g, 'u').replace(/(sh|ch)/g, 's').replace(/kh/g, 'k').replace(/gh/g, 'g').replace(/th/g, 't').replace(/dh/g, 'd')
       .replace(/dj/g, 'j').replace(/ph/g, 'f').replace(/ck|q|c/g, 'k').replace(/x/g, 'ks').replace(/p/g, 'b').replace(/v/g, 'f')
       .replace(/7/g, 'h').replace(/9/g, 'k').replace(/[23]/g, '')
@@ -107,7 +114,8 @@
   }
   const skel = phrase => phrase.split(' ').map(skeleton).join('');
   // allowed edits: short words must be exact, longer words tolerate 1–2 letters (as the host asked: «الرياض»/«الراط» for «الرباط»)
-  const tolFor = len => (len <= 3 ? 0.5 : len === 4 ? 1.5 : len <= 7 ? 2 : 3);
+  // one letter only (or two "near" letters): short words must be almost exact
+  const tolFor = len => (len <= 3 ? 0.5 : 1);
   const dedup = w => w.replace(/(.)\1+/g, '$1');
 
   /** true if the comment contains one of the accepted answers (whole words, close spelling allowed) */
@@ -142,7 +150,7 @@
           if (aSk.length >= 3) {
             const wSk = skel(win);
             if (wSk === aSk) return true;
-            if (aSk.length >= 4 && Math.abs(wSk.length - aSk.length) <= 1 && lev(wSk, aSk) <= 1) return true;
+            if (aSk.length >= 5 && Math.abs(wSk.length - aSk.length) <= 1 && lev(wSk, aSk) <= 1) return true;
           }
         }
       }
@@ -196,16 +204,23 @@
         else { a = 12 + ((Math.random() * 30) | 0); b = 3 + ((Math.random() * 7) | 0); op = '×'; r = a * b; }
         return { ...base, id: 'math:' + a + op + b, titleAr: 'احسب بسرعة', titleEn: 'Quick maths', visual: { kind: 'math', text: `${a} ${op} ${b} = ?` }, answers: [String(r)], show: { ar: String(r), en: '' } };
       }
-      case 'languages': {
+      case 'english':
+      case 'french': {
+        const fr = catId === 'french';
+        const pre = fr ? 'fr:' : 'en:';
         const used = new Set(st.used);
-        const words = G.QUIZ_WORDS.filter(w => !used.has('word:' + w[2]));
+        const words = G.QUIZ_WORDS.filter(w => !used.has(pre + (Array.isArray(w[2]) ? w[2][0] : w[2])));
+        if (!words.length) st.used = st.used.filter(u => !u.startsWith(pre));
         const w = rnd(words.length ? words : G.QUIZ_WORDS);
-        const mode = rnd(['en2ar', 'fr2ar', 'ar2en', 'ar2fr']);
-        const id = 'word:' + w[2];
-        if (mode === 'en2ar') return { ...base, id, titleAr: 'ما معنى هذه الكلمة بالعربية؟', titleEn: 'Translate to Arabic', visual: { kind: 'text', text: w[2], sub: 'English 🇬🇧' }, answers: [w[0], ...w[1]], show: { ar: w[0], en: w[2] } };
-        if (mode === 'fr2ar') return { ...base, id, titleAr: 'ما معنى هذه الكلمة بالعربية؟', titleEn: 'Traduire en arabe', visual: { kind: 'text', text: w[3], sub: 'Français 🇫🇷' }, answers: [w[0], ...w[1]], show: { ar: w[0], en: w[3] } };
-        if (mode === 'ar2en') return { ...base, id, titleAr: 'كيف نقولها بالإنجليزية؟', titleEn: 'Say it in English', visual: { kind: 'text', text: w[0], sub: '→ English 🇬🇧' }, answers: [w[2]], show: { ar: w[2], en: w[0] } };
-        return { ...base, id, titleAr: 'كيف نقولها بالفرنسية؟', titleEn: 'En français ?', visual: { kind: 'text', text: w[0], sub: '→ Français 🇫🇷' }, answers: [w[3]], show: { ar: w[3], en: w[0] } };
+        const list = v => (Array.isArray(v) ? v : [v]);
+        const foreign = list(fr ? w[3] : w[2]);
+        const ar = [w[0], ...w[1]];
+        const id = pre + list(w[2])[0];
+        const toArabic = Math.random() < 0.5;
+        const flag = fr ? 'Français 🇫🇷' : 'English 🇬🇧';
+        return toArabic
+          ? { ...base, id, titleAr: 'ترجم إلى العربية', titleEn: fr ? 'Traduire en arabe' : 'Translate to Arabic', visual: { kind: 'text', text: foreign[0], sub: flag + ' → العربية' }, answers: ar, show: { ar: w[0], en: foreign[0] } }
+          : { ...base, id, titleAr: fr ? 'ترجم إلى الفرنسية' : 'ترجم إلى الإنجليزية', titleEn: fr ? 'Traduire en français' : 'Translate to English', visual: { kind: 'text', text: w[0], sub: 'العربية → ' + flag }, answers: foreign, show: { ar: foreign[0], en: w[0] } };
       }
       default: {
         const bank = G.QUIZ_BANK[catId] || [];
@@ -242,14 +257,22 @@
     if (!s.quiz) s.quiz = { no: 0, game: 1, used: [], lastCat: null, asked: 0 };
     st = s.quiz;
   }
-  function setPhase(p, ms) { phase = p; phaseEnds = ms ? Date.now() + ms : 0; render(); }
+  function setPhase(p, ms) { phase = p; phaseEnds = ms ? Date.now() + ms : 0; music(); render(); }
+  // background music follows the game: drum-roll on the roulette, groove on the question, "hot" in the last 10 s
+  function music() {
+    const M = G.Music; if (!M) return;
+    if (phase === 'idle' || paused || cfg().music === false) { M.stop(); return; }
+    M.setVolume(cfg().musicVol == null ? 0.5 : cfg().musicVol);
+    const mode = phase === 'topic' ? 'roll' : phase === 'question' ? ((phaseEnds - Date.now()) <= 10500 ? 'hot' : 'play') : 'calm';
+    M.start(mode);
+  }
 
   function start() {
     ensureState();
     q = null; paused = false;
     setPhase('ready', 4000);
   }
-  function stop() { phase = 'idle'; q = null; paused = false; clearAnim(); }
+  function stop() { phase = 'idle'; q = null; paused = false; clearAnim(); if (G.Music) G.Music.stop(); }
 
   function nextTopic(forceCat) {
     ensureState();
@@ -290,7 +313,7 @@
     const now = Date.now();
     if (phase === 'question' && q) {
       const left = Math.max(0, Math.ceil((phaseEnds - now) / 1000));
-      if (left !== q.lastLeft) { q.lastLeft = left; if (left <= 5 && left > 0) api.Sfx.tick(left === 1); renderTimer(); }
+      if (left !== q.lastLeft) { q.lastLeft = left; if (left <= 5 && left > 0) api.Sfx.tick(left === 1); if (left === 10) music(); renderTimer(); }
       if (!q.hint && now >= q.hintAt) { q.hint = true; renderHint(); }
     }
     if (phase === 'topic') renderRoulette();
@@ -353,6 +376,7 @@
     $('qzPaused').textContent = T('paused');
     $('qzPrompt').textContent = T('type');
     $('qzPrompt').classList.toggle('on', phase === 'question');
+    const ar = $('qzArena'); if (ar) ar.classList.toggle('on', phase === 'question' || phase === 'reveal');
     if (phase === 'ready') { show('qzReady'); $('qzReadyText').textContent = T('ready'); setTitle(T('next'), T('nextEn')); renderWall(); }
     if (phase === 'topic') { show('qzTopic'); setTitle(T('next'), T('nextEn')); renderTopics(); renderWall(); }
     if (phase === 'question' || phase === 'reveal') { show('qzQuestion'); renderQuestion(); }
@@ -434,31 +458,33 @@
     bar.classList.toggle('low', left < 6000);
     if (!paused) { void bar.offsetWidth; bar.style.transition = `width ${left}ms linear`; bar.style.width = '0%'; }
   }
-  /* Correct answers as a round bubble cloud (sunflower / Vogel spiral around a counter bubble).
-     Existing bubbles keep their place; only newcomers pop in. Up to 40 photos, then just the counter grows. */
+  /* Correct answers: photos packed INSIDE a round glass arena (sunflower / Vogel spiral around a ✓ counter).
+     The arena never grows; bubbles shrink a little as more people answer, and never leave the circle.
+     Existing bubbles keep their place, newcomers pop in. Up to 30 photos, then only the counter grows. */
   const GOLDEN = Math.PI * (3 - Math.sqrt(5));
   function renderCorrect() {
     if (!q) return;
     const box = $('qzCorrect'); if (!box) return;
     const s = S();
     if (box.dataset.q !== q.id + q.start) { box.dataset.q = q.id + q.start; box.innerHTML = '<div class="qb-count"><b>0</b><small>✓</small></div>'; }
-    const W = box.clientWidth || 300, H = box.clientHeight || 110;
-    const ids = q.correct.slice(0, 40), n = ids.length;
-    // bubble size shrinks as the cloud fills up, but stays readable
-    const size = Math.max(22, Math.min(44, Math.sqrt((W * H * 0.42) / (n + 5))));
-    const unit = i => size * 0.6 * Math.sqrt(i + 2.6);            // sunflower radius (counter sits in the middle)
-    const rmax = n ? unit(n - 1) : 1, Ry = H / 2 - size / 2, Rx = W / 2 - size / 2;
-    const ky = Math.min(1, Ry / rmax);                              // squeeze vertically only if needed…
-    const kx = Math.min(Rx / rmax, ky < 1 ? Math.min(2.6, 1 / ky) : 1); // …and spread sideways to compensate
+    const D = Math.min(box.clientWidth, box.clientHeight) || 160, R = D / 2;
+    const ids = q.correct.slice(0, 24), n = ids.length;
+    // biggest bubble size that still keeps the whole spiral inside the circle
+    // (×1.15 leaves room for the pop / float animation so nothing ever crosses the circle)
+    const fit = R / ((0.62 * Math.sqrt(Math.max(1, n) + 1.6) + 0.58) * 1.15);
+    const size = Math.max(18, Math.min(R * 0.4, fit));
     const cnt = box.querySelector('.qb-count');
-    cnt.style.width = cnt.style.height = Math.round(size * 1.35) + 'px';
+    const cs = Math.min(R * 0.62, Math.max(size * 1.25, 30));
+    cnt.style.width = cnt.style.height = Math.round(cs) + 'px';
     cnt.querySelector('b').textContent = q.correct.length;
     box.classList.toggle('empty', !n);
     const have = new Map([...box.querySelectorAll('.qb')].map(el => [el.dataset.u, el]));
+    const inner = R - size * 0.62 - 4;                                // max distance of a bubble centre (pop scale included)
     ids.forEach((id, i) => {
-      const r = unit(i), th = i * GOLDEN;
-      let x = W / 2 + r * Math.cos(th) * kx, y = H / 2 + r * Math.sin(th) * ky;
-      x = Math.max(size / 2, Math.min(W - size / 2, x)); y = Math.max(size / 2, Math.min(H - size / 2, y));
+      let r = size * 0.62 * Math.sqrt(i + 2.6);
+      r = Math.min(r, inner);
+      const th = i * GOLDEN - Math.PI / 2;
+      const x = R + r * Math.cos(th), y = R + r * Math.sin(th);
       let el = have.get(id);
       if (!el) {
         el = document.createElement('div'); el.className = 'qb pop'; el.dataset.u = id;
@@ -573,7 +599,7 @@
       if (phase === 'idle' || phase === 'ready') return;
       if (!paused) { paused = true; pausedLeft = Math.max(0, phaseEnds - Date.now()); }
       else { paused = false; if (phaseEnds) phaseEnds = Date.now() + pausedLeft; }
-      render(); if (phase === 'question') renderTimer();
+      render(); music(); if (phase === 'question') renderTimer();
     },
     showBoard() { if (phase !== 'question') { setPhase('board', cfg().autopilot ? cfg().winnersTime * 1000 : 0); } },
     hideBoard() { if (phase === 'board' || phase === 'final') { phaseEnds = 0; nextTopic(); } },
@@ -595,7 +621,7 @@
   G.Quiz = {
     CATS,
     init(a) { api = a; },
-    applyLayout,
+    applyLayout, music,
     start, stop, onChat, ctl, simTarget,
     isCorrect, key,
     get phase() { return phase; },
