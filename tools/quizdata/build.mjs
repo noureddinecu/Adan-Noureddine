@@ -75,6 +75,8 @@ for (const a2 of Object.keys(byA2)) {
 geoms.filter(g => !num2a2[String(g.id).padStart(3, '0')]).forEach(g => rings(topojson.feature(topo, g).geometry, 10).forEach(r => bg.push(r)));
 
 // --- countries --------------------------------------------------------------
+// common short English names where the ISO name is long/official
+const EN_SHORT = { SY: 'Syria', LA: 'Laos', MD: 'Moldova', BA: 'Bosnia', CF: 'Central Africa', DO: 'Dominican Rep.', US: 'USA', GB: 'UK', KR: 'South Korea', KP: 'North Korea', RU: 'Russia', IR: 'Iran', VN: 'Vietnam', TZ: 'Tanzania', BO: 'Bolivia', VE: 'Venezuela', CD: 'DR Congo', CG: 'Congo' };
 const countries = [];
 const shapes = {};
 for (const [a2, [capAr, capEn, tier, capExtra, nameExtra]] of Object.entries(CAPITALS)) {
@@ -87,7 +89,7 @@ for (const [a2, [capAr, capEn, tier, capExtra, nameExtra]] of Object.entries(CAP
   countries.push({
     c: a2, tier,
     ar: uniq([...names, ...nameExtra.filter(x => /[؀-ۿ]/.test(x))]),
-    en: uniq([...arr(en[a2]).sort((a, b) => ((a.length <= 3) - (b.length <= 3)) || a.length - b.length), ...arr(fr[a2]), ...nameExtra.filter(x => !/[؀-ۿ]/.test(x))]),
+    en: uniq([...(EN_SHORT[a2] ? [EN_SHORT[a2]] : []), ...arr(en[a2]).sort((a, b) => ((a.length <= 3) - (b.length <= 3)) || a.length - b.length), ...arr(fr[a2]), ...nameExtra.filter(x => !/[؀-ۿ]/.test(x))]),
     cap: { ar: capAr, en: capEn, al: uniq([capAr, capEn, ...capExtra]) },
     area: Math.round(ar2 * 10) / 10
   });

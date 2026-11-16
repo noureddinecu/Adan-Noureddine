@@ -282,9 +282,13 @@
   // keep the bottom of the screen free so TikTok's comment overlay does not cover the game
   function applyLayout() {
     const hud = $('quizHud'); if (!hud) return;
-    const free = Math.max(0, Math.min(55, Number(cfg().freeSpace == null ? 38 : cfg().freeSpace)));
+    const free = Math.max(0, Math.min(55, Number(cfg().freeSpace == null ? 40 : cfg().freeSpace)));
+    const top = Math.max(0, Math.min(25, Number(cfg().topSpace == null ? 13 : cfg().topSpace)));
     hud.style.setProperty('--free', free + 'vh');
-    hud.classList.toggle('compact', free >= 30);
+    hud.style.setProperty('--top', top + 'vh');
+    hud.classList.toggle('compact', free >= 30 || top >= 10);
+    hud.classList.toggle('tight', free + top >= 50);
+    const g = $('qzGuides'); if (g) g.classList.toggle('on', !!cfg().showGuides);
   }
   function render() {
     const hud = $('quizHud'); if (!hud) return;

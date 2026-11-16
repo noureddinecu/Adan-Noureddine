@@ -73,7 +73,7 @@
     source: 'sim', user: '', relayUrl: '', token: '', eulerKey: '',
     qTime: 30, winnersTime: 12, autopilot: true, volKeys: true, lang: 'ma', saver: true,
     simViewers: 40, startLevel: 1,
-    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 38
+    game: 'quiz', qCount: 30, fuzzy: true, quizOff: '', freeSpace: 40, topSpace: 13, showGuides: false
   };
   let cfg = Object.assign({}, DEFAULT_CFG);
   let session = null;      // persisted
@@ -589,7 +589,7 @@
   /* =================================================================
    * CONTROL PANEL (host only)
    * ================================================================= */
-  const FIELDS = ['freeSpace', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
+  const FIELDS = ['freeSpace', 'topSpace', 'showGuides', 'game', 'source', 'user', 'relayUrl', 'token', 'eulerKey', 'qTime', 'qCount', 'fuzzy', 'winnersTime', 'autopilot', 'volKeys', 'lang', 'saver', 'simViewers', 'startLevel'];
   const isQuiz = () => cfg.game === 'quiz';
   function fillForm() {
     renderCats();

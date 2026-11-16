@@ -503,3 +503,31 @@ input, select { font: inherit; font-size: 1em; border: 0.13em solid var(--ink); 
 #quizHud.compact .qz-fast-t { margin-bottom: 0.1em; }
 #quizHud.compact .qa.xl { width: 4.2em; height: 4.2em; }
 #quizHud.compact .qp.gold .step { height: 3.4em; } #quizHud.compact .qp.silver .step { height: 2.5em; } #quizHud.compact .qp.bronze .step { height: 1.9em; }
+
+/* ---- quiz: TikTok-aware layout (top UI band + bottom comments band) ---- */
+#quizHud { --top: 13vh; padding-top: calc(var(--top) + var(--sat)); }
+#quizHud .qz-head, #quizHud.compact .qz-head { margin-top: 0; }
+#quizHud::before { mask-image: none; }
+/* prompt now sits right under the header, inside the safe zone */
+#quizHud .qz-prompt { display: none; position: relative; z-index: 2; }
+#quizHud .qz-prompt.on { display: block; visibility: visible; }
+#quizHud.compact .qz-prompt { font-size: 1.15em; padding: 0.25em 0.4em; border-radius: 0.7em; }
+/* very tight safe zone: drop secondary bits */
+#quizHud.tight .qz-hint small { display: none; }
+#quizHud.tight #qzBoard .qz-fast-row { display: none; }
+#quizHud.tight .qz-title small { display: none; }
+#quizHud.tight .qz-topics .qt b { font-size: 0.75em; }
+#quizHud.tight .qz-wall { display: none; }
+#quizHud.tight #qzReady h2 { font-size: 1.3em; }
+/* host preview of TikTok's overlays */
+.qz-guides { display: none; position: absolute; inset: 0; pointer-events: none; z-index: 8; }
+.qz-guides.on { display: block; }
+.qz-guides div { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 900; font-size: 0.9em; color: #fff;
+  background: repeating-linear-gradient(45deg, rgba(254, 44, 85, .28) 0 12px, rgba(254, 44, 85, .12) 12px 24px); border: 2px dashed #FE2C55; }
+.qz-guides .g-top { top: 0; height: var(--top); }
+.qz-guides .g-bottom { bottom: 0; height: var(--free); }
+/* reveal: keep the picture/map readable inside the safe zone */
+#quizHud.compact .revealed .qz-correct { display: none; }
+#quizHud.compact .revealed .qz-visual { min-height: 6.5em; }
+#quizHud.tight .revealed .qz-fast-t { display: none; }
+#quizHud.tight .revealed .qz-answer small { display: none; }
