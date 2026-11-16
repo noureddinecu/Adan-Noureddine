@@ -117,7 +117,8 @@
       <p class="cp-note">إذا لم يعمل الربط التلقائي، اكتب الأسماء والإجابات التي تراها في التعليقات أثناء السؤال.</p>
 
       <h3 class="cp-h">الإعدادات</h3>
-      <div class="card cp-form">
+      <div class="cp-groups cp-form">
+      <div class="cp-group"><h4 class="cp-gh"><i>🔌</i>الاتصال بـ TikTok</h4>
         <select id="cp_game" hidden><option value="quiz">🧠 تحدي الثقافة</option></select>
         <label>مصدر التعليقات
           <select id="cp_source">
@@ -131,7 +132,8 @@
         <label data-src="relay">الرمز السري (ACCESS_TOKEN)<input id="cp_token" type="password" autocomplete="off"></label>
         <label data-src="euler">Euler Stream API key<input id="cp_eulerKey" type="password" autocomplete="off"></label>
         <label data-src="sim">عدد المشاهدين الوهميين<input id="cp_simViewers" type="number" min="3" max="300"></label>
-        <label>وقت الإجابة (بالثواني)<input id="cp_qTime" type="number" min="8" max="60"></label>
+      </div>
+      <div class="cp-group"><h4 class="cp-gh"><i>🎮</i>قواعد اللعبة</h4>
         <label>مدة التسجيل («العب») قبل الأسئلة
           <select id="cp_lobbyTime"><option value="60">دقيقة</option><option value="90">دقيقة ونصف</option><option value="120">دقيقتان · مستحسن</option><option value="180">3 دقائق</option></select></label>
         <label>قراءة شروط وقواعد المسابقة أثناء التسجيل
@@ -144,16 +146,43 @@
           <select id="cp_reviveMin"><option value="1">أي هدية (حتى الوردة) · مستحسن</option><option value="5">5 عملات أو أكثر</option><option value="10">10 عملات أو أكثر</option><option value="30">30 عملة أو أكثر</option><option value="100">100 عملة أو أكثر</option></select></label>
         <label>المرحلة النهائية (لا عودة، حتى بالهدية) عندما يبقى
           <select id="cp_finalAt"><option value="5">5 لاعبين</option><option value="10">10 لاعبين · مستحسن</option><option value="15">15 لاعباً</option><option value="20">20 لاعباً</option></select></label>
-        <label>المذيع (يقرأ الأسئلة ويعلّق بالدارجة)
-          <select id="cp_voice"><option value="mohamed">🎙️ محمد (صوت طبيعي)</option><option value="tts">📱 صوت الهاتف</option><option value="off">🔇 بدون مذيع</option></select></label>
-        <label>سرعة المذيع
-          <select id="cp_voiceRate"><option value="0.9">هادئ</option><option value="1">عادي · مستحسن</option><option value="1.12">سريع</option></select></label>
+      </div>
+      <div class="cp-group"><h4 class="cp-gh"><i>⏱️</i>الأوقات والإيقاع</h4>
+        <label>وقت الإجابة (بالثواني)<input id="cp_qTime" type="number" min="8" max="60"></label>
         <label data-game="quiz">وقت إضافي خفي لتأخّر البث
           <select id="cp_grace"><option value="5">5 ثوانٍ</option><option value="8">8 ثوانٍ</option><option value="10">10 ثوانٍ · مستحسن</option><option value="15">15 ثانية</option></select></label>
         <label>وقت الضحك والتعليق بعد السقوط (قبل السؤال التالي)
           <select id="cp_gapTime"><option value="6">6 ثوانٍ</option><option value="10">10 ثوانٍ · مستحسن</option><option value="14">14 ثانية</option></select></label>
         <label>فقرة الدعم والمتابعة (وقفة قصيرة)
           <select id="cp_giftHype"><option value="0">أبداً</option><option value="4">كل 4 أسئلة</option><option value="5">كل 5 أسئلة · مستحسن</option><option value="6">كل 6 أسئلة</option></select></label>
+      </div>
+      <div class="cp-group"><h4 class="cp-gh"><i>🎙️</i>المذيع والموسيقى</h4>
+        <label>المذيع (يقرأ الأسئلة ويعلّق بالدارجة)
+          <select id="cp_voice"><option value="mohamed">🎙️ محمد (صوت طبيعي)</option><option value="tts">📱 صوت الهاتف</option><option value="off">🔇 بدون مذيع</option></select></label>
+        <label>سرعة المذيع
+          <select id="cp_voiceRate"><option value="0.9">هادئ</option><option value="1">عادي · مستحسن</option><option value="1.12">سريع</option></select></label>
+        <div class="cp-sw" data-game="quiz"><span>🎵 موسيقى حماسية</span><label class="switch"><input type="checkbox" id="cp_music"><i></i></label></div>
+        <label data-game="quiz">الموسيقى
+          <select id="cp_musicSong">
+            <option value="arena">⭐ Arena (الرئيسية)</option>
+            <option value="oriental">🪘 شرقية (دربوكة)</option>
+            <option value="synth">🎹 Synth</option>
+            <option value="funk">🕺 Funk</option>
+            <option value="auto">🔄 تبديل تلقائي</option>
+          </select></label>
+        <label data-game="quiz">صوت الموسيقى
+          <select id="cp_musicVol"><option value="0.3">منخفض · مستحسن</option><option value="0.5">متوسط</option><option value="0.7">مرتفع</option><option value="0.9">مرتفع جداً</option></select></label>
+        <label data-game="quiz">تبديل الموسيقى (عند اختيار «تبديل تلقائي»)
+          <select id="cp_musicRotate"><option value="15">كل 15 دقيقة</option><option value="20">كل 20 دقيقة</option><option value="30">كل 30 دقيقة</option></select></label>
+        <button class="btn" id="cpTestSound" type="button">🔊 جرّب الصوت</button>
+      </div>
+      <div class="cp-group"><h4 class="cp-gh"><i>🎁</i>الهدايا</h4>
+        <div class="cp-sw" data-game="quiz"><span>🎁 الشكر على الهدية (صورة كبيرة على اليمين)</span><label class="switch"><input type="checkbox" id="cp_giftThanks"><i></i></label></div>
+        <label data-game="quiz">مدة ظهور الشكر
+          <select id="cp_giftShow"><option value="3">3 ثوانٍ</option><option value="4">4 ثوانٍ · مستحسن</option><option value="6">6 ثوانٍ</option><option value="8">8 ثوانٍ</option></select></label>
+        <div class="cp-sw" data-game="quiz"><span>👏 تصفيق خفيف مع الشكر</span><label class="switch"><input type="checkbox" id="cp_applause"><i></i></label></div>
+      </div>
+      <div class="cp-group"><h4 class="cp-gh"><i>📱</i>شاشة TikTok</h4>
         <label data-game="quiz">مساحة واجهة TikTok في الأعلى
           <select id="cp_topSpace">
             <option value="0">بدون</option>
@@ -170,29 +199,12 @@
             <option value="45">كبيرة (45%)</option>
           </select></label>
         <div class="cp-sw" data-game="quiz"><span>إظهار حدود TikTok فوق اللعبة (للتجربة، أوقفها قبل البث)</span><label class="switch"><input type="checkbox" id="cp_showGuides"><i></i></label></div>
-        <div class="cp-sw" data-game="quiz"><span>🎵 موسيقى حماسية</span><label class="switch"><input type="checkbox" id="cp_music"><i></i></label></div>
-        <label data-game="quiz">الموسيقى
-          <select id="cp_musicSong">
-            <option value="arena">⭐ Arena (الرئيسية)</option>
-            <option value="oriental">🪘 شرقية (دربوكة)</option>
-            <option value="synth">🎹 Synth</option>
-            <option value="funk">🕺 Funk</option>
-            <option value="auto">🔄 تبديل تلقائي</option>
-          </select></label>
-        <button class="btn" id="cpTestSound" type="button">🔊 جرّب الصوت</button>
-        <label data-game="quiz">تبديل الموسيقى (عند اختيار «تبديل تلقائي»)
-          <select id="cp_musicRotate"><option value="15">كل 15 دقيقة</option><option value="20">كل 20 دقيقة</option><option value="30">كل 30 دقيقة</option></select></label>
-        <label data-game="quiz">صوت الموسيقى
-          <select id="cp_musicVol"><option value="0.3">منخفض</option><option value="0.5">متوسط · مستحسن</option><option value="0.7">مرتفع</option><option value="0.9">مرتفع جداً</option></select></label>
-        <div class="cp-sw" data-game="quiz"><span>🎁 الشكر على الهدية (صورة كبيرة على اليمين)</span><label class="switch"><input type="checkbox" id="cp_giftThanks"><i></i></label></div>
-        <label data-game="quiz">يظهر الشكر بعد الهدية بـ
-          <select id="cp_giftDelay"><option value="0">مباشرة</option><option value="3">3 ثوانٍ</option><option value="7">7 ثوانٍ · مستحسن</option><option value="10">10 ثوانٍ</option><option value="15">15 ثانية</option></select></label>
-        <label data-game="quiz">مدة ظهور الشكر
-          <select id="cp_giftShow"><option value="3">3 ثوانٍ</option><option value="4">4 ثوانٍ · مستحسن</option><option value="6">6 ثوانٍ</option><option value="8">8 ثوانٍ</option></select></label>
-        <div class="cp-sw" data-game="quiz"><span>👏 تصفيق خفيف مع الشكر</span><label class="switch"><input type="checkbox" id="cp_applause"><i></i></label></div>
+      </div>
+      <div class="cp-group"><h4 class="cp-gh"><i>⚙️</i>متقدّم</h4>
         <div class="cp-sw"><span>تشغيل تلقائي (الأسئلة تتوالى وحدها)</span><label class="switch"><input type="checkbox" id="cp_autopilot"><i></i></label></div>
         <div class="cp-sw"><span>التحكم بأزرار الصوت</span><label class="switch"><input type="checkbox" id="cp_volKeys"><i></i></label></div>
         <div class="cp-sw"><span>توفير البطارية (30 صورة/ثانية)</span><label class="switch"><input type="checkbox" id="cp_saver"><i></i></label></div>
+      </div>
       </div>
       <div class="cp-row2">
         <button class="btn" id="cpBattery">🔋 إعدادات البطارية</button>

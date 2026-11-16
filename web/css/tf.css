@@ -272,3 +272,56 @@ body.tf-app { background: #1B1033; }
   border-radius: 1.2em; padding: 0.7em 1.2em; border: 0.12em solid #fff; box-shadow: 0 0.8em 2em rgba(0,0,0,.45); }
 .tf-sup i { font-style: normal; font-size: 2.6em; line-height: 1; animation: tfCrown 1.2s ease-in-out infinite; }
 .tf-sup b { font-size: 1.15em; font-weight: 900; } .tf-sup small { font-size: 0.85em; opacity: .95; }
+
+/* =====================================================================
+ * control panel — calm, modern, dark glass (only in «صح أم خطأ»)
+ * ===================================================================== */
+body.tf-app #control { --pc-bg: #120B24; --pc-card: rgba(255,255,255,.055); --pc-line: rgba(196,181,253,.16); --pc-text: #EDE9FE; --pc-muted: #A99BD6;
+  --pc-acc: #8B5CF6; --pc-acc2: #EC4899; --pc-ok: #34D399;
+  background: radial-gradient(120% 60% at 50% 0%, #2A1757 0%, #160C2E 55%, #0D0720 100%); color: var(--pc-text); }
+body.tf-app #control .header { background: rgba(18,11,36,.75); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid var(--pc-line); }
+body.tf-app #control .header h2 { color: #fff; font-weight: 900; letter-spacing: .01em; }
+body.tf-app #control .icon-btn { background: var(--pc-card); border: 1px solid var(--pc-line); box-shadow: none; }
+body.tf-app #control .icon-btn svg path { stroke: #EDE9FE; }
+body.tf-app #control .cp-pill { background: rgba(255,255,255,.08); color: var(--pc-muted); border: 1px solid var(--pc-line); }
+body.tf-app #control .cp-pill.ok { background: rgba(52,211,153,.18); color: #6EE7B7; border-color: rgba(52,211,153,.4); }
+body.tf-app #control .cp-pill.mid { background: rgba(251,191,36,.16); color: #FCD34D; border-color: rgba(251,191,36,.35); }
+body.tf-app #control .cp-pill.bad { background: rgba(244,63,94,.16); color: #FDA4AF; border-color: rgba(244,63,94,.35); }
+body.tf-app #control .cp-msg, body.tf-app #control .cp-note, body.tf-app #control .muted { color: var(--pc-muted); }
+body.tf-app #control .cp-h { color: #fff; font-size: 1.05em; margin: 1.2em 0 0.5em; display: flex; align-items: center; gap: 0.4em; }
+body.tf-app #control .cp-h::before { content: ''; width: 0.3em; height: 1.1em; border-radius: 1em; background: linear-gradient(var(--pc-acc2), var(--pc-acc)); }
+/* buttons */
+body.tf-app #control .btn { background: var(--pc-card); color: var(--pc-text); border: 1px solid var(--pc-line); box-shadow: 0 0.3em 0.9em rgba(0,0,0,.25); border-radius: 0.9em; font-weight: 800; }
+body.tf-app #control .btn:active { transform: scale(.98); box-shadow: none; }
+body.tf-app #control .btn.primary { background: linear-gradient(135deg, var(--pc-acc2), var(--pc-acc)); color: #fff; border: 0; box-shadow: 0 0.5em 1.4em rgba(139,92,246,.45); }
+body.tf-app #control .btn.danger { background: rgba(244,63,94,.16); color: #FDA4AF; border-color: rgba(244,63,94,.4); }
+/* cards: stats, last comments, manual answer */
+body.tf-app #control .card { background: var(--pc-card); border: 1px solid var(--pc-line); box-shadow: none; border-radius: 1em; color: var(--pc-text); }
+body.tf-app #control .cp-stats div { background: var(--pc-card); border: 1px solid var(--pc-line); }
+body.tf-app #control .cp-stats small { color: var(--pc-muted); } body.tf-app #control .cp-stats b { color: #fff; }
+body.tf-app #control .cp-recent li { border-color: var(--pc-line); }
+body.tf-app #control .cp-recent li.ok em { color: #6EE7B7; }
+/* settings: one card per group */
+body.tf-app #control .cp-groups { padding: 0; background: none; border: 0; box-shadow: none; gap: 0.8em; }
+body.tf-app #control .cp-group { background: var(--pc-card); border: 1px solid var(--pc-line); border-radius: 1.1em; padding: 0.8em 0.9em 0.9em;
+  display: flex; flex-direction: column; gap: 0.7em; box-shadow: 0 0.6em 1.6em rgba(0,0,0,.25); }
+body.tf-app #control .cp-gh { margin: 0 0 0.1em; font-size: 1em; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 0.5em; }
+body.tf-app #control .cp-gh i { font-style: normal; width: 1.9em; height: 1.9em; border-radius: 0.65em; display: inline-flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, rgba(236,72,153,.35), rgba(139,92,246,.35)); font-size: 0.95em; }
+body.tf-app #control .cp-form label { color: var(--pc-muted); font-weight: 700; font-size: 0.86em; }
+body.tf-app #control .cp-form select, body.tf-app #control .cp-form input, body.tf-app #control .cp-manual input {
+  background: rgba(10,6,22,.55); color: #fff; border: 1px solid var(--pc-line); border-radius: 0.75em; padding: 0.6em 0.75em; font-size: 1.05em; font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04); outline: none; }
+body.tf-app #control .cp-form select:focus, body.tf-app #control .cp-form input:focus { border-color: var(--pc-acc); box-shadow: 0 0 0 0.2em rgba(139,92,246,.25); }
+body.tf-app #control .cp-form select option { background: #1B1033; color: #fff; }
+body.tf-app #control .cp-sw { color: var(--pc-text); font-weight: 700; font-size: 0.9em; padding: 0.15em 0; }
+body.tf-app #control .switch i { background: rgba(255,255,255,.12); border: 1px solid var(--pc-line); }
+body.tf-app #control .switch i::after { border: 0; box-shadow: 0 0.1em 0.3em rgba(0,0,0,.4); }
+body.tf-app #control .switch input:checked + i { background: linear-gradient(135deg, var(--pc-acc2), var(--pc-acc)); border-color: transparent; }
+body.tf-app #control #cpTestSound { margin-top: 0.1em; }
+/* the confirm / guide dialogs in the same style */
+body.tf-app .modal .dialog { background: #1B1236; color: #EDE9FE; border: 1px solid rgba(196,181,253,.2); box-shadow: 0 1em 3em rgba(0,0,0,.6); }
+body.tf-app .modal .dialog .btn { background: rgba(255,255,255,.06); color: #EDE9FE; border: 1px solid rgba(196,181,253,.2); box-shadow: none; }
+body.tf-app .modal .dialog .btn.primary { background: linear-gradient(135deg, #EC4899, #8B5CF6); color: #fff; border: 0; }
+body.tf-app .modal .dialog .btn.danger { background: #E11D48; color: #fff; border: 0; }
+body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
