@@ -109,7 +109,7 @@
    * The host picks the group the broadcast starts with (panel: «مجموعة الأسئلة»); when a group is used up the game
    * moves on to the next one by itself. Progress is kept on the phone, so leaving and reopening the app does not
    * replay the same questions. */
-  const SETS_KEY = 'sahkhata.sets.v1';
+  const SETS_KEY = 'sahkhata.sets.v2';   // v2: groups rebuilt with even «yes» / «no»
   const SETS = () => window.TF_SETS || [];
   let prog = null;
   function loadProg() {
@@ -146,7 +146,14 @@
         let pool = (g[s] || []).filter(x => !u.has(x[2]));
         if (s === 2) { const top = pool.filter(x => x[0] >= 4); if (level >= 4 && top.length) pool = top; else if (level < 4 && pool.length > top.length) pool = pool.filter(x => x[0] < 4); }
         if (pool.length) {
-          const x = rnd(pool); used.push(x[2]); saveProg();
+          // never the same answer 3 times in a row; otherwise keep «yes» and «no» about even in the round
+          const h = st.truths || (st.truths = []), last2 = h.slice(-2);
+          const yes = h.filter(Boolean).length, no = h.length - yes;
+          let want = null;
+          if (last2.length === 2 && last2[0] === last2[1]) want = !last2[0];
+          else if (Math.abs(yes - no) >= 2) want = yes < no;
+          const side = want === null ? pool : pool.filter(x => x[1] === want);
+          const x = rnd(side.length ? side : pool); used.push(x[2]); saveProg(); h.push(x[1]);
           return { id: 's:' + x[2], truth: x[1], text: x[2], fix: x[3] || '', set: prog.set + 1 };
         }
       }
@@ -722,7 +729,7 @@
     yesNo, isJoin,
     get phase() { return phase; },
     get paused() { return paused; },
-    _sample: level => generated(level),
+    _sample: level => generated(level), _pick: level => nextStatement(level),
     _debug: () => ({ st, phase, phaseEnds, Voice })
   };
 })(window);
