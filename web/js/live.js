@@ -826,3 +826,17 @@
     _debug: () => ({ cfg, session, round, connState, sched })
   };
 })(window);
+
+/* PC (browser) controls — the same invisible remote as the phone's volume keys:
+ *   Esc = control panel ⇄ broadcast,  → or N = next / end the time,  Space or P = break on/off,  F = full screen */
+(function (G) {
+  'use strict';
+  document.addEventListener('keydown', e => {
+    if (/^(INPUT|SELECT|TEXTAREA)$/.test((e.target && e.target.tagName) || '')) return;
+    const k = e.key;
+    if (k === 'Escape') { if (G.onAndroidBack) G.onAndroidBack(); e.preventDefault(); }
+    else if (k === 'ArrowRight' || k === 'ArrowLeft' || k === 'n' || k === 'N') { if (G.onLiveKey && G.onLiveKey('up')) e.preventDefault(); }
+    else if (k === ' ' || k === 'p' || k === 'P') { if (G.onLiveKey && G.onLiveKey('down')) e.preventDefault(); }
+    else if (k === 'f' || k === 'F') { const d = document; if (!d.fullscreenElement) d.documentElement.requestFullscreen && d.documentElement.requestFullscreen().catch(() => 0); else d.exitFullscreen(); }
+  });
+})(window);
