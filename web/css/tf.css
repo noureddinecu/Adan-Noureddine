@@ -548,7 +548,7 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 #quizHud.tf .tf-bar { display: none; }
 .tf-stage { overflow: visible; perspective: 70em; display: flex; align-items: center; justify-content: center; border-radius: 0; }
 .tf-cam, .tf-sway { display: flex; align-items: center; justify-content: center; }
-.bd-board { position: relative; width: 108%; flex: none; aspect-ratio: 1672 / 1059; container-type: inline-size; transform-style: preserve-3d;
+.bd-board { position: relative; width: 108%; flex: none; aspect-ratio: 3344 / 2118; container-type: inline-size; transform-style: preserve-3d;
   filter: drop-shadow(0 0.8em 1.4em rgba(0,0,0,.55)); }
 .bd-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: 0.6em; }
 /* doors: each panel = 2 halves cut exactly on its painted middle line (1 px overlap: closed, it looks like one panel) */
@@ -558,12 +558,12 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 .bd-door.mid .bd-pit { clip-path: polygon(39.702% 7.743%, 61.678% 7.743%, 62.844% 88.347%, 38.827% 88.347%); }
 .bd-door.yes .bd-pit { clip-path: polygon(67.846% 7.743%, 90.129% 7.743%, 94.5% 87.592%, 69.594% 87.592%); }
 .bd-h { position: absolute; display: block; transition: transform .75s cubic-bezier(.55,0,.85,.55), filter .75s; }
-.bd-door.no .bd-h.l { left: 6.4%; top: 7.554%; width: 15.849%; height: 80.359%; }
-.bd-door.no .bd-h.r { left: 19.258%; top: 7.554%; width: 13.278%; height: 80.359%; }
-.bd-door.mid .bd-h.l { left: 38.696%; top: 7.554%; width: 12.141%; height: 81.114%; }
-.bd-door.mid .bd-h.r { left: 50.538%; top: 7.554%; width: 12.5%; height: 81.114%; }
-.bd-door.yes .bd-h.l { left: 67.703%; top: 7.554%; width: 14.653%; height: 80.359%; }
-.bd-door.yes .bd-h.r { left: 78.648%; top: 7.554%; width: 16.089%; height: 80.359%; }
+.bd-door.no .bd-h.l { left: 6.429%; top: 7.554%; width: 15.76%; height: 80.312%; }
+.bd-door.no .bd-h.r { left: 19.258%; top: 7.554%; width: 13.248%; height: 80.312%; }
+.bd-door.mid .bd-h.l { left: 38.696%; top: 7.554%; width: 12.081%; height: 81.067%; }
+.bd-door.mid .bd-h.r { left: 50.538%; top: 7.554%; width: 12.47%; height: 81.067%; }
+.bd-door.yes .bd-h.l { left: 67.703%; top: 7.554%; width: 14.593%; height: 80.312%; }
+.bd-door.yes .bd-h.r { left: 78.648%; top: 7.554%; width: 16.029%; height: 80.312%; }
 .bd-h.l { transform-origin: 0% 50%; } .bd-h.r { transform-origin: 100% 50%; }
 .bd-door.open .bd-pit { opacity: 1; }
 .bd-door.open .bd-h.l { transform: perspective(40em) rotateY(88deg); filter: brightness(.45); }
@@ -630,7 +630,7 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
    the texts above are more compact */
 .tf-stage { container-type: size; align-items: flex-start; padding-top: 0.2em; }
 .tf-cam, .tf-sway { width: 100%; height: 100%; align-items: flex-start; }
-.bd-board { width: min(112cqw, calc(99cqh * 1672 / 1059)); }
+.bd-board { width: min(112cqw, calc(99cqh * 3344 / 2118)); }
 .tf-lobby.tf-join { padding: 0.4em 0.7em; }
 .tf-lobby.tf-join b { font-size: 1.05em; }
 .tf-sub { font-size: 0.74em; padding: 0.18em 0.6em; }
@@ -653,3 +653,16 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
   background: linear-gradient(#FFE27A, #F5A623); color: #3A2400; }
 @keyframes tfLi { from { opacity: 0; transform: translateY(0.6em); } to { opacity: 1; transform: none; } }
 .tf-rbig li { animation-name: tfLi; }
+
+/* 3.6 the rules as a news ticker under the registration card: it scrolls, it never covers the game */
+.tf-rbig { display: none !important; }
+.tf-tick { position: relative; margin: 0.3em auto 0; width: 96%; height: 1.75em; overflow: hidden; border-radius: 0.5em; direction: ltr;
+  background: linear-gradient(180deg, rgba(36, 12, 80, .92), rgba(22, 8, 52, .92)); box-shadow: 0 0 0 0.1em rgba(245, 196, 81, .6), 0 0.25em 0.6em rgba(0,0,0,.4); }
+.tf-tick::before, .tf-tick::after { content: ''; position: absolute; top: 0; bottom: 0; width: 1.6em; z-index: 1; pointer-events: none; }
+.tf-tick::before { left: 0; background: linear-gradient(90deg, #170838, transparent); } .tf-tick::after { right: 0; background: linear-gradient(-90deg, #170838, transparent); }
+.tk-lab { position: absolute; right: 0; top: 0; bottom: 0; z-index: 2; display: flex; align-items: center; padding: 0 0.6em; font-weight: 900; font-size: 0.82em; color: #2A0F62;
+  background: linear-gradient(180deg, #FFE27A, #F5A623); border-radius: 0 0.5em 0.5em 0; }
+.tk-in { position: absolute; top: 0; bottom: 0; left: 0; display: flex; align-items: center; white-space: nowrap; animation: tfTick 34s linear infinite; will-change: transform; }
+.tk-in span { direction: rtl; font-weight: 800; font-size: 0.86em; color: #fff; padding: 0 0.7em; }
+.tk-in i { font-style: normal; color: #FFD45A; font-size: 0.7em; }
+@keyframes tfTick { from { transform: translateX(-50%); } to { transform: translateX(0); } }   /* Arabic: the text comes from the left */

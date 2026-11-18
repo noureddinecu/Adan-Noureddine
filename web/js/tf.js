@@ -213,7 +213,7 @@
     if (alive().length < Math.max(1, num(cfg().minPlayers, 2))) {
       setPhase('lobby', 30000); return;
     }
-    setPhase('ready', 7000);
+    setPhase('ready', 5000);
   }
   function ask() {
     // bring back the players revived by a gift; everybody stands in the middle (most are already walking back there)
@@ -545,7 +545,7 @@
     if (!(phase === 'podium' && $('tfPod'))) { big.className = 'tf-big'; big.innerHTML = ''; }
     showRules(phase === 'ready');
     if (phase === 'lobby') renderLobby();
-    else if (phase === 'ready') card.innerHTML = `<div class="tf-lobby"><b>استعدّوا… 🔥 الأسئلة تبدأ الآن</b></div>`;
+    else if (phase === 'ready') card.innerHTML = `<div class="tf-lobby"><b>استعدّوا… 🔥 الأسئلة تبدأ الآن</b></div>${ticker()}`;
     else if (st && st.q && (phase === 'question' || phase === 'collect' || phase === 'fall')) {
       // while playing: only the question (and its time) — no other text
       const q = st.q;
@@ -592,22 +592,17 @@
     const n = Object.keys(st.players).length;
     // the «write العب» card is fixed (built once); only the numbers change and the rules turn below it
     if (!$('tfLobN')) $('tfCard').innerHTML = `<div class="tf-lobby tf-join"><i class="tf-pad">🎮</i><b>اكتب «<em>العب</em>» في التعليقات للمشاركة معنا</b></div>
-      <div class="tf-sub"><span>⏱️ تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</span><i></i><span>المسجّلون: <span class="tf-cnt big" id="tfLobN"></span></span><i></i><span>👥 المشاركة مجانية</span></div>`;
+      <div class="tf-sub"><span>⏱️ تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</span><i></i><span>المسجّلون: <span class="tf-cnt big" id="tfLobN"></span></span><i></i><span>👥 المشاركة مجانية</span></div>${ticker()}`;
     $('tfLobN').textContent = n; $('tfLobT').textContent = left();
-    // the rules are shown big over the game at the start of the registration (then the players have all the room)
-    const shown = Date.now() - (st.lobbyAt || 0) < RULES_SHOW;
-    showRules(shown);
     renderCounts();
   }
-  const RULES_SHOW = 16000;
-  /** the rules in a big card over the game: at the start of the registration and just before the first question */
-  function showRules(on) {
-    const el = $('tfRBig'); if (!el) return;
-    if (on && !el.classList.contains('on')) {
-      el.innerHTML = `<div class="rb"><b>📜 قواعد اللعبة</b><ol>${RULES.map((r, i) => `<li style="--i:${i}"><span>${i + 1}</span>${r}</li>`).join('')}</ol></div>`;
-      el.classList.add('on');
-    } else if (!on && el.classList.contains('on')) el.classList.remove('on');
+  /** the rules as a news ticker (scrolling, under the registration card) */
+  function ticker() {
+    // the strip moves to the right: the rule on the right comes first, so the DOM order is reversed (1, 2, 3… read in order)
+    const items = RULES.map((r, i) => `<i>◆</i><span>${i + 1}. ${r}</span>`).reverse().join('');
+    return `<div class="tf-tick"><div class="tk-in">${items}${items}</div><b class="tk-lab">📜 القواعد</b></div>`;
   }
+  function showRules() { }
   const RULE_MS = 5000;
   const RULES = ['اكتب «العب» في التعليقات لتدخل اللعبة', 'أجب على كل سؤال بـ «نعم» أو «لا»', 'الإجابة الأولى هي التي تُحتسب، لا يمكن تغييرها',
     'من لا يجيب يبقى في الوسط ويسقط', 'آخر من يبقى واقفاً هو البطل 👑'];
