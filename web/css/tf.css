@@ -548,28 +548,28 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 #quizHud.tf .tf-bar { display: none; }
 .tf-stage { overflow: visible; perspective: 70em; display: flex; align-items: center; justify-content: center; border-radius: 0; }
 .tf-cam, .tf-sway { display: flex; align-items: center; justify-content: center; }
-.bd-board { position: relative; width: 108%; flex: none; aspect-ratio: 1672 / 911; container-type: inline-size; transform-style: preserve-3d;
+.bd-board { position: relative; width: 108%; flex: none; aspect-ratio: 1672 / 1059; container-type: inline-size; transform-style: preserve-3d;
   filter: drop-shadow(0 0.8em 1.4em rgba(0,0,0,.55)); }
 .bd-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: 0.6em; }
 /* doors: each panel = 2 halves cut exactly on its painted middle line (1 px overlap: closed, it looks like one panel) */
 .bd-door { position: absolute; inset: 0; pointer-events: none; }
 .bd-pit { position: absolute; inset: 0; opacity: 0; transition: opacity .25s; background: radial-gradient(circle at 50% 45%, #2A1D45, #07030F 70%); }
-.bd-door.no .bd-pit { clip-path: polygon(10.357% 8.178%, 32.335% 8.178%, 30.703% 86.427%, 6.569% 86.427%); }
-.bd-door.mid .bd-pit { clip-path: polygon(39.702% 8.178%, 61.678% 8.178%, 62.844% 87.168%, 38.827% 87.168%); }
-.bd-door.yes .bd-pit { clip-path: polygon(67.846% 8.178%, 90.129% 8.178%, 94.5% 86.427%, 69.594% 86.427%); }
+.bd-door.no .bd-pit { clip-path: polygon(10.357% 7.743%, 32.335% 7.743%, 30.703% 87.592%, 6.569% 87.592%); }
+.bd-door.mid .bd-pit { clip-path: polygon(39.702% 7.743%, 61.678% 7.743%, 62.844% 88.347%, 38.827% 88.347%); }
+.bd-door.yes .bd-pit { clip-path: polygon(67.846% 7.743%, 90.129% 7.743%, 94.5% 87.592%, 69.594% 87.592%); }
 .bd-h { position: absolute; display: block; transition: transform .75s cubic-bezier(.55,0,.85,.55), filter .75s; }
-.bd-door.no .bd-h.l { left: 6.4%; top: 7.903%; width: 15.849%; height: 78.924%; }
-.bd-door.no .bd-h.r { left: 19.258%; top: 7.903%; width: 13.278%; height: 78.924%; }
-.bd-door.mid .bd-h.l { left: 38.696%; top: 7.903%; width: 12.141%; height: 79.693%; }
-.bd-door.mid .bd-h.r { left: 50.538%; top: 7.903%; width: 12.5%; height: 79.693%; }
-.bd-door.yes .bd-h.l { left: 67.703%; top: 7.903%; width: 14.653%; height: 78.924%; }
-.bd-door.yes .bd-h.r { left: 78.648%; top: 7.903%; width: 16.089%; height: 78.924%; }
+.bd-door.no .bd-h.l { left: 6.4%; top: 7.554%; width: 15.849%; height: 80.359%; }
+.bd-door.no .bd-h.r { left: 19.258%; top: 7.554%; width: 13.278%; height: 80.359%; }
+.bd-door.mid .bd-h.l { left: 38.696%; top: 7.554%; width: 12.141%; height: 81.114%; }
+.bd-door.mid .bd-h.r { left: 50.538%; top: 7.554%; width: 12.5%; height: 81.114%; }
+.bd-door.yes .bd-h.l { left: 67.703%; top: 7.554%; width: 14.653%; height: 80.359%; }
+.bd-door.yes .bd-h.r { left: 78.648%; top: 7.554%; width: 16.089%; height: 80.359%; }
 .bd-h.l { transform-origin: 0% 50%; } .bd-h.r { transform-origin: 100% 50%; }
 .bd-door.open .bd-pit { opacity: 1; }
 .bd-door.open .bd-h.l { transform: perspective(40em) rotateY(88deg); filter: brightness(.45); }
 .bd-door.open .bd-h.r { transform: perspective(40em) rotateY(-88deg); filter: brightness(.45); }
 /* the pill at the bottom of the board */
-.bd-pill { position: absolute; left: 47.548%; top: 89.462%; width: 9.868%; height: 6.531%; display: flex; align-items: center; justify-content: center; direction: rtl; color: #fff; font-weight: 900; white-space: nowrap;
+.bd-pill { position: absolute; left: 47.548%; top: 90.652%; width: 9.868%; height: 5.855%; display: flex; align-items: center; justify-content: center; direction: rtl; color: #fff; font-weight: 900; white-space: nowrap;
   font-size: 2.5cqw; gap: 0.25em; text-shadow: 0 0.06em 0.15em rgba(0,0,0,.6); }
 .bd-pill b { font-size: 1.2em; color: #FFD45A; text-shadow: 0 0 0.4em rgba(255, 200, 60, .55), 0 0.06em 0.15em rgba(0,0,0,.6); }
 /* players: little people standing on the panels; their size follows the picture */
@@ -617,11 +617,24 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 
 /* 3.3 b — sliding doors: the two halves slide apart into the frame (clipped to the panel), then slide back together.
    No rotation: the words on the doors are never squeezed, a door is never seen twice. */
-.bd-door.no { clip-path: polygon(10.357% 8.178%, 32.335% 8.178%, 30.703% 86.427%, 6.569% 86.427%); }
-.bd-door.mid { clip-path: polygon(39.702% 8.178%, 61.678% 8.178%, 62.844% 87.168%, 38.827% 87.168%); }
-.bd-door.yes { clip-path: polygon(67.846% 8.178%, 90.129% 8.178%, 94.5% 86.427%, 69.594% 86.427%); }
+.bd-door.no { clip-path: polygon(10.357% 7.743%, 32.335% 7.743%, 30.703% 87.592%, 6.569% 87.592%); }
+.bd-door.mid { clip-path: polygon(39.702% 7.743%, 61.678% 7.743%, 62.844% 88.347%, 38.827% 88.347%); }
+.bd-door.yes { clip-path: polygon(67.846% 7.743%, 90.129% 7.743%, 94.5% 87.592%, 69.594% 87.592%); }
 .bd-pit { clip-path: none !important; box-shadow: inset 0 0 1.2em rgba(0,0,0,.9); }
 .bd-h { transition: transform .75s cubic-bezier(.45,0,.25,1) !important; filter: none !important; }
 .bd-door.open .bd-h { transition: transform .6s cubic-bezier(.5,0,.3,1) !important; }
 .bd-door.open .bd-h.l { transform: translateX(-104%) !important; }
 .bd-door.open .bd-h.r { transform: translateX(104%) !important; }
+
+/* 3.4 — a bigger game: the board takes all the width TikTok allows (sides cut a little) and the height there is,
+   the texts above are more compact */
+.tf-stage { container-type: size; align-items: flex-start; padding-top: 0.2em; }
+.tf-cam, .tf-sway { width: 100%; height: 100%; align-items: flex-start; }
+.bd-board { width: min(112cqw, calc(99cqh * 1672 / 1059)); }
+.tf-lobby.tf-join { padding: 0.4em 0.7em; }
+.tf-lobby.tf-join b { font-size: 1.05em; }
+.tf-sub { font-size: 0.74em; padding: 0.18em 0.6em; }
+.tf-rules { height: 2.25em; margin-top: 0.3em; }
+.tf-rt { font-size: 0.9em; }
+#quizHud.tf { gap: 0.3em; }
+.bd-players .tp-tag { max-width: 4.4em; }   /* short name pills: two players side by side fit on a panel */

@@ -251,9 +251,9 @@
       if (!st || st.round !== round) return;
       const back = stay.filter(u => st.players[u] && st.players[u].alive);
       back.forEach(u => { if (els[u]) els[u].dataset.zone = 'away'; });   // the middle is empty again
-      zs.mid = zs.no = zs.yes = 1;
       back.forEach(u => { if (els[u]) { els[u].classList.remove('noname'); els[u]._goal = 'mid'; } });
-      arrange('mid', back.filter(u => els[u]), null);
+      sizeFor('mid', back.length);
+      back.forEach(u => { if (els[u]) { const [x, y] = spot('mid', u); walkTo(els[u], x, y, 'mid'); } });
     }, 2800);
   }
   function afterFall() {
@@ -373,117 +373,86 @@
   const els = {};          // uid -> element
   function clearStage() { Object.keys(els).forEach(u => { els[u].remove(); delete els[u]; }); }
   // floor coordinates: x ∈ [0,1] across the 3 floors (0 = left edge of «لا», 1 = right edge of «نعم»), y ∈ [0,1] back→front
+  const BOARD_H = 1059;
   const ZONES = { no: [0.107, 0.305], mid: [0.399, 0.617], yes: [0.699, 0.9] };   // inside the 3 panels of the picture (board %)   // the middle floor is the widest: everybody starts there
-  /* ---- places without any overlap ----
-   * Each player takes a place where his name + head do not touch anybody else's (name width measured, or
-   * estimated from its length when the floor is hidden). The name stays inside its own floor. When a floor is
-   * too full, the players of THAT floor get smaller (smoothly) until everybody fits. */
-  const zs = { no: 1, mid: 1, yes: 1 };          // size of the players on each floor
-  const TOP = 0.09, Y1 = 0.855; let Y0 = 0.45;   // the panels of the picture: from 28.5% to 83.5% of its height; Y0 = TOP + height of a player
+  /* ---- places: scattered over the WHOLE panel, without any overlap ----
+   * Each player goes to the free place that is the farthest from the others (corners, top, bottom, middle),
+   * so a floor looks naturally scattered, never in rows. Nobody else moves when somebody arrives. When a floor
+   * is full, everybody gets a little smaller where he stands; in a real crowd the extra ones show no name. */
+  const zs = { no: 1, mid: 1, yes: 1 };          // size of the players (the same on the three floors)
+  const TOP = 0.09, Y1 = 0.855;                   // top / bottom of the panels in the picture (board height fraction)
   let lastF = null;
   function geo() {
     const f = $('tfFloor');
     if (f && f.clientWidth > 50) lastF = [f.clientWidth, f.clientHeight, parseFloat(getComputedStyle(f).fontSize) || 16];
     if (lastF) return lastF;
-    const w = window.innerWidth * 1.08; return [w, w * 911 / 1672, parseFloat(getComputedStyle(document.body).fontSize) || 16];
+    const w = window.innerWidth * 1.08; return [w, w * BOARD_H / 1672, parseFloat(getComputedStyle(document.body).fontSize) || 16];
   }
-  /** half width (floor x fraction) and row depth (floor y fraction) of a player at size sc (name + head must not touch) */
+  /** [half width, name+head depth, whole height] of a player at size sc, in board fractions */
   function foot(el, sc) {
-    const [fw, fh, fs] = geo(), em = fs * 1.55 * sc;
-    if (el && el.classList.contains('noname')) return [2.1 * em / 2 / fw, 2.3 * em / fh];
+    const [fw, fh, fs] = geo(), em = fs * 1.55 * sc, full = 4.75 * em / fh;
+    if (el && el.classList.contains('noname')) return [2.1 * em / 2 / fw, 2.3 * em / fh, full];
     const tag = el && el.querySelector('.tp-tag');
     const cur = el ? parseFloat(getComputedStyle(el).fontSize) : 0;
     let tagEm = tag && tag.offsetWidth && cur ? tag.offsetWidth / cur : 0;
-    if (!tagEm) { const n = (el && el._n) || 'Abcdefgh'; tagEm = Math.min(3.0, 0.5 * (0.6 * n.length + 1.2)); }
-    return [(Math.max(2.2, tagEm) + 0.25) * em / 2 / fw, 3.3 * em / fh];   // seen from above: name + round avatar
+    if (!tagEm) { const n = (el && el._n) || 'Abcdefgh'; tagEm = Math.min(2.7, 0.6 * (0.6 * n.length + 1.2)); }
+    return [(Math.max(2.2, tagEm) + 0.25) * em / 2 / fw, 3.2 * em / fh, full];
   }
-  /** places that look natural (staggered rows, a little random) and where nobody touches anybody */
-  function freeSpot(zone, uid) {
-    const [a, b] = ZONES[zone], el = els[uid], [hw, dy] = foot(el, zs[zone]);
-    Y0 = Math.min(Y1 - 0.02, TOP + dy * 1.45);   // the whole person (name, head, body) inside the panel
-    const others = Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && els[u]._p && !els[u].classList.contains('fall'))
-      .map(u => { const [w, d] = foot(els[u], zs[zone]); return { p: els[u]._p, w, d }; });
-    const free = c => others.every(o => Math.abs(c[0] - o.p[0]) >= hw + o.w || Math.abs(c[1] - o.p[1]) >= Math.max(dy, o.d));
-    const cands = [];
-    for (let k = 0; k < 40; k++) { const c = [a + hw + Math.random() * Math.max(0, b - a - 2 * hw), Y0 + Math.random() * (Y1 - Y0)]; if (free(c)) cands.push(c); }
-    if (cands.length) return cands[(Math.random() * cands.length) | 0];
-    // nothing found at random: try every place of a staggered grid (invisible), front rows first
-    const rows = Math.max(1, Math.floor((Y1 - Y0) / dy) + 1), stepX = 2 * hw * 1.01;
-    for (let r = rows - 1; r >= 0; r--) {
-      const y = Math.min(Y1, Y0 + r * dy), off = (r % 2) * hw;
-      const xs = []; for (let x = a + hw + off; x <= b - hw + 1e-6; x += stepX) xs.push(x);
-      xs.sort(() => Math.random() - 0.5);
-      for (const x of xs) if (free([x, y])) return [x, y];
+  function others(zone, uid) {
+    return Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && els[u]._p && !els[u].classList.contains('fall'))
+      .map(u => { const [w, d] = foot(els[u], zs[zone]); return { p: els[u]._p, w, d, named: !els[u].classList.contains('noname') }; });
+  }
+  /** the free place farthest from everybody (best of many random tries over the whole panel) */
+  function scatter(zone, uid) {
+    const [a, b] = ZONES[zone], [hw, dy, full] = foot(els[uid], zs[zone]);
+    const y0 = Math.min(Y1 - 0.02, TOP + full), os = others(zone, uid);
+    let best = null, bestS = -1;
+    for (let k = 0; k < 90; k++) {
+      const c = [a + hw + Math.random() * Math.max(0, b - a - 2 * hw), y0 + Math.random() * (Y1 - y0)];
+      let ok = true, sc = 3;
+      for (const o of os) {
+        const dx = Math.abs(c[0] - o.p[0]) / (hw + o.w), dd = Math.abs(c[1] - o.p[1]) / Math.max(dy, o.d);
+        if (dx < 1 && dd < 1) { ok = false; break; }
+        sc = Math.min(sc, Math.hypot(dx, dd));
+      }
+      // a little preference for the empty edges of the panel when there are few players
+      if (ok && sc + Math.random() * 0.15 > bestS) { bestS = sc; best = c; }
     }
-    return null;
+    return best;
   }
-  // one size for everybody (the three floors look the same); it only grows back when a new round / return to the middle starts
   function setZoneSize(zone, v) {
     zs.no = zs.mid = zs.yes = v;
     Object.keys(els).forEach(u => els[u].style.setProperty('--s', v.toFixed(3)));
   }
-  /** a free place in a floor; if there is none, the floor is arranged again a little smaller (everybody steps aside),
-   *  down to a size where names can still be read. Beyond that (a real crowd), the extra players show only their head. */
   const MIN_S = 0.6;
   function spot(zone, uid) {
-    const el = els[uid];
-    if (el) { el.classList.remove('noname'); const c = freeSpot(zone, uid); if (c) return c; }   // a new floor: try with the name first
-    const members = Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && els[u]._p && !els[u].classList.contains('fall'));
-    return arrange(zone, members.concat(uid), uid);
-  }
-  /** spread a group over a floor: the biggest size where nobody touches anybody, rows spread over the whole depth,
-   *  a little random so it looks natural; everybody goes to the nearest place. Returns the place of «want». */
-  function arrange(zone, list, want) {
-    const [a, b] = ZONES[zone], W = b - a, n = list.length;
-    if (!n) return null;
-    let v = Math.min(1, zs[zone] * 1.0001), named = n, cols = 1, rows = 1, hw = 0, dy = 0;
-    list.forEach(u => els[u] && els[u].classList.remove('noname'));
-    const widest = sc => Math.max(...list.map(u => foot(els[u] || null, sc)[0]));
-    for (;;) {
-      hw = widest(v); dy = foot(null, v)[1]; Y0 = Math.min(Y1 - 0.02, TOP + dy * 1.45);
-      cols = Math.max(1, Math.floor(W / (2 * hw))); rows = Math.floor((Y1 - Y0) / dy) + 1;
-      if (cols * rows >= n || v <= MIN_S) break;
-      v = Math.max(MIN_S, v * 0.94);
+    const el = els[uid]; if (el) el.classList.remove('noname');
+    for (let t = 0; t < 16; t++) {
+      const c = scatter(zone, uid); if (c) return c;
+      if (zs[zone] <= MIN_S) break;
+      setZoneSize(zone, Math.max(MIN_S, zs[zone] * 0.95));        // everybody a little smaller, where he stands
     }
-    named = Math.min(n, cols * rows);
-    setZoneSize(zone, v);
-    // the ones that do not fit (crowd): head only, small footprint → more of them per row
-    const extra = list.slice(named);
-    list.forEach(u => els[u] && els[u].classList.toggle('noname', extra.includes(u)));
-    const need = Math.ceil(named / cols), dyE = need > 1 ? (Y1 - Y0) / (need - 1) : 0, cell = W / cols;
-    const pts = [];
-    for (let r = 0; r < need; r++) for (let c = 0; c < cols; c++) {
-      const jx = (Math.random() - 0.5) * Math.max(0, cell - 2 * hw) * 0.8, jy = need > 1 ? (Math.random() - 0.5) * Math.max(0, dyE - dy) * 0.8 : 0;
-      pts.push([a + (c + 0.5) * cell + jx, need > 1 ? Y0 + r * dyE + jy : (Y0 + Y1) / 2]);
-    }
-    while (pts.length > named) pts.splice((Math.random() * pts.length) | 0, 1);
-    // nearest place for each (those already standing keep close to where they are)
-    let res = null;
-    const order = list.slice(0, named).sort((x, y) => (els[x] && els[x]._p ? 0 : 1) - (els[y] && els[y]._p ? 0 : 1));
-    for (const u of order) {
-      const cur = els[u] && els[u]._p && els[u].dataset.zone === zone ? els[u]._p : [(a + b) / 2, Y1];
-      let bi = 0, bd = 9; pts.forEach((q, i) => { const d = Math.hypot(q[0] - cur[0], q[1] - cur[1]); if (d < bd) { bd = d; bi = i; } });
-      const q = pts.splice(bi, 1)[0];
-      if (u === want) res = q; else if (els[u]) walkTo(els[u], q[0], q[1], zone);
-    }
-    for (const u of extra) {                                  // heads only: never on a name, then as far as possible from the others
-      const [h, d0] = foot(els[u], v); let best = null, bestS = -1e9;
-      const taken = Object.keys(els).filter(o => o !== u && els[o].dataset.zone === zone && els[o]._p && (o === want ? false : true))
-        .map(o => { const [w, d] = foot(els[o], v); return { p: els[o]._p, w, d, named: !els[o].classList.contains('noname') }; });
-      for (let k = 0; k < 80; k++) {
-        const c = [a + h + Math.random() * Math.max(0, W - 2 * h), Y0 + Math.random() * (Y1 - Y0)];
-        let hits = 0, md = 9;
-        for (const o of taken) {
-          const dx = Math.abs(c[0] - o.p[0]), dyy = Math.abs(c[1] - o.p[1]);
-          if (o.named && dx < h + o.w && dyy < Math.max(d0, o.d)) hits++;
-          md = Math.min(md, Math.hypot(dx * 2, dyy));
-        }
-        const sc = -hits * 10 + md;
-        if (sc > bestS) { bestS = sc; best = c; }
+    // a real crowd: no name for this one, his head where it touches no name
+    if (el) el.classList.add('noname');
+    const [a, b] = ZONES[zone], [h, d0, full] = foot(el, zs[zone]), y0 = Math.min(Y1 - 0.02, TOP + full), os = others(zone, uid);
+    let best = null, bestS = -1e9;
+    for (let k = 0; k < 90; k++) {
+      const c = [a + h + Math.random() * Math.max(0, b - a - 2 * h), y0 + Math.random() * (Y1 - y0)];
+      let hits = 0, md = 9;
+      for (const o of os) {
+        const dx = Math.abs(c[0] - o.p[0]), dd = Math.abs(c[1] - o.p[1]);
+        if (o.named && dx < h + o.w && dd < Math.max(d0, o.d)) hits++;
+        md = Math.min(md, Math.hypot(dx * 2, dd));
       }
-      if (u === want) res = best; else if (els[u]) { walkTo(els[u], best[0], best[1], zone); }
+      const sc = -hits * 10 + md; if (sc > bestS) { bestS = sc; best = c; }
     }
-    return res;
+    return best;
+  }
+  /** the biggest size at which n players should fit on a floor (used when a group walks into an empty floor) */
+  function sizeFor(zone, n) {
+    const [a, b] = ZONES[zone]; let v = 1;
+    for (; v > MIN_S; v *= 0.95) { const [hw, dy, full] = foot(null, v); if (Math.max(1, Math.floor((b - a) / (2 * hw))) * (Math.floor((Y1 - TOP - full) / dy) + 1) * 0.7 >= n) break; }
+    setZoneSize(zone, Math.max(MIN_S, v));
   }
   function ensureEl(uid) {
     let el = els[uid];
@@ -491,33 +460,43 @@
       const pl = st.players[uid];
       el = document.createElement('div'); el.className = 'tp'; el.innerHTML = personHtml(pl, uid); el._n = pl.n || '';
       el.style.setProperty('--d', (-Math.random() * 3).toFixed(2) + 's');
+      el.style.setProperty('--s', zs.mid.toFixed(3));
       $('tfFloor').appendChild(el); els[uid] = el;
       el.classList.add('drop-in'); setTimeout(() => el.classList.remove('drop-in'), 800);
     }
     return el;
   }
-  // positions are percentages of the floor (left/top): right even when the floor is hidden (control panel open, size 0)
+  // positions are percentages of the board (left/top): right even when the board is hidden (control panel open)
   function paint(el) {
     const p = el._p;
     el.style.left = (p[0] * 100).toFixed(2) + '%'; el.style.top = (p[1] * 100).toFixed(2) + '%';
     el.style.zIndex = String(10 + Math.round(p[1] * 100));
   }
-  /** walk (or appear) to x,y: the time depends on the distance, like a person walking at a steady pace */
+  /** walk (or appear) to x,y — every player with his own small delay and pace, like real people */
   function walkTo(el, x, y, zone, instant) {
     const from = el._p;
     el._p = [x, y]; el.dataset.zone = zone; el._goal = zone; el.style.setProperty('--s', zs[zone].toFixed(3));
-    clearTimeout(el._t);
-    if (instant || !from) { el.style.transitionDuration = '0s'; el.classList.remove('walk'); paint(el); el.getBoundingClientRect(); el.style.transitionDuration = ''; return; }
-    const dist = Math.hypot(x - from[0], (y - from[1]) * 0.45), ms = Math.round(Math.max(650, Math.min(2600, dist / 0.36 * 1000)));
+    clearTimeout(el._t); clearTimeout(el._t0);
+    if (instant || !from) { el.style.transitionDuration = '0s'; el.style.transitionDelay = '0s'; el.classList.remove('walk'); paint(el); el.getBoundingClientRect(); el.style.transitionDuration = ''; el.style.transitionDelay = ''; return; }
+    const pace = 0.3 + Math.random() * 0.14, delay = Math.round(Math.random() * 450);
+    const dist = Math.hypot(x - from[0], (y - from[1]) * 0.5), ms = Math.round(Math.max(700, Math.min(2800, dist / pace * 1000)));
     el.style.transitionDuration = ms + 'ms, ' + ms + 'ms, 1.15s, .9s, .6s';
+    el.style.transitionDelay = delay + 'ms, ' + delay + 'ms, 0s, .35s, 0s';
     el.style.setProperty('--lean', (x > from[0] ? 1 : -1) * 4 + 'deg');
-    el.classList.add('walk'); paint(el);
-    el._t = setTimeout(() => el.classList.remove('walk'), ms);
+    paint(el);
+    el._t0 = setTimeout(() => el.classList.add('walk'), delay);
+    el._t = setTimeout(() => el.classList.remove('walk'), delay + ms);
+  }
+  /** a new player comes in from one side of the middle panel (top, bottom, left or right) and walks to his place */
+  function entry() {
+    const [a, b] = ZONES.mid, r = Math.random();
+    return r < 0.3 ? [a + Math.random() * (b - a), TOP + 0.05] : r < 0.6 ? [a + Math.random() * (b - a), Y1] : [r < 0.8 ? a : b, TOP + 0.2 + Math.random() * (Y1 - TOP - 0.2)];
   }
   function placeMiddle(uid, fresh) {
     const el = ensureEl(uid); el.classList.remove('fall'); el._goal = 'mid';
     const [x, y] = spot('mid', uid);
-    walkTo(el, x, y, 'mid', fresh);
+    if (fresh && !el._p) { const e = entry(); el._p = null; walkTo(el, e[0], e[1], 'mid', true); }
+    walkTo(el, x, y, 'mid', fresh && !el._p);
   }
   function moveTo(uid, a) {
     const el = ensureEl(uid);
