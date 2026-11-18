@@ -364,7 +364,7 @@
     const col = COLORS[hash(uid) % COLORS.length];
     const initial = esc((pl.n || '?').trim().charAt(0).toUpperCase());
     const img = pl.a && /^https:\/\//.test(pl.a) ? `<img src="${esc(pl.a)}" referrerpolicy="no-referrer" alt="" onerror="this.remove()">` : '';
-    return `<div class="tp-in"><div class="tp-tag">${esc(pl.n)}</div><div class="tp-head" style="--c:${col}"><b>${initial}</b>${img}</div>
+    return `<div class="tp-in"><div class="tp-tag">${esc(pl.n)}</div><div class="tp-head" style="--c:${col}"><svg class="tp-sil" viewBox="0 0 40 40"><circle cx="20" cy="15" r="7.5" fill="#fff" fill-opacity=".92"/><path d="M6 36c1.5-8 7-12 14-12s12.5 4 14 12z" fill="#fff" fill-opacity=".92"/></svg>${img}</div>
       <svg class="tp-body" viewBox="0 0 40 46"><defs><linearGradient id="g${hash(uid)}" x1="0" x2="1"><stop offset="0" stop-color="${col}"/><stop offset=".55" stop-color="${col}" stop-opacity=".85"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient></defs>
       <rect class="lg l1" x="9" y="30" width="9" height="15" rx="4" fill="#2B2F45"/><rect class="lg l2" x="22" y="30" width="9" height="15" rx="4" fill="#2B2F45"/>
       <rect x="3" y="6" width="7" height="20" rx="3.5" fill="${col}"/><rect x="30" y="6" width="7" height="20" rx="3.5" fill="${col}"/>
@@ -379,7 +379,7 @@
    * estimated from its length when the floor is hidden). The name stays inside its own floor. When a floor is
    * too full, the players of THAT floor get smaller (smoothly) until everybody fits. */
   const zs = { no: 1, mid: 1, yes: 1 };          // size of the players on each floor
-  const Y0 = 0.22, Y1 = 0.97;                     // back / front limits of the floor where a player can stand
+  const Y0 = 0.2, Y1 = 0.88;   // the counters sit on the bottom edge                     // back / front limits of the floor where a player can stand
   let lastF = null;
   function geo() {
     const f = $('tfFloor');
@@ -390,12 +390,12 @@
   /** half width (floor x fraction) and row depth (floor y fraction) of a player at size sc (name + head must not touch) */
   function foot(el, sc) {
     const [fw, fh, fs] = geo(), em = fs * 1.55 * sc;
-    if (el && el.classList.contains('noname')) return [1.9 * em / 2 / fw, 1.8 * em / (0.57 * fh)];
+    if (el && el.classList.contains('noname')) return [2.1 * em / 2 / fw, 2.3 * em / fh];
     const tag = el && el.querySelector('.tp-tag');
     const cur = el ? parseFloat(getComputedStyle(el).fontSize) : 0;
     let tagEm = tag && tag.offsetWidth && cur ? tag.offsetWidth / cur : 0;
     if (!tagEm) { const n = (el && el._n) || 'Abcdefgh'; tagEm = Math.min(3.0, 0.5 * (0.6 * n.length + 1.2)); }
-    return [(Math.max(2.1, tagEm) + 0.25) * em / 2 / fw, 2.45 * em / (0.57 * fh)];
+    return [(Math.max(2.2, tagEm) + 0.25) * em / 2 / fw, 3.3 * em / fh];   // seen from above: name + round avatar
   }
   /** places that look natural (staggered rows, a little random) and where nobody touches anybody */
   function freeSpot(zone, uid) {
@@ -416,16 +416,17 @@
     }
     return null;
   }
+  // one size for everybody (the three floors look the same); it only grows back when a new round / return to the middle starts
   function setZoneSize(zone, v) {
-    zs[zone] = v;
-    Object.keys(els).forEach(u => { if (els[u].dataset.zone === zone || els[u]._goal === zone) els[u].style.setProperty('--s', v.toFixed(3)); });
+    zs.no = zs.mid = zs.yes = v;
+    Object.keys(els).forEach(u => els[u].style.setProperty('--s', v.toFixed(3)));
   }
   /** a free place in a floor; if there is none, the floor is arranged again a little smaller (everybody steps aside),
    *  down to a size where names can still be read. Beyond that (a real crowd), the extra players show only their head. */
   const MIN_S = 0.6;
   function spot(zone, uid) {
     const el = els[uid];
-    if (el && !el.classList.contains('noname')) { const c = freeSpot(zone, uid); if (c) return c; }
+    if (el) { el.classList.remove('noname'); const c = freeSpot(zone, uid); if (c) return c; }   // a new floor: try with the name first
     const members = Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && els[u]._p && !els[u].classList.contains('fall'));
     return arrange(zone, members.concat(uid), uid);
   }
@@ -557,7 +558,7 @@
       if (phase === 'fall' && st && st.q && Date.now() - (st.fallAt || 0) < 1600) shot = st.q.truth ? 'fall-no' : 'fall-yes';   // a short look at the falling floor, then the whole game again
       if (phase === 'winner') shot = 'win';
       if (phase === 'lobby') shot = 'lobby';
-      cam.dataset.shot = shot;
+      cam.dataset.shot = 'fixed';   // the camera never moves (seen from above)
     }
     hud.classList.toggle('paused', paused);
     const card = $('tfCard'), big = $('tfBig');
@@ -609,7 +610,8 @@
     if (phase !== 'lobby') return;
     const n = Object.keys(st.players).length;
     // the «write العب» card is fixed (built once); only the numbers change and the rules turn below it
-    if (!$('tfLobN')) $('tfCard').innerHTML = `<div class="tf-lobby tf-join"><b>اكتب «العب» في التعليقات للمشاركة معنا 🎮</b><small>المشاركة مجانية · المسجّلون: <span class="tf-cnt" id="tfLobN"></span> · تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</small></div>
+    if (!$('tfLobN')) $('tfCard').innerHTML = `<div class="tf-lobby tf-join"><i class="tf-pad">🎮</i><b>اكتب «<em>العب</em>» في التعليقات للمشاركة معنا</b></div>
+      <div class="tf-sub"><span>⏱️ تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</span><i></i><span>المسجّلون: <span class="tf-cnt big" id="tfLobN"></span></span><i></i><span>👥 المشاركة مجانية</span></div>
       <div class="tf-rules" id="tfRules"></div>`;
     $('tfLobN').textContent = n; $('tfLobT').textContent = left();
     const k = Math.floor(Date.now() / RULE_MS) % RULES.length, box = $('tfRules');
@@ -644,7 +646,7 @@
     const al = alive();
     const yes = al.filter(u => st.players[u].ans === 'yes').length, no = al.filter(u => st.players[u].ans === 'no').length;
     b.innerHTML = phase === 'lobby'
-      ? `<span class="tb mid">🎮 ${players(Object.keys(st.players).length)}</span>`
+      ? `<span class="tb mid tb-big"><i>👥</i>${players(Object.keys(st.players).length)}</span>`
       : `<span class="tb no">لا ✗ ${no}</span><span class="tb mid">؟ ${al.length - yes - no}</span><span class="tb yes">نعم ✓ ${yes}</span>`
         + `<span class="tb left">باقٍ ${al.length}</span>`;
   }
