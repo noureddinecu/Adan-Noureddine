@@ -373,19 +373,19 @@
   const els = {};          // uid -> element
   function clearStage() { Object.keys(els).forEach(u => { els[u].remove(); delete els[u]; }); }
   // floor coordinates: x ∈ [0,1] across the 3 floors (0 = left edge of «لا», 1 = right edge of «نعم»), y ∈ [0,1] back→front
-  const ZONES = { no: [0.015, 0.265], mid: [0.315, 0.685], yes: [0.735, 0.985] };   // the middle floor is the widest: everybody starts there
+  const ZONES = { no: [0.104, 0.306], mid: [0.396, 0.616], yes: [0.695, 0.902] };   // inside the 3 panels of the picture (board %)   // the middle floor is the widest: everybody starts there
   /* ---- places without any overlap ----
    * Each player takes a place where his name + head do not touch anybody else's (name width measured, or
    * estimated from its length when the floor is hidden). The name stays inside its own floor. When a floor is
    * too full, the players of THAT floor get smaller (smoothly) until everybody fits. */
   const zs = { no: 1, mid: 1, yes: 1 };          // size of the players on each floor
-  const Y0 = 0.2, Y1 = 0.88;   // the counters sit on the bottom edge                     // back / front limits of the floor where a player can stand
+  const TOP = 0.285, Y1 = 0.835; let Y0 = 0.45;   // the panels of the picture: from 28.5% to 83.5% of its height; Y0 = TOP + height of a player
   let lastF = null;
   function geo() {
     const f = $('tfFloor');
     if (f && f.clientWidth > 50) lastF = [f.clientWidth, f.clientHeight, parseFloat(getComputedStyle(f).fontSize) || 16];
     if (lastF) return lastF;
-    const w = window.innerWidth * 0.92; return [w, w * 0.85, parseFloat(getComputedStyle(document.body).fontSize) || 16];
+    const w = window.innerWidth * 1.08; return [w, w * 941 / 1672, parseFloat(getComputedStyle(document.body).fontSize) || 16];
   }
   /** half width (floor x fraction) and row depth (floor y fraction) of a player at size sc (name + head must not touch) */
   function foot(el, sc) {
@@ -400,6 +400,7 @@
   /** places that look natural (staggered rows, a little random) and where nobody touches anybody */
   function freeSpot(zone, uid) {
     const [a, b] = ZONES[zone], el = els[uid], [hw, dy] = foot(el, zs[zone]);
+    Y0 = Math.min(Y1 - 0.02, TOP + dy);
     const others = Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && els[u]._p && !els[u].classList.contains('fall'))
       .map(u => { const [w, d] = foot(els[u], zs[zone]); return { p: els[u]._p, w, d }; });
     const free = c => others.every(o => Math.abs(c[0] - o.p[0]) >= hw + o.w || Math.abs(c[1] - o.p[1]) >= Math.max(dy, o.d));
@@ -439,7 +440,7 @@
     list.forEach(u => els[u] && els[u].classList.remove('noname'));
     const widest = sc => Math.max(...list.map(u => foot(els[u] || null, sc)[0]));
     for (;;) {
-      hw = widest(v); dy = foot(null, v)[1];
+      hw = widest(v); dy = foot(null, v)[1]; Y0 = Math.min(Y1 - 0.02, TOP + dy);
       cols = Math.max(1, Math.floor(W / (2 * hw))); rows = Math.floor((Y1 - Y0) / dy) + 1;
       if (cols * rows >= n || v <= MIN_S) break;
       v = Math.max(MIN_S, v * 0.94);
@@ -558,7 +559,7 @@
       if (phase === 'fall' && st && st.q && Date.now() - (st.fallAt || 0) < 1600) shot = st.q.truth ? 'fall-no' : 'fall-yes';   // a short look at the falling floor, then the whole game again
       if (phase === 'winner') shot = 'win';
       if (phase === 'lobby') shot = 'lobby';
-      cam.dataset.shot = 'fixed';   // the camera never moves (seen from above)
+      cam.dataset.shot = shot;
     }
     hud.classList.toggle('paused', paused);
     const card = $('tfCard'), big = $('tfBig');
@@ -610,10 +611,7 @@
     if (phase !== 'lobby') return;
     const n = Object.keys(st.players).length;
     // the «write العب» card is fixed (built once); only the numbers change and the rules turn below it
-    if (!$('tfLobN')) $('tfCard').innerHTML = `<div class="tf-lobby tf-join"><i class="tf-pad">🎮</i><b>اكتب «<em>العب</em>» في التعليقات للمشاركة معنا</b></div>
-      <div class="tf-sub"><span>⏱️ تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</span><i></i><span>المسجّلون: <span class="tf-cnt big" id="tfLobN"></span></span><i></i><span>👥 المشاركة مجانية</span></div>
-      <div class="tf-rules" id="tfRules"></div>`;
-    $('tfLobN').textContent = n; $('tfLobT').textContent = left();
+    if (!$('tfRules')) $('tfCard').innerHTML = `<div class="tf-rules" id="tfRules"></div>`;
     const k = Math.floor(Date.now() / RULE_MS) % RULES.length, box = $('tfRules');
     if (box.dataset.k !== String(k)) {
       box.dataset.k = k;
@@ -641,14 +639,24 @@
     t.classList.toggle('low', l <= 5);
   }
   function renderCounts() {
-    const b = $('tfBar'); if (!b) return;
-    if (!st || phase === 'idle' || phase === 'winner' || phase === 'podium') { b.innerHTML = ''; return; }
-    const al = alive();
+    const m = $('bdMain'), sb = $('bdSub'), pl = $('bdPill'); if (!m) return;
+    const set = (el, h) => { if (el._h !== h) { el._h = h; el.innerHTML = h; } };
+    if (!st || phase === 'idle') { set(m, ''); set(sb, ''); set(pl, ''); return; }
+    const al = alive(), all = Object.keys(st.players).length;
     const yes = al.filter(u => st.players[u].ans === 'yes').length, no = al.filter(u => st.players[u].ans === 'no').length;
-    b.innerHTML = phase === 'lobby'
-      ? `<span class="tb mid tb-big"><i>👥</i>${players(Object.keys(st.players).length)}</span>`
-      : `<span class="tb no">لا ✗ ${no}</span><span class="tb mid">؟ ${al.length - yes - no}</span><span class="tb yes">نعم ✓ ${yes}</span>`
-        + `<span class="tb left">باقٍ ${al.length}</span>`;
+    let main = '', sub = '', pill = '';
+    if (phase === 'lobby') {
+      main = 'اكتب «<em>العب</em>» في التعليقات للمشاركة معنا';
+      sub = `<span>⏱️ تبدأ الأسئلة بعد ${left()}</span><i></i><span>المسجّلون: <b>${all}</b></span><i></i><span>👥 المشاركة مجانية</span>`;
+      pill = `<b>${all}</b> ${all === 1 ? 'لاعب' : all === 2 ? 'لاعبان' : all >= 3 && all <= 10 ? 'لاعبين' : 'لاعباً'}`;
+    } else if (phase === 'winner' || phase === 'podium') { main = '👑 أبطال الجولة'; pill = `<b>${all}</b> لاعباً`; }
+    else if (phase === 'nowinner') { main = 'سقط الجميع! 😅'; sub = '<span>جولة جديدة بعد قليل…</span>'; }
+    else {
+      main = phase === 'ready' ? 'استعدّوا… 🔥' : phase === 'gap' ? `بقي <em>${al.length}</em> من أصل ${all}` : 'السؤال <em>' + st.qNo + '</em>';
+      sub = `<span class="y">نعم ✓ <b>${yes}</b></span><i></i><span>؟ <b>${al.length - yes - no}</b></span><i></i><span class="n">لا ✗ <b>${no}</b></span>`;
+      pill = `باقٍ <b>${al.length}</b>`;
+    }
+    set(m, main); set(sb, sub); set(pl, pill);
   }
 
   /* ---------------- gift cards ---------------- */

@@ -421,8 +421,6 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 .tf-light { opacity: .18; } .tf-bokeh { opacity: .35; }
 .tf-crn { position: absolute; top: 50%; font-size: 1.1em; transform: translateY(-50%); filter: drop-shadow(0 0 0.4em rgba(255, 200, 60, .8)); font-style: normal; opacity: .9; z-index: 4; }
 .tf-crn.l { left: 0.15em; } .tf-crn.r { right: 0.15em; }
-.tf-cam, .tf-cam[data-shot] { transform: none !important; transition: none; }
-.tf-sway { animation: none !important; transform: none !important; }
 .tf-floor { top: 4%; bottom: 4%; left: 6%; right: 6%; height: auto; transform: none; grid-template-columns: 28% 40% 28%; }
 /* the zones: raised, glossy, glowing borders */
 .tf-tile { border-radius: 0.9em; }
@@ -542,3 +540,61 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 .tb.tb-big i { font-style: normal; }
 /* question card in the same frame */
 .tf-q { background: linear-gradient(180deg, #4C1F9C, #2A0F62) padding-box, linear-gradient(180deg, var(--gold1), var(--gold2) 45%, var(--gold3)) border-box; border: 0.18em solid transparent; }
+
+/* =====================================================================
+ * 3.1 THE PICTURE IS THE GAME — the host's board image, the doors cut from it, live texts written on it.
+ * The camera glides left / right and looks at the falling panel for a moment, like before.
+ * ===================================================================== */
+#quizHud.tf .tf-bar { display: none; }
+.tf-stage { overflow: visible; perspective: 70em; display: flex; align-items: center; justify-content: center; border-radius: 0; }
+.tf-cam, .tf-sway { display: flex; align-items: center; justify-content: center; }
+.bd-board { position: relative; width: 108%; flex: none; aspect-ratio: 1672 / 941; container-type: inline-size; transform-style: preserve-3d;
+  filter: drop-shadow(0 0.8em 1.4em rgba(0,0,0,.55)); }
+.bd-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: 0.6em; }
+/* doors (each panel = 2 halves of the picture); a dark pit under them */
+.bd-door { position: absolute; inset: 0; pointer-events: none; }
+.bd-pit { position: absolute; inset: 0; opacity: 0; transition: opacity .25s; background: radial-gradient(circle at 50% 45%, #2A1D45, #07030F 70%); }
+.bd-door.no .bd-pit { clip-path: polygon(9.868% 27.099%, 32.895% 27.099%, 31.22% 85.016%, 5.981% 85.016%); }
+.bd-door.mid .bd-pit { clip-path: polygon(39.175% 27.099%, 62.201% 27.099%, 63.397% 85.547%, 38.278% 85.547%); }
+.bd-door.yes .bd-pit { clip-path: polygon(67.285% 27.099%, 90.61% 27.099%, 95.096% 85.016%, 69.079% 85.016%); }
+.bd-h { position: absolute; display: block; transition: transform .75s cubic-bezier(.55,0,.85,.55), filter .75s; }
+.bd-door.no .bd-h.l { left: 5.981%; top: 27.099%; width: 15.73%; height: 58.023%; }
+.bd-door.no .bd-h.r { left: 19.258%; top: 27.099%; width: 13.696%; height: 58.023%; }
+.bd-door.mid .bd-h.l { left: 38.278%; top: 27.099%; width: 12.62%; height: 58.555%; }
+.bd-door.mid .bd-h.r { left: 50.718%; top: 27.099%; width: 12.739%; height: 58.555%; }
+.bd-door.yes .bd-h.l { left: 67.285%; top: 27.099%; width: 14.833%; height: 58.023%; }
+.bd-door.yes .bd-h.r { left: 79.246%; top: 27.099%; width: 15.909%; height: 58.023%; }
+.bd-h.l { transform-origin: 0% 50%; } .bd-h.r { transform-origin: 100% 50%; }
+.bd-door.open .bd-pit { opacity: 1; }
+.bd-door.open .bd-h.l { transform: perspective(40em) rotateY(88deg); filter: brightness(.45); }
+.bd-door.open .bd-h.r { transform: perspective(40em) rotateY(-88deg); filter: brightness(.45); }
+/* live texts on the picture */
+.bd-main, .bd-sub, .bd-pill { position: absolute; display: flex; align-items: center; justify-content: center; direction: rtl; color: #fff; font-weight: 900; white-space: nowrap; overflow: hidden; }
+.bd-main { left: 27%; width: 45%; top: 5.4%; height: 6.8%; font-size: 2.45cqw; text-shadow: 0 0.06em 0.15em rgba(0,0,0,.6); }
+.bd-main em, .bd-pill b { font-style: normal; color: #FFD45A; text-shadow: 0 0 0.4em rgba(255, 200, 60, .55), 0 0.06em 0.15em rgba(0,0,0,.6); }
+.bd-sub { left: 28.5%; width: 43.8%; top: 14.6%; height: 4.6%; font-size: 1.32cqw; gap: 0.6em; font-weight: 800; }
+.bd-sub i { width: 0.1em; height: 1.1em; background: rgba(255,255,255,.75); }
+.bd-sub b { font-size: 1.35em; color: #fff; margin-inline-start: 0.2em; }
+.bd-sub .y b { color: #6CF08A; } .bd-sub .n b { color: #FF7B7B; }
+.bd-pill { left: 47.3%; width: 10.4%; top: 86.2%; height: 6.2%; font-size: 2.6cqw; gap: 0.25em; }
+.bd-pill b { font-size: 1.2em; }
+/* players on the picture: their size follows the picture's size */
+.bd-players { position: absolute; inset: 0; font-size: 2.9cqw; }
+.bd-players .tp-tag { max-width: 5.2em; }
+.bd-players .tp { transform: translate(-50%, -100%); }
+.bd-players .tp.fall { transform: translate(-50%, -100%) scale(.12) rotate(var(--rz, 30deg)) !important; }
+/* the lobby: only the rules (the picture says «اكتب العب»); the card does not take the board's place */
+#quizHud.tf .tf-card { min-height: 0; }
+/* camera: a gentle glide that always keeps the whole picture, a short look at the falling panel */
+.tf-sway { animation: camBoard 22s cubic-bezier(.45,0,.55,1) infinite; will-change: transform; transform-style: preserve-3d; }
+@keyframes camBoard {
+  0%   { transform: scale(.92) rotateY(-5deg) rotateX(2deg); }
+  25%  { transform: scale(.94) rotateY(0deg) rotateX(3.5deg); }
+  50%  { transform: scale(.92) rotateY(5deg) rotateX(2deg); }
+  75%  { transform: scale(.94) rotateY(0deg) rotateX(0.5deg); }
+  100% { transform: scale(.92) rotateY(-5deg) rotateX(2deg); }
+}
+.tf-cam { transition: transform 1.4s cubic-bezier(.37,0,.2,1); transform-style: preserve-3d; }
+.tf-cam[data-shot] { transform: none; }
+.tf-cam[data-shot="fall-no"] { transform: translateX(14%) scale(1.18); }
+.tf-cam[data-shot="fall-yes"] { transform: translateX(-14%) scale(1.18); }
