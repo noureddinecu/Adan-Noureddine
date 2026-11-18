@@ -366,17 +366,17 @@
   const els = {};          // uid -> element
   function clearStage() { Object.keys(els).forEach(u => { els[u].remove(); delete els[u]; }); }
   // floor coordinates: x ∈ [0,1] across the 3 floors (0 = left edge of «لا», 1 = right edge of «نعم»), y ∈ [0,1] back→front
-  const ZONES = { no: [0.02, 0.31], mid: [0.355, 0.645], yes: [0.69, 0.98] };
+  const ZONES = { no: [0.015, 0.265], mid: [0.315, 0.685], yes: [0.735, 0.985] };   // the middle floor is the widest: everybody starts there
   /** a free place in a floor: the best of a few random candidates (as far as possible from the others) */
   function spot(zone, uid) {
     const [a, b] = ZONES[zone];
     const others = Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && !els[u].classList.contains('fall')).map(u => els[u]._p);
     let best = null, bestD = -1;
-    for (let k = 0; k < 14; k++) {
-      const c = [a + 0.035 + Math.random() * (b - a - 0.07), 0.3 + Math.random() * 0.6];
+    for (let k = 0; k < 24; k++) {
+      const c = [a + 0.04 + Math.random() * (b - a - 0.08), 0.24 + Math.random() * 0.68];
       let d = 9; for (const o of others) if (o) d = Math.min(d, Math.hypot((c[0] - o[0]) * 1.4, c[1] - o[1]));
       if (d > bestD) { bestD = d; best = c; }
-      if (d > 0.16) break;
+      if (d > 0.2) break;
     }
     return best;
   }
