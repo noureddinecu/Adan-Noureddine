@@ -638,3 +638,18 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 .tf-rt { font-size: 0.9em; }
 #quizHud.tf { gap: 0.3em; }
 .bd-players .tp-tag { max-width: 4.4em; }   /* short name pills: two players side by side fit on a panel */
+
+/* 3.5 the rules: big and clear over the game before the round (start of the registration + just before the first question) */
+.tf-stage { position: relative; }
+.tf-rbig { position: absolute; inset: 4% 3%; z-index: 9; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transform: scale(.94); transition: opacity .5s, transform .5s; }
+.tf-rbig.on { opacity: 1; transform: none; }
+.tf-rbig .rb { width: 100%; max-height: 100%; direction: rtl; padding: 0.6em 0.9em; border-radius: 1em; color: #fff;
+  background: linear-gradient(180deg, rgba(76, 31, 156, .96), rgba(42, 15, 98, .96)) padding-box, linear-gradient(180deg, #FFF1B8, #F5C451 45%, #B9781B) border-box;
+  border: 0.18em solid transparent; box-shadow: 0 0 1.4em rgba(170, 110, 255, .6), 0 0.6em 1.4em rgba(0,0,0,.55); }
+.tf-rbig b { display: block; text-align: center; font-size: 1.2em; font-weight: 900; color: #FFD45A; margin-bottom: 0.35em; }
+.tf-rbig ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.3em; }
+.tf-rbig li { display: flex; align-items: center; gap: 0.5em; font-weight: 800; font-size: 0.98em; line-height: 1.25; opacity: 0; animation: tfRuleIn .5s cubic-bezier(.2,.8,.3,1) forwards; animation-delay: calc(0.35s + var(--i) * 0.45s); }
+.tf-rbig li span { flex: none; width: 1.6em; height: 1.6em; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900;
+  background: linear-gradient(#FFE27A, #F5A623); color: #3A2400; }
+@keyframes tfLi { from { opacity: 0; transform: translateY(0.6em); } to { opacity: 1; transform: none; } }
+.tf-rbig li { animation-name: tfLi; }

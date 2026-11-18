@@ -307,19 +307,27 @@
             const tg = G.Quiz.simTarget();
             if (tg && seenRound !== tg.id) {
               seenRound = tg.id;
-              // «صح أم خطأ» (yes / no): a real elimination — most fake viewers answer, the good ones are right more often,
-              // and the last ones fight to the end, so a rehearsal ends with a champion, a runner-up and a podium
-              const yn = !!G.Quiz.yesNo, left = yn && G.Quiz._debug ? Object.values(G.Quiz._debug().st.players).filter(x => x.alive).length : 99;
-              people.forEach(p => {
-                if (Math.random() < (yn ? 0.06 : 0.25)) return;
-                const right = Math.random() < (yn ? (left <= 3 ? 0.62 : 0.55) + p.skill * 0.38 : 0.3 + p.skill * 0.55);
+              if (G.Quiz.yesNo && G.Quiz._debug && tg.id.charAt(0) === 'Q') {
+                // «صح أم خطأ» rehearsal: a sure elimination — about 30 % fall at each question, and when 2 or 3 are left
+                // exactly one stays: every rehearsal ends with a champion, a runner-up and the podium
+                const sp = G.Quiz._debug().st.players, alive = people.filter(p => sp[p.u] && sp[p.u].alive);
+                const n = alive.length, keep = n <= 3 ? 1 : Math.max(2, Math.round(n * (0.62 + Math.random() * 0.14)));
+                const order = alive.map(p => [p, p.skill + Math.random() * 0.8]).sort((x, y) => y[1] - x[1]).map(x => x[0]);
+                order.forEach((p, i) => {
+                  const good = i < keep, delay = 1200 + Math.random() * cfg.qTime * 700;
+                  if (!good && Math.random() < 0.15) return;                 // a few do not answer (they fall too)
+                  setTimeout(() => { const t2 = G.Quiz.simTarget(); if (t2 && t2.id === tg.id) onChat({ u: p.u, n: p.n, a: p.a, c: good ? t2.right : t2.wrong }); }, delay);
+                });
+              } else people.forEach(p => {
+                if (Math.random() < 0.25) return;
+                const right = Math.random() < 0.3 + p.skill * 0.55;
                 const delay = 1200 + Math.random() * cfg.qTime * 750;
-                if (!right || (!yn && Math.random() < 0.3)) setTimeout(() => { const t2 = G.Quiz.simTarget(); if (t2 && t2.id === tg.id) onChat({ u: p.u, n: p.n, a: p.a, c: t2.wrong }); }, delay * 0.6);
+                if (!right || Math.random() < 0.3) setTimeout(() => { const t2 = G.Quiz.simTarget(); if (t2 && t2.id === tg.id) onChat({ u: p.u, n: p.n, a: p.a, c: t2.wrong }); }, delay * 0.6);
                 if (right) setTimeout(() => { const t2 = G.Quiz.simTarget(); if (t2 && t2.id === tg.id) onChat({ u: p.u, n: p.n, a: p.a, c: t2.right }); }, delay);
               });
             }
             if (Math.random() < 0.06) { const p = people[(Math.random() * people.length) | 0]; onChat({ u: p.u, n: p.n, a: p.a, c: CHAT[(Math.random() * CHAT.length) | 0] }); }
-            if (Math.random() < 0.012) { const p = people[(Math.random() * people.length) | 0]; const big = Math.random() < 0.15; onGiftMsg({ u: p.u, n: p.n, a: p.a, gname: big ? 'Perfume' : 'Rose', coins: big ? 20 : 1, count: big ? 1 : 1 + ((Math.random() * 5) | 0), gimg: '' }); }
+            if (Math.random() < (G.Quiz.yesNo ? 0.002 : 0.012)) { const p = people[(Math.random() * people.length) | 0]; const big = Math.random() < 0.15; onGiftMsg({ u: p.u, n: p.n, a: p.a, gname: big ? 'Perfume' : 'Rose', coins: big ? 20 : 1, count: big ? 1 : 1 + ((Math.random() * 5) | 0), gimg: '' }); }
             return;
           }
           if (Math.random() < 0.08) { const p = people[(Math.random() * people.length) | 0]; onChat({ u: p.u, n: p.n, a: p.a, c: CHAT[(Math.random() * CHAT.length) | 0] }); }
