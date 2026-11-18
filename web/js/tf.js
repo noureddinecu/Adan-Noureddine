@@ -391,11 +391,10 @@
     }
     return el;
   }
-  // positions use transform (GPU), not left/top: smooth even with many players on a phone
-  function floorSize() { const f = $('tfFloor'); return f ? [f.clientWidth || 1, f.clientHeight || 1] : [1, 1]; }
+  // positions are percentages of the floor (left/top): right even when the floor is hidden (control panel open, size 0)
   function paint(el) {
-    const [w, h] = floorSize(), p = el._p;
-    el.style.transform = `translate3d(${(p[0] * w).toFixed(1)}px, ${(p[1] * h).toFixed(1)}px, 0) translate(-50%, -100%) rotateX(-58deg)`;
+    const p = el._p;
+    el.style.left = (p[0] * 100).toFixed(2) + '%'; el.style.top = (p[1] * 100).toFixed(2) + '%';
     el.style.zIndex = String(10 + Math.round(p[1] * 100));
   }
   /** walk (or appear) to x,y: the time depends on the distance, like a person walking at a steady pace */
@@ -404,9 +403,8 @@
     el._p = [x, y]; el.dataset.zone = zone;
     clearTimeout(el._t);
     if (instant || !from) { el.style.transitionDuration = '0s'; el.classList.remove('walk'); paint(el); el.getBoundingClientRect(); el.style.transitionDuration = ''; return; }
-    const [w, h] = floorSize();
-    const dist = Math.hypot((x - from[0]) * w, (y - from[1]) * h * 0.6), ms = Math.max(650, Math.min(2600, dist / (w * 0.36) * 1000));
-    el.style.transitionDuration = ms + 'ms';
+    const dist = Math.hypot(x - from[0], (y - from[1]) * 0.45), ms = Math.round(Math.max(650, Math.min(2600, dist / 0.36 * 1000)));
+    el.style.transitionDuration = ms + 'ms, ' + ms + 'ms';
     el.style.setProperty('--lean', (x > from[0] ? 1 : -1) * 4 + 'deg');
     el.classList.add('walk'); paint(el);
     el._t = setTimeout(() => el.classList.remove('walk'), ms);
@@ -421,14 +419,13 @@
     const z = a === 'yes' ? 'yes' : 'no', [x, y] = spot(z, uid);
     walkTo(el, x, y, z);
   }
-  window.addEventListener('resize', () => Object.keys(els).forEach(u => { if (els[u]._p && !els[u].classList.contains('fall')) paint(els[u]); }));
   function dropFloors(right, out) {
     const wrong = right === 'yes' ? 'no' : 'yes';
     ['mid', wrong].forEach(z => $('tf_' + z).classList.add('open'));
     out.forEach(u => {
       const el = els[u]; if (!el) return;
       clearTimeout(el._t); el.classList.remove('walk');
-      setTimeout(() => { el.style.transitionDuration = ''; el.classList.add('fall'); const [w, h] = floorSize(), p = el._p || [0.5, 0.5]; el.style.transform = `translate3d(${(p[0] * w).toFixed(1)}px, ${(p[1] * h).toFixed(1)}px, 0) translate(-50%, -100%) translateZ(-26em) rotateX(-58deg) rotateZ(${(Math.random() < 0.5 ? -1 : 1) * (20 + Math.random() * 25)}deg)`; }, 220 + Math.random() * 260);
+      setTimeout(() => { el.style.transitionDuration = ''; el.style.setProperty('--rz', (Math.random() < 0.5 ? -1 : 1) * (20 + Math.random() * 25) + 'deg'); el.classList.add('fall'); }, 220 + Math.random() * 260);
       setTimeout(() => { el.remove(); delete els[u]; }, 2000);
     });
     setTimeout(() => ['mid', wrong].forEach(z => $('tf_' + z).classList.remove('open')), 2600);

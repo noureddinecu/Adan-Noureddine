@@ -78,9 +78,9 @@ body.tf-app { background: #1B1033; }
 .tf-tile.open .tf-door { transform: rotateX(-100deg); }
 
 /* ---------------- the people ---------------- */
-.tp { position: absolute; left: 0; top: 0; width: 2.5em; font-size: 1.32em; transform-origin: 50% 100%; transform-style: preserve-3d; will-change: transform;
-  transform: translate(-50%, -100%) rotateX(-58deg);
-  transition: transform 1s cubic-bezier(.42,.08,.4,1), opacity .9s ease-in .35s; }
+.tp { position: absolute; width: 2.5em; font-size: 1.32em; transform: translate(-50%, -100%) rotateX(-58deg); transform-origin: 50% 100%; transform-style: preserve-3d;
+  transition-property: left, top, transform, opacity; transition-duration: 1s, 1s, 1.15s, .9s;
+  transition-timing-function: cubic-bezier(.42,.08,.4,1), cubic-bezier(.42,.08,.4,1), cubic-bezier(.55,0,1,.45), ease-in; transition-delay: 0s, 0s, 0s, .35s; }
 .tp-in { position: relative; display: flex; flex-direction: column; align-items: center; transform-origin: 50% 100%; transition: transform .35s ease; }
 /* standing: only a calm breathing, no bouncing */
 .tp-body { transform-origin: 50% 100%; animation: tpBreath 3.2s ease-in-out infinite; animation-delay: var(--d, 0s); }
@@ -98,7 +98,7 @@ body.tf-app { background: #1B1033; }
 .tp-head img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .tp-body { width: 1.9em; height: 2.2em; display: block; filter: drop-shadow(0 0.08em 0.06em rgba(0,0,0,.3)); }
 .tp::after { content: ''; position: absolute; left: 50%; bottom: -0.15em; width: 1.9em; height: 0.5em; border-radius: 50%; transform: translateX(-50%); background: rgba(0,0,0,.25); filter: blur(2px); z-index: -1; }
-.tp.fall { opacity: 0; transition: transform 1.15s cubic-bezier(.55,0,1,.45), opacity .9s ease-in .35s !important; }
+.tp.fall { opacity: 0; transform: translate(-50%, -100%) translateZ(-26em) rotateX(-58deg) rotateZ(var(--rz, 30deg)); transition-duration: 0s, 0s, 1.15s, .9s !important; }
 .tp.fall::after { opacity: 0; transition: opacity .3s; }
 .tp.drop-in .tp-in { animation: tpDrop .7s cubic-bezier(.25,.8,.35,1); }
 
