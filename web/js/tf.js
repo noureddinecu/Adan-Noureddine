@@ -379,13 +379,13 @@
    * estimated from its length when the floor is hidden). The name stays inside its own floor. When a floor is
    * too full, the players of THAT floor get smaller (smoothly) until everybody fits. */
   const zs = { no: 1, mid: 1, yes: 1 };          // size of the players on each floor
-  const TOP = 0.105, Y1 = 0.81; let Y0 = 0.45;   // the panels of the picture: from 28.5% to 83.5% of its height; Y0 = TOP + height of a player
+  const TOP = 0.09, Y1 = 0.855; let Y0 = 0.45;   // the panels of the picture: from 28.5% to 83.5% of its height; Y0 = TOP + height of a player
   let lastF = null;
   function geo() {
     const f = $('tfFloor');
     if (f && f.clientWidth > 50) lastF = [f.clientWidth, f.clientHeight, parseFloat(getComputedStyle(f).fontSize) || 16];
     if (lastF) return lastF;
-    const w = window.innerWidth * 1.08; return [w, w * 720 / 1672, parseFloat(getComputedStyle(document.body).fontSize) || 16];
+    const w = window.innerWidth * 1.08; return [w, w * 911 / 1672, parseFloat(getComputedStyle(document.body).fontSize) || 16];
   }
   /** half width (floor x fraction) and row depth (floor y fraction) of a player at size sc (name + head must not touch) */
   function foot(el, sc) {

@@ -548,28 +548,28 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 #quizHud.tf .tf-bar { display: none; }
 .tf-stage { overflow: visible; perspective: 70em; display: flex; align-items: center; justify-content: center; border-radius: 0; }
 .tf-cam, .tf-sway { display: flex; align-items: center; justify-content: center; }
-.bd-board { position: relative; width: 108%; flex: none; aspect-ratio: 1672 / 720; container-type: inline-size; transform-style: preserve-3d;
+.bd-board { position: relative; width: 108%; flex: none; aspect-ratio: 1672 / 911; container-type: inline-size; transform-style: preserve-3d;
   filter: drop-shadow(0 0.8em 1.4em rgba(0,0,0,.55)); }
 .bd-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: 0.6em; }
 /* doors: each panel = 2 halves cut exactly on its painted middle line (1 px overlap: closed, it looks like one panel) */
 .bd-door { position: absolute; inset: 0; pointer-events: none; }
 .bd-pit { position: absolute; inset: 0; opacity: 0; transition: opacity .25s; background: radial-gradient(circle at 50% 45%, #2A1D45, #07030F 70%); }
-.bd-door.no .bd-pit { clip-path: polygon(10.287% 9.306%, 32.476% 9.306%, 30.801% 83.056%, 6.4% 83.056%); }
-.bd-door.mid .bd-pit { clip-path: polygon(39.593% 9.306%, 61.782% 9.306%, 62.978% 83.75%, 38.696% 83.75%); }
-.bd-door.yes .bd-pit { clip-path: polygon(67.703% 9.306%, 90.191% 9.306%, 94.677% 83.056%, 69.498% 83.056%); }
+.bd-door.no .bd-pit { clip-path: polygon(10.357% 8.178%, 32.335% 8.178%, 30.703% 86.427%, 6.569% 86.427%); }
+.bd-door.mid .bd-pit { clip-path: polygon(39.702% 8.178%, 61.678% 8.178%, 62.844% 87.168%, 38.827% 87.168%); }
+.bd-door.yes .bd-pit { clip-path: polygon(67.846% 8.178%, 90.129% 8.178%, 94.5% 86.427%, 69.594% 86.427%); }
 .bd-h { position: absolute; display: block; transition: transform .75s cubic-bezier(.55,0,.85,.55), filter .75s; }
-.bd-door.no .bd-h.l { left: 6.4%; top: 9.306%; width: 15.849%; height: 74.028%; }
-.bd-door.no .bd-h.r { left: 19.258%; top: 9.306%; width: 13.337%; height: 74.028%; }
-.bd-door.mid .bd-h.l { left: 38.696%; top: 9.306%; width: 12.141%; height: 74.722%; }
-.bd-door.mid .bd-h.r { left: 50.538%; top: 9.306%; width: 12.56%; height: 74.722%; }
-.bd-door.yes .bd-h.l { left: 67.703%; top: 9.306%; width: 14.653%; height: 74.028%; }
-.bd-door.yes .bd-h.r { left: 78.648%; top: 9.306%; width: 16.148%; height: 74.028%; }
+.bd-door.no .bd-h.l { left: 6.4%; top: 7.903%; width: 15.849%; height: 78.924%; }
+.bd-door.no .bd-h.r { left: 19.258%; top: 7.903%; width: 13.278%; height: 78.924%; }
+.bd-door.mid .bd-h.l { left: 38.696%; top: 7.903%; width: 12.141%; height: 79.693%; }
+.bd-door.mid .bd-h.r { left: 50.538%; top: 7.903%; width: 12.5%; height: 79.693%; }
+.bd-door.yes .bd-h.l { left: 67.703%; top: 7.903%; width: 14.653%; height: 78.924%; }
+.bd-door.yes .bd-h.r { left: 78.648%; top: 7.903%; width: 16.089%; height: 78.924%; }
 .bd-h.l { transform-origin: 0% 50%; } .bd-h.r { transform-origin: 100% 50%; }
 .bd-door.open .bd-pit { opacity: 1; }
 .bd-door.open .bd-h.l { transform: perspective(40em) rotateY(88deg); filter: brightness(.45); }
 .bd-door.open .bd-h.r { transform: perspective(40em) rotateY(-88deg); filter: brightness(.45); }
 /* the pill at the bottom of the board */
-.bd-pill { position: absolute; left: 47.548%; top: 85.694%; width: 9.868%; height: 7.778%; display: flex; align-items: center; justify-content: center; direction: rtl; color: #fff; font-weight: 900; white-space: nowrap;
+.bd-pill { position: absolute; left: 47.548%; top: 89.462%; width: 9.868%; height: 6.531%; display: flex; align-items: center; justify-content: center; direction: rtl; color: #fff; font-weight: 900; white-space: nowrap;
   font-size: 2.5cqw; gap: 0.25em; text-shadow: 0 0.06em 0.15em rgba(0,0,0,.6); }
 .bd-pill b { font-size: 1.2em; color: #FFD45A; text-shadow: 0 0 0.4em rgba(255, 200, 60, .55), 0 0.06em 0.15em rgba(0,0,0,.6); }
 /* players: little people standing on the panels; their size follows the picture */
@@ -602,3 +602,26 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 /* rules: the old one leaves first, then the new one comes (never two texts on top of each other) */
 .tf-rc { animation: tfRuleIn .5s cubic-bezier(.2,.8,.3,1) .45s both; }
 .tf-rc.out { animation: tfRuleOut .4s ease forwards; }
+
+/* 3.3 doors: the pit is ALWAYS under the doors (a closed door covers it): closing never shows a second door.
+   Open: the two halves fall down into the pit; close: they come back up, slower and soft */
+.bd-pit { opacity: 1 !important; transition: none; }
+.bd-h { transition: transform .9s cubic-bezier(.2,.7,.3,1), filter .9s; will-change: transform; backface-visibility: hidden; }
+.bd-door.open .bd-h { transition: transform .7s cubic-bezier(.55,0,.85,.45), filter .7s; }
+/* players: bigger, bright and clear */
+.bd-players { font-size: 2.75cqw; }
+.bd-players .tp-head { width: 1.85em; height: 1.85em; box-shadow: 0 0 0 0.12em #fff, 0 0.2em 0.35em rgba(0,0,0,.6); }
+.bd-players .tp-body { filter: drop-shadow(0 0 0.05em rgba(255,255,255,.9)) drop-shadow(0 0.12em 0.12em rgba(0,0,0,.5)); }
+.bd-players .tp-tag { font-size: 0.6em; color: #1E0B45; background: linear-gradient(180deg, #FFFFFF, #EDE6FF); padding: 0.1em 0.6em;
+  box-shadow: 0 0 0 0.09em var(--gold2, #F5C451), 0 0.15em 0.3em rgba(0,0,0,.55); text-shadow: none; }
+
+/* 3.3 b — sliding doors: the two halves slide apart into the frame (clipped to the panel), then slide back together.
+   No rotation: the words on the doors are never squeezed, a door is never seen twice. */
+.bd-door.no { clip-path: polygon(10.357% 8.178%, 32.335% 8.178%, 30.703% 86.427%, 6.569% 86.427%); }
+.bd-door.mid { clip-path: polygon(39.702% 8.178%, 61.678% 8.178%, 62.844% 87.168%, 38.827% 87.168%); }
+.bd-door.yes { clip-path: polygon(67.846% 8.178%, 90.129% 8.178%, 94.5% 86.427%, 69.594% 86.427%); }
+.bd-pit { clip-path: none !important; box-shadow: inset 0 0 1.2em rgba(0,0,0,.9); }
+.bd-h { transition: transform .75s cubic-bezier(.45,0,.25,1) !important; filter: none !important; }
+.bd-door.open .bd-h { transition: transform .6s cubic-bezier(.5,0,.3,1) !important; }
+.bd-door.open .bd-h.l { transform: translateX(-104%) !important; }
+.bd-door.open .bd-h.r { transform: translateX(104%) !important; }
