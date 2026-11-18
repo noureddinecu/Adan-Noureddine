@@ -666,3 +666,13 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 .tk-in span { direction: rtl; font-weight: 800; font-size: 0.86em; color: #fff; padding: 0 0.7em; }
 .tk-in i { font-style: normal; color: #FFD45A; font-size: 0.7em; }
 @keyframes tfTick { from { transform: translateX(-50%); } to { transform: translateX(0); } }   /* Arabic: the text comes from the left */
+/* 3.6.1 the camera turns left / right clearly, like the first versions (the whole board always stays in the frame) */
+.tf-stage { perspective: 52em; }
+.tf-sway { animation: camTurn 14s cubic-bezier(.45,0,.55,1) infinite; }
+@keyframes camTurn {
+  0%   { transform: scale(.88) translateX(-2.5%) rotateY(-11deg) rotateZ(0.5deg) rotateX(3deg); }
+  25%  { transform: scale(.9) translateX(0) rotateY(0deg) rotateZ(0deg) rotateX(5deg); }
+  50%  { transform: scale(.88) translateX(2.5%) rotateY(11deg) rotateZ(-0.5deg) rotateX(3deg); }
+  75%  { transform: scale(.9) translateX(0) rotateY(0deg) rotateZ(0deg) rotateX(1deg); }
+  100% { transform: scale(.88) translateX(-2.5%) rotateY(-11deg) rotateZ(0.5deg) rotateX(3deg); }
+}
