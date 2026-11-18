@@ -548,43 +548,44 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 #quizHud.tf .tf-bar { display: none; }
 .tf-stage { overflow: visible; perspective: 70em; display: flex; align-items: center; justify-content: center; border-radius: 0; }
 .tf-cam, .tf-sway { display: flex; align-items: center; justify-content: center; }
-.bd-board { position: relative; width: 108%; flex: none; aspect-ratio: 1672 / 941; container-type: inline-size; transform-style: preserve-3d;
+.bd-board { position: relative; width: 108%; flex: none; aspect-ratio: 1672 / 720; container-type: inline-size; transform-style: preserve-3d;
   filter: drop-shadow(0 0.8em 1.4em rgba(0,0,0,.55)); }
 .bd-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: 0.6em; }
-/* doors (each panel = 2 halves of the picture); a dark pit under them */
+/* doors: each panel = 2 halves cut exactly on its painted middle line (1 px overlap: closed, it looks like one panel) */
 .bd-door { position: absolute; inset: 0; pointer-events: none; }
 .bd-pit { position: absolute; inset: 0; opacity: 0; transition: opacity .25s; background: radial-gradient(circle at 50% 45%, #2A1D45, #07030F 70%); }
-.bd-door.no .bd-pit { clip-path: polygon(9.868% 27.099%, 32.895% 27.099%, 31.22% 85.016%, 5.981% 85.016%); }
-.bd-door.mid .bd-pit { clip-path: polygon(39.175% 27.099%, 62.201% 27.099%, 63.397% 85.547%, 38.278% 85.547%); }
-.bd-door.yes .bd-pit { clip-path: polygon(67.285% 27.099%, 90.61% 27.099%, 95.096% 85.016%, 69.079% 85.016%); }
+.bd-door.no .bd-pit { clip-path: polygon(10.287% 9.306%, 32.476% 9.306%, 30.801% 83.056%, 6.4% 83.056%); }
+.bd-door.mid .bd-pit { clip-path: polygon(39.593% 9.306%, 61.782% 9.306%, 62.978% 83.75%, 38.696% 83.75%); }
+.bd-door.yes .bd-pit { clip-path: polygon(67.703% 9.306%, 90.191% 9.306%, 94.677% 83.056%, 69.498% 83.056%); }
 .bd-h { position: absolute; display: block; transition: transform .75s cubic-bezier(.55,0,.85,.55), filter .75s; }
-.bd-door.no .bd-h.l { left: 5.981%; top: 27.099%; width: 15.73%; height: 58.023%; }
-.bd-door.no .bd-h.r { left: 19.258%; top: 27.099%; width: 13.696%; height: 58.023%; }
-.bd-door.mid .bd-h.l { left: 38.278%; top: 27.099%; width: 12.62%; height: 58.555%; }
-.bd-door.mid .bd-h.r { left: 50.718%; top: 27.099%; width: 12.739%; height: 58.555%; }
-.bd-door.yes .bd-h.l { left: 67.285%; top: 27.099%; width: 14.833%; height: 58.023%; }
-.bd-door.yes .bd-h.r { left: 79.246%; top: 27.099%; width: 15.909%; height: 58.023%; }
+.bd-door.no .bd-h.l { left: 6.4%; top: 9.306%; width: 15.849%; height: 74.028%; }
+.bd-door.no .bd-h.r { left: 19.258%; top: 9.306%; width: 13.337%; height: 74.028%; }
+.bd-door.mid .bd-h.l { left: 38.696%; top: 9.306%; width: 12.141%; height: 74.722%; }
+.bd-door.mid .bd-h.r { left: 50.538%; top: 9.306%; width: 12.56%; height: 74.722%; }
+.bd-door.yes .bd-h.l { left: 67.703%; top: 9.306%; width: 14.653%; height: 74.028%; }
+.bd-door.yes .bd-h.r { left: 78.648%; top: 9.306%; width: 16.148%; height: 74.028%; }
 .bd-h.l { transform-origin: 0% 50%; } .bd-h.r { transform-origin: 100% 50%; }
 .bd-door.open .bd-pit { opacity: 1; }
 .bd-door.open .bd-h.l { transform: perspective(40em) rotateY(88deg); filter: brightness(.45); }
 .bd-door.open .bd-h.r { transform: perspective(40em) rotateY(-88deg); filter: brightness(.45); }
-/* live texts on the picture */
-.bd-main, .bd-sub, .bd-pill { position: absolute; display: flex; align-items: center; justify-content: center; direction: rtl; color: #fff; font-weight: 900; white-space: nowrap; overflow: hidden; }
-.bd-main { left: 27%; width: 45%; top: 5.4%; height: 6.8%; font-size: 2.45cqw; text-shadow: 0 0.06em 0.15em rgba(0,0,0,.6); }
-.bd-main em, .bd-pill b { font-style: normal; color: #FFD45A; text-shadow: 0 0 0.4em rgba(255, 200, 60, .55), 0 0.06em 0.15em rgba(0,0,0,.6); }
-.bd-sub { left: 28.5%; width: 43.8%; top: 14.6%; height: 4.6%; font-size: 1.32cqw; gap: 0.6em; font-weight: 800; }
-.bd-sub i { width: 0.1em; height: 1.1em; background: rgba(255,255,255,.75); }
-.bd-sub b { font-size: 1.35em; color: #fff; margin-inline-start: 0.2em; }
-.bd-sub .y b { color: #6CF08A; } .bd-sub .n b { color: #FF7B7B; }
-.bd-pill { left: 47.3%; width: 10.4%; top: 86.2%; height: 6.2%; font-size: 2.6cqw; gap: 0.25em; }
-.bd-pill b { font-size: 1.2em; }
-/* players on the picture: their size follows the picture's size */
-.bd-players { position: absolute; inset: 0; font-size: 2.9cqw; }
-.bd-players .tp-tag { max-width: 5.2em; }
+/* the pill at the bottom of the board */
+.bd-pill { position: absolute; left: 47.548%; top: 85.694%; width: 9.868%; height: 7.778%; display: flex; align-items: center; justify-content: center; direction: rtl; color: #fff; font-weight: 900; white-space: nowrap;
+  font-size: 2.5cqw; gap: 0.25em; text-shadow: 0 0.06em 0.15em rgba(0,0,0,.6); }
+.bd-pill b { font-size: 1.2em; color: #FFD45A; text-shadow: 0 0 0.4em rgba(255, 200, 60, .55), 0 0.06em 0.15em rgba(0,0,0,.6); }
+/* players: little people standing on the panels; their size follows the picture */
+.bd-players { position: absolute; inset: 0; font-size: 2.6cqw; }
 .bd-players .tp { transform: translate(-50%, -100%); }
+.bd-players .tp-in { gap: 0; }
+.bd-players .tp-body { display: block; width: 1.9em; height: 2.2em; }
+.bd-players .tp::after { display: block; bottom: -0.12em; width: 1.7em; height: 0.45em; background: rgba(0,0,0,.4); }
+.bd-players .tp-head { width: 1.75em; height: 1.75em; margin-bottom: -0.38em; }
+.bd-players .tp-head b { position: relative; z-index: 1; font-size: 0.85em; text-shadow: 0 0.05em 0.1em rgba(0,0,0,.4); }
+.bd-players .tp-head img { z-index: 2; }
+.bd-players .tp-tag { max-width: 5.6em; margin-bottom: 0.12em; }
+.bd-players .tp.walk .tp-head { animation: none; }
 .bd-players .tp.fall { transform: translate(-50%, -100%) scale(.12) rotate(var(--rz, 30deg)) !important; }
-/* the lobby: only the rules (the picture says «اكتب العب»); the card does not take the board's place */
-#quizHud.tf .tf-card { min-height: 0; }
+#quizHud.tf .tf-card { min-height: 0; z-index: 8; }
+.tf-stage { overflow: hidden; }
 /* camera: a gentle glide that always keeps the whole picture, a short look at the falling panel */
 .tf-sway { animation: camBoard 22s cubic-bezier(.45,0,.55,1) infinite; will-change: transform; transform-style: preserve-3d; }
 @keyframes camBoard {
@@ -598,3 +599,6 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 .tf-cam[data-shot] { transform: none; }
 .tf-cam[data-shot="fall-no"] { transform: translateX(14%) scale(1.18); }
 .tf-cam[data-shot="fall-yes"] { transform: translateX(-14%) scale(1.18); }
+/* rules: the old one leaves first, then the new one comes (never two texts on top of each other) */
+.tf-rc { animation: tfRuleIn .5s cubic-bezier(.2,.8,.3,1) .45s both; }
+.tf-rc.out { animation: tfRuleOut .4s ease forwards; }
