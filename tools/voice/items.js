@@ -3,7 +3,7 @@
 const path = require('path');
 const W = path.join(__dirname, '../../web/');
 global.window = {}; global.document = { getElementById() { return null; } };
-require(W + 'data/world.js'); require(W + 'js/quiz-bank.js'); require(W + 'js/tf-bank.js'); require(W + "js/tf-sets.js"); require(W + "js/tf-lines.js");
+require(W + 'data/world.js'); require(W + 'js/quiz-bank.js'); require(W + 'js/tf-bank.js'); require(W + "js/tf-sets.js"); try { require(W + "js/tf-lines.js"); } catch (e) { process.exit(0); }   /* 2.7: no announcer any more */
 const fs = require('fs');
 const RAW = process.argv.includes('--raw');
 // vocalised statements (tools/voice/tashkeel.py): the voice reads the version with diacritics

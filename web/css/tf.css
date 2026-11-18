@@ -78,10 +78,18 @@ body.tf-app { background: #1B1033; }
 .tf-tile.open .tf-door { transform: rotateX(-100deg); }
 
 /* ---------------- the people ---------------- */
-.tp { position: absolute; width: 2.5em; font-size: 1.32em; transform: translate(-50%, -100%) rotateX(-58deg); transform-origin: 50% 100%; transform-style: preserve-3d;
-  transition: left .85s cubic-bezier(.4,.1,.3,1), top .85s cubic-bezier(.4,.1,.3,1), transform 1.15s cubic-bezier(.55,0,1,.45), opacity .9s ease-in .35s; }
-.tp-in { position: relative; display: flex; flex-direction: column; align-items: center; animation: tpIdle 2.4s ease-in-out infinite; animation-delay: var(--d, 0s); }
-.tp.walk .tp-in { animation: tpWalk .28s ease-in-out infinite; }
+.tp { position: absolute; left: 0; top: 0; width: 2.5em; font-size: 1.32em; transform-origin: 50% 100%; transform-style: preserve-3d; will-change: transform;
+  transform: translate(-50%, -100%) rotateX(-58deg);
+  transition: transform 1s cubic-bezier(.42,.08,.4,1), opacity .9s ease-in .35s; }
+.tp-in { position: relative; display: flex; flex-direction: column; align-items: center; transform-origin: 50% 100%; transition: transform .35s ease; }
+/* standing: only a calm breathing, no bouncing */
+.tp-body { transform-origin: 50% 100%; animation: tpBreath 3.2s ease-in-out infinite; animation-delay: var(--d, 0s); }
+/* walking: the legs swing and the body leans a little toward where it goes — feet stay on the floor */
+.tp.walk .tp-in { transform: rotate(var(--lean, 0deg)); }
+.tp .lg { transform-box: fill-box; transform-origin: 50% 0%; }
+.tp.walk .lg.l1 { animation: tpLeg .5s ease-in-out infinite; }
+.tp.walk .lg.l2 { animation: tpLeg .5s ease-in-out infinite reverse; }
+.tp.walk .tp-body { animation: tpStep .5s ease-in-out infinite; }
 .tp-tag { font-size: 0.42em; font-weight: 900; color: #fff; background: rgba(43, 27, 74, .82); border-radius: 0.6em; padding: 0.05em 0.5em; white-space: nowrap;
   max-width: 11em; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.15em; box-shadow: 0 0.1em 0.3em rgba(0,0,0,.3); }
 .tp-head { position: relative; width: 1.55em; height: 1.55em; border-radius: 50%; background: var(--c); overflow: hidden; z-index: 2; margin-bottom: -0.35em;
@@ -90,8 +98,9 @@ body.tf-app { background: #1B1033; }
 .tp-head img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .tp-body { width: 1.9em; height: 2.2em; display: block; filter: drop-shadow(0 0.08em 0.06em rgba(0,0,0,.3)); }
 .tp::after { content: ''; position: absolute; left: 50%; bottom: -0.15em; width: 1.9em; height: 0.5em; border-radius: 50%; transform: translateX(-50%); background: rgba(0,0,0,.25); filter: blur(2px); z-index: -1; }
-.tp.fall { transform: translate(-50%, -100%) translateZ(-26em) rotateX(-58deg) rotateZ(35deg); opacity: 0; }
-.tp.drop-in .tp-in { animation: tpDrop .65s cubic-bezier(.3,1.5,.5,1); }
+.tp.fall { opacity: 0; transition: transform 1.15s cubic-bezier(.55,0,1,.45), opacity .9s ease-in .35s !important; }
+.tp.fall::after { opacity: 0; transition: opacity .3s; }
+.tp.drop-in .tp-in { animation: tpDrop .7s cubic-bezier(.25,.8,.35,1); }
 
 /* ---------------- counters bar ---------------- */
 .tf-bar { flex: none; display: flex; justify-content: center; flex-wrap: wrap; gap: 0.35em; position: relative; z-index: 4; direction: rtl; min-height: 1.9em; }
@@ -150,7 +159,10 @@ body.tf-app { background: #1B1033; }
 @keyframes tfLight { from { opacity: .55; } to { opacity: 1; } }
 @keyframes tpIdle { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-0.08em) rotate(1.5deg); } }
 @keyframes tpWalk { 0%, 100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-0.25em) rotate(6deg); } }
-@keyframes tpDrop { from { transform: translateY(-4em) scale(.6); opacity: 0; } }
+@keyframes tpDrop { from { transform: translateY(-1.2em); opacity: 0; } }
+@keyframes tpBreath { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.025); } }
+@keyframes tpLeg { 0%, 100% { transform: rotate(16deg); } 50% { transform: rotate(-16deg); } }
+@keyframes tpStep { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
 @keyframes tfIn { from { transform: translateX(110%); opacity: 0; } }
 @keyframes tfCrown { 50% { transform: translateY(-0.15em) rotate(-6deg); } }
 @keyframes tfConf { 0% { transform: translate(0, 0) rotate(0); opacity: 1; } 100% { transform: translate(var(--dx, 3em), 6em) rotate(540deg); opacity: 0; } }
@@ -325,3 +337,28 @@ body.tf-app .modal .dialog .btn { background: rgba(255,255,255,.06); color: #EDE
 body.tf-app .modal .dialog .btn.primary { background: linear-gradient(135deg, #EC4899, #8B5CF6); color: #fff; border: 0; }
 body.tf-app .modal .dialog .btn.danger { background: #E11D48; color: #fff; border: 0; }
 body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
+
+/* ---------------- 2.7: written lobby (fixed «العب» card + rules one by one), clean question, podium in turn ---------------- */
+.tf-rules { position: relative; height: 2.6em; margin-top: 0.35em; }
+.tf-rc { position: absolute; inset: 0; display: flex; align-items: center; gap: 0.5em; direction: rtl; padding: 0.3em 0.7em; border-radius: 0.9em;
+  background: rgba(30, 18, 60, .78); color: #fff; box-shadow: 0 0.3em 1em rgba(0,0,0,.3); backdrop-filter: blur(6px);
+  animation: tfRuleIn .7s cubic-bezier(.2,.8,.3,1) both; }
+.tf-rc.out { animation: tfRuleOut .6s ease forwards; }
+.tf-rn { flex: none; width: 1.6em; height: 1.6em; border-radius: 50%; background: linear-gradient(#FFE27A, #F5A623); color: #3A2400; font-weight: 900;
+  display: flex; align-items: center; justify-content: center; }
+.tf-rt { flex: 1; min-width: 0; font-weight: 900; font-size: 0.95em; line-height: 1.25; }
+.tf-rd { flex: none; display: flex; gap: 0.2em; } .tf-rd i { width: 0.35em; height: 0.35em; border-radius: 50%; background: rgba(255,255,255,.35); } .tf-rd i.on { background: #FFE27A; }
+@keyframes tfRuleIn { from { opacity: 0; transform: translateY(0.6em); } }
+@keyframes tfRuleOut { to { opacity: 0; transform: translateY(-0.6em); } }
+.tf-gap { animation: tfRuleIn .6s cubic-bezier(.2,.8,.3,1) both; }
+.tf-q.done { opacity: .75; transition: opacity .6s; }
+.tf-q .tf-qt b { font-size: 1.12em; line-height: 1.35; }
+/* podium: each place comes in its turn with its own applause */
+.tf-pod .pd, .tf-top li { opacity: 0; animation: tfPlace .8s cubic-bezier(.2,.9,.3,1.15) forwards; animation-delay: var(--dl, 0ms); }
+.tf-big.pod.keep { animation: none !important; }
+.tf-pod .pd { position: relative; }
+.pd-clap { position: absolute; top: -0.6em; left: 50%; transform: translateX(-50%); font-size: 1.1em; opacity: 0; animation: tfClap 1.6s ease-out forwards; animation-delay: calc(var(--dl, 0ms) + 300ms); }
+@keyframes tfPlace { from { opacity: 0; transform: translateY(1.2em) scale(.85); } to { opacity: 1; transform: none; } }
+@keyframes tfClap { 0% { opacity: 0; transform: translate(-50%, 0) scale(.6); } 30% { opacity: 1; transform: translate(-50%, -0.4em) scale(1.15); } 100% { opacity: 0; transform: translate(-50%, -1.4em) scale(1); } }
+.tf-pod .pd.p4 { opacity: 0; }
+.tf-top li .tf-ph { flex: none; aspect-ratio: 1; }

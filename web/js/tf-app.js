@@ -6,7 +6,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const Sfx = G.Sfx;
-  const VERSION = '2.6.1';
+  const VERSION = '2.7.0';
   const SKEY = 'sahkhata.app.v1';
 
   // Logo: a green ✓ and a red ✗ on two floors, a little player in the middle
@@ -74,7 +74,7 @@
     bind('hGuide', () => openModal('liveGuide'));
     bind('guideOk', closeModal);
     bind('hSound', toggleSound, false);
-    bind('hTestSound', () => { G.testSound && G.testSound(); G.Quiz && setTimeout(() => G.Quiz._debug().Voice.speak('مرحبا بكم في صح أم خطأ! اكتبوا العب في التعليقات باش تدخلو معانا!', true), 300); }, false);
+    bind('hTestSound', () => { G.testSound && G.testSound(); }, false);
     bind('cfYes', () => { const cb = confirmCb; closeModal(); cb && cb(); });
     bind('cfNo', closeModal);
     window.addEventListener('pointerdown', () => { Sfx.unlock(); if (screen === 'home' && G.Music && !G.Music.playing && G.homeMusic) G.homeMusic(true); });

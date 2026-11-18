@@ -163,103 +163,10 @@
   }
   G.TfSets = { get current() { return loadProg().set + 1; }, left: () => leftAll(loadProg().set), count: () => SETS().length, reset() { prog = { set: 0, used: {} }; saveProg(); } };
 
-  /* ---------------- announcer (voice) ----------------
-   * 4 recorded announcers (voice/<id>/<key>.ogg, listed in voice/manifest.js) — chosen in the panel.
-   * A sentence that is not recorded (or «صوت الهاتف») is read by the phone's text-to-speech.
-   * Sentences are queued so they never cut each other (interrupt = drop the queue). */
-  const L = () => window.TF_LINES || {};
-  const strip = t => String(t || '').replace(/\[[^\]]*\]/g, '').replace(/\s+/g, ' ').trim();
-  const pack = () => { const v = cfg().voice || 'mohamed'; const m = window.TF_VOICE_PACK || {}; return m[v] ? { id: v, keys: m[v] } : null; };
-  const Voice = {
-    busyUntil: 0, queue: [], cur: null, last: 0,
-    native() { try { return window.AndroidBridge && window.AndroidBridge.speak ? window.AndroidBridge : null; } catch (e) { return null; } },
-    get speaking() { return !!this.cur || this.queue.length > 0 || Date.now() < this.busyUntil; },
-    /** item = { key, text } */
-    say(item, interrupt) {
-      if (!item || cfg().voice === 'off') return;
-      if (interrupt) this.queue.length = 0;             // never cut the sentence being said, just drop the waiting ones
-      item.exp = Date.now() + (item.ttl || 9000);       // a sentence that waited too long is not said any more
-      this.queue.push(item);
-      if (this.queue.length > 9) this.queue.splice(0, this.queue.length - 9);
-      if (!this.cur) this.next();
-    },
-    next() {
-      let item = this.queue.shift();
-      while (item && item.exp && Date.now() > item.exp) item = this.queue.shift();
-      if (!item) { this.cur = null; this.duck(false); return; }
-      this.last = Date.now();
-      const p = pack();
-      if (p && cfg().voice !== 'tts' && p.keys.indexOf(item.key) >= 0) {
-        const a = new Audio('voice/' + p.id + '/' + item.key + '.ogg');
-        a.volume = 1; this.cur = a; this.duck(true);
-        const done = () => { if (this.cur === a) { this.cur = null; this.lastEnd = Date.now(); setTimeout(() => this.next(), item.fast ? 40 : 1000); } };   // a calm pause between sentences (not inside the countdown)
-        a.onended = done; a.onerror = () => { if (this.cur === a) { this.cur = null; this.tts(item); } };
-        a.play().catch(() => { if (this.cur === a) { this.cur = null; this.tts(item); } });
-        return;
-      }
-      if (cfg().voice !== 'tts') { this.cur = null; this.next(); return; }   // not recorded yet: say nothing (no robot voice)
-      this.tts(item);
-    },
-    tts(item) {
-      const text = strip(item.text);
-      const rate = num(cfg().voiceRate, 1);
-      const ms = 900 + text.length * 75 / rate;
-      this.cur = { tts: true }; this.duck(true);
-      const tok = this.cur;
-      setTimeout(() => { if (this.cur === tok) { this.cur = null; this.next(); } }, ms);
-      const N = this.native();
-      if (N) { try { N.speak(text, rate, false); } catch (e) { /* */ } return; }
-      if (!window.speechSynthesis) return;
-      try {
-        const u = new SpeechSynthesisUtterance(text);
-        const vs = speechSynthesis.getVoices();
-        u.voice = vs.find(v => /ar[-_]MA/i.test(v.lang)) || vs.find(v => /^ar/i.test(v.lang)) || null;
-        u.lang = u.voice ? u.voice.lang : 'ar-SA'; u.rate = rate;
-        speechSynthesis.speak(u);
-      } catch (e) { /* */ }
-    },
-    duck(on) { if (G.Music) G.Music.duck(on || (phase === 'question' && left() <= 5)); },
-    stop() {
-      this.queue.length = 0;
-      if (this.cur && this.cur.pause) try { this.cur.pause(); } catch (e) { /* */ }
-      this.cur = null;
-      const N = this.native(); if (N && N.stopSpeaking) try { N.stopSpeaking(); } catch (e) { /* */ }
-      if (window.speechSynthesis) try { speechSynthesis.cancel(); } catch (e) { /* */ }
-    },
-    // compatibility with the home screen «test the voice» button
-    speak(text, interrupt) { this.say({ key: 'a_lobby_0', text: (L().lobby || [text])[0] }, interrupt); }
-  };
-  /** say a random sentence of a group */
-  // TikTok suspends gifts for «mechanically, automatically or non-interactively soliciting Gifts»:
-  // the automated announcer never asks for (or talks about) gifts. Only the host, live, may do it.
-  const NO_GIFT_TALK = /a_(reviveHint|final|finalRemind|finalGift|maxRevive|support|thanks)_|a_rules_[56]$|a_revived_2$/;
-  const lastIdx = {};
-  function say(group, interrupt) {
-    const arr = L()[group]; if (!arr || !arr.length) return;
-    const ok = arr.map((_, k) => k).filter(k => !NO_GIFT_TALK.test('a_' + group + '_' + k));
-    if (!ok.length) return;
-    // prefer recorded sentences; never the same one twice in a row
-    const p = pack(), rec = p && cfg().voice !== 'tts' ? ok.filter(k => p.keys.indexOf('a_' + group + '_' + k) >= 0) : ok;
-    let pool = (rec.length ? rec : ok).filter(k => k !== lastIdx[group]);
-    if (!pool.length) pool = ok;
-    const i = pool[(Math.random() * pool.length) | 0]; lastIdx[group] = i;
-    Voice.say({ key: 'a_' + group + '_' + i, text: arr[i] }, interrupt);
-  }
-  /** the conditions and rules of the game, one sentence after the other */
-  function sayRules() { (L().rules || []).forEach((t, i) => { if (!NO_GIFT_TALK.test('a_rules_' + i)) Voice.say({ key: 'a_rules_' + i, text: t, ttl: 60000 }); }); }
-  function sayCount(n) {
-    const C = window.TF_COUNTS || {};
-    if (n > 30) { if (C.many) Voice.say({ key: 'n_many', text: C.many }); return; }
-    if (C[n]) Voice.say({ key: 'n_' + n, text: C[n] });
-  }
-  // the question is NOT read aloud: the announcer invites the players to read it and think
-  // if the question was recorded, the announcer reads it; otherwise he invites the players to read it
-  // the questions are not read aloud: the announcer invites the players to read the question and think
-  function sayQuestion(q) {
-    const p = pack(), key = window.TF_QKEY ? window.TF_QKEY(q.text) : '';
-    if (cfg().readQ !== false && p && key && cfg().voice !== 'tts' && p.keys.indexOf(key) >= 0) Voice.say({ key, text: q.text }, true);   // recorded (with diacritics)
-    else say('askRead', true);
-  }
+  /* ---------------- no announcer ----------------
+   * TikTok closed a LIVE over the automated voice: the game has no voice at all any more.
+   * The screen shows only what the players must do (lobby card + rules) and the questions. */
+  const Voice = { speaking: false, say() { }, stop() { }, speak() { } };
 
   /* ---------------- state ---------------- */
   let phase = 'idle', phaseEnds = 0, paused = false, pausedLeft = 0, tickTimer = null;
@@ -294,7 +201,6 @@
   function lobby() {
     clearStage(); freshRound(); checkSet();
     setPhase('lobby', num(cfg().lobbyTime, 60) * 1000);
-    say('lobby', true);
   }
   function join(uid, p, quiet) {
     if (st.players[uid]) return false;
@@ -305,27 +211,25 @@
   }
   function startQuestions() {
     if (alive().length < Math.max(1, num(cfg().minPlayers, 2))) {
-      say('lobbyMore'); setPhase('lobby', 30000); return;
+      setPhase('lobby', 30000); return;
     }
-    setPhase('ready', 8000);
-    say('go', true);
+    setPhase('ready', 3000);
   }
   function ask() {
-    // bring back the players revived by a gift, everybody stands in the middle
+    // bring back the players revived by a gift; everybody stands in the middle (most are already walking back there)
     Object.keys(st.players).forEach(u => { const pl = st.players[u]; if (pl.reviveNext) { pl.reviveNext = false; pl.alive = true; placeMiddle(u, true); } });
     st.qNo++; st.hurry = false;
-    alive().forEach(u => { st.players[u].ans = null; placeMiddle(u); });
+    alive().forEach(u => { st.players[u].ans = null; if (!els[u] || els[u].dataset.zone !== 'mid') placeMiddle(u); });
     const n = alive().length;
     if (n <= num(cfg().finalAt, 10) && !st.finalSaid && st.qNo > 1) { st.finalSaid = true; }
     st.q = nextStatement(level());
     st.q.start = Date.now();
     setPhase('question', num(cfg().qTime, 15) * 1000);
-    sayQuestion(st.q); st.hyped = false;
   }
   function close() {
     // grace: answers that were written before the end but arrive late through the stream delay
     const g = Math.max(0, Math.min(20, num(cfg().grace, 10)));
-    if (g > 0 && !st.q.collecting) { st.q.collecting = true; setPhase('collect', g * 1000); if (g >= 6) say('collect'); return; }
+    if (g > 0 && !st.q.collecting) { st.q.collecting = true; setPhase('collect', g * 1000); return; }
     fall();
   }
   function fall() {
@@ -340,64 +244,44 @@
     setPhase('fall', 8000);
     dropFloors(right, out);
     api.Sfx.lose();
-    say(st.q.truth ? 'ansYes' : 'ansNo', true);
-    setTimeout(() => {
-      if (!out.length) say('none');
-      else if (out.length === before.length) { /* everybody: said at the end */ }
-      else say(out.length >= before.length / 2 ? 'fallMany' : 'fallFew');
-      if (silent && out.length < before.length && Math.random() < 0.4) setTimeout(() => say('noAnswer'), 2600);
-    }, 900);
+    // as soon as the doors are closed again, the players who stayed walk calmly back to the middle
+    const stay = before.filter(u => !out.includes(u)), round = st.round;
+    setTimeout(() => { if (st && st.round === round) stay.forEach(u => { if (st.players[u] && st.players[u].alive) placeMiddle(u); }); }, 2800);
   }
   function afterFall() {
     const n = alive().length;
-    if (n === 0) { setPhase('nowinner', 7000); say('nowinner', true); api.Sfx.lose(); return; }
+    if (n === 0) { setPhase('nowinner', 7000); api.Sfx.lose(); return; }
     if (n === 1) {
-      const u = alive()[0], pl = st.players[u];
+      const u = alive()[0];
       const s = S(); const p = s && s.participants[u]; if (p) { p.wins = (p.wins || 0) + 1; p.pts = (p.pts || 0) + 100; }
-      st.winner = u; st.ranking = ranking(); setPhase('winner', 9000);
-      say('winner', true); api.Sfx.fanfare(); setTimeout(() => api.Sfx.applause(), 400);
+      st.winner = u; st.ranking = ranking(); setPhase('winner', 6000);
+      api.Sfx.fanfare(); setTimeout(() => api.Sfx.applause(), 400); setTimeout(() => api.Sfx.applause(), 2600);
       return;
     }
-    const finalAt = num(cfg().finalAt, 10);
-    if (n <= finalAt && !st.finalAnnounced) { st.finalAnnounced = true; st.finalReminds = 0; st.lastRemindQ = st.qNo; setPhase('final', 7000); say('final'); return; }
-    if (n === 3 && !st.said3) { st.said3 = true; say('three'); }
-    else if (n === 2 && !st.said2) { st.said2 = true; say('two'); }
-    else if (st.lastOut && !st.reviveHinted && num(cfg().reviveMax, 2) > 0 && n > finalAt) { st.reviveHinted = true; say('reviveHint'); }
-    else if (n <= finalAt && st.finalReminds < 2 && st.qNo - st.lastRemindQ >= 2) { st.finalReminds++; st.lastRemindQ = st.qNo; say('finalRemind'); }
-    else if (Math.random() < 0.6) sayCount(n);           // «بقاو دابا عندنا 15 داللعّابة!»
-    say('next');                                           // «هادو اللي بقاو معانا… يلاه ندوزو للسؤال الجاي!»
-    // every N questions (5 by default) a short support break: «ما تنساوناش بالدعم ديالكم وما تنساوش المتابعة…»
-    const every = num(cfg().giftHype, 5);
-    if (every > 0 && st.qNo % every === 0 && n > 1) { st.supportNext = true; }
-    setPhase('gap', 1000 * Math.max(4, num(cfg().gapTime, 10)));
+    // between two questions: «12 players left out of 40 · next question, read it well»
+    setPhase('gap', 1000 * Math.max(4, num(cfg().gapTime, 7)));
+  }
+  /** the podium comes one by one: champion, runner-up, 3rd, 4th, then the rest of the top 10 — applause for each */
+  const POD_STEP = [0, 1500, 3000, 4500], TOP_FROM = 6000, TOP_STEP = 800;
+  function podium() {
+    const k = Math.min(10, (st.ranking || []).length);
+    setPhase('podium', TOP_FROM + Math.max(0, k - 4) * TOP_STEP + 5000);
+    const round = st.round, at = [...POD_STEP.slice(0, Math.min(4, k)), ...Array.from({ length: Math.max(0, k - 4) }, (_, i) => TOP_FROM + i * TOP_STEP)];
+    at.forEach((ms, i) => setTimeout(() => { if (st && st.round === round && phase === 'podium' && (i < 4 || i % 2 === 0)) api.Sfx.applause(); }, ms + 150));
   }
 
   function tick() {
     if (phase === 'idle' || paused) return;
     const now = Date.now();
     if (phase === 'lobby') {
-      if (!st.lobbyWarn && phaseEnds - now <= 13000) { st.lobbyWarn = true; say('lobbyEnd', true); }
-      else if (phaseEnds - now <= 5200 && Object.keys(st.players).length >= Math.max(1, num(cfg().minPlayers, 2))) {
-        // «خمسة… ربعة… تلاتة… جوج… واحد!» — one number a second
-        const c = Math.ceil((phaseEnds - now) / 1000);
-        if (c >= 1 && c <= 5 && st.countSaid !== c) { st.countSaid = c; Voice.say({ key: 'a_countdown_' + (5 - c), text: L().countdown[5 - c], ttl: 1200, fast: true }); api.Sfx.tick(c <= 3); }
-      }
-      else if (phaseEnds - now > 14000 && !Voice.speaking && now - (Voice.lastEnd || 0) > 4500 && now - Voice.last > 8000) {
-        st.lobbyTalks = (st.lobbyTalks || 0) + 1;
-        const rr = cfg().rulesRead || 'once', el = num(cfg().lobbyTime, 120) * 1000 - (phaseEnds - now);
-        const rulesDue = rr !== 'off' && ((!st.rulesSaid && st.lobbyTalks >= 2) || (rr === 'twice' && st.rulesSaid === 1 && now - st.rulesAt > 90000 && phaseEnds - now > 55000) || (rr === 'always' && st.rulesSaid && now - st.rulesAt > 100000));
-        if (rulesDue) { st.rulesSaid = (st.rulesSaid || 0) + 1; st.rulesAt = now; sayRules(); }  // all the rules, in order
-        else if (st.lobbyTalks % 6 === 5) say('hype');                        // «شاركو اللايف مع صحابكم» (never gifts)
-        else say('lobby');
-      }
+      const c = Math.ceil((phaseEnds - now) / 1000);
+      if (c >= 1 && c <= 5 && st.countSaid !== c && Object.keys(st.players).length >= Math.max(1, num(cfg().minPlayers, 2))) { st.countSaid = c; api.Sfx.tick(c <= 3); }
       renderLobby();
     }
     if (phase === 'question') {
       const l = left();
-      if (l <= 5 && !st.hurry) { st.hurry = true; say('hurry'); }
-      if (!st.hyped && l > 7 && l < num(cfg().qTime, 15) - 6 && !Voice.speaking) { st.hyped = true; if (Math.random() < 0.6) say('hype'); }
       if (l <= 5 && l > 0 && st.lastTick !== l) { st.lastTick = l; api.Sfx.tick(l <= 3); }
-      if (G.Music) G.Music.duck(l <= 5 || Voice.speaking);
+      if (G.Music) G.Music.duck(l <= 5);
       renderTimer();
     }
     if (!phaseEnds || now < phaseEnds) return;
@@ -406,9 +290,8 @@
     if (phase === 'question') return close();
     if (phase === 'collect') return fall();
     if (phase === 'fall') return afterFall();
-    if (phase === 'gap' && st.supportNext) { st.supportNext = false; setPhase('supportBreak', 8000); say('hype'); return; }   // «شاركو اللايف» — never gifts
     if (phase === 'final' || phase === 'gap' || phase === 'supportBreak') return ask();
-    if (phase === 'winner') { setPhase('podium', 14000); say('podium'); return; }
+    if (phase === 'winner') return podium();
     if (phase === 'podium' || phase === 'nowinner') return lobby();
   }
 
@@ -453,13 +336,12 @@
     if (pl.alive || pl.reviveNext) { giftThanks(p, g); return 'هدية (لاعب في اللعبة)'; }
     // a spectator: comes back at the next question, if allowed
     const max = num(cfg().reviveMax, 2), min = num(cfg().reviveMin, 1);
-    if (alive().length <= num(cfg().finalAt, 10)) { if (!st.finalGiftSaid) { st.finalGiftSaid = true; say('finalGift'); } giftThanks(p, g, true); return 'لا عودة في المرحلة النهائية'; }
+    if (alive().length <= num(cfg().finalAt, 10)) { giftThanks(p, g, true); return 'لا عودة في المرحلة النهائية'; }
     if (max <= 0) { giftThanks(p, g); return 'العودة متوقفة'; }
-    if (pl.revives >= max) { if (!pl.maxSaid) { pl.maxSaid = true; say('maxRevive'); } giftThanks(p, g, true); return 'استعمل كل العودات'; }
+    if (pl.revives >= max) { giftThanks(p, g, true); return 'استعمل كل العودات'; }
     if (coins < min) { giftThanks(p, g); return 'هدية أقل من الحد'; }
     pl.revives++; pl.reviveNext = true;
     toast(p, g, 'revive', pl.revives, max);
-    say('revived');
     api.Sfx.win();
     if (phase === 'gap' || phase === 'final' || phase === 'ready') { /* will be placed at ask() */ }
     return 'سيعود في السؤال القادم 🌹 (' + pl.revives + '/' + max + ')';
@@ -476,7 +358,7 @@
     const img = pl.a && /^https:\/\//.test(pl.a) ? `<img src="${esc(pl.a)}" referrerpolicy="no-referrer" alt="" onerror="this.remove()">` : '';
     return `<div class="tp-in"><div class="tp-tag">${esc(pl.n)}</div><div class="tp-head" style="--c:${col}"><b>${initial}</b>${img}</div>
       <svg class="tp-body" viewBox="0 0 40 46"><defs><linearGradient id="g${hash(uid)}" x1="0" x2="1"><stop offset="0" stop-color="${col}"/><stop offset=".55" stop-color="${col}" stop-opacity=".85"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient></defs>
-      <rect x="9" y="30" width="9" height="15" rx="4" fill="#2B2F45"/><rect x="22" y="30" width="9" height="15" rx="4" fill="#2B2F45"/>
+      <rect class="lg l1" x="9" y="30" width="9" height="15" rx="4" fill="#2B2F45"/><rect class="lg l2" x="22" y="30" width="9" height="15" rx="4" fill="#2B2F45"/>
       <rect x="3" y="6" width="7" height="20" rx="3.5" fill="${col}"/><rect x="30" y="6" width="7" height="20" rx="3.5" fill="${col}"/>
       <rect x="8" y="2" width="24" height="31" rx="9" fill="url(#g${hash(uid)})"/><ellipse cx="16" cy="9" rx="5" ry="3" fill="#fff" opacity=".35"/></svg></div>`;
   }
@@ -484,39 +366,70 @@
   function clearStage() { Object.keys(els).forEach(u => { els[u].remove(); delete els[u]; }); }
   // floor coordinates: x ∈ [0,1] across the 3 floors (0 = left edge of «لا», 1 = right edge of «نعم»), y ∈ [0,1] back→front
   const ZONES = { no: [0.02, 0.31], mid: [0.355, 0.645], yes: [0.69, 0.98] };
-  function spot(zone) {
+  /** a free place in a floor: the best of a few random candidates (as far as possible from the others) */
+  function spot(zone, uid) {
     const [a, b] = ZONES[zone];
-    return [a + 0.03 + Math.random() * (b - a - 0.06), 0.3 + Math.random() * 0.62];
+    const others = Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && !els[u].classList.contains('fall')).map(u => els[u]._p);
+    let best = null, bestD = -1;
+    for (let k = 0; k < 14; k++) {
+      const c = [a + 0.035 + Math.random() * (b - a - 0.07), 0.3 + Math.random() * 0.6];
+      let d = 9; for (const o of others) if (o) d = Math.min(d, Math.hypot((c[0] - o[0]) * 1.4, c[1] - o[1]));
+      if (d > bestD) { bestD = d; best = c; }
+      if (d > 0.16) break;
+    }
+    return best;
   }
   function ensureEl(uid) {
     let el = els[uid];
     if (!el) {
       const pl = st.players[uid];
       el = document.createElement('div'); el.className = 'tp'; el.innerHTML = personHtml(pl, uid);
-      el.style.setProperty('--d', (-Math.random() * 1.2).toFixed(2) + 's');
+      el.style.setProperty('--d', (-Math.random() * 3).toFixed(2) + 's');
       $('tfFloor').appendChild(el); els[uid] = el;
-      el.classList.add('drop-in'); setTimeout(() => el.classList.remove('drop-in'), 700);
+      el.classList.add('drop-in'); setTimeout(() => el.classList.remove('drop-in'), 800);
     }
     return el;
   }
-  function setPos(el, x, y) { el.style.left = (x * 100).toFixed(2) + '%'; el.style.top = (y * 100).toFixed(2) + '%'; el.style.zIndex = String(10 + Math.round(y * 100)); }
+  // positions use transform (GPU), not left/top: smooth even with many players on a phone
+  function floorSize() { const f = $('tfFloor'); return f ? [f.clientWidth || 1, f.clientHeight || 1] : [1, 1]; }
+  function paint(el) {
+    const [w, h] = floorSize(), p = el._p;
+    el.style.transform = `translate3d(${(p[0] * w).toFixed(1)}px, ${(p[1] * h).toFixed(1)}px, 0) translate(-50%, -100%) rotateX(-58deg)`;
+    el.style.zIndex = String(10 + Math.round(p[1] * 100));
+  }
+  /** walk (or appear) to x,y: the time depends on the distance, like a person walking at a steady pace */
+  function walkTo(el, x, y, zone, instant) {
+    const from = el._p;
+    el._p = [x, y]; el.dataset.zone = zone;
+    clearTimeout(el._t);
+    if (instant || !from) { el.style.transitionDuration = '0s'; el.classList.remove('walk'); paint(el); el.getBoundingClientRect(); el.style.transitionDuration = ''; return; }
+    const [w, h] = floorSize();
+    const dist = Math.hypot((x - from[0]) * w, (y - from[1]) * h * 0.6), ms = Math.max(650, Math.min(2600, dist / (w * 0.36) * 1000));
+    el.style.transitionDuration = ms + 'ms';
+    el.style.setProperty('--lean', (x > from[0] ? 1 : -1) * 4 + 'deg');
+    el.classList.add('walk'); paint(el);
+    el._t = setTimeout(() => el.classList.remove('walk'), ms);
+  }
   function placeMiddle(uid, fresh) {
-    const el = ensureEl(uid); el.classList.remove('fall', 'walk');
-    const [x, y] = spot('mid');
-    if (!fresh) el.classList.add('walk');
-    setPos(el, x, y);
-    if (!fresh) setTimeout(() => el.classList.remove('walk'), 900);
+    const el = ensureEl(uid); el.classList.remove('fall');
+    const [x, y] = spot('mid', uid);
+    walkTo(el, x, y, 'mid', fresh);
   }
   function moveTo(uid, a) {
     const el = ensureEl(uid);
-    const [x, y] = spot(a === 'yes' ? 'yes' : 'no');
-    el.classList.add('walk'); setPos(el, x, y);
-    setTimeout(() => el.classList.remove('walk'), 950);
+    const z = a === 'yes' ? 'yes' : 'no', [x, y] = spot(z, uid);
+    walkTo(el, x, y, z);
   }
+  window.addEventListener('resize', () => Object.keys(els).forEach(u => { if (els[u]._p && !els[u].classList.contains('fall')) paint(els[u]); }));
   function dropFloors(right, out) {
     const wrong = right === 'yes' ? 'no' : 'yes';
     ['mid', wrong].forEach(z => $('tf_' + z).classList.add('open'));
-    out.forEach((u, i) => { const el = els[u]; if (!el) return; setTimeout(() => el.classList.add('fall'), 250 + Math.random() * 250); setTimeout(() => { el.remove(); delete els[u]; }, 1900); });
+    out.forEach(u => {
+      const el = els[u]; if (!el) return;
+      clearTimeout(el._t); el.classList.remove('walk');
+      setTimeout(() => { el.style.transitionDuration = ''; el.classList.add('fall'); const [w, h] = floorSize(), p = el._p || [0.5, 0.5]; el.style.transform = `translate3d(${(p[0] * w).toFixed(1)}px, ${(p[1] * h).toFixed(1)}px, 0) translate(-50%, -100%) translateZ(-26em) rotateX(-58deg) rotateZ(${(Math.random() < 0.5 ? -1 : 1) * (20 + Math.random() * 25)}deg)`; }, 220 + Math.random() * 260);
+      setTimeout(() => { el.remove(); delete els[u]; }, 2000);
+    });
     setTimeout(() => ['mid', wrong].forEach(z => $('tf_' + z).classList.remove('open')), 2600);
   }
 
@@ -546,43 +459,39 @@
     }
     hud.classList.toggle('paused', paused);
     const card = $('tfCard'), big = $('tfBig');
-    big.className = 'tf-big'; big.innerHTML = '';
+    if (!(phase === 'podium' && $('tfPod'))) { big.className = 'tf-big'; big.innerHTML = ''; }
     if (phase === 'lobby') renderLobby();
-    else if (phase === 'ready') card.innerHTML = `<div class="tf-lobby"><b>استعدّوا! 🔥</b><small>أجيبوا بـ «نعم» أو «لا» · أول إجابة هي النهائية</small></div>`;
+    else if (phase === 'ready') card.innerHTML = `<div class="tf-lobby"><b>استعدّوا… 🔥</b></div>`;
     else if (st && st.q && (phase === 'question' || phase === 'collect' || phase === 'fall')) {
+      // while playing: only the question (and its time) — no other text
       const q = st.q;
-      card.innerHTML = `<div class="tf-q"><span class="tf-no">${st.qNo}</span><div class="tf-qt">${q.flag ? `<img class="tf-flag" src="flags/${q.flag}.svg" alt="">` : ''}<b>${esc(q.text)}</b></div>
-        <span class="tf-timer" id="tfTimer"><i></i><em id="tfSec">${left()}</em></span></div>`;
-      if (phase === 'collect') { big.className = 'tf-big on wait'; big.innerHTML = '<div class="tf-fix">⏳ نجمع الإجابات…</div>'; }
-      if (phase === 'fall') {
-        big.className = 'tf-big on ' + (q.truth ? 'yes' : 'no');
-        const fell = st.lastOut;
-        big.innerHTML = `<div class="tf-ans">الإجابة: ${q.truth ? 'نعم ✓' : 'لا ✗'}</div>${q.fix ? `<div class="tf-fix">${esc(q.fix)}</div>` : ''}
-          <div class="tf-out">${fell ? 'سقط ' + players(fell) : 'لم يسقط أحد! 👏'}</div>`;
+      if (!$('tfQt') || $('tfQt').dataset.id !== q.id + st.qNo) {
+        card.innerHTML = `<div class="tf-q"><span class="tf-no">${st.qNo}</span><div class="tf-qt" id="tfQt">${q.flag ? `<img class="tf-flag" src="flags/${q.flag}.svg" alt="">` : ''}<b>${esc(q.text)}</b></div>
+          <span class="tf-timer" id="tfTimer"><i></i><em id="tfSec">${left()}</em></span></div>`;
+        $('tfQt').dataset.id = q.id + st.qNo;
       }
+      card.firstChild.classList.toggle('done', phase === 'fall');
       renderTimer();
-    } else if (phase === 'final') {
-      card.innerHTML = `<div class="tf-lobby final"><b>🔥 المرحلة النهائية</b><small>بقي ${alive().length} · لا عودة بعد الآن</small></div>`;
-    } else if (phase === 'supportBreak') {
-      card.innerHTML = `<div class="tf-lobby final"><b>⭐ تابعونا وشاركوا اللايف مع أصدقائكم</b><small>ألعاب حصرية للذكاء وتنمية الذكاء · السؤال التالي بعد قليل</small></div>`;
-      big.className = 'tf-big on sup'; big.innerHTML = `<div class="tf-sup"><i>🔁</i><b>شاركوا اللايف مع أصدقائكم</b><small>وتابعوا الصفحة لمزيد من الألعاب الحصرية</small></div>`;
     } else if (phase === 'gap') {
-      card.innerHTML = `<div class="tf-lobby"><b>بقي ${players(alive().length)}</b><small>السؤال التالي…</small></div>`;
+      const all = Object.keys(st.players).length;
+      card.innerHTML = `<div class="tf-lobby tf-gap"><b>بقي ${players(alive().length)} من أصل ${all}</b><small>هيا ننتقل إلى السؤال الموالي… اقرؤوا السؤال جيداً 👀</small></div>`;
     } else if (phase === 'winner') {
       const pl = st.players[st.winner];
       card.innerHTML = `<div class="tf-lobby final"><b>👑 بطل الجولة</b></div>`;
       big.className = 'tf-big on win';
       big.innerHTML = `<div class="tf-win"><div class="tf-crown">👑</div><div class="tf-wphoto">${personHead(pl, st.winner)}</div><div class="tf-wname">${esc(pl.n)}</div><div class="tf-confetti">${'<i></i>'.repeat(18)}</div></div>`;
     } else if (phase === 'podium') {
-      const r = st.ranking || [], P = u => st.players[u];
-      const medal = ['👑', '🥈', '🥉', '4'];
-      card.innerHTML = `<div class="tf-lobby final"><b>🏆 أبطال الجولة</b></div>`;
-      big.className = 'tf-big on pod';
-      big.innerHTML = `<div class="tf-pod">${r.slice(0, 4).map((u, i) => `<div class="pd p${i + 1}"><i>${medal[i]}</i>${personHead(P(u), u)}<span>${esc(P(u).n)}</span><em>${i === 0 ? 'البطل' : i === 1 ? 'الوصيف' : 'المركز ' + (i + 1)}</em></div>`).join('')}</div>`
-        + (r.length > 4 ? `<ol class="tf-top" start="5">${r.slice(4, 10).map(u => `<li>${personHead(P(u), u)}<span>${esc(P(u).n)}</span><em>✓ ${P(u).rights || 0}</em></li>`).join('')}</ol>` : '');
+      // built once; every place appears in its turn (CSS delays), same timing as the applause in podium()
+      if (!$('tfPod')) {
+        const r = st.ranking || [], P = u => st.players[u];
+        const medal = ['👑', '🥈', '🥉', '4'];
+        card.innerHTML = `<div class="tf-lobby final"><b>🏆 أبطال الجولة</b></div>`;
+        big.className = 'tf-big on pod';
+        big.innerHTML = `<div class="tf-pod" id="tfPod">${r.slice(0, 4).map((u, i) => `<div class="pd p${i + 1}" style="--dl:${POD_STEP[i]}ms"><i>${medal[i]}</i>${personHead(P(u), u)}<span>${esc(P(u).n)}</span><em>${i === 0 ? 'البطل' : i === 1 ? 'الوصيف' : 'المركز ' + (i + 1)}</em><div class="pd-clap">👏</div></div>`).join('')}</div>`
+          + (r.length > 4 ? `<ol class="tf-top" start="5">${r.slice(4, 10).map((u, i) => `<li style="--dl:${TOP_FROM + i * TOP_STEP}ms">${personHead(P(u), u)}<span>${esc(P(u).n)}</span><em>✓ ${P(u).rights || 0}</em></li>`).join('')}</ol>` : '');
+      } else { big.className = 'tf-big on pod keep'; return void renderCounts(); }
     } else if (phase === 'nowinner') {
-      card.innerHTML = `<div class="tf-lobby"><b>سقط الجميع! 😅</b><small>لا يوجد فائز هذه المرة · نعيد الجولة</small></div>`;
-      big.className = 'tf-big on none'; big.innerHTML = `<div class="tf-ans">لا يوجد فائز</div><div class="tf-fix">جولة جديدة بعد قليل…</div>`;
+      card.innerHTML = `<div class="tf-lobby"><b>سقط الجميع! 😅</b><small>لا يوجد فائز هذه المرة · جولة جديدة بعد قليل</small></div>`;
     } else if (phase === 'idle') card.innerHTML = '';
     renderCounts();
     $('tfPaused').classList.toggle('on', paused);
@@ -597,18 +506,23 @@
   function renderLobby() {
     if (phase !== 'lobby') return;
     const n = Object.keys(st.players).length;
-    // build the card once, then only update the numbers (rebuilding would restart its animation)
-    if (!$('tfLobN')) $('tfCard').innerHTML = `<div class="tf-lobby"><b>اكتب «لعب» في التعليقات للمشاركة 🎮</b><small>المسجّلون: <span class="tf-cnt" id="tfLobN"></span> · تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</small><div class="tf-rule" id="tfRule"></div></div>`;
+    // the «write العب» card is fixed (built once); only the numbers change and the rules turn below it
+    if (!$('tfLobN')) $('tfCard').innerHTML = `<div class="tf-lobby tf-join"><b>اكتب «العب» في التعليقات للمشاركة معنا 🎮</b><small>المشاركة مجانية · المسجّلون: <span class="tf-cnt" id="tfLobN"></span> · تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</small></div>
+      <div class="tf-rules" id="tfRules"></div>`;
     $('tfLobN').textContent = n; $('tfLobT').textContent = left();
-    // the rules, one at a time (and the champions of the session) while waiting
-    const items = RULES.slice(), top = sessionTop();
-    if (top) items.push(top);
-    const k = Math.floor(Date.now() / 6000) % items.length;
-    if ($('tfRule').dataset.k !== String(k)) { $('tfRule').dataset.k = k; $('tfRule').innerHTML = items[k]; }
+    const k = Math.floor(Date.now() / RULE_MS) % RULES.length, box = $('tfRules');
+    if (box.dataset.k !== String(k)) {
+      box.dataset.k = k;
+      const old = box.querySelector('.tf-rc:not(.out)'); if (old) { old.classList.add('out'); setTimeout(() => old.remove(), 700); }
+      const c = document.createElement('div'); c.className = 'tf-rc';
+      c.innerHTML = `<span class="tf-rn">${k + 1}</span><span class="tf-rt">${RULES[k]}</span><span class="tf-rd">${RULES.map((_, i) => `<i class="${i === k ? 'on' : ''}"></i>`).join('')}</span>`;
+      box.appendChild(c);
+    }
     renderCounts();
   }
-  const RULES = ['📜 اكتب «لعب» للدخول — المشاركة مجانية', '✅ أجب بـ «نعم» أو «لا» (yes / no)', '🔒 الإجابة الأولى هي التي تُحتسب، ولو كتبتها مرة أخرى',
-    '⏳ من لا يجيب يسقط',  '🔥 عندما يبقى 10: لا عودة، حتى بالهدية', '👑 آخر من يبقى هو البطل'];
+  const RULE_MS = 5000;
+  const RULES = ['اكتب «العب» في التعليقات لتدخل اللعبة', 'أجب على كل سؤال بـ «نعم» أو «لا»', 'الإجابة الأولى هي التي تُحتسب، لا يمكن تغييرها',
+    'من لا يجيب يبقى في الوسط ويسقط', 'آخر من يبقى واقفاً هو البطل 👑'];
   function sessionTop() {
     const s = S(); if (!s) return '';
     const t = Object.keys(s.participants).filter(u => s.participants[u].wins).sort((a, b) => s.participants[b].wins - s.participants[a].wins).slice(0, 3);
@@ -624,14 +538,13 @@
   }
   function renderCounts() {
     const b = $('tfBar'); if (!b) return;
-    if (!st || phase === 'idle') { b.innerHTML = ''; return; }
+    if (!st || phase === 'idle' || phase === 'winner' || phase === 'podium') { b.innerHTML = ''; return; }
     const al = alive();
     const yes = al.filter(u => st.players[u].ans === 'yes').length, no = al.filter(u => st.players[u].ans === 'no').length;
-    const fin = al.length <= num(cfg().finalAt, 10) && st.qNo > 0;
     b.innerHTML = phase === 'lobby'
       ? `<span class="tb mid">🎮 ${players(Object.keys(st.players).length)}</span>`
       : `<span class="tb no">لا ✗ ${no}</span><span class="tb mid">؟ ${al.length - yes - no}</span><span class="tb yes">نعم ✓ ${yes}</span>`
-        + `<span class="tb left">باقٍ ${al.length}</span>${fin ? '<span class="tb fin">🔥 المرحلة النهائية</span>' : ''}`;
+        + `<span class="tb left">باقٍ ${al.length}</span>`;
   }
 
   /* ---------------- gift cards ---------------- */
@@ -642,8 +555,11 @@
   function showCard(html, cls, ms) {
     giftQ.push({ html, cls, ms }); nextCard();
   }
+  // while a question is played, nothing but the question is written on the screen: the cards wait
+  const PLAYING = ['ready', 'question', 'collect', 'fall'];
   function nextCard() {
     if (giftBusy || !giftQ.length) return;
+    if (PLAYING.includes(phase)) { clearTimeout(nextCard.t); nextCard.t = setTimeout(nextCard, 800); if (giftQ.length > 6) giftQ.splice(0, giftQ.length - 6); return; }
     const { html, cls, ms } = giftQ.shift(); giftBusy = true;
     const el = document.createElement('div'); el.className = 'tf-toast ' + (cls || ''); el.innerHTML = html;
     $('tfToasts').appendChild(el);
@@ -683,14 +599,14 @@
       if (phase === 'question') return close();
       if (phase === 'collect') return fall();
       if (phase === 'ready' || phase === 'gap' || phase === 'final' || phase === 'supportBreak') return ask();
-      if (phase === 'winner') { setPhase('podium', 14000); return; }
+      if (phase === 'winner') return podium();
       if (phase === 'podium' || phase === 'nowinner') return lobby();
     },
     newTopic() { paused = false; lobby(); },
     reveal() { if (phase === 'question') close(); else if (phase === 'collect') fall(); },
     togglePause() {
       if (phase === 'idle') return;
-      if (!paused) { paused = true; pausedLeft = Math.max(0, phaseEnds - Date.now()); Voice.stop(); }
+      if (!paused) { paused = true; pausedLeft = Math.max(0, phaseEnds - Date.now()); }
       else { paused = false; if (phaseEnds) phaseEnds = Date.now() + pausedLeft; }
       render(); music();
     },
@@ -705,7 +621,8 @@
       api = a;
       // one-time new defaults for apps installed before (quieter music, 10 s extra time, 2 min to join, 20 s to answer)
       const c = cfg();
-      if (c.tfVer !== 3) { c.tfVer = 3; c.musicVol = 0.3; c.grace = 10; c.lobbyTime = 120; c.qTime = Math.max(20, num(c.qTime, 20)); c.gapTime = 10; c.giftHype = 5; if (api.save) api.save(); }
+      if (c.tfVer !== 3 && c.tfVer !== 4) { c.musicVol = 0.3; c.grace = 10; c.lobbyTime = 120; c.qTime = Math.max(20, num(c.qTime, 20)); }
+      if (c.tfVer !== 4) { c.tfVer = 4; c.voice = 'off'; c.giftHype = 0; c.gapTime = 7; if (api.save) api.save(); }   // 2.7: no announcer, no support break
     },
     applyLayout, music,
     start() {
@@ -713,7 +630,7 @@
       clearInterval(tickTimer); tickTimer = setInterval(tick, 200);
       lobby();
     },
-    stop() { clearInterval(tickTimer); phase = 'idle'; paused = false; Voice.stop(); clearStage(); render(); if (G.Music) G.Music.stop(); },
+    stop() { clearInterval(tickTimer); phase = 'idle'; paused = false; clearStage(); render(); if (G.Music) G.Music.stop(); },
     onChat, onGift, ctl,
     simTarget() {
       if (!st) return null;

@@ -7,7 +7,7 @@
   <title>صح أم خطأ</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/tf.css">
-  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 20, grace: 10, lobbyTime: 120, gapTime: 10, giftHype: 5, musicVol: 0.3, tfVer: 3, rulesRead: 'once', readQ: true, minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'mohamed', voiceRate: 1, autopilot: true, lang: 'ar', giftDelay: 0, qSet: 'auto' };</script>
+  <script>window.APP_KEY = 'sahkhata.live.v1'; window.APP_DEFAULTS = { qTime: 20, grace: 10, lobbyTime: 120, gapTime: 7, giftHype: 0, musicVol: 0.3, tfVer: 4, minPlayers: 2, reviveMax: 2, reviveMin: 1, finalAt: 10, voice: 'off', autopilot: true, lang: 'ar', giftDelay: 0, qSet: 'auto' };</script>
 </head>
 <body class="tf-app">
   <!-- ============ SPLASH ============ -->
@@ -32,7 +32,7 @@
       <p class="subtitle">اكتب «العب» للمشاركة، ثم أجب بـ «نعم» أو «لا»<br><small>من يخطئ يسقط · آخر من يبقى هو البطل 👑</small></p>
       <button class="btn primary huge" id="hLive"><span class="live-dot"></span><span>ابدأ بث TikTok LIVE</span><small>لوحة التحكم والإعدادات</small></button>
       <button class="btn home-btn" id="hDemo">🧪 جرّب اللعبة الآن (مشاهدون وهميون)</button>
-      <button class="btn home-btn" id="hTestSound">🔊 جرّب الصوت والمذيع</button>
+      <button class="btn home-btn" id="hTestSound">🔊 جرّب الصوت</button>
       <button class="btn home-btn" id="hGuide">📖 كيف أبدأ البث من الهاتف؟</button>
     </div>
   </section>
@@ -139,8 +139,6 @@
           <small style="opacity:.7;font-weight:400">10 مجموعات مختلفة، في كل واحدة أسئلة سهلة ثم متوسطة ثم صعبة. عندما تنتهي المجموعة ينتقل البث تلقائياً إلى التي بعدها.</small></label>
         <label>مدة التسجيل («العب») قبل الأسئلة
           <select id="cp_lobbyTime"><option value="60">دقيقة</option><option value="90">دقيقة ونصف</option><option value="120">دقيقتان · مستحسن</option><option value="180">3 دقائق</option></select></label>
-        <label>قراءة شروط وقواعد المسابقة أثناء التسجيل
-          <select id="cp_rulesRead"><option value="once">مرة واحدة في بداية التسجيل · مستحسن</option><option value="twice">مرتان (إذا كان التسجيل 3 دقائق)</option><option value="always">باستمرار (كل دقيقتين تقريباً)</option><option value="off">لا</option></select></label>
         <label>أقل عدد من اللاعبين لبدء الأسئلة
           <select id="cp_minPlayers"><option value="2">2 · مستحسن</option><option value="3">3</option><option value="5">5</option><option value="10">10</option></select></label>
         <label>العودة إلى اللعبة بهدية (لكل لاعب في الجولة)
@@ -154,18 +152,11 @@
         <label>وقت الإجابة (بالثواني)<input id="cp_qTime" type="number" min="8" max="60"></label>
         <label data-game="quiz">وقت إضافي خفي لتأخّر البث
           <select id="cp_grace"><option value="5">5 ثوانٍ</option><option value="8">8 ثوانٍ</option><option value="10">10 ثوانٍ · مستحسن</option><option value="15">15 ثانية</option></select></label>
-        <label>وقت الضحك والتعليق بعد السقوط (قبل السؤال التالي)
-          <select id="cp_gapTime"><option value="6">6 ثوانٍ</option><option value="10">10 ثوانٍ · مستحسن</option><option value="14">14 ثانية</option></select></label>
-        <label>وقفة «تابعونا وشاركوا اللايف» (بدون هدايا)
-          <select id="cp_giftHype"><option value="0">أبداً</option><option value="4">كل 4 أسئلة</option><option value="5">كل 5 أسئلة · مستحسن</option><option value="6">كل 6 أسئلة</option></select></label>
+        <label>الوقت بين سؤالين («بقي … من أصل …»)
+          <select id="cp_gapTime"><option value="5">5 ثوانٍ</option><option value="7">7 ثوانٍ · مستحسن</option><option value="10">10 ثوانٍ</option></select></label>
       </div>
-      <div class="cp-group"><h4 class="cp-gh"><i>🎙️</i>المذيع والموسيقى</h4>
-        <label>المذيع (يقرأ الأسئلة ويعلّق بالدارجة)
-          <select id="cp_voice"><option value="mohamed">🎙️ محمد (صوت طبيعي)</option><option value="tts">📱 صوت الهاتف</option><option value="off">🔇 بدون مذيع</option></select></label>
-        <label>سرعة المذيع
-          <select id="cp_voiceRate"><option value="0.9">هادئ</option><option value="1">عادي · مستحسن</option><option value="1.12">سريع</option></select></label>
+      <div class="cp-group"><h4 class="cp-gh"><i>🎵</i>الموسيقى والمؤثرات</h4>
         <div class="cp-sw" data-game="quiz"><span>🎵 موسيقى حماسية</span><label class="switch"><input type="checkbox" id="cp_music"><i></i></label></div>
-        <div class="cp-sw"><span>🎙️ المذيع يقرأ السؤال بصوته (إذا كان مسجّلاً)</span><label class="switch"><input type="checkbox" id="cp_readQ"><i></i></label></div>
         <label data-game="quiz">الموسيقى
           <select id="cp_musicSong">
             <option value="arena">⭐ Arena (الرئيسية)</option>
@@ -251,8 +242,6 @@
   <script src="js/quiz-bank.js"></script>
   <script src="js/tf-bank.js"></script>
   <script src="js/tf-sets.js"></script>
-  <script src="js/tf-lines.js"></script>
-  <script src="voice/manifest.js"></script>
   <script src="js/tf.js"></script>
   <script src="js/live.js"></script>
   <script src="js/tf-app.js"></script>
