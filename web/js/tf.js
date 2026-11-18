@@ -199,7 +199,7 @@
 
   /* ---------------- rounds ---------------- */
   function lobby() {
-    clearStage(); freshRound(); checkSet();
+    clearStage(); freshRound(); checkSet(); zs.no = zs.yes = zs.mid = 1;
     setPhase('lobby', num(cfg().lobbyTime, 60) * 1000);
   }
   function join(uid, p, quiet) {
@@ -241,13 +241,20 @@
     before.forEach(u => { if (st.players[u].ans === right) st.players[u].rights = (st.players[u].rights || 0) + 1; });
     st.lastOut = out.length; st.lastSilent = silent;
     const s = S(); before.forEach(u => { const p = s && s.participants[u]; if (p && st.players[u].ans === right) { p.correct = (p.correct || 0) + 1; } });
-    setPhase('fall', 8000);
+    st.fallAt = Date.now(); setPhase('fall', 8000); setTimeout(render, 1650);
     dropFloors(right, out);
     api.Sfx.trapdoor();
     if (out.length) setTimeout(() => api.Sfx.fallScream(out.length), 300);   // «waaa…» down into the pit
     // as soon as the doors are closed again, the players who stayed walk calmly back to the middle
     const stay = before.filter(u => !out.includes(u)), round = st.round;
-    setTimeout(() => { if (st && st.round === round) stay.forEach(u => { if (st.players[u] && st.players[u].alive) placeMiddle(u); }); }, 2800);
+    setTimeout(() => {
+      if (!st || st.round !== round) return;
+      const back = stay.filter(u => st.players[u] && st.players[u].alive);
+      back.forEach(u => { if (els[u]) els[u].dataset.zone = 'away'; });   // the middle is empty again
+      zs.mid = zs.no = zs.yes = 1;
+      back.forEach(u => { if (els[u]) { els[u].classList.remove('noname'); els[u]._goal = 'mid'; } });
+      arrange('mid', back.filter(u => els[u]), null);
+    }, 2800);
   }
   function afterFall() {
     const n = alive().length;
@@ -367,24 +374,120 @@
   function clearStage() { Object.keys(els).forEach(u => { els[u].remove(); delete els[u]; }); }
   // floor coordinates: x ∈ [0,1] across the 3 floors (0 = left edge of «لا», 1 = right edge of «نعم»), y ∈ [0,1] back→front
   const ZONES = { no: [0.015, 0.265], mid: [0.315, 0.685], yes: [0.735, 0.985] };   // the middle floor is the widest: everybody starts there
-  /** a free place in a floor: the best of a few random candidates (as far as possible from the others) */
-  function spot(zone, uid) {
-    const [a, b] = ZONES[zone];
-    const others = Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && !els[u].classList.contains('fall')).map(u => els[u]._p);
-    let best = null, bestD = -1;
-    for (let k = 0; k < 24; k++) {
-      const c = [a + 0.04 + Math.random() * (b - a - 0.08), 0.24 + Math.random() * 0.68];
-      let d = 9; for (const o of others) if (o) d = Math.min(d, Math.hypot((c[0] - o[0]) * 1.4, c[1] - o[1]));
-      if (d > bestD) { bestD = d; best = c; }
-      if (d > 0.2) break;
+  /* ---- places without any overlap ----
+   * Each player takes a place where his name + head do not touch anybody else's (name width measured, or
+   * estimated from its length when the floor is hidden). The name stays inside its own floor. When a floor is
+   * too full, the players of THAT floor get smaller (smoothly) until everybody fits. */
+  const zs = { no: 1, mid: 1, yes: 1 };          // size of the players on each floor
+  const Y0 = 0.22, Y1 = 0.97;                     // back / front limits of the floor where a player can stand
+  let lastF = null;
+  function geo() {
+    const f = $('tfFloor');
+    if (f && f.clientWidth > 50) lastF = [f.clientWidth, f.clientHeight, parseFloat(getComputedStyle(f).fontSize) || 16];
+    if (lastF) return lastF;
+    const w = window.innerWidth * 0.92; return [w, w * 0.85, parseFloat(getComputedStyle(document.body).fontSize) || 16];
+  }
+  /** half width (floor x fraction) and row depth (floor y fraction) of a player at size sc (name + head must not touch) */
+  function foot(el, sc) {
+    const [fw, fh, fs] = geo(), em = fs * 1.55 * sc;
+    if (el && el.classList.contains('noname')) return [1.9 * em / 2 / fw, 1.8 * em / (0.57 * fh)];
+    const tag = el && el.querySelector('.tp-tag');
+    const cur = el ? parseFloat(getComputedStyle(el).fontSize) : 0;
+    let tagEm = tag && tag.offsetWidth && cur ? tag.offsetWidth / cur : 0;
+    if (!tagEm) { const n = (el && el._n) || 'Abcdefgh'; tagEm = Math.min(3.0, 0.5 * (0.6 * n.length + 1.2)); }
+    return [(Math.max(2.1, tagEm) + 0.25) * em / 2 / fw, 2.45 * em / (0.57 * fh)];
+  }
+  /** places that look natural (staggered rows, a little random) and where nobody touches anybody */
+  function freeSpot(zone, uid) {
+    const [a, b] = ZONES[zone], el = els[uid], [hw, dy] = foot(el, zs[zone]);
+    const others = Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && els[u]._p && !els[u].classList.contains('fall'))
+      .map(u => { const [w, d] = foot(els[u], zs[zone]); return { p: els[u]._p, w, d }; });
+    const free = c => others.every(o => Math.abs(c[0] - o.p[0]) >= hw + o.w || Math.abs(c[1] - o.p[1]) >= Math.max(dy, o.d));
+    const cands = [];
+    for (let k = 0; k < 40; k++) { const c = [a + hw + Math.random() * Math.max(0, b - a - 2 * hw), Y0 + Math.random() * (Y1 - Y0)]; if (free(c)) cands.push(c); }
+    if (cands.length) return cands[(Math.random() * cands.length) | 0];
+    // nothing found at random: try every place of a staggered grid (invisible), front rows first
+    const rows = Math.max(1, Math.floor((Y1 - Y0) / dy) + 1), stepX = 2 * hw * 1.01;
+    for (let r = rows - 1; r >= 0; r--) {
+      const y = Math.min(Y1, Y0 + r * dy), off = (r % 2) * hw;
+      const xs = []; for (let x = a + hw + off; x <= b - hw + 1e-6; x += stepX) xs.push(x);
+      xs.sort(() => Math.random() - 0.5);
+      for (const x of xs) if (free([x, y])) return [x, y];
     }
-    return best;
+    return null;
+  }
+  function setZoneSize(zone, v) {
+    zs[zone] = v;
+    Object.keys(els).forEach(u => { if (els[u].dataset.zone === zone || els[u]._goal === zone) els[u].style.setProperty('--s', v.toFixed(3)); });
+  }
+  /** a free place in a floor; if there is none, the floor is arranged again a little smaller (everybody steps aside),
+   *  down to a size where names can still be read. Beyond that (a real crowd), the extra players show only their head. */
+  const MIN_S = 0.6;
+  function spot(zone, uid) {
+    const el = els[uid];
+    if (el && !el.classList.contains('noname')) { const c = freeSpot(zone, uid); if (c) return c; }
+    const members = Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && els[u]._p && !els[u].classList.contains('fall'));
+    return arrange(zone, members.concat(uid), uid);
+  }
+  /** spread a group over a floor: the biggest size where nobody touches anybody, rows spread over the whole depth,
+   *  a little random so it looks natural; everybody goes to the nearest place. Returns the place of «want». */
+  function arrange(zone, list, want) {
+    const [a, b] = ZONES[zone], W = b - a, n = list.length;
+    if (!n) return null;
+    let v = Math.min(1, zs[zone] * 1.0001), named = n, cols = 1, rows = 1, hw = 0, dy = 0;
+    list.forEach(u => els[u] && els[u].classList.remove('noname'));
+    const widest = sc => Math.max(...list.map(u => foot(els[u] || null, sc)[0]));
+    for (;;) {
+      hw = widest(v); dy = foot(null, v)[1];
+      cols = Math.max(1, Math.floor(W / (2 * hw))); rows = Math.floor((Y1 - Y0) / dy) + 1;
+      if (cols * rows >= n || v <= MIN_S) break;
+      v = Math.max(MIN_S, v * 0.94);
+    }
+    named = Math.min(n, cols * rows);
+    setZoneSize(zone, v);
+    // the ones that do not fit (crowd): head only, small footprint → more of them per row
+    const extra = list.slice(named);
+    list.forEach(u => els[u] && els[u].classList.toggle('noname', extra.includes(u)));
+    const need = Math.ceil(named / cols), dyE = need > 1 ? (Y1 - Y0) / (need - 1) : 0, cell = W / cols;
+    const pts = [];
+    for (let r = 0; r < need; r++) for (let c = 0; c < cols; c++) {
+      const jx = (Math.random() - 0.5) * Math.max(0, cell - 2 * hw) * 0.8, jy = need > 1 ? (Math.random() - 0.5) * Math.max(0, dyE - dy) * 0.8 : 0;
+      pts.push([a + (c + 0.5) * cell + jx, need > 1 ? Y0 + r * dyE + jy : (Y0 + Y1) / 2]);
+    }
+    while (pts.length > named) pts.splice((Math.random() * pts.length) | 0, 1);
+    // nearest place for each (those already standing keep close to where they are)
+    let res = null;
+    const order = list.slice(0, named).sort((x, y) => (els[x] && els[x]._p ? 0 : 1) - (els[y] && els[y]._p ? 0 : 1));
+    for (const u of order) {
+      const cur = els[u] && els[u]._p && els[u].dataset.zone === zone ? els[u]._p : [(a + b) / 2, Y1];
+      let bi = 0, bd = 9; pts.forEach((q, i) => { const d = Math.hypot(q[0] - cur[0], q[1] - cur[1]); if (d < bd) { bd = d; bi = i; } });
+      const q = pts.splice(bi, 1)[0];
+      if (u === want) res = q; else if (els[u]) walkTo(els[u], q[0], q[1], zone);
+    }
+    for (const u of extra) {                                  // heads only: never on a name, then as far as possible from the others
+      const [h, d0] = foot(els[u], v); let best = null, bestS = -1e9;
+      const taken = Object.keys(els).filter(o => o !== u && els[o].dataset.zone === zone && els[o]._p && (o === want ? false : true))
+        .map(o => { const [w, d] = foot(els[o], v); return { p: els[o]._p, w, d, named: !els[o].classList.contains('noname') }; });
+      for (let k = 0; k < 80; k++) {
+        const c = [a + h + Math.random() * Math.max(0, W - 2 * h), Y0 + Math.random() * (Y1 - Y0)];
+        let hits = 0, md = 9;
+        for (const o of taken) {
+          const dx = Math.abs(c[0] - o.p[0]), dyy = Math.abs(c[1] - o.p[1]);
+          if (o.named && dx < h + o.w && dyy < Math.max(d0, o.d)) hits++;
+          md = Math.min(md, Math.hypot(dx * 2, dyy));
+        }
+        const sc = -hits * 10 + md;
+        if (sc > bestS) { bestS = sc; best = c; }
+      }
+      if (u === want) res = best; else if (els[u]) { walkTo(els[u], best[0], best[1], zone); }
+    }
+    return res;
   }
   function ensureEl(uid) {
     let el = els[uid];
     if (!el) {
       const pl = st.players[uid];
-      el = document.createElement('div'); el.className = 'tp'; el.innerHTML = personHtml(pl, uid);
+      el = document.createElement('div'); el.className = 'tp'; el.innerHTML = personHtml(pl, uid); el._n = pl.n || '';
       el.style.setProperty('--d', (-Math.random() * 3).toFixed(2) + 's');
       $('tfFloor').appendChild(el); els[uid] = el;
       el.classList.add('drop-in'); setTimeout(() => el.classList.remove('drop-in'), 800);
@@ -400,23 +503,24 @@
   /** walk (or appear) to x,y: the time depends on the distance, like a person walking at a steady pace */
   function walkTo(el, x, y, zone, instant) {
     const from = el._p;
-    el._p = [x, y]; el.dataset.zone = zone;
+    el._p = [x, y]; el.dataset.zone = zone; el._goal = zone; el.style.setProperty('--s', zs[zone].toFixed(3));
     clearTimeout(el._t);
     if (instant || !from) { el.style.transitionDuration = '0s'; el.classList.remove('walk'); paint(el); el.getBoundingClientRect(); el.style.transitionDuration = ''; return; }
     const dist = Math.hypot(x - from[0], (y - from[1]) * 0.45), ms = Math.round(Math.max(650, Math.min(2600, dist / 0.36 * 1000)));
-    el.style.transitionDuration = ms + 'ms, ' + ms + 'ms';
+    el.style.transitionDuration = ms + 'ms, ' + ms + 'ms, 1.15s, .9s, .6s';
     el.style.setProperty('--lean', (x > from[0] ? 1 : -1) * 4 + 'deg');
     el.classList.add('walk'); paint(el);
     el._t = setTimeout(() => el.classList.remove('walk'), ms);
   }
   function placeMiddle(uid, fresh) {
-    const el = ensureEl(uid); el.classList.remove('fall');
+    const el = ensureEl(uid); el.classList.remove('fall'); el._goal = 'mid';
     const [x, y] = spot('mid', uid);
     walkTo(el, x, y, 'mid', fresh);
   }
   function moveTo(uid, a) {
     const el = ensureEl(uid);
-    const z = a === 'yes' ? 'yes' : 'no', [x, y] = spot(z, uid);
+    const z = a === 'yes' ? 'yes' : 'no'; el._goal = z;
+    const [x, y] = spot(z, uid);
     walkTo(el, x, y, z);
   }
   function dropFloors(right, out) {
@@ -450,7 +554,7 @@
     if (cam) {
       let shot = 'wide';
       if (phase === 'question' || phase === 'collect') shot = 'q';
-      if (phase === 'fall' && st && st.q) shot = st.q.truth ? 'fall-no' : 'fall-yes';   // the wrong floor drops: look at it
+      if (phase === 'fall' && st && st.q && Date.now() - (st.fallAt || 0) < 1600) shot = st.q.truth ? 'fall-no' : 'fall-yes';   // a short look at the falling floor, then the whole game again
       if (phase === 'winner') shot = 'win';
       if (phase === 'lobby') shot = 'lobby';
       cam.dataset.shot = shot;

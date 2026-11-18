@@ -389,3 +389,20 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 .tf-cam[data-shot="fall-no"] .tf-sway, .tf-cam[data-shot="fall-yes"] .tf-sway { animation-duration: 26s; }
 /* the counters sit on the bottom edge of the stage (more room for the floors) */
 #quizHud.tf .tf-bar { margin-top: -2.35em; margin-bottom: 0.2em; z-index: 7; pointer-events: none; }
+
+/* ---------------- 2.9: no overlap — each floor has its own player size (--s), the camera always shows the whole game ---------------- */
+.tp { font-size: calc(1.55em * var(--s, 1)); transition-property: left, top, transform, opacity, font-size; }
+.tp-tag { max-width: 6em; }
+.tf-sway { animation-name: camGlideFull; }
+@keyframes camGlideFull {
+  0%   { transform: scale(.95) rotateY(-3deg) translateX(-1%); }
+  25%  { transform: scale(.96) translateY(-0.4%); }
+  50%  { transform: scale(.95) rotateY(3deg) translateX(1%); }
+  75%  { transform: scale(.96) translateY(0.4%); }
+  100% { transform: scale(.95) rotateY(-3deg) translateX(-1%); }
+}
+.tf-cam[data-shot="q"] { transform: none; }
+.tf-cam[data-shot="fall-no"] { transform: translateX(8%) translateY(2%) scale(1.12); }
+.tf-cam[data-shot="fall-yes"] { transform: translateX(-8%) translateY(2%) scale(1.12); }
+.tf-cam { transition: transform 1.5s cubic-bezier(.37,0,.2,1); }
+.tp.noname .tp-tag { display: none; }
