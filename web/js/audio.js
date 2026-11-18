@@ -77,6 +77,52 @@
       if (!enabled || !ensure()) return;
       for (let i = 0; i < 22; i++) noise(0.05 + Math.random() * 0.05, 0.05 + Math.random() * 0.04, i * 0.05 + Math.random() * 0.04, 1300 + Math.random() * 1500, 1.4);
     },
+    /** the trapdoors: a latch clack, a heavy thump and a short creak of the hinges */
+    trapdoor() {
+      if (!enabled || !ensure()) return;
+      noise(0.06, 0.35, 0, 2400, 2.5);                          // latch
+      tone(95, 0.35, 'square', 0.22, 0.03, 55);                 // heavy door thump
+      noise(0.3, 0.28, 0.03, 220, 0.7);
+      const t = ctx.currentTime + 0.12, o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      o.type = 'sawtooth'; o.frequency.setValueAtTime(150, t); o.frequency.linearRampToValueAtTime(95, t + 0.45);   // creak
+      f.type = 'bandpass'; f.frequency.value = 900; f.Q.value = 6;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09, t + 0.05); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+      o.connect(f); f.connect(g); g.connect(master); o.start(t); o.stop(t + 0.55);
+    },
+    /** players falling into a deep pit: a «waaa…» that drops in pitch and fades far down, with an echo */
+    fallScream(n) {
+      if (!enabled || !ensure()) return;
+      const k = Math.max(1, Math.min(5, n | 0)), now = ctx.currentTime;
+      // a shared echo: sounds like a deep hole
+      const dl = ctx.createDelay(1), fb = ctx.createGain(), lp = ctx.createBiquadFilter(), wet = ctx.createGain();
+      dl.delayTime.value = 0.21; fb.gain.value = 0.42; lp.type = 'lowpass'; lp.frequency.value = 1400; wet.gain.value = 0.55;
+      dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(master);
+      setTimeout(() => { try { wet.disconnect(); } catch (e) { /* */ } }, 5000);
+      for (let i = 0; i < k; i++) {
+        const t = now + i * (0.06 + Math.random() * 0.12), dur = 1.7 + Math.random() * 0.5;
+        const f0 = (Math.random() < 0.5 ? 260 : 420) * (0.9 + Math.random() * 0.3);
+        const o = ctx.createOscillator(), vib = ctx.createOscillator(), vg = ctx.createGain();
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(f0, t); o.frequency.linearRampToValueAtTime(f0 * 1.08, t + 0.15);
+        o.frequency.exponentialRampToValueAtTime(f0 * 0.38, t + dur);                       // the voice drops while falling
+        vib.frequency.value = 5.5 + Math.random() * 2; vg.gain.value = f0 * 0.03; vib.connect(vg); vg.connect(o.frequency);
+        const far = ctx.createBiquadFilter(); far.type = 'lowpass';                         // further and further away
+        far.frequency.setValueAtTime(5000, t); far.frequency.exponentialRampToValueAtTime(500, t + dur);
+        const g = ctx.createGain(), peak = 0.7 / Math.sqrt(k);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.06);
+        g.gain.setValueAtTime(peak, t + 0.35); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        // vowel «aaa»: three formants
+        [[800, 0.9, 6], [1150, 0.55, 8], [2900, 0.25, 10]].forEach(([fq, gn, q]) => {
+          const bp = ctx.createBiquadFilter(), bg = ctx.createGain();
+          bp.type = 'bandpass'; bp.frequency.value = fq * (f0 > 350 ? 1.12 : 1); bp.Q.value = q; bg.gain.value = gn;
+          o.connect(bp); bp.connect(bg); bg.connect(far);
+        });
+        far.connect(g); g.connect(master); g.connect(dl);
+        o.start(t); vib.start(t); o.stop(t + dur + 0.1); vib.stop(t + dur + 0.1);
+      }
+      noise(1.2, 0.12, 0.05, 700, 0.6);                         // air rushing by
+      tone(70, 0.5, 'sine', 0.06, 1.9, 40);                      // a far, muffled bump at the bottom
+    },
     achievement() { [659, 880, 1318].forEach((f, i) => tone(f, 0.2, 'sine', 0.2, i * 0.08)); },
 
     startRumble() {

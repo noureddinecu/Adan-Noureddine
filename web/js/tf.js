@@ -243,7 +243,8 @@
     const s = S(); before.forEach(u => { const p = s && s.participants[u]; if (p && st.players[u].ans === right) { p.correct = (p.correct || 0) + 1; } });
     setPhase('fall', 8000);
     dropFloors(right, out);
-    api.Sfx.lose();
+    api.Sfx.trapdoor();
+    if (out.length) setTimeout(() => api.Sfx.fallScream(out.length), 300);   // «waaa…» down into the pit
     // as soon as the doors are closed again, the players who stayed walk calmly back to the middle
     const stay = before.filter(u => !out.includes(u)), round = st.round;
     setTimeout(() => { if (st && st.round === round) stay.forEach(u => { if (st.players[u] && st.players[u].alive) placeMiddle(u); }); }, 2800);
