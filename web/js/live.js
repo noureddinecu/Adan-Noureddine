@@ -307,11 +307,14 @@
             const tg = G.Quiz.simTarget();
             if (tg && seenRound !== tg.id) {
               seenRound = tg.id;
+              // «صح أم خطأ» (yes / no): a real elimination — most fake viewers answer, the good ones are right more often,
+              // and the last ones fight to the end, so a rehearsal ends with a champion, a runner-up and a podium
+              const yn = !!G.Quiz.yesNo, left = yn && G.Quiz._debug ? Object.values(G.Quiz._debug().st.players).filter(x => x.alive).length : 99;
               people.forEach(p => {
-                if (Math.random() < 0.25) return;
-                const right = Math.random() < 0.3 + p.skill * 0.55;
+                if (Math.random() < (yn ? 0.06 : 0.25)) return;
+                const right = Math.random() < (yn ? (left <= 3 ? 0.62 : 0.55) + p.skill * 0.38 : 0.3 + p.skill * 0.55);
                 const delay = 1200 + Math.random() * cfg.qTime * 750;
-                if (!right || Math.random() < 0.3) setTimeout(() => { const t2 = G.Quiz.simTarget(); if (t2 && t2.id === tg.id) onChat({ u: p.u, n: p.n, a: p.a, c: t2.wrong }); }, delay * 0.6);
+                if (!right || (!yn && Math.random() < 0.3)) setTimeout(() => { const t2 = G.Quiz.simTarget(); if (t2 && t2.id === tg.id) onChat({ u: p.u, n: p.n, a: p.a, c: t2.wrong }); }, delay * 0.6);
                 if (right) setTimeout(() => { const t2 = G.Quiz.simTarget(); if (t2 && t2.id === tg.id) onChat({ u: p.u, n: p.n, a: p.a, c: t2.right }); }, delay);
               });
             }

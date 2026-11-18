@@ -626,7 +626,8 @@
     let h = '';
     if (st && phase !== 'idle') {
       const all = Object.keys(st.players).length, al = alive().length;
-      h = phase === 'lobby' || phase === 'winner' || phase === 'podium' || phase === 'nowinner' ? `<b>${all}</b> ${all === 1 ? 'لاعب' : all === 2 ? 'لاعبان' : all >= 3 && all <= 10 ? 'لاعبين' : 'لاعباً'}` : `باقٍ <b>${al}</b>`;
+      if (phase === 'winner' || phase === 'podium') h = '';
+      else h = phase === 'lobby' || phase === 'nowinner' ? `<b>${all}</b> ${all === 1 ? 'لاعب' : all === 2 ? 'لاعبان' : all >= 3 && all <= 10 ? 'لاعبين' : 'لاعباً'}` : `باقٍ <b>${al}</b>`;
     }
     if (pl._h !== h) { pl._h = h; pl.innerHTML = h; }
   }
