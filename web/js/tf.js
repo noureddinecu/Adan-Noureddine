@@ -199,7 +199,7 @@
 
   /* ---------------- rounds ---------------- */
   function lobby() {
-    clearStage(); freshRound(); checkSet(); zs.no = zs.yes = zs.mid = 1; st.lobbyAt = Date.now();
+    clearStage(); freshRound(); checkSet(); zs.no = zs.yes = zs.mid = 1;
     setPhase('lobby', num(cfg().lobbyTime, 60) * 1000);
   }
   function join(uid, p, quiet) {
@@ -213,7 +213,7 @@
     if (alive().length < Math.max(1, num(cfg().minPlayers, 2))) {
       setPhase('lobby', 30000); return;
     }
-    setPhase('ready', 5000);
+    setPhase('ready', 3000);
   }
   function ask() {
     // bring back the players revived by a gift; everybody stands in the middle (most are already walking back there)
@@ -373,30 +373,29 @@
   const els = {};          // uid -> element
   function clearStage() { Object.keys(els).forEach(u => { els[u].remove(); delete els[u]; }); }
   // floor coordinates: x ∈ [0,1] across the 3 floors (0 = left edge of «لا», 1 = right edge of «نعم»), y ∈ [0,1] back→front
-  const BOARD_H = 1059;
-  const ZONES = { no: [0.107, 0.305], mid: [0.399, 0.617], yes: [0.699, 0.9] };   // inside the 3 panels of the picture (board %)   // the middle floor is the widest: everybody starts there
+  const ZONES = { no: [0.015, 0.265], mid: [0.315, 0.685], yes: [0.735, 0.985] };   // the middle floor is the widest: everybody starts there
   /* ---- places: scattered over the WHOLE panel, without any overlap ----
    * Each player goes to the free place that is the farthest from the others (corners, top, bottom, middle),
    * so a floor looks naturally scattered, never in rows. Nobody else moves when somebody arrives. When a floor
    * is full, everybody gets a little smaller where he stands; in a real crowd the extra ones show no name. */
   const zs = { no: 1, mid: 1, yes: 1 };          // size of the players (the same on the three floors)
-  const TOP = 0.09, Y1 = 0.855;                   // top / bottom of the panels in the picture (board height fraction)
+  const Y0F = 0.22, Y1 = 0.92;                    // back / front of the floors where a player can stand
   let lastF = null;
   function geo() {
     const f = $('tfFloor');
     if (f && f.clientWidth > 50) lastF = [f.clientWidth, f.clientHeight, parseFloat(getComputedStyle(f).fontSize) || 16];
     if (lastF) return lastF;
-    const w = window.innerWidth * 1.08; return [w, w * BOARD_H / 1672, parseFloat(getComputedStyle(document.body).fontSize) || 16];
+    const w = window.innerWidth * 0.92; return [w, w * 0.85, parseFloat(getComputedStyle(document.body).fontSize) || 16];
   }
   /** [half width, name+head depth, whole height] of a player at size sc, in board fractions */
   function foot(el, sc) {
     const [fw, fh, fs] = geo(), em = fs * 1.55 * sc, full = 4.75 * em / fh;
-    if (el && el.classList.contains('noname')) return [2.1 * em / 2 / fw, 2.3 * em / fh, full];
+    if (el && el.classList.contains('noname')) return [1.9 * em / 2 / fw, 1.8 * em / (0.57 * fh), full];
     const tag = el && el.querySelector('.tp-tag');
     const cur = el ? parseFloat(getComputedStyle(el).fontSize) : 0;
     let tagEm = tag && tag.offsetWidth && cur ? tag.offsetWidth / cur : 0;
     if (!tagEm) { const n = (el && el._n) || 'Abcdefgh'; tagEm = Math.min(2.7, 0.6 * (0.6 * n.length + 1.2)); }
-    return [(Math.max(2.2, tagEm) + 0.25) * em / 2 / fw, 3.2 * em / fh, full];
+    return [(Math.max(2.1, tagEm) + 0.25) * em / 2 / fw, 2.45 * em / (0.57 * fh), full];
   }
   function others(zone, uid) {
     return Object.keys(els).filter(u => u !== uid && els[u].dataset.zone === zone && els[u]._p && !els[u].classList.contains('fall'))
@@ -405,7 +404,7 @@
   /** the free place farthest from everybody (best of many random tries over the whole panel) */
   function scatter(zone, uid) {
     const [a, b] = ZONES[zone], [hw, dy, full] = foot(els[uid], zs[zone]);
-    const y0 = Math.min(Y1 - 0.02, TOP + full), os = others(zone, uid);
+    const y0 = Math.min(Y1 - 0.02, Y0F), os = others(zone, uid);
     let best = null, bestS = -1;
     for (let k = 0; k < 90; k++) {
       const c = [a + hw + Math.random() * Math.max(0, b - a - 2 * hw), y0 + Math.random() * (Y1 - y0)];
@@ -434,7 +433,7 @@
     }
     // a real crowd: no name for this one, his head where it touches no name
     if (el) el.classList.add('noname');
-    const [a, b] = ZONES[zone], [h, d0, full] = foot(el, zs[zone]), y0 = Math.min(Y1 - 0.02, TOP + full), os = others(zone, uid);
+    const [a, b] = ZONES[zone], [h, d0, full] = foot(el, zs[zone]), y0 = Math.min(Y1 - 0.02, Y0F), os = others(zone, uid);
     let best = null, bestS = -1e9;
     for (let k = 0; k < 90; k++) {
       const c = [a + h + Math.random() * Math.max(0, b - a - 2 * h), y0 + Math.random() * (Y1 - y0)];
@@ -451,7 +450,7 @@
   /** the biggest size at which n players should fit on a floor (used when a group walks into an empty floor) */
   function sizeFor(zone, n) {
     const [a, b] = ZONES[zone]; let v = 1;
-    for (; v > MIN_S; v *= 0.95) { const [hw, dy, full] = foot(null, v); if (Math.max(1, Math.floor((b - a) / (2 * hw))) * (Math.floor((Y1 - TOP - full) / dy) + 1) * 0.7 >= n) break; }
+    for (; v > MIN_S; v *= 0.95) { const [hw, dy, full] = foot(null, v); if (Math.max(1, Math.floor((b - a) / (2 * hw))) * (Math.floor((Y1 - Y0F) / dy) + 1) * 0.7 >= n) break; }
     setZoneSize(zone, Math.max(MIN_S, v));
   }
   function ensureEl(uid) {
@@ -490,7 +489,7 @@
   /** a new player comes in from one side of the middle panel (top, bottom, left or right) and walks to his place */
   function entry() {
     const [a, b] = ZONES.mid, r = Math.random();
-    return r < 0.3 ? [a + Math.random() * (b - a), TOP + 0.05] : r < 0.6 ? [a + Math.random() * (b - a), Y1] : [r < 0.8 ? a : b, TOP + 0.2 + Math.random() * (Y1 - TOP - 0.2)];
+    return r < 0.3 ? [a + Math.random() * (b - a), Y0F] : r < 0.6 ? [a + Math.random() * (b - a), Y1] : [r < 0.8 ? a : b, Y0F + Math.random() * (Y1 - Y0F)];
   }
   function placeMiddle(uid, fresh) {
     const el = ensureEl(uid); el.classList.remove('fall'); el._goal = 'mid';
@@ -543,9 +542,8 @@
     hud.classList.toggle('paused', paused);
     const card = $('tfCard'), big = $('tfBig');
     if (!(phase === 'podium' && $('tfPod'))) { big.className = 'tf-big'; big.innerHTML = ''; }
-    showRules(phase === 'ready');
     if (phase === 'lobby') renderLobby();
-    else if (phase === 'ready') card.innerHTML = `<div class="tf-lobby"><b>استعدّوا… 🔥 الأسئلة تبدأ الآن</b></div>${ticker()}`;
+    else if (phase === 'ready') card.innerHTML = `<div class="tf-lobby"><b>استعدّوا… 🔥</b></div>`;
     else if (st && st.q && (phase === 'question' || phase === 'collect' || phase === 'fall')) {
       // while playing: only the question (and its time) — no other text
       const q = st.q;
@@ -591,8 +589,8 @@
     if (phase !== 'lobby') return;
     const n = Object.keys(st.players).length;
     // the «write العب» card is fixed (built once); only the numbers change and the rules turn below it
-    if (!$('tfLobN')) $('tfCard').innerHTML = `<div class="tf-lobby tf-join"><i class="tf-pad">🎮</i><b>اكتب «<em>العب</em>» في التعليقات للمشاركة معنا</b></div>
-      <div class="tf-sub"><span>⏱️ تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</span><i></i><span>المسجّلون: <span class="tf-cnt big" id="tfLobN"></span></span><i></i><span>👥 المشاركة مجانية</span></div>${ticker()}`;
+    if (!$('tfLobN')) $('tfCard').innerHTML = `<div class="tf-lobby tf-join"><b>اكتب «العب» في التعليقات للمشاركة معنا 🎮</b><small>المشاركة مجانية · المسجّلون: <span class="tf-cnt" id="tfLobN"></span> · تبدأ الأسئلة بعد <span class="tf-cnt" id="tfLobT"></span> ث</small></div>
+      ${ticker()}`;
     $('tfLobN').textContent = n; $('tfLobT').textContent = left();
     renderCounts();
   }
@@ -602,7 +600,6 @@
     const items = RULES.map((r, i) => `<i>◆</i><span>${i + 1}. ${r}</span>`).reverse().join('');
     return `<div class="tf-tick"><div class="tk-in">${items}${items}</div><b class="tk-lab">📜 القواعد</b></div>`;
   }
-  function showRules() { }
   const RULE_MS = 5000;
   const RULES = ['اكتب «العب» في التعليقات لتدخل اللعبة', 'أجب على كل سؤال بـ «نعم» أو «لا»', 'الإجابة الأولى هي التي تُحتسب، لا يمكن تغييرها',
     'من لا يجيب يبقى في الوسط ويسقط', 'آخر من يبقى واقفاً هو البطل 👑'];
@@ -619,16 +616,15 @@
     t.style.setProperty('--p', (l / total).toFixed(3));
     t.classList.toggle('low', l <= 5);
   }
-  /** the pill at the bottom of the board: players registered (lobby) / still playing */
   function renderCounts() {
-    const pl = $('bdPill'); if (!pl) return;
-    let h = '';
-    if (st && phase !== 'idle') {
-      const all = Object.keys(st.players).length, al = alive().length;
-      if (phase === 'winner' || phase === 'podium') h = '';
-      else h = phase === 'lobby' || phase === 'nowinner' ? `<b>${all}</b> ${all === 1 ? 'لاعب' : all === 2 ? 'لاعبان' : all >= 3 && all <= 10 ? 'لاعبين' : 'لاعباً'}` : `باقٍ <b>${al}</b>`;
-    }
-    if (pl._h !== h) { pl._h = h; pl.innerHTML = h; }
+    const b = $('tfBar'); if (!b) return;
+    if (!st || phase === 'idle' || phase === 'winner' || phase === 'podium') { b.innerHTML = ''; return; }
+    const al = alive();
+    const yes = al.filter(u => st.players[u].ans === 'yes').length, no = al.filter(u => st.players[u].ans === 'no').length;
+    b.innerHTML = phase === 'lobby'
+      ? `<span class="tb mid">🎮 ${players(Object.keys(st.players).length)}</span>`
+      : `<span class="tb no">لا ✗ ${no}</span><span class="tb mid">؟ ${al.length - yes - no}</span><span class="tb yes">نعم ✓ ${yes}</span>`
+        + `<span class="tb left">باقٍ ${al.length}</span>`;
   }
 
   /* ---------------- gift cards ---------------- */
