@@ -573,3 +573,8 @@ body.tf-app #control .btn:active { transform: translateY(0.2em); box-shadow: 0 0
 body.tf-app #control .btn.primary { background: linear-gradient(180deg, #FFE27A, #F5A623); color: #3A2400; box-shadow: 0 0.35em 0 #A8630C, 0 0.6em 1.2em rgba(245, 166, 35, .35), inset 0 1px 0 rgba(255,255,255,.6); }
 body.tf-app #control .card, body.tf-app #control .cp-stats { border-radius: 1em; background: linear-gradient(180deg, rgba(124, 77, 255, .16), rgba(60, 30, 130, .26)) !important;
   border: 1px solid rgba(196, 181, 253, .22); box-shadow: 0 0.35em 0 #1A0B3E, 0 0.6em 1.2em rgba(0,0,0,.45); }
+
+/* the arrow of each settings group: a round 3D button on the side */
+body.tf-app #control .cp-chev { flex: none; width: 1.9em; height: 1.9em; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding-bottom: 0.25em;
+  font-size: 1.15em; color: #2A0F62; background: linear-gradient(180deg, #FFE27A, #F5A623); box-shadow: 0 0.18em 0 #A8630C, 0 0.3em 0.5em rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.6); }
+body.tf-app #control .cp-group.open .cp-chev { transform: rotate(180deg); padding-bottom: 0; padding-top: 0.25em; box-shadow: 0 -0.18em 0 #A8630C, 0 -0.3em 0.5em rgba(0,0,0,.45), inset 0 -1px 0 rgba(255,255,255,.6); }

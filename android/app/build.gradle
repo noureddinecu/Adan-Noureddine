@@ -16,7 +16,7 @@ android {
         minSdk 24
         targetSdk 35
         versionCode 16
-        versionName '3.13.0'
+        versionName '3.13.1'
     }
 
     buildFeatures { buildConfig true }
@@ -29,7 +29,7 @@ android {
             dimension 'app'
             applicationId 'com.adan.goldrail'
             versionCode 16
-            versionName '3.13.0'
+            versionName '3.13.1'
             buildConfigField 'String', 'START_PAGE', '"index.html"'
             buildConfigField 'String', 'BG_COLOR', '"#071A36"'
             buildConfigField 'boolean', 'USE_TTS', 'false'
@@ -37,8 +37,8 @@ android {
         tf {
             dimension 'app'
             applicationId 'com.adan.sahkhata'
-            versionCode 42
-            versionName '3.13.0'
+            versionCode 43
+            versionName '3.13.1'
             buildConfigField 'String', 'START_PAGE', '"tf.html"'
             buildConfigField 'String', 'BG_COLOR', '"#1B1033"'
             buildConfigField 'boolean', 'USE_TTS', 'false'
