@@ -199,7 +199,7 @@
 
   /* ---------------- rounds ---------------- */
   function lobby() {
-    clearStage(); freshRound(); checkSet(); zs.no = zs.yes = zs.mid = 1;
+    clearStage(); freshRound(); checkSet(); zs.no = zs.yes = zs.mid = 1; if ($('tfJoinList')) $('tfJoinList').innerHTML = '';
     setPhase('lobby', num(cfg().lobbyTime, 60) * 1000);
   }
   function join(uid, p, quiet) {
@@ -207,7 +207,16 @@
     st.players[uid] = { n: p.n, a: p.a, alive: true, revives: 0, ans: null };
     placeMiddle(uid, true);
     if (!quiet) api.Sfx.select();
+    joinFeed(uid);
     return true;
+  }
+  /** the registration list on the «لا» panel (empty during the registration): every new player sees his name appear */
+  function joinFeed(uid) {
+    const ol = $('tfJoinList'); if (!ol || !st.players[uid]) return;
+    const li = document.createElement('li'); const pl = st.players[uid];
+    li.innerHTML = `${personHead(pl, uid)}<span>${esc(pl.n)}</span><i>✓</i>`;
+    ol.insertBefore(li, ol.firstChild);
+    while (ol.children.length > 9) ol.lastChild.remove();
   }
   function startQuestions() {
     if (alive().length < Math.max(1, num(cfg().minPlayers, 2))) {
@@ -379,7 +388,7 @@
    * so a floor looks naturally scattered, never in rows. Nobody else moves when somebody arrives. When a floor
    * is full, everybody gets a little smaller where he stands; in a real crowd the extra ones show no name. */
   const zs = { no: 1, mid: 1, yes: 1 };          // size of the players (the same on the three floors)
-  const Y0F = 0.22, Y1 = 0.92;                    // back / front of the floors where a player can stand
+  const Y0F = 0.12, Y1 = 0.93;                    // back / front of the floors where a player can stand
   let lastF = null;
   function geo() {
     const f = $('tfFloor');

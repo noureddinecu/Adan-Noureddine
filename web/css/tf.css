@@ -490,3 +490,18 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 .pd-four .tf-ph, .tf-top li .tf-ph { flex: none; aspect-ratio: 1; }
 .pd-step b { line-height: 1.1; }
 .pd-who em { white-space: nowrap; }
+
+/* 3.10 the registration list: on the «لا» panel while it is empty (registration only) */
+.tf-joins { position: absolute; left: 3%; width: 25%; top: 17%; bottom: 7%; z-index: 5; display: none; flex-direction: column; overflow: hidden; direction: rtl;
+  border-radius: 0.8em; padding: 0.35em 0.3em; background: linear-gradient(180deg, rgba(40, 10, 30, .55), rgba(40, 10, 30, .25)); backdrop-filter: blur(3px);
+  box-shadow: inset 0 0 0 0.08em rgba(255,255,255,.35); pointer-events: none; }
+#quizHud.tf[data-phase="lobby"] .tf-joins { display: flex; }
+.tf-joins b { flex: none; text-align: center; font-size: 0.66em; font-weight: 900; color: #fff; text-shadow: 0 0.08em 0.2em rgba(0,0,0,.6); margin-bottom: 0.25em; }
+.tf-joins ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.2em; overflow: hidden; }
+.tf-joins li { display: flex; align-items: center; gap: 0.25em; padding: 0.12em 0.25em; border-radius: 0.6em; background: rgba(255,255,255,.93); color: #2B1B4A;
+  font-size: 0.66em; font-weight: 900; box-shadow: 0 0.15em 0.35em rgba(0,0,0,.35); animation: tfJoinIn .55s cubic-bezier(.2,.9,.3,1.2) both; }
+.tf-joins li:first-child { background: linear-gradient(90deg, #FFF6C9, #FFFFFF); box-shadow: 0 0 0 0.12em #F5C451, 0 0.15em 0.35em rgba(0,0,0,.35); }
+.tf-joins li .tf-ph { flex: none; width: 1.7em; height: 1.7em; aspect-ratio: 1; font-size: 0.8em; }
+.tf-joins li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tf-joins li i { flex: none; font-style: normal; color: #16A34A; }
+@keyframes tfJoinIn { from { opacity: 0; transform: translateY(-0.8em) scale(.9); } to { opacity: 1; transform: none; } }
