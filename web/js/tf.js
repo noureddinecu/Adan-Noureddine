@@ -427,8 +427,7 @@
         sc = Math.min(sc, Math.hypot(dx / W, dd / H));
       }
       if (!ok) continue;
-      // the edges of the floor count a little as neighbours too (players do not all stick to the borders)
-      sc = Math.min(sc, 0.12 + Math.min(c[0] - a, b - c[0]) / W * 1.2, 0.12 + Math.min(c[1] - Y0F, Y1 - c[1]) / H * 1.2);
+      // (no penalty for the edges: the top, the bottom and the sides of the floor are used as much as the centre)
       if (!os.length) sc = Math.random();               // the first one: anywhere
       if (sc > bestS) { bestS = sc; best = c; }
     }
