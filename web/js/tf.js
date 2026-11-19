@@ -376,7 +376,7 @@
     return `<div class="tp-in"><div class="tp-tag">${esc(pl.n)}</div><div class="tp-head" style="--c:${col}"><b>${initial}</b>${img}</div>
       <svg class="tp-body" viewBox="0 0 40 46"><defs><linearGradient id="g${hash(uid)}" x1="0" x2="1"><stop offset="0" stop-color="${col}"/><stop offset=".55" stop-color="${col}" stop-opacity=".85"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient></defs>
       <rect class="lg l1" x="9" y="30" width="9" height="15" rx="4" fill="#2B2F45"/><rect class="lg l2" x="22" y="30" width="9" height="15" rx="4" fill="#2B2F45"/>
-      <rect x="3" y="6" width="7" height="20" rx="3.5" fill="${col}"/><rect x="30" y="6" width="7" height="20" rx="3.5" fill="${col}"/>
+      <rect class="arm a1" x="3" y="6" width="7" height="20" rx="3.5" fill="${col}"/><rect class="arm a2" x="30" y="6" width="7" height="20" rx="3.5" fill="${col}"/>
       <rect x="8" y="2" width="24" height="31" rx="9" fill="url(#g${hash(uid)})"/><ellipse cx="16" cy="9" rx="5" ry="3" fill="#fff" opacity=".35"/></svg></div>`;
   }
   const els = {};          // uid -> element
@@ -576,7 +576,7 @@
       const pl = st.players[st.winner];
       card.innerHTML = `<div class="tf-lobby final"><b>👑 بطل الجولة</b></div>`;
       big.className = 'tf-big on win';
-      big.innerHTML = `<div class="tf-win"><div class="tf-crown">👑</div><div class="tf-wphoto">${personHead(pl, st.winner)}</div><div class="tf-wname">${esc(pl.n)}</div><div class="tf-confetti">${'<i></i>'.repeat(18)}</div></div>`;
+      big.innerHTML = `<div class="tf-win"><div class="tf-crown">👑</div><div class="tf-dancer">${personHtml(pl, st.winner)}</div><div class="tf-wphoto mini">${personHead(pl, st.winner)}</div><div class="tf-wname">${esc(pl.n)}</div><div class="tf-confetti">${'<i></i>'.repeat(18)}</div></div>`;
     } else if (phase === 'podium') {
       // built once; every place appears in its turn (CSS delays), same timing as the applause in podium()
       if (!$('tfPod')) {

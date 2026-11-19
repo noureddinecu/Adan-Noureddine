@@ -510,3 +510,19 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 .tf-joins { top: 11%; bottom: 4%; }
 .tf-joins ol { gap: 0.13em; }
 .tf-joins li { font-size: 0.6em; padding: 0.08em 0.25em; }
+
+/* 3.12 the champion dances (jumps, turns, arms up and down, legs moving) */
+.tf-dancer { font-size: 2.6em; display: inline-block; margin: 0.1em auto 0; animation: tfDance .9s ease-in-out infinite; transform-origin: 50% 100%; }
+.tf-dancer .tp-in { animation: none; }
+.tf-dancer .tp-tag { display: none; }
+.tf-dancer .tp-head { width: 1.8em; height: 1.8em; margin-bottom: -0.38em; box-shadow: 0 0 0 0.1em #FFD45A, 0 0 0.8em rgba(255, 210, 90, .9); }
+.tf-dancer .tp-body { width: 1.9em; height: 2.2em; display: block; animation: none; }
+.tf-dancer .lg { transform-box: fill-box; transform-origin: 50% 0%; animation: tpLeg .45s ease-in-out infinite; }
+.tf-dancer .lg.l2 { animation-direction: reverse; }
+.tf-dancer .arm { transform-box: fill-box; transform-origin: 50% 12%; animation: tfArm .45s ease-in-out infinite alternate; }
+.tf-dancer .arm.a2 { animation-delay: -.45s; }
+@keyframes tfDance { 0%, 100% { transform: translateY(0) rotate(-7deg); } 25% { transform: translateY(-0.28em) rotate(0deg) scale(1.03); } 50% { transform: translateY(0) rotate(7deg); } 75% { transform: translateY(-0.28em) rotate(0deg) scale(1.03); } }
+@keyframes tfArm { from { transform: rotate(20deg); } to { transform: rotate(160deg); } }
+.tf-wphoto.mini { display: none; }
+.p1 .pd-who .tf-ph { animation: tfBounce .8s ease-in-out infinite; }
+@keyframes tfBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.18em); } }
