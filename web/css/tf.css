@@ -432,3 +432,61 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 #quizHud.tf { padding-left: 1.2vw; padding-right: 1.2vw; }
 .tf-floor { left: 1%; right: 1%; }
 #quizHud.tf .tf-paused { z-index: 20; }   /* the break card is always on top (even over the podium) */
+
+/* 3.9 the podium: an olympic stage (2 · 1 · 3), the 4th on a wide bar, then 5–10 sliding in one by one */
+#quizHud.tf[data-phase="podium"] .tp, #quizHud.tf[data-phase="winner"] .tp { opacity: 0; transition: opacity .5s; }
+.tf-big.pod { left: 3%; right: 3%; }
+.tf-pod { display: block; direction: ltr; }
+.pd-stage { display: flex; justify-content: center; align-items: flex-end; gap: 0.35em; }
+.tf-pod .pd { background: none; box-shadow: none; padding: 0; border-radius: 0; color: #fff; opacity: 0; animation: tfPlace .8s cubic-bezier(.2,.9,.3,1.1) forwards; animation-delay: var(--dl, 0ms); position: relative; }
+.tf-pod .pd.p1, .tf-pod .pd.p2, .tf-pod .pd.p3 { width: 31%; display: flex; flex-direction: column; align-items: center; order: 0; }
+.pd-who { display: flex; flex-direction: column; align-items: center; gap: 0.12em; margin-bottom: 0.3em; }
+.pd-who .tf-ph { width: 3.1em; height: 3.1em; font-size: 0.95em; box-shadow: 0 0 0 0.14em #C9D2E0, 0 0.3em 0.7em rgba(0,0,0,.5); }
+.p1 .pd-who .tf-ph { width: 4.4em; height: 4.4em; box-shadow: 0 0 0 0.16em #FFD45A, 0 0 1.4em rgba(255, 200, 60, .9), 0 0.3em 0.8em rgba(0,0,0,.5); }
+.p3 .pd-who .tf-ph { box-shadow: 0 0 0 0.14em #E3A16B, 0 0.3em 0.7em rgba(0,0,0,.5); }
+.pd-who span { max-width: 100%; font-weight: 900; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0.08em 0.25em rgba(0,0,0,.7); }
+.p1 .pd-who span { font-size: 1em; color: #FFE27A; }
+.pd-who em { font-style: normal; font-size: 0.68em; font-weight: 800; padding: 0.05em 0.6em; border-radius: 1em; background: rgba(20, 8, 48, .75); color: #E9DDFF; }
+.pd-crown { font-style: normal; font-size: 1.5em; line-height: 1; animation: tfCrown 1.6s ease-in-out infinite; }
+.pd-medal { font-style: normal; font-size: 1.15em; line-height: 1; }
+.pd-step { width: 100%; display: flex; align-items: flex-start; justify-content: center; border-radius: 0.6em 0.6em 0.25em 0.25em; padding-top: 0.25em;
+  box-shadow: inset 0 0.25em 0 rgba(255,255,255,.45), inset 0 -0.35em 0.5em rgba(0,0,0,.25), 0 0.5em 1em rgba(0,0,0,.45); }
+.pd-step b { font-size: 1.6em; font-weight: 900; color: rgba(255,255,255,.95); text-shadow: 0 0.06em 0.15em rgba(0,0,0,.4); }
+.p1 .pd-step { height: 4.6em; background: linear-gradient(180deg, #FFE27A, #F5A623 60%, #C77A12); }
+.p2 .pd-step { height: 3.4em; background: linear-gradient(180deg, #F4F7FB, #B9C3D3 60%, #8792A5); }
+.p3 .pd-step { height: 2.6em; background: linear-gradient(180deg, #F7C79B, #D9874A 60%, #A65A26); }
+.p2 .pd-step b { color: #4A5568; text-shadow: none; } 
+.tf-pod .pd.pd-four { display: flex; align-items: center; gap: 0.5em; margin: 0.45em auto 0; width: 94%; padding: 0.3em 0.7em; border-radius: 0.8em; direction: rtl;
+  background: linear-gradient(90deg, rgba(167, 139, 250, .95), rgba(124, 58, 237, .95)); box-shadow: 0 0.3em 0.8em rgba(0,0,0,.4); }
+.pd-four .tf-ph { width: 2.1em; height: 2.1em; font-size: 0.8em; }
+.pd-four span { flex: 1; text-align: right; font-weight: 900; font-size: 0.9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pd-four em, .tf-top li em { font-style: normal; font-weight: 900; color: #B6F5C9; direction: ltr; }
+.pd-n { flex: none; width: 1.55em; height: 1.55em; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85em;
+  background: rgba(255,255,255,.95); color: #5B21B6; }
+.tf-pod .pd-clap { top: -0.4em; }
+.tf-top { display: flex; flex-direction: column; gap: 0.22em; margin: 0.4em auto 0; width: 94%; max-width: none; counter-reset: none; }
+.tf-top li { counter-increment: none; padding: 0.22em 0.6em; border-radius: 0.7em; background: rgba(28, 14, 60, .88); color: #fff; box-shadow: 0 0 0 0.06em rgba(167, 139, 250, .5);
+  gap: 0.5em; font-size: 0.8em; animation-name: tfSlide; }
+.tf-top li::before { display: none; }
+.tf-top li .pd-n { background: #7C3AED; color: #fff; }
+.tf-top li span { text-align: right; }
+@keyframes tfSlide { from { opacity: 0; transform: translateX(-1.5em); } to { opacity: 1; transform: none; } }
+/* podium: compact, every place in proportion (fits a small phone) */
+.tf-pod .pd.p1, .tf-pod .pd.p2, .tf-pod .pd.p3 { background: none !important; padding: 0 !important; width: 31% !important; border-radius: 0; box-shadow: none; }
+.tf-pod .pd.p1 { order: 2; } .tf-pod .pd.p2 { order: 1; } .tf-pod .pd.p3 { order: 3; }
+.pd-who .tf-ph { width: 2.6em; height: 2.6em; }
+.p1 .pd-who .tf-ph { width: 3.5em; height: 3.5em; }
+.pd-who span { font-size: 0.78em; } .p1 .pd-who span { font-size: 0.9em; }
+.pd-who em { font-size: 0.62em; }
+.pd-crown { font-size: 1.25em; } .pd-medal { font-size: 1em; }
+.p1 .pd-step { height: 3.3em; } .p2 .pd-step { height: 2.5em; } .p3 .pd-step { height: 1.9em; }
+.pd-step b { font-size: 1.3em; }
+.tf-pod .pd.pd-four { flex-direction: row; width: 94% !important; padding: 0.22em 0.6em !important; background: linear-gradient(90deg, rgba(167, 139, 250, .95), rgba(124, 58, 237, .95)) !important; border-radius: 0.8em; }
+.pd-four .tf-ph { width: 1.8em; height: 1.8em; }
+.pd-four span { font-size: 0.82em; }
+.tf-top { gap: 0.16em; margin-top: 0.3em; }
+.tf-top li { font-size: 0.74em; padding: 0.16em 0.55em; }
+.tf-top li .tf-ph { width: 1.7em; height: 1.7em; }
+.pd-four .tf-ph, .tf-top li .tf-ph { flex: none; aspect-ratio: 1; }
+.pd-step b { line-height: 1.1; }
+.pd-who em { white-space: nowrap; }

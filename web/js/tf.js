@@ -402,26 +402,28 @@
       .map(u => { const [w, d] = foot(els[u], zs[zone]); return { p: els[u]._p, w, d, named: !els[u].classList.contains('noname') }; });
   }
   /** the free place farthest from everybody (best of many random tries over the whole panel) */
-  /** the next free place of a floor, filling it from the top (back) down to the bottom (front), row after row:
-   *  staggered rows, each place a little shifted at random, so the players are spread over the whole floor */
+  /** the biggest empty place of the floor: of many random places where nobody is touched, the one farthest from
+   *  everybody (distances measured on the whole rectangle) → with 3 players: top, middle, bottom; with more, the gaps
+   *  are filled — the floor always looks evenly filled, from top to bottom and side to side. Nobody else moves. */
   function scatter(zone, uid) {
     const [a, b] = ZONES[zone], [hw, dy] = foot(els[uid], zs[zone]), os = others(zone, uid);
-    const W = b - a, cols = Math.max(1, Math.floor(W / (2 * hw))), cell = W / cols;
-    const step = dy * 1.18, rows = Math.max(1, Math.floor((Y1 - Y0F) / step) + 1), gapY = rows > 1 ? (Y1 - Y0F) / (rows - 1) : 0;
-    const free = c => os.every(o => Math.abs(c[0] - o.p[0]) >= hw + o.w || Math.abs(c[1] - o.p[1]) >= Math.max(dy, o.d));
-    for (let r = 0; r < rows; r++) {
-      const odd = r % 2 && cols > 1, n = odd ? cols - 1 : cols, off = odd ? cell / 2 : 0;
-      const idx = Array.from({ length: n }, (_, i) => i).sort(() => Math.random() - 0.5);
-      for (const i of idx) {
-        const sx = Math.max(0, cell - 2 * hw) * 0.45, sy = Math.max(0, gapY - dy) * 0.45;
-        for (let t = 0; t < 4; t++) {                          // a few shifted tries inside the place
-          const c = [a + off + (i + 0.5) * cell + (Math.random() - 0.5) * 2 * sx * (t < 3 ? 1 : 0),
-                     Math.min(Y1, Y0F + r * gapY + (Math.random() - 0.5) * 2 * sy * (t < 3 ? 1 : 0))];
-          if (c[0] - hw >= a - 1e-6 && c[0] + hw <= b + 1e-6 && free(c)) return c;
-        }
+    const W = b - a, H = Y1 - Y0F, x0 = a + hw, xr = Math.max(0, W - 2 * hw);
+    let best = null, bestS = -1;
+    for (let k = 0; k < 140; k++) {
+      const c = [x0 + Math.random() * xr, Y0F + Math.random() * H];
+      let sc = 9, ok = true;
+      for (const o of os) {
+        const dx = Math.abs(c[0] - o.p[0]), dd = Math.abs(c[1] - o.p[1]);
+        if (dx < hw + o.w && dd < Math.max(dy, o.d)) { ok = false; break; }
+        sc = Math.min(sc, Math.hypot(dx / W, dd / H));
       }
+      if (!ok) continue;
+      // the edges of the floor count a little as neighbours too (players do not all stick to the borders)
+      sc = Math.min(sc, 0.12 + Math.min(c[0] - a, b - c[0]) / W * 1.2, 0.12 + Math.min(c[1] - Y0F, Y1 - c[1]) / H * 1.2);
+      if (!os.length) sc = Math.random();               // the first one: anywhere
+      if (sc > bestS) { bestS = sc; best = c; }
     }
-    return null;
+    return best;
   }
   function setZoneSize(zone, v) {
     zs.no = zs.mid = zs.yes = v;
@@ -573,8 +575,10 @@
         const medal = ['👑', '🥈', '🥉', '4'];
         card.innerHTML = `<div class="tf-lobby final"><b>🏆 أبطال الجولة</b></div>`;
         big.className = 'tf-big on pod';
-        big.innerHTML = `<div class="tf-pod" id="tfPod">${r.slice(0, 4).map((u, i) => `<div class="pd p${i + 1}" style="--dl:${POD_STEP[i]}ms"><i>${medal[i]}</i>${personHead(P(u), u)}<span>${esc(P(u).n)}</span><em>${i === 0 ? 'البطل' : i === 1 ? 'الوصيف' : 'المركز ' + (i + 1)}</em><div class="pd-clap">👏</div></div>`).join('')}</div>`
-          + (r.length > 4 ? `<ol class="tf-top" start="5">${r.slice(4, 10).map((u, i) => `<li style="--dl:${TOP_FROM + i * TOP_STEP}ms">${personHead(P(u), u)}<span>${esc(P(u).n)}</span><em>✓ ${P(u).rights || 0}</em></li>`).join('')}</ol>` : '');
+        const col = (u, i) => !u ? '' : `<div class="pd p${i + 1}" style="--dl:${POD_STEP[i]}ms"><div class="pd-who">${i === 0 ? '<i class="pd-crown">👑</i>' : `<i class="pd-medal">${i === 1 ? '🥈' : '🥉'}</i>`}${personHead(P(u), u)}<span>${esc(P(u).n)}</span><em>${i === 0 ? 'البطل' : i === 1 ? 'الوصيف' : 'المركز الثالث'}</em></div><div class="pd-step"><b>${i + 1}</b></div><div class="pd-clap">👏</div></div>`;
+        big.innerHTML = `<div class="tf-pod" id="tfPod"><div class="pd-stage">${col(r[1], 1)}${col(r[0], 0)}${col(r[2], 2)}</div>`
+          + (r[3] ? `<div class="pd p4 pd-four" style="--dl:${POD_STEP[3]}ms"><b class="pd-n">4</b>${personHead(P(r[3]), r[3])}<span>${esc(P(r[3]).n)}</span><em>✓ ${P(r[3]).rights || 0}</em><div class="pd-clap">👏</div></div>` : '') + `</div>`
+          + (r.length > 4 ? `<ol class="tf-top" start="5">${r.slice(4, 10).map((u, i) => `<li style="--dl:${TOP_FROM + i * TOP_STEP}ms"><b class="pd-n">${i + 5}</b>${personHead(P(u), u)}<span>${esc(P(u).n)}</span><em>✓ ${P(u).rights || 0}</em></li>`).join('')}</ol>` : '');
       } else { big.className = 'tf-big on pod keep'; return void renderCounts(); }
     } else if (phase === 'nowinner') {
       card.innerHTML = `<div class="tf-lobby"><b>سقط الجميع! 😅</b><small>لا يوجد فائز هذه المرة · جولة جديدة بعد قليل</small></div>`;
