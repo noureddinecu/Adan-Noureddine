@@ -314,7 +314,7 @@
                 const n = alive.length, keep = n <= 3 ? 1 : Math.max(2, Math.round(n * (0.62 + Math.random() * 0.14)));
                 const order = alive.map(p => [p, p.skill + Math.random() * 0.8]).sort((x, y) => y[1] - x[1]).map(x => x[0]);
                 order.forEach((p, i) => {
-                  const good = i < keep, delay = 1200 + Math.random() * cfg.qTime * 700;
+                  const good = i < keep, delay = 900 + Math.random() * Math.min(cfg.qTime * 0.45, 6) * 1000;   // within ~7 s: even if the host ends the time early
                   if (!good && Math.random() < 0.15) return;                 // a few do not answer (they fall too)
                   setTimeout(() => { const t2 = G.Quiz.simTarget(); if (t2 && t2.id === tg.id) onChat({ u: p.u, n: p.n, a: p.a, c: good ? t2.right : t2.wrong }); }, delay);
                 });

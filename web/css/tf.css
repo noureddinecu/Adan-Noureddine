@@ -427,3 +427,8 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
   75%  { transform: scale(.94) translateX(0) rotateY(0deg) translateY(0.5%); }
   100% { transform: scale(.92) translateX(-2%) rotateY(-9deg) rotateZ(0.4deg); }
 }
+
+/* 3.8 a wider game: less side margin */
+#quizHud.tf { padding-left: 1.2vw; padding-right: 1.2vw; }
+.tf-floor { left: 1%; right: 1%; }
+#quizHud.tf .tf-paused { z-index: 20; }   /* the break card is always on top (even over the podium) */

@@ -701,8 +701,10 @@
       api = a;
       // one-time new defaults for apps installed before (quieter music, 10 s extra time, 2 min to join, 20 s to answer)
       const c = cfg();
-      if (c.tfVer !== 3 && c.tfVer !== 4) { c.musicVol = 0.3; c.grace = 10; c.lobbyTime = 120; c.qTime = Math.max(20, num(c.qTime, 20)); }
-      if (c.tfVer !== 4) { c.tfVer = 4; c.voice = 'off'; c.giftHype = 0; c.gapTime = 7; if (api.save) api.save(); }   // 2.7: no announcer, no support break
+      const v = num(c.tfVer, 0);   // one-time updates, in order (never undo a newer one)
+      if (v < 3) { c.musicVol = 0.3; c.grace = 10; c.lobbyTime = 120; c.qTime = Math.max(20, num(c.qTime, 20)); }
+      if (v < 4) { c.voice = 'off'; c.giftHype = 0; c.gapTime = 7; if (api.save) api.save(); }   // 2.7: no announcer, no support break
+      if (v < 5) { if (num(c.freeSpace, 40) >= 38) c.freeSpace = 30; c.tfVer = 5; if (api.save) api.save(); }   // 3.8: a bigger game (TikTok comments: 30%)
     },
     applyLayout, music,
     start() {
@@ -715,7 +717,7 @@
     simTarget() {
       if (!st) return null;
       if (phase === 'lobby') return { id: 'L' + st.round, right: rnd(['العب', 'العب 🔥', 'play', 'نلعب']), wrong: 'العب' };
-      if (phase === 'question' && st.q) { const y = rnd(['نعم', 'yes', 'ايه', 'صح', 'oui', '✅']), n = rnd(['لا', 'no', 'non', 'غلط', '❌']); return { id: 'Q' + st.round + '.' + st.qNo, right: st.q.truth ? y : n, wrong: st.q.truth ? n : y }; }
+      if ((phase === 'question' || phase === 'collect') && st.q) { const y = rnd(['نعم', 'yes', 'ايه', 'صح', 'oui', '✅']), n = rnd(['لا', 'no', 'non', 'غلط', '❌']); return { id: 'Q' + st.round + '.' + st.qNo, right: st.q.truth ? y : n, wrong: st.q.truth ? n : y }; }
       return null;
     },
     stats() {
