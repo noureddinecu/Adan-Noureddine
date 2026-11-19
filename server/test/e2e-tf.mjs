@@ -100,7 +100,7 @@ await p.evaluate(() => Quiz.ctl.reveal());
 await p.waitForFunction(() => Quiz.phase === 'winner', null, { timeout: 15000 }); await wait(1200);
 await p.screenshot({ path: shots + '/tf_winner.png' });
 check(await p.evaluate(() => Quiz._debug().st.winner) === 'salma', 'the last one standing wins (salma), big photo shown');
-check(await p.evaluate(() => !!document.querySelector('.tf-win .tf-ph')), 'winner card with the photo');
+check(await p.evaluate(() => !!document.querySelector('.tf-win .tf-dancer .tp-head') && !!document.querySelector('.tf-win .tf-ph')), 'winner card: the champion dances (with his photo)');
 
 // --- podium: champion, runner-up (fell last; among equals the one with more right answers), top of the round
 await p.evaluate(() => Quiz.ctl.next());
