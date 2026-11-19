@@ -17,6 +17,7 @@ const p = await (await b.newContext({ ...devices['Pixel 7'] })).newPage();
 const errs = []; p.on('pageerror', e => errs.push(e.message));
 await p.goto('file:///home/user/Adan-Noureddine/web/tf.html'); await wait(2000);
 await p.tap('#hLive'); await wait(300);
+await p.evaluate(() => document.querySelectorAll('#control .cp-group').forEach(g => g.classList.add('open')));   // settings groups open/close: open them all
 await p.selectOption('#cp_source', 'relay');
 await p.fill('#cp_user', '@my_live'); await p.fill('#cp_relayUrl', `ws://127.0.0.1:${srv.port}`); await p.fill('#cp_token', 'tf');
 await p.fill('#cp_qTime', '30'); await p.selectOption('#cp_finalAt', '5');

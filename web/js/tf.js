@@ -37,7 +37,7 @@
     'si', 'verdad', 'cierto', 'evet', 'dogru', 'ja', 'sim', 'da', 'ih', 'iyeh', 'naam', 'na3am', 'sah', 's7i7', 'sa7', 'aah', 'ah', 'eyh', 'iyeh'];
   const NO = ['لا', 'لالا', 'كلا', 'ابدا', 'غلط', 'غالط', 'خطا', 'خاطي', 'خاطيء', 'ماشي', 'نو', 'لاء',
     'no', 'nope', 'nah', 'nop', 'false', 'wrong', 'non', 'faux', 'falso', 'hayir', 'yanlis', 'nein', 'nao', 'net', 'uhu', 'la', 'ghalat', 'khata'];
-  const JOIN = ['العب', 'لعب', 'نلعب', 'العبو', 'نلعبو', 'بغيت نلعب', 'play', 'jouer', 'joue', 'juego', 'jugar', 'oyna', 'spielen', 'jogar', 'gioca', 'join'];
+  const JOIN = ['العب', 'لعب', 'لعبو', 'يلعب', 'نلعب', 'العبو', 'نلعبو', 'بغيت نلعب', 'play', 'jouer', 'joue', 'juego', 'jugar', 'oyna', 'spielen', 'jogar', 'gioca', 'join'];
   const YES_K = new Set(YES.map(w => dedup(norm(w)))), NO_K = new Set(NO.map(w => dedup(norm(w)))), JOIN_K = new Set(JOIN.map(w => dedup(norm(w))));
   const YES_EMO = /✅|✔|👍|⭕|☑/, NO_EMO = /❌|✖|👎|⛔|🚫/;
   /** 'yes' | 'no' | null (nothing clear, or both) */

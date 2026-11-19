@@ -6,7 +6,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const Sfx = G.Sfx;
-  const VERSION = '3.12.1';
+  const VERSION = '3.13.0';
   const SKEY = 'sahkhata.app.v1';
 
   // Logo: a green ✓ and a red ✗ on two floors, a little player in the middle
@@ -75,6 +75,19 @@
     bind('guideOk', closeModal);
     bind('hSound', toggleSound, false);
     bind('hTestSound', () => { G.testSound && G.testSound(); }, false);
+    // settings: each group opens / closes (the open ones are remembered); the connection group is open the first time
+    const OPEN_KEY = 'sahkhata.panel.open';
+    let open = null; try { open = JSON.parse(localStorage.getItem(OPEN_KEY) || 'null'); } catch (e) { /* */ }
+    document.querySelectorAll('#control .cp-group').forEach((g, i) => {
+      const h = g.querySelector('.cp-gh'); if (!h) return;
+      if (!h.querySelector('.cp-chev')) h.insertAdjacentHTML('beforeend', '<b class="cp-chev">⌄</b>');
+      g.classList.toggle('open', open ? open.includes(i) : i === 0);
+      h.addEventListener('click', () => {
+        Sfx.click(); g.classList.toggle('open');
+        const now = [...document.querySelectorAll('#control .cp-group')].map((x, k) => x.classList.contains('open') ? k : -1).filter(k => k >= 0);
+        try { localStorage.setItem(OPEN_KEY, JSON.stringify(now)); } catch (e) { /* */ }
+      });
+    });
     bind('cfYes', () => { const cb = confirmCb; closeModal(); cb && cb(); });
     bind('cfNo', closeModal);
     window.addEventListener('pointerdown', () => { Sfx.unlock(); if (screen === 'home' && G.Music && !G.Music.playing && G.homeMusic) G.homeMusic(true); });
