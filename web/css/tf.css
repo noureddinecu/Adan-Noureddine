@@ -506,63 +506,6 @@ body.tf-app .modal .cp-note, body.tf-app .modal li { color: #CFC3F5; }
 .tf-joins li i { flex: none; font-style: normal; color: #16A34A; }
 @keyframes tfJoinIn { from { opacity: 0; transform: translateY(-0.8em) scale(.9); } to { opacity: 1; transform: none; } }
 
-/* =====================================================================
- * 3.11 LAVA ISLAND — the floors stand on a rock in the middle of lava; open trapdoors show fire;
- * the champion dances. CSS only (light).
- * ===================================================================== */
-.tf-room { background:
-    radial-gradient(38% 26% at 18% 22%, rgba(255, 214, 90, .55), transparent 70%),
-    radial-gradient(34% 24% at 84% 30%, rgba(255, 150, 30, .55), transparent 70%),
-    radial-gradient(45% 30% at 30% 88%, rgba(255, 190, 60, .5), transparent 70%),
-    radial-gradient(40% 28% at 85% 85%, rgba(255, 110, 20, .55), transparent 70%),
-    linear-gradient(180deg, #2A0703 0%, #6B1306 30%, #B52B07 65%, #E2560C 100%) !important;
-  box-shadow: inset 0 0 0 0.12em rgba(255, 170, 60, .6), inset 0 0 2.2em rgba(0,0,0,.6), 0 0.8em 2em rgba(0,0,0,.5) !important; }
-/* the dark crust floating on the lava, slowly moving */
-.tf-room::before { content: ''; position: absolute; inset: -20%; pointer-events: none; opacity: .55;
-  background:
-    radial-gradient(7% 5% at 12% 18%, #1C0603 60%, transparent 63%), radial-gradient(9% 6% at 72% 12%, #1C0603 60%, transparent 63%),
-    radial-gradient(6% 4% at 40% 46%, #240804 60%, transparent 63%), radial-gradient(10% 6% at 88% 56%, #1C0603 60%, transparent 63%),
-    radial-gradient(8% 5% at 24% 74%, #240804 60%, transparent 63%), radial-gradient(7% 5% at 62% 86%, #1C0603 60%, transparent 63%);
-  animation: tfCrust 26s linear infinite alternate; }
-@keyframes tfCrust { from { transform: translate(0, 0); } to { transform: translate(6%, -5%); } }
-/* the glow breathes */
-.tf-room::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(70% 55% at 50% 60%, rgba(255, 170, 40, .35), transparent 70%);
-  animation: tfGlow 3.2s ease-in-out infinite alternate; }
-@keyframes tfGlow { from { opacity: .45; } to { opacity: 1; } }
-.tf-light { display: none; }
-/* embers rising */
-.tf-bokeh { opacity: .9 !important; background-image:
-    radial-gradient(circle at 12% 90%, #FFD27A 0 0.14em, transparent 0.2em), radial-gradient(circle at 28% 70%, #FFB347 0 0.1em, transparent 0.16em),
-    radial-gradient(circle at 46% 95%, #FFE29A 0 0.12em, transparent 0.18em), radial-gradient(circle at 63% 78%, #FF9F40 0 0.1em, transparent 0.16em),
-    radial-gradient(circle at 80% 92%, #FFD27A 0 0.14em, transparent 0.2em), radial-gradient(circle at 92% 66%, #FFB347 0 0.1em, transparent 0.16em) !important;
-  animation: tfEmbers 6s linear infinite !important; }
-@keyframes tfEmbers { from { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } to { transform: translateY(-75%); opacity: 0; } }
-/* the rock under the floors (a dark rim around them; the trapdoors stay open to the fire) */
-.tf-floor::before { content: ''; position: absolute; inset: -0.2em; border-radius: 0.9em; pointer-events: none;
-  box-shadow: 0 0 0 0.75em #2B1A14, 0 0 0 0.95em #4A2C1E, 0 0 0 1.1em rgba(255, 140, 30, .85), 0 0 1.6em 1.1em rgba(255, 110, 20, .55); }
-/* fire in the pits */
-.tf-pit .bot { background: radial-gradient(circle at 50% 50%, #FFF2A8 0%, #FFB020 22%, #FF5A10 50%, #A3140A 78%, #3A0603 100%) !important;
-  animation: tfFire .5s ease-in-out infinite alternate; }
-@keyframes tfFire { from { filter: brightness(.9) saturate(1.1); } to { filter: brightness(1.35) saturate(1.4); } }
-.tf-pit .w { background: linear-gradient(180deg, #3A0D06, #FF6A10) !important; }
-.tf-pit .w.b { background: linear-gradient(0deg, #4A1208, #FF7A1A) !important; }
-.tf-tile.open .tf-pit { box-shadow: 0 0 2em 0.4em rgba(255, 120, 20, .85); }
-.tp.fall { filter: brightness(1.4) sepia(.6) saturate(2.2) hue-rotate(-15deg) drop-shadow(0 0 0.6em #FF7A00); }
-/* the champion dances */
-.tf-dancer { font-size: 2.6em; display: inline-block; margin: 0.1em auto 0; animation: tfDance .9s ease-in-out infinite; transform-origin: 50% 100%; }
-.tf-dancer .tp-in { animation: none; }
-.tf-dancer .tp-tag { display: none; }
-.tf-dancer .tp-head { width: 1.8em; height: 1.8em; margin-bottom: -0.38em; box-shadow: 0 0 0 0.1em #FFD45A, 0 0 0.8em rgba(255, 210, 90, .9); }
-.tf-dancer .tp-body { width: 1.9em; height: 2.2em; display: block; animation: none; }
-.tf-dancer .lg { transform-box: fill-box; transform-origin: 50% 0%; animation: tpLeg .45s ease-in-out infinite; }
-.tf-dancer .lg.l2 { animation-direction: reverse; }
-.tf-dancer .arm { transform-box: fill-box; transform-origin: 50% 12%; animation: tfArm .45s ease-in-out infinite alternate; }
-.tf-dancer .arm.a2 { animation-delay: -.45s; }
-@keyframes tfDance { 0%, 100% { transform: translateY(0) rotate(-7deg); } 25% { transform: translateY(-0.28em) rotate(0deg) scale(1.03); } 50% { transform: translateY(0) rotate(7deg); } 75% { transform: translateY(-0.28em) rotate(0deg) scale(1.03); } }
-@keyframes tfArm { from { transform: rotate(20deg); } to { transform: rotate(160deg); } }
-.tf-wphoto.mini { display: none; }
-.p1 .pd-who .tf-ph { animation: tfBounce .8s ease-in-out infinite; }
-@keyframes tfBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.18em); } }
 /* a longer registration list (14 names) */
 .tf-joins { top: 11%; bottom: 4%; }
 .tf-joins ol { gap: 0.13em; }
