@@ -1,0 +1,89 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Release signing: values come from android/keystore.properties (see README)
+def ksProps = new Properties()
+def ksFile = rootProject.file('keystore.properties')
+if (ksFile.exists()) { ksFile.withInputStream { ksProps.load(it) } }
+
+android {
+    namespace 'com.adan.goldrail'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.adan.goldrail'
+        minSdk 24
+        targetSdk 35
+        versionCode 16
+        versionName '3.13.1'
+    }
+
+    buildFeatures { buildConfig true }
+
+    // Two separate apps from the same code: the quiz «تحدي الثقافة» and the yes/no game «صح أم خطأ».
+    // Different applicationId = installed side by side, each with its own settings.
+    flavorDimensions 'app'
+    productFlavors {
+        quiz {
+            dimension 'app'
+            applicationId 'com.adan.goldrail'
+            versionCode 16
+            versionName '3.13.1'
+            buildConfigField 'String', 'START_PAGE', '"index.html"'
+            buildConfigField 'String', 'BG_COLOR', '"#071A36"'
+            buildConfigField 'boolean', 'USE_TTS', 'false'
+        }
+        tf {
+            dimension 'app'
+            applicationId 'com.adan.sahkhata'
+            versionCode 43
+            versionName '3.13.1'
+            buildConfigField 'String', 'START_PAGE', '"tf.html"'
+            buildConfigField 'String', 'BG_COLOR', '"#1B1033"'
+            buildConfigField 'boolean', 'USE_TTS', 'false'
+        }
+    }
+
+    signingConfigs {
+        release {
+            if (ksFile.exists()) {
+                storeFile rootProject.file(ksProps['storeFile'])
+                storePassword ksProps['storePassword']
+                keyAlias ksProps['keyAlias']
+                keyPassword ksProps['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            if (ksFile.exists()) signingConfig signingConfigs.release
+        }
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
+    }
+
+    // The game itself (HTML/CSS/JS/fonts) lives in ../../web and is bundled as assets.
+    sourceSets {
+        main { assets.srcDirs = ['../../web'] }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+// Name the outputs ثقافة-v<version>.apk / صح-أم-خطأ-v<version>.apk (+ -debug)
+android.applicationVariants.configureEach { variant ->
+    variant.outputs.configureEach {
+        def suffix = variant.buildType.name == 'release' ? '' : '-' + variant.buildType.name
+        def base = variant.flavorName == 'tf' ? 'صح-أم-خطأ' : 'ثقافة'
+        outputFileName = "${base}-v${variant.versionName.replace('-debug', '')}${suffix}.apk"
+    }
+}

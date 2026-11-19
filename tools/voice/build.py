@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+"""Records the 4 announcers of «صح أم خطأ» with Gemini TTS → web/voice/<announcer>/<key>.ogg + web/voice/manifest.js
+The API key is read from the GEMINI_KEY environment variable (never stored in the repo).
+usage: GEMINI_KEY=… python3 tools/voice/build.py [announcer ids…] [--only=line|q] [--limit=N] [--workers=4]
+Already recorded files are skipped, so it can be stopped and resumed at any time."""
+import base64, json, os, subprocess, sys, time, urllib.request, urllib.error
+from concurrent.futures import ThreadPoolExecutor
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+VOICE = os.path.join(ROOT, 'web', 'voice')
+ANN = {'mohamed': 'Sadachbia'}       # one announcer only (محمد)
+# each announcer has his own model: on the paid Tier 1 every TTS model allows ~100 requests a day,
+# so the 4 announcers can be recorded in parallel
+MODELS = {'mohamed': 'gemini-3.8-flash-tts'}   # one model only (~100 recordings a day on Tier 1)
+STOPPED = set()          # (key, model) pairs that reached their daily limit during this run
+# rotation: several keys (GEMINI_KEYS=k1,k2,…) × several models (TTS_MODELS=m1,m2,…), same voice; when a pair
+# reaches its daily limit the next pair is used
+import threading
+LOCK = threading.Lock()
+def pairs():
+    keys = [k for k in os.environ.get('GEMINI_KEYS', os.environ.get('GEMINI_KEY', '')).split(',') if k]
+    models = [m for m in os.environ.get('TTS_MODELS', '').split(',') if m]
+    return keys, models
+def current_pair(a):
+    keys, models = pairs()
+    if not models: models = [os.environ.get('TTS_MODEL_' + a.upper(), MODELS[a])]
+    for m in models:
+        for k in keys:
+            if (k, m) not in STOPPED: return k, m
+    return None, None
+# the same layout as the samples that worked: instructions, an explicit «do not read», a blank line, then the line
+STYLE_LINE = ("Read this as a real, funny Moroccan TV game-show host from Casablanca, in pure Moroccan Darija with a strong "
+              "natural Moroccan accent. Very energetic, warm and playful, like a human talking live to his audience, never robotic. "
+              "Where you see [laughs], laugh out loud for real. Do not read these instructions, only the Darija line below.\n\n")
+STYLE_Q = ("Read this as a real Moroccan TV game-show host from Casablanca with a natural Moroccan accent: say the quiz "
+           "statement clearly with a little suspense, then ask the question at the end with energy, like a human, never robotic. "
+           "Do not read these instructions, only the Arabic line below.\n\n")
+
+def tts(voice, text, model, key=None):
+    body = {"contents": [{"parts": [{"text": text}]}],
+            "generationConfig": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}}}}
+    req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+                                 data=json.dumps(body).encode(), method="POST",
+                                 headers={"Content-Type": "application/json", "x-goog-api-key": key or os.environ["GEMINI_KEY"]})
+    for attempt in range(6):
+        try:
+            with urllib.request.urlopen(req, timeout=180) as r:
+                d = json.load(r)
+            part = d["candidates"][0]["content"]["parts"][0]["inlineData"]
+            mt = part.get("mimeType", "")
+            if 'wav' in mt: return base64.b64decode(part["data"]), 'wav'        # complete WAV file
+            rate = int(mt.split("rate=")[-1].split(";")[0]) if "rate=" in mt else 24000
+            return base64.b64decode(part["data"]), rate                         # raw 16-bit PCM
+        except urllib.error.HTTPError as e:
+            msg = e.read().decode()[:300]
+            if 'per day' in msg.lower() or 'per_day' in msg.lower() or 'free_tier_requests' in msg:
+                with LOCK: STOPPED.add((key, model))
+                raise RuntimeError('DAILY LIMIT ' + model)
+            if e.code in (429, 500, 503) and attempt < 5: time.sleep(10 * (attempt + 1)); continue
+            raise RuntimeError(f"HTTP {e.code}: {msg}")
+        except (KeyError, IndexError):
+            if attempt < 5: time.sleep(3); continue
+            raise RuntimeError('no audio in the answer')
+
+def too_long(pcm, rate, text):
+    import re
+    n = len(re.sub(r'[\u064B-\u0652\s\[\]a-z]', '', text))
+    secs = (len(pcm) - (44 if rate == 'wav' else 0)) / (2 * (24000 if rate == 'wav' else rate))
+    laughs = text.count('[laughs]')
+    return secs > 6 + n * 0.2 + laughs * 3        # generous: long rules and real laughter take time; reading the instructions takes far more
+
+def encode(pcm, rate, out):
+    inp = ['-i', '-'] if rate == 'wav' else ['-f', 's16le', '-ar', str(rate), '-ac', '1', '-i', '-']
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', *inp,
+                    '-af', 'silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.05,areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.15,areverse,loudnorm=I=-16:TP=-1.5',
+                    '-ar', '24000', '-c:a', 'libopus', '-b:a', '28k', out], input=pcm, check=True)
+
+def manifest():
+    data = {}
+    for a in ANN:
+        d = os.path.join(VOICE, a)
+        if os.path.isdir(d): data[a] = sorted(f[:-4] for f in os.listdir(d) if f.endswith('.ogg'))
+    with open(os.path.join(VOICE, 'manifest.js'), 'w', encoding='utf-8') as f:
+        f.write('/* generated by tools/voice/build.py — recorded announcers: { id: [keys…] } */\nwindow.TF_VOICE_PACK = ' + json.dumps(data) + ';\n')
+    return {a: len(k) for a, k in data.items()}
+
+def main():
+    args = [a for a in sys.argv[1:] if not a.startswith('--')]
+    opt = dict(a[2:].split('=', 1) for a in sys.argv[1:] if a.startswith('--') and '=' in a)
+    anns = args or list(ANN)
+    items = json.loads(subprocess.run(['node', os.path.join(ROOT, 'tools', 'voice', 'items.js')], capture_output=True, text=True, check=True).stdout)
+    if opt.get('only'): items = [i for i in items if i['kind'] == opt['only']]
+    # sentences whose text changed but whose OLD recording was put back for now: record them again (overwrite)
+    rr_path = os.path.join(ROOT, 'tools', 'voice', 'rerecord.json')
+    rerecord = set(json.load(open(rr_path))) if os.path.exists(rr_path) else set()
+    jobs = []
+    for a in anns:
+        os.makedirs(os.path.join(VOICE, a), exist_ok=True)
+        for it in items:
+            out = os.path.join(VOICE, a, it['key'] + '.ogg')
+            if not os.path.exists(out) or it['key'] in rerecord: jobs.append((a, it, out))
+    if opt.get('limit'): jobs = jobs[:int(opt['limit'])]
+    print(f'{len(jobs)} recordings to make', flush=True)
+    done = [0]; errors = []
+    def work(j):
+        a, it, out = j
+        try:
+            for tries in range(4):
+                key, model = current_pair(a)
+                if not key: return                                   # every key × model reached its daily limit
+                try:
+                    pcm, rate = tts(ANN[a], (STYLE_LINE if it['kind'] == 'line' else STYLE_Q) + it['text'], model, key)
+                except RuntimeError as e:
+                    if 'DAILY LIMIT' in str(e): continue              # switch to the next key / model
+                    raise
+                if not too_long(pcm, rate, it['text']): break
+            else:
+                raise RuntimeError('recording too long (instructions read?)')
+            encode(pcm, rate, out)
+            with LOCK:
+                if it['key'] in rerecord:
+                    rerecord.discard(it['key']); json.dump(sorted(rerecord), open(rr_path, 'w'))
+        except Exception as e:
+            errors.append((a, it['key'], str(e)[:120]))
+        done[0] += 1
+        if done[0] % 25 == 0: print(f'  {done[0]}/{len(jobs)}  errors={len(errors)}', flush=True)
+    try:
+        with ThreadPoolExecutor(int(opt.get('workers', 4))) as ex: list(ex.map(work, jobs))
+    finally:
+        print('recorded per announcer:', manifest(), flush=True)
+        for e in errors[:6]: print('ERR', e)
+        if STOPPED: print('daily limit reached for:', sorted(m + ' / key …' + k[-4:] for k, m in STOPPED))
+
+if __name__ == '__main__':
+    main()

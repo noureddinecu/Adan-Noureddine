@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#071A36">
+  <title>تحدي الثقافة</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- ============ SPLASH ============ -->
+  <section id="splash" class="screen active">
+    <div class="splash-inner">
+      <div class="qz-applogo big" id="splashLogo"></div>
+      <h1 class="title">تحدي <span class="hl">الثقافة</span></h1>
+      <p class="subtitle">مسابقة ثقافة عامة مباشرة فـ TikTok LIVE</p>
+      <div class="loader"><i></i></div>
+    </div>
+  </section>
+
+  <!-- ============ HOME (تحدي الثقافة) ============ -->
+  <section id="home" class="screen">
+    <div class="home-top">
+      <span class="home-ver" id="homeVer"></span>
+      <button class="icon-btn" id="hSound" aria-label="sound"></button>
+    </div>
+    <div class="home-body">
+      <div class="qz-applogo" id="homeLogo"></div>
+      <h1 class="title">تحدي <span class="hl">الثقافة</span></h1>
+      <p class="subtitle">مسابقة ثقافة عامة مباشرة على TikTok LIVE<br><small>13 مجالاً · أكثر من 1100 سؤال · الإجابة في التعليقات</small></p>
+      <div class="home-cats" id="homeCats"></div>
+      <button class="btn primary huge" id="hLive"><span class="live-dot"></span><span>ابدأ بث TikTok LIVE</span><small>لوحة التحكم والإعدادات</small></button>
+      <button class="btn home-btn" id="hDemo">🧪 جرّب المسابقة الآن (مشاهدون وهميون)</button>
+      <button class="btn home-btn" id="hTestSound">🔊 جرّب الصوت والموسيقى</button>
+      <button class="btn home-btn" id="hGuide">📖 كيف أبدأ البث من الهاتف؟</button>
+    </div>
+  </section>
+
+  <!-- ============ MAIN MENU (train game) ============ -->
+  <section id="menu" class="screen">
+    <div class="topbar">
+      <div class="chip"><span class="ico" data-i="star"></span><b id="mStars">0</b><small>/300</small></div>
+      <div class="chip"><span class="ico" data-i="coin"></span><b id="mPoints">0</b></div>
+      <button class="icon-btn" id="mSound" aria-label="sound"></button>
+    </div>
+    <div class="menu-body">
+      <div class="logo-cart" id="menuLogo"></div>
+      <h1 class="title">عربة <span class="hl">الذهب</span></h1>
+      <p class="subtitle">لعبة تتبّع وتركيز على السكك الحديدية</p>
+      <button class="btn live-btn" id="mLive"><span class="live-dot"></span>لوحة التحكم · TikTok LIVE</button>
+      <button class="btn primary huge" id="mPlay"><span class="ico" data-i="play"></span><span>العب</span><small id="mPlayLvl">المرحلة 1</small></button>
+      <div class="menu-grid">
+        <button class="btn" id="mLevels"><span class="ico" data-i="grid"></span>المراحل</button>
+        <button class="btn" id="mAch"><span class="ico" data-i="trophy"></span>الإنجازات</button>
+        <button class="btn" id="mSettings"><span class="ico" data-i="gear"></span>الإعدادات</button>
+        <button class="btn" id="mHelp"><span class="ico" data-i="help"></span>طريقة اللعب</button>
+      </div>
+      <div class="menu-progress card">
+        <div class="mp-row"><span id="mTier">الفصل 1 · أول الطريق</span><span id="mPct">0%</span></div>
+        <div class="bar"><i id="mBar"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEVEL SELECT ============ -->
+  <section id="levels" class="screen">
+    <div class="header">
+      <button class="icon-btn" data-back aria-label="back"><span class="ico" data-i="back"></span></button>
+      <h2>اختر المرحلة</h2>
+      <div class="chip"><span class="ico" data-i="star"></span><b id="lStars">0</b></div>
+    </div>
+    <div class="scroll" id="levelList"></div>
+  </section>
+
+  <!-- ============ ACHIEVEMENTS ============ -->
+  <section id="achievements" class="screen">
+    <div class="header">
+      <button class="icon-btn" data-back aria-label="back"><span class="ico" data-i="back"></span></button>
+      <h2>الإنجازات</h2>
+      <div class="chip"><span class="ico" data-i="trophy"></span><b id="aCount">0</b></div>
+    </div>
+    <div class="scroll" id="achList"></div>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section id="settings" class="screen">
+    <div class="header">
+      <button class="icon-btn" data-back aria-label="back"><span class="ico" data-i="back"></span></button>
+      <h2>الإعدادات</h2>
+      <span class="spacer"></span>
+    </div>
+    <div class="scroll">
+      <div class="card setting"><div><b>المؤثرات الصوتية</b><small>أصوات القطار والمفاتيح والفوز</small></div><label class="switch"><input type="checkbox" id="sSound"><i></i></label></div>
+      <div class="card setting"><div><b>الاهتزاز</b><small>اهتزاز خفيف عند الاختيار</small></div><label class="switch"><input type="checkbox" id="sVibrate"><i></i></label></div>
+      <div class="card setting"><div><b>الوضع المريح</b><small>العربات أبطأ بقليل لمن يريد التدرّب</small></div><label class="switch"><input type="checkbox" id="sRelaxed"><i></i></label></div>
+      <button class="card setting as-btn" id="sHelp"><div><b>طريقة اللعب</b><small>شرح القواعد والإشارات والأنفاق</small></div><span class="ico" data-i="help"></span></button>
+      <button class="card setting as-btn danger" id="sReset"><div><b>إعادة ضبط التقدم</b><small>حذف كل النجوم والنقاط والمراحل المفتوحة</small></div><span class="ico" data-i="trash"></span></button>
+      <p class="about">عربة الذهب · الإصدار <span id="ver">1.0.0</span><br>تعمل بدون إنترنت · يُحفظ تقدمك تلقائياً</p>
+    </div>
+  </section>
+
+  <!-- ============ IN-GAME HUD ============ -->
+  <section id="hud" class="screen overlay-pass">
+    <div class="hud-top">
+      <button class="icon-btn" id="hPause" aria-label="pause"><span class="ico" data-i="pause"></span></button>
+      <div class="hud-level"><b id="hLevel">المرحلة 1</b><small id="hTier">سهل</small></div>
+      <button class="icon-btn hint" id="hHint" aria-label="hint"><span class="ico" data-i="eye"></span><em id="hHints">3</em></button>
+    </div>
+    <div class="track-card card" id="hCard">
+      <span class="ico gold" data-i="gold"></span>
+      <div class="tc-body"><b id="hText">تابع الذهب</b><div class="bar slim"><i id="hBar"></i></div></div>
+    </div>
+    <div class="intro-card card" id="hIntro">
+      <h3 id="iTitle"><span class="hl">الذهب</span> في وحدة من العربات</h3>
+      <p id="iSub">تابعه لين النهاية</p>
+      <div class="tags" id="iTags"></div>
+      <p class="tip" id="iTip"></p>
+    </div>
+  </section>
+
+  <!-- ============ LIVE BROADCAST (what viewers see) ============ -->
+  <section id="liveHud" class="screen overlay-pass">
+    <div id="lvHot" aria-hidden="true"></div>
+    <div class="lv-top card" id="lvTop">
+      <span class="ico gold" data-i="gold"></span>
+      <div class="lv-qbody"><b id="lvQ">الجولة غادي تبدا دابا…</b><small id="lvQs"></small>
+        <div class="bar slim" id="lvBarWrap"><i id="lvBar"></i></div></div>
+    </div>
+    <div class="lv-round" id="lvRound"></div>
+    <div class="lv-feed" id="lvFeed"></div>
+    <div class="lv-bottom" id="lvBottom">
+      <div class="lv-prompt" id="lvPrompt">كتب رقم العربة فالكومنتير 👇</div>
+      <div class="lv-chips" id="lvChips"></div>
+      <div class="lv-count" id="lvCount"></div>
+    </div>
+    <div class="lv-paused" id="lvPaused"></div>
+    <div class="lv-board" id="lvBoard"></div>
+  </section>
+
+  <!-- ============ QUIZ BROADCAST (تحدي الثقافة) ============ -->
+  <section id="quizHud" class="screen">
+    <div id="qzHot" aria-hidden="true"></div>
+    <div class="qz-head">
+      <div class="qz-counter" id="qzCounter"><b>0</b><small>/30</small></div>
+      <div class="qz-title" id="qzTitle"><b>تحدي الثقافة</b><small>Culture Challenge</small></div>
+      <div class="qz-pts" id="qzPts">+20</div>
+    </div>
+    <div class="qz-prompt" id="qzPrompt"></div>
+
+    <div class="qz-pane" id="qzReady">
+      <div class="qz-logo">🧠</div>
+      <h2 id="qzReadyText"></h2>
+      <div class="qz-wall" id="qzWallReady"></div>
+    </div>
+
+    <div class="qz-pane" id="qzTopic">
+      <div class="qz-topics" id="qzTopics"></div>
+      <div class="qz-wall" id="qzWall"></div>
+    </div>
+
+    <div class="qz-pane" id="qzQuestion">
+      <div class="qz-timer" id="qzTimerWrap"><span class="qz-cat" id="qzCat"></span><div class="qz-track"><i id="qzBar"></i></div><b id="qzSec">30</b></div>
+      <div class="qz-visual" id="qzVisual"></div>
+      <div class="qz-answer" id="qzAnswer"></div>
+      <div class="qz-hint" id="qzHint"></div>
+      <!-- correct answers: a free round cluster of BIG photos (no frame) under the question -->
+      <div class="qz-arena" id="qzArena"><div class="qz-correct" id="qzCorrect"></div></div>
+      <div class="qz-fast" id="qzFast"></div>
+    </div>
+
+    <div class="qz-pane" id="qzBoard">
+      <div class="qz-board-ans" id="qzBoardAns"></div>
+      <div class="qz-fast-row" id="qzBoardTop"></div>
+      <ol class="qz-list" id="qzList"></ol>
+      <div class="qz-soon" id="qzSoon"></div>
+    </div>
+
+    <!-- support segment: invites viewers to support a "brain" quiz with roses -->
+    <div class="qz-pane" id="qzSupport">
+      <div class="sp-rose">🌹</div>
+      <h2 id="spTitle"></h2>
+      <p id="spText"></p>
+      <div class="sp-wall" id="spWall"></div>
+      <p class="sp-thanks" id="spThanks"></p>
+    </div>
+
+    <div class="qz-pane" id="qzFinal">
+      <div id="qzFinalBody"></div>
+    </div>
+
+    <div class="qz-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="qz-paused" id="qzPaused"></div>
+    <div class="qz-toasts" id="qzToasts"></div>
+    <!-- share reminder (shown during the topic roulette every N questions), points at TikTok's share button -->
+    <div class="qz-share" id="qzShare"><i class="sh-ico">🔁</i><div><b id="shTitle"></b><small id="shSub"></small></div><i class="sh-arrow">↘</i></div>
+    <!-- break screen (volume − / pause): calm, outside the game frame -->
+    <div class="qz-break" id="qzBreak">
+      <div class="br-stars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="br-orb"><span>☕</span></div>
+      <h2 id="brTitle">استراحة قصيرة</h2>
+      <p id="brSub">نعود بعد قليل… ابقوا معنا 💙</p>
+      <div class="br-top" id="brTop"></div>
+      <p class="br-tip" id="brTip"></p>
+    </div>
+    <!-- optional overlay showing where TikTok draws its own UI (host preview only) -->
+    <div class="qz-guides" id="qzGuides"><div class="g-top">واجهة TikTok (الاسم، المشاهدون، ✕)</div><div class="g-bottom">تعليقات TikTok 💬 + خانة الكتابة + 🎁</div></div>
+  </section>
+
+  <!-- ============ CONTROL PANEL (host only, Darija) ============ -->
+  <section id="control" class="screen">
+    <div class="header">
+      <button class="icon-btn" id="cpClose" aria-label="close"><span class="ico" data-i="back"></span></button>
+      <h2>لوحة التحكم</h2>
+      <span class="cp-pill" id="cpStatus">غير متصل</span>
+    </div>
+    <div class="scroll">
+      <p class="cp-msg" id="cpStatusMsg"></p>
+
+      <div id="cpSetup">
+        <button class="btn primary big" id="cpStart"><span class="live-dot"></span>ابدأ جلسة TikTok LIVE</button>
+        <button class="btn" id="cpResume" style="display:none"></button>
+        <div class="cp-row2">
+          <button class="btn" id="cpGuide"><span class="ico" data-i="help"></span>كيف أبدأ البث؟</button>
+          <button class="btn" id="cpTikTok">♪ افتح TikTok</button>
+        </div>
+      </div>
+
+      <div id="cpLive" style="display:none">
+        <button class="btn primary big" id="cpBack">📺 العودة إلى شاشة البث</button>
+        <div class="cp-row2">
+          <button class="btn" id="cpTikTok2">♪ افتح TikTok</button>
+          <button class="btn" id="cpGuide2"><span class="ico" data-i="help"></span>كيف أبدأ البث؟</button>
+        </div>
+        <h3 class="cp-h">الجولة</h3>
+        <div class="cp-grid">
+          <button class="btn" id="cpNew">▶️ سؤال جديد</button>
+          <button class="btn" id="cpPause">⏸️ إيقاف / متابعة</button>
+          <button class="btn" id="cpReveal">👁️ إظهار الإجابة</button>
+          <button class="btn" id="cpWin">🏆 عرض الترتيب</button>
+          <button class="btn" id="cpHide">🙈 إخفاء الترتيب</button>
+          <button class="btn" id="cpNext">⏭️ التالي</button>
+          <button class="btn" id="cpReplay">🔁 تحدٍّ جديد من 1</button>
+          <button class="btn" id="cpBoard">📊 الترتيب العام</button>
+          <button class="btn" id="cpSupport">🌹 فقرة الدعم</button>
+          <button class="btn" id="cpSound">🔊 تشغيل / إيقاف الصوت</button>
+          <button class="btn danger" id="cpEnd">⏹️ إنهاء الجلسة</button>
+        </div>
+        <p class="cp-note">💡 أثناء البث: <b>زر الصوت +</b> = التالي / إظهار الإجابة · <b>زر الصوت −</b> = استراحة ☕ / عودة. لا يرى المشاهدون شيئاً. الضغط المطوّل في الزاوية العلوية أو زر الرجوع يفتح هذه اللوحة (ويراها المشاهدون).</p>
+      </div>
+
+      <h3 class="cp-h">الإحصائيات</h3>
+      <div class="cp-stats" id="cpStats"></div>
+      <ol class="cp-top" id="cpTop"></ol>
+      <h3 class="cp-h">آخر التعليقات الواصلة</h3>
+      <ul class="cp-recent card" id="cpRecent"></ul>
+      <p class="cp-note">إذا كتب أحدهم تعليقاً ولم يظهر هنا، فالتعليق لم يصل إلى اللعبة. وإذا ظهر بعبارة «قبل السؤال» فمعناه أنه كتب قبل ظهور السؤال.</p>
+
+      <h3 class="cp-h">إجابة يدوية</h3>
+      <div class="cp-manual card">
+        <input id="cpManName" placeholder="اسم المشارك" maxlength="40">
+        <input id="cpManNum" placeholder="رقم" inputmode="numeric" maxlength="2">
+        <button class="btn" id="cpManualAdd">أضف</button>
+      </div>
+      <p class="cp-note">إذا لم يعمل الربط التلقائي، اكتب الأسماء والإجابات التي تراها في التعليقات أثناء السؤال.</p>
+
+      <h3 class="cp-h">الإعدادات</h3>
+      <div class="card cp-form">
+        <select id="cp_game" hidden><option value="quiz">🧠 تحدي الثقافة</option></select>
+        <label>مصدر التعليقات
+          <select id="cp_source">
+            <option value="relay">TikTok عبر خادمي (مستحسن)</option>
+            <option value="euler">TikTok مباشرة عبر Euler Stream (تجريبي)</option>
+            <option value="sim">وضع التجربة (مشاهدون وهميون)</option>
+            <option value="manual">يدوي (أُدخل الإجابات بنفسي)</option>
+          </select></label>
+        <label data-src="relay euler">حسابك على TikTok<input id="cp_user" placeholder="@username" autocapitalize="off" autocomplete="off"></label>
+        <label data-src="relay">رابط الخادم<input id="cp_relayUrl" placeholder="goldrail-live-relay.onrender.com" autocapitalize="off" inputmode="url"></label>
+        <label data-src="relay">الرمز السري (ACCESS_TOKEN)<input id="cp_token" type="password" autocomplete="off"></label>
+        <label data-src="euler">Euler Stream API key<input id="cp_eulerKey" type="password" autocomplete="off"></label>
+        <label data-src="sim">عدد المشاهدين الوهميين<input id="cp_simViewers" type="number" min="3" max="300"></label>
+        <label>وقت الإجابة (بالثواني)<input id="cp_qTime" type="number" min="8" max="60"></label>
+        <label data-game="quiz">وقت إضافي خفي لتأخّر البث
+          <select id="cp_grace"><option value="0">بدون</option><option value="5">5 ثوانٍ</option><option value="8">8 ثوانٍ · مستحسن</option><option value="12">12 ثانية</option></select></label>
+        <label data-game="quiz">تذكير المشاركة 🔁
+          <select id="cp_shareEvery"><option value="0">بدون</option><option value="1">كل سؤال</option><option value="2">كل 2 أسئلة</option><option value="3">كل 3 أسئلة</option></select></label>
+        <label data-game="quiz">فقرة الدعم 🌹
+          <select id="cp_supportEvery"><option value="0">بدون</option><option value="5">كل 5 أسئلة</option><option value="7">كل 7 أسئلة</option><option value="10">كل 10 أسئلة</option></select></label>
+        <label data-game="quiz">عدد الأسئلة في كل تحدٍّ<input id="cp_qCount" type="number" min="5" max="100"></label>
+        <label data-game="quiz">مساحة واجهة TikTok في الأعلى
+          <select id="cp_topSpace">
+            <option value="0">بدون</option>
+            <option value="10">صغيرة (10%)</option>
+            <option value="13">متوسطة (13%) · مستحسن</option>
+            <option value="17">كبيرة (17%)</option>
+          </select></label>
+        <label data-game="quiz">مساحة تعليقات TikTok في الأسفل
+          <select id="cp_freeSpace">
+            <option value="0">بدون (اللعبة تملأ الشاشة)</option>
+            <option value="30">صغيرة (30%)</option>
+            <option value="38">متوسطة (38%)</option>
+            <option value="40">40% · مستحسن</option>
+            <option value="45">كبيرة (45%)</option>
+          </select></label>
+        <div class="cp-sw" data-game="quiz"><span>إظهار حدود TikTok فوق اللعبة (للتجربة، أوقفها قبل البث)</span><label class="switch"><input type="checkbox" id="cp_showGuides"><i></i></label></div>
+        <div class="cp-sw" data-game="quiz"><span>🎵 موسيقى حماسية</span><label class="switch"><input type="checkbox" id="cp_music"><i></i></label></div>
+        <label data-game="quiz">الموسيقى
+          <select id="cp_musicSong">
+            <option value="arena">⭐ Arena (الرئيسية)</option>
+            <option value="oriental">🪘 شرقية (دربوكة)</option>
+            <option value="synth">🎹 Synth</option>
+            <option value="funk">🕺 Funk</option>
+            <option value="auto">🔄 تبديل تلقائي</option>
+          </select></label>
+        <button class="btn" id="cpTestSound" type="button">🔊 جرّب الصوت</button>
+        <label data-game="quiz">تبديل الموسيقى (عند اختيار «تبديل تلقائي»)
+          <select id="cp_musicRotate"><option value="15">كل 15 دقيقة</option><option value="20">كل 20 دقيقة</option><option value="30">كل 30 دقيقة</option></select></label>
+        <label data-game="quiz">صوت الموسيقى
+          <select id="cp_musicVol"><option value="0.3">منخفض</option><option value="0.5">متوسط · مستحسن</option><option value="0.7">مرتفع</option><option value="0.9">مرتفع جداً</option></select></label>
+        <label data-game="quiz">عدد الصور تحت السؤال (أقل = أكبر)
+          <select id="cp_photoMax"><option value="6">6 صور · كبيرة جداً</option><option value="8">8 صور</option><option value="10">10 صور · مستحسن</option><option value="12">12 صورة</option><option value="16">16 صورة</option><option value="20">20 صورة · صغيرة</option></select></label>
+        <label data-game="quiz">مدة عجلة المجالات
+          <select id="cp_topicTime"><option value="4">4 ثوانٍ</option><option value="6">6 ثوانٍ · مستحسن</option><option value="8">8 ثوانٍ</option><option value="10">10 ثوانٍ</option></select></label>
+        <label data-game="quiz">مدة عرض الجواب الصحيح
+          <select id="cp_revealTime"><option value="5">5 ثوانٍ</option><option value="7">7 ثوانٍ · مستحسن</option><option value="10">10 ثوانٍ</option></select></label>
+        <label data-game="quiz">مدة فقرة الدعم 🌹
+          <select id="cp_supportTime"><option value="8">8 ثوانٍ</option><option value="13">13 ثانية · مستحسن</option><option value="20">20 ثانية</option></select></label>
+        <div class="cp-sw" data-game="quiz"><span>🎁 الشكر على الهدية (صورة كبيرة على اليمين)</span><label class="switch"><input type="checkbox" id="cp_giftThanks"><i></i></label></div>
+        <label data-game="quiz">يظهر الشكر بعد الهدية بـ
+          <select id="cp_giftDelay"><option value="0">مباشرة</option><option value="3">3 ثوانٍ</option><option value="7">7 ثوانٍ · مستحسن</option><option value="10">10 ثوانٍ</option><option value="15">15 ثانية</option></select></label>
+        <label data-game="quiz">مدة ظهور الشكر
+          <select id="cp_giftShow"><option value="3">3 ثوانٍ</option><option value="4">4 ثوانٍ · مستحسن</option><option value="6">6 ثوانٍ</option><option value="8">8 ثوانٍ</option></select></label>
+        <div class="cp-sw" data-game="quiz"><span>👏 تصفيق خفيف مع الشكر</span><label class="switch"><input type="checkbox" id="cp_applause"><i></i></label></div>
+        <div class="cp-sw" data-game="quiz"><span>قبول الأخطاء الإملائية الصغيرة</span><label class="switch"><input type="checkbox" id="cp_fuzzy"><i></i></label></div>
+        <div data-game="quiz"><span class="cp-lbl">المجالات</span><div class="cp-cats" id="cpCats"></div></div>
+        <label>مدة عرض الترتيب (بالثواني)<input id="cp_winnersTime" type="number" min="5" max="60"></label>
+        <label>لغة الشاشة
+          <select id="cp_lang"><option value="ar">العربية الفصحى</option><option value="ma">الدارجة المغربية</option></select></label>
+        <div class="cp-sw"><span>تشغيل تلقائي (الأسئلة تتوالى وحدها)</span><label class="switch"><input type="checkbox" id="cp_autopilot"><i></i></label></div>
+        <div class="cp-sw"><span>التحكم بأزرار الصوت</span><label class="switch"><input type="checkbox" id="cp_volKeys"><i></i></label></div>
+        <div class="cp-sw"><span>توفير البطارية (30 صورة/ثانية)</span><label class="switch"><input type="checkbox" id="cp_saver"><i></i></label></div>
+      </div>
+      <div class="cp-row2">
+        <button class="btn" id="cpBattery">🔋 إعدادات البطارية</button>
+        <button class="btn" id="cpReset">🗑️ مسح الترتيب</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LIVE GUIDE ============ -->
+  <section id="liveGuide" class="modal">
+    <div class="dialog card help">
+      <h2>البث من التيليفون</h2>
+      <ol>
+        <li>املأ <b>الإعدادات</b> في لوحة التحكم: حسابك ورابط الخادم (أو جرّب <b>وضع التجربة</b>).</li>
+        <li>فعّل <b>وضع عدم الإزعاج</b> حتى لا تظهر الإشعارات للمشاهدين.</li>
+        <li>اضغط <b>ابدأ جلسة TikTok LIVE</b> ← ستظهر شاشة البث.</li>
+        <li>اضغط <b>افتح TikTok</b> ← <b>+</b> ← <b>LIVE</b> ← اختر <b>Mobile Gaming / ألعاب الهاتف</b> (أو «مشاركة الشاشة») ← ابدأ البث.</li>
+        <li>عد إلى اللعبة من زر التطبيقات الأخيرة. الآن يرى المشاهدون اللعبة بملء الشاشة.</li>
+        <li>تحكّم بـ <b>زر الصوت +/−</b> دون أن يظهر شيء، أو اترك التشغيل التلقائي يعمل.</li>
+        <li>عند الانتهاء: عد إلى TikTok وأنهِ البث، ثم اضغط «إنهاء الجلسة» في اللوحة.</li>
+      </ol>
+      <p class="cp-note">⚠️ يمنح TikTok خاصية Mobile Gaming / مشاركة الشاشة لبعض الحسابات فقط (غالباً 18+ مع عدد معيّن من المتابعين، وتختلف حسب البلد). إذا لم تجدها في حسابك فلا يوجد تطبيق يستطيع إضافتها.</p>
+      <button class="btn" id="guideTikTok">♪ افتح TikTok دابا</button>
+      <button class="btn primary" id="guideOk">فهمت</button>
+    </div>
+  </section>
+
+  <!-- ============ PAUSE ============ -->
+  <section id="pause" class="modal">
+    <div class="dialog card">
+      <h2>إيقاف مؤقت</h2>
+      <button class="btn primary" id="pResume"><span class="ico" data-i="play"></span>متابعة</button>
+      <button class="btn" id="pRestart"><span class="ico" data-i="retry"></span>إعادة المرحلة</button>
+      <button class="btn" id="pLevels"><span class="ico" data-i="grid"></span>المراحل</button>
+      <button class="btn" id="pHome"><span class="ico" data-i="home"></span>القائمة الرئيسية</button>
+      <div class="row-toggles"><button class="icon-btn" id="pSound"></button></div>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section id="result" class="modal">
+    <div class="dialog card result">
+      <h2 id="rTitle">أحسنت!</h2>
+      <div class="stars" id="rStars"><i></i><i></i><i></i></div>
+      <p class="r-sub" id="rSub">الذهب كان في</p>
+      <div class="r-cart"><span class="hl" id="rCart">العربة 4</span></div>
+      <canvas id="ladder" width="560" height="330"></canvas>
+      <div class="r-points" id="rPoints">+250 نقطة</div>
+      <div class="r-actions">
+        <button class="btn primary" id="rNext"><span class="ico" data-i="play"></span>التالي</button>
+        <button class="btn" id="rRetry"><span class="ico" data-i="retry"></span>إعادة</button>
+        <button class="btn square" id="rLevels" aria-label="levels"><span class="ico" data-i="grid"></span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHAPTER COMPLETE ============ -->
+  <section id="chapter" class="modal">
+    <div class="dialog card chapter">
+      <div class="rays"></div>
+      <div class="trophy-big" id="cTrophy"></div>
+      <h2 id="cTitle">أكملت الفصل 1!</h2>
+      <p id="cName">أول الطريق</p>
+      <div class="reward-grid">
+        <div><span class="ico" data-i="star"></span><b id="cStars">0/30</b><small>نجوم الفصل</small></div>
+        <div><span class="ico" data-i="coin"></span><b id="cPoints">+0</b><small>مكافأة</small></div>
+        <div><span class="ico" data-i="eye"></span><b id="cHints">+2</b><small>كاشف الذهب</small></div>
+      </div>
+      <p class="tip" id="cNext"></p>
+      <button class="btn primary" id="cGo"><span class="ico" data-i="play"></span>تابع</button>
+    </div>
+  </section>
+
+  <!-- ============ HELP ============ -->
+  <section id="help" class="modal">
+    <div class="dialog card help">
+      <h2>طريقة اللعب</h2>
+      <ol>
+        <li>في البداية تشوف <b>الذهب</b> داخل وحدة من العربات.</li>
+        <li>تنقفل العربات وتبدأ تمشي على السكك. عند <b>التقاطعات البنفسجية</b> تتبادل العربات أماكنها.</li>
+        <li><b>الأنفاق</b> تخفي العربات، راقب اتجاه السكة عند الدخول والخروج.</li>
+        <li><b>الإشارة الخضراء</b> تعني أن المفتاح يعمل، و<b>الحمراء</b> تعني أن العربة تكمل بخط مستقيم.</li>
+        <li>في النهاية اضغط على العربة اللي فيها الذهب قبل انتهاء الوقت.</li>
+        <li>اجمع <b>3 نجوم</b> بالإجابة الصحيحة السريعة من أول محاولة. زر <b>العين</b> يكشف الذهب لحظياً (يقلل النجوم إلى 2).</li>
+      </ol>
+      <button class="btn primary" id="helpOk">فهمت!</button>
+    </div>
+  </section>
+
+  <!-- ============ CONFIRM ============ -->
+  <section id="confirm" class="modal">
+    <div class="dialog card">
+      <h2 id="cfTitle">متأكد؟</h2>
+      <p id="cfText"></p>
+      <button class="btn danger" id="cfYes">نعم</button>
+      <button class="btn" id="cfNo">إلغاء</button>
+    </div>
+  </section>
+
+  <div id="toasts"></div>
+
+  <script src="js/levels.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/game.js"></script>
+  <script src="data/world.js"></script>
+  <script src="js/quiz-bank.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/live.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

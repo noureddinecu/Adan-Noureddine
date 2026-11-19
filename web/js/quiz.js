@@ -1,0 +1,773 @@
+/* =========================================================================
+ * تحدي الثقافة — TikTok LIVE general-knowledge quiz
+ * -------------------------------------------------------------------------
+ *  topic (roulette) → question (viewers type the answer in comments)
+ *  → reveal (answer + fastest players) → leaderboard (photo, name, ✓ correct, points)
+ *  Points and correct answers accumulate for the whole session.
+ * ========================================================================= */
+(function (G) {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const rnd = a => a[(Math.random() * a.length) | 0];
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  const CATS = [
+    { id: 'geo', ar: 'الجغرافيا', en: 'Geography', icon: '🗺️' },
+    { id: 'capitals', ar: 'العواصم', en: 'Capitals', icon: '🏛️' },
+    { id: 'flags', ar: 'الأعلام', en: 'Flags', icon: '🚩' },
+    { id: 'maths', ar: 'الرياضيات', en: 'Maths', icon: '🧮' },
+    { id: 'sport', ar: 'الرياضة', en: 'Sport', icon: '⚽' },
+    { id: 'islam', ar: 'إسلاميات', en: 'Islamic', icon: '🕌' },
+    { id: 'history', ar: 'التاريخ', en: 'History', icon: '📜' },
+    { id: 'science', ar: 'العلوم', en: 'Science', icon: '🔬' },
+    { id: 'landmarks', ar: 'المعالم', en: 'Landmarks', icon: '🗼' },
+    { id: 'films', ar: 'أفلام ومسلسلات', en: 'Films & Series', icon: '🎬' },
+    { id: 'english', ar: 'الإنجليزية ⇄ العربية', en: 'English', icon: '🇬🇧' },
+    { id: 'french', ar: 'الفرنسية ⇄ العربية', en: 'Français', icon: '🇫🇷' },
+    { id: 'morocco', ar: 'المغرب', en: 'Morocco', icon: '🇲🇦' }
+  ];
+  const CAT = {}; CATS.forEach(c => { CAT[c.id] = c; });
+
+  const TXT = {
+    ma: { sh_t: 'شاركو البث مع صحابكم 🔁', sh_s: 'باش يتحداو معانا ويربحو حتى هوما! ضغطو على «مشاركة» ↘', sp_t: 'دعمونا بوردة 🌹', sp_x: 'هاد المسابقة كتحرّك الدماغ وكتفيد 🧠 — إلا عجباتكم، دعمونا بالورود باش نكملو ونجيبو ليكم أسئلة جديدة وجوائز!', sp_none: 'كونو أول من يدعم المسابقة 🌹', sp_thx: 'شكراً لكل من دعمنا ❤️', thx: 'شكراً {n}', br_t: 'استراحة قصيرة ☕', br_s: 'نرجعو دابا… خليكم معانا 💙', br_top: 'المتصدرين دابا', br_tips: ['شاركو البث مع صحابكم باش يتحداو معانا 🔁', 'تفكرو فالمجال اللي بغيتو فالجولة الجاية 🧠', 'اللي فالترتيب، استعدو! المنافسة باقا ما سالاتش 🏆', 'تبعو الحساب باش ما يفوتكم حتى تحدي ⭐'], collect: '⏳ آخر فرصة! كنجمعو الأجوبة اللي جاية…', next: 'الموضوع الجاي…', nextEn: 'Next topic…', type: 'كتب الجواب فالكومنتير ✍️', hint: 'تلميح', answer: 'الجواب الصحيح', fastest: 'الأسرع ⚡',
+      board: 'الترتيب العام 🏆', nobody: 'حتى واحد ما جابها هاد المرة 😅', paused: 'استراحة صغيرة… نرجعو دابا ⏸', final: 'بطل التحدي 👑', soon: 'السؤال الجاي بعد {s}…', ready: 'وجدو راسكم! التحدي غادي يبدا…', correct: 'جاوبو صح' },
+    ar: { sh_t: 'شاركوا البث مع أصدقائكم 🔁', sh_s: 'ليتحدّوا معنا ويربحوا أيضاً! اضغطوا «مشاركة» ↘', sp_t: 'ادعمونا بوردة 🌹', sp_x: 'هذه المسابقة تنشّط العقل وتفيد 🧠 — إن أعجبتكم، ادعمونا بالورود لنستمر ونقدم لكم أسئلة جديدة وجوائز!', sp_none: 'كونوا أول من يدعم المسابقة 🌹', sp_thx: 'شكراً لكل من دعمنا ❤️', thx: 'شكراً {n}', br_t: 'استراحة قصيرة ☕', br_s: 'نعود حالاً… ابقوا معنا 💙', br_top: 'المتصدرون الآن', br_tips: ['شاركوا البث مع أصدقائكم ليتحدوا معنا 🔁', 'فكروا في المجال الذي تريدونه في الجولة القادمة 🧠', 'المتصدرون، استعدوا! المنافسة لم تنته بعد 🏆', 'تابعوا الحساب كي لا يفوتكم أي تحدٍ ⭐'], collect: '⏳ فرصة أخيرة! نجمع الإجابات المتأخرة…', next: 'الموضوع القادم…', nextEn: 'Next topic…', type: 'اكتب الجواب في التعليقات ✍️', hint: 'تلميح', answer: 'الإجابة الصحيحة', fastest: 'الأسرع ⚡',
+      board: 'الترتيب العام 🏆', nobody: 'لم يُجب أحد بشكل صحيح هذه المرة 😅', paused: 'استراحة قصيرة… نعود حالاً ⏸', final: 'بطل التحدي 👑', soon: 'السؤال التالي بعد {s}…', ready: 'استعدوا! التحدي سيبدأ…', correct: 'أجابوا بشكل صحيح' }
+  };
+
+  let api = null;
+  let st = null;              // per-session quiz state (persisted in session.quiz)
+  let q = null;               // current question
+  let phase = 'idle';         // idle | ready | topic | question | reveal | board | final
+  let phaseEnds = 0, pausedLeft = 0, paused = false;
+  let roulette = null;
+  let mapAnim = null;
+
+  const cfg = () => api.cfg();
+  const T = (k, v) => { let s = (TXT[cfg().lang] || TXT.ma)[k] || k; if (v) for (const x in v) s = s.replace('{' + x + '}', v[x]); return s; };
+  const W = () => G.QUIZ_WORLD;
+
+  /* =================================================================
+   * ANSWER MATCHING
+   * ================================================================= */
+  function norm(s) {
+    return String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[ً-ٰٟـ]/g, '')
+      .replace(/[أإآٱ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي')
+      .replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x660)).replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 0x6F0))
+      .replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+  }
+  const stripAl = w => (w.length > 3 && w.startsWith('ال') ? w.slice(2) : w.length > 4 && /^(وال|بال|لل)/.test(w) ? w.slice(3) : w);
+  const key = s => norm(s).split(' ').filter(Boolean).map(stripAl).join(' ');
+  // Arabic letters that differ only by their dots (the most common typing mistake) cost half an edit
+  // …and so do letters that SOUND alike (common spelling confusions)
+  const NEAR = [
+    'بتثنيئ', 'جحخ', 'دذ', 'رز', 'سش', 'صض', 'طظ', 'عغ', 'فق', 'هة',          // same shape, different dots
+    'سصث', 'تط', 'دض', 'ذزظ', 'قك', 'هحة', 'اأإآءعى', 'وؤ', 'يئى'           // same / close sound
+  ].map(g => new Set([...g]));
+  const near = (x, y) => NEAR.some(g => g.has(x) && g.has(y));
+  const LATIN_NEAR = ['ie', 'ou', 'ck', 'sz', 'ao', 'yi'].map(g => new Set([...g]));
+  const nearL = (x, y) => LATIN_NEAR.some(g => g.has(x) && g.has(y));
+  function wlev(a, b) {
+    a = [...a]; b = [...b];
+    if (Math.abs(a.length - b.length) > 3) return 9;
+    let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i];
+      for (let j = 1; j <= b.length; j++) {
+        const x = a[i - 1], y = b[j - 1];
+        const sub = x === y ? 0 : (near(x, y) || nearL(x, y)) ? 0.5 : 1;
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + sub);
+      }
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+  function lev(a, b) {
+    if (a === b) return 0;
+    if (Math.abs(a.length - b.length) > 3) return 9;
+    let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i];
+      for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+  /* ---- phonetic "consonant skeleton": lets «rabat», «arribat», «rbat» match «الرباط»,
+          «lmaghrib» match «المغرب», and «باري» match «Paris» ---- */
+  const AR_SK = { 'ب': 'b', 'ت': 't', 'ث': 't', 'ج': 'j', 'ح': 'h', 'خ': 'k', 'د': 'd', 'ذ': 'd', 'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 's',
+    'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'd', 'غ': 'g', 'ف': 'f', 'ق': 'k', 'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n', 'ه': 'h', 'پ': 'b', 'ڤ': 'f', 'گ': 'g', 'چ': 's' };
+  function skeleton(word) {
+    let w = word;
+    if (/[؀-ۿ]/.test(w)) {
+      w = w.replace(/^(ال|لل)/, '').replace(/ه$/, '');        // article, final ta marbuta
+      return [...w].map(ch => AR_SK[ch] || '').join('').replace(/(.)\1+/g, '$1');
+    }
+    w = w.replace(/^(al|el|ar|er|as|es|at|et|an|en|ad|ed|le|la|les|the)[- ']?(?=\w{4,})/, '').replace(/^l'?(?=[^aeiouy'\s]\w{3,})/, '')
+      .replace(/ou/g, 'u').replace(/(sh|ch)/g, 's').replace(/kh/g, 'k').replace(/gh/g, 'g').replace(/th/g, 't').replace(/dh/g, 'd')
+      .replace(/dj/g, 'j').replace(/ph/g, 'f').replace(/ck|q|c/g, 'k').replace(/x/g, 'ks').replace(/p/g, 'b').replace(/v/g, 'f')
+      .replace(/7/g, 'h').replace(/9/g, 'k').replace(/[23]/g, '')
+      .replace(/h$/, '').replace(/[aeiouyw]/g, '');
+    return w.replace(/[^a-z]/g, '').replace(/(.)\1+/g, '$1');
+  }
+  const skel = phrase => phrase.split(' ').map(skeleton).join('');
+  // allowed edits: short words must be exact, longer words tolerate 1–2 letters (as the host asked: «الرياض»/«الراط» for «الرباط»)
+  // one letter only (or two "near" letters): short words must be almost exact
+  const tolFor = len => (len <= 3 ? 0.5 : 1);
+  const dedup = w => w.replace(/(.)\1+/g, '$1');
+
+  /** true if the comment contains one of the accepted answers (whole words, close spelling allowed) */
+  function isCorrect(comment, answers, fuzzy) {
+    const c = key(comment);
+    if (!c) return false;
+    const cTokens = c.split(' ');
+    const nums = (norm(comment).match(/\d+/g) || []);
+    for (const ans of answers) {
+      const a = key(ans);
+      if (!a) continue;
+      if (/^\d+$/.test(a)) { if (nums.includes(a)) return true; continue; }
+      if (c === a) return true;
+      // anti-spam: a comment listing many guesses ("باريس روما لندن مدريد…") does not count
+      const n = a.split(' ').length;
+      if (cTokens.length > n + 3) continue;
+      if ((' ' + c + ' ').includes(' ' + a + ' ')) return true;
+      if (c.replace(/ /g, '') === a.replace(/ /g, '')) return true;
+      if (!fuzzy) continue;
+      const aFlat = a.replace(/ /g, '');
+      const tol = tolFor(aFlat.length);
+      const aSk = skel(a);
+      // try every window of the comment with the same number of words (±1 for "nahr nil" vs "nil")
+      for (let size = Math.max(1, n - 1); size <= n + 1; size++) {
+        for (let i = 0; i + size <= cTokens.length; i++) {
+          const win = cTokens.slice(i, i + size).join(' ');
+          const wFlat = win.replace(/ /g, '');
+          // 1) close spelling in the same alphabet
+          if (dedup(wFlat) === dedup(aFlat)) return true;                               // «الصيين», «parisss»
+          if (Math.abs(wFlat.length - aFlat.length) <= Math.ceil(tol) && wlev(wFlat, aFlat) <= tol) return true;
+          // 2) same sounds across alphabets (Arabic ⇄ Latin), consonants only
+          if (aSk.length >= 3) {
+            const wSk = skel(win);
+            if (wSk === aSk) return true;
+            if (aSk.length >= 5 && Math.abs(wSk.length - aSk.length) <= 1 && lev(wSk, aSk) <= 1) return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /* =================================================================
+   * QUESTION GENERATION
+   * ================================================================= */
+  function tierFor(no) { return no <= 10 ? 1 : no <= 20 ? 2 : 3; }
+  function pickCountry(filter, maxTier, prefix) {
+    const used = new Set(st.used);
+    let pool = W().countries.filter(c => filter(c) && c.tier <= maxTier && !used.has(prefix + c.c));
+    if (!pool.length) pool = W().countries.filter(c => filter(c) && !used.has(prefix + c.c));
+    if (!pool.length) { st.used = st.used.filter(u => !u.startsWith(prefix)); pool = W().countries.filter(filter); }
+    return rnd(pool);
+  }
+  const countryAnswers = c => [...c.ar, ...c.en];
+  const cname = c => c.ar[0];
+
+  function makeQuestion(catId, no) {
+    const maxTier = tierFor(no);
+    const base = { cat: catId, no };
+    switch (catId) {
+      case 'flags': {
+        const c = pickCountry(() => true, maxTier, 'flag:');
+        return { ...base, id: 'flag:' + c.c, titleAr: 'لمن هذا العلم؟', titleEn: 'Whose flag is this?', visual: { kind: 'flag', code: c.c }, answers: countryAnswers(c), show: { ar: cname(c), en: c.en[0] } };
+      }
+      case 'capitals': {
+        const reverse = Math.random() < 0.35;
+        if (reverse) {
+          const c = pickCountry(x => key(x.cap.ar) !== key(x.ar[0]) && !x.ar.some(n => key(n) === key(x.cap.ar)), maxTier, 'caprev:');
+          return { ...base, id: 'caprev:' + c.c, titleAr: 'عاصمة أي دولة؟', titleEn: 'Capital of which country?', visual: { kind: 'text', text: c.cap.ar, sub: c.cap.en }, answers: countryAnswers(c), show: { ar: cname(c), en: c.en[0] } };
+        }
+        // skip countries whose capital has the same name as the country (Tunisia, Algeria, Kuwait…)
+        const c = pickCountry(x => !x.ar.some(n => key(n) === key(x.cap.ar)) && !x.cap.al.some(a => x.ar.some(n => key(n) === key(a))), maxTier, 'cap:');
+        return { ...base, id: 'cap:' + c.c, titleAr: 'ما هي عاصمة هذه الدولة؟', titleEn: 'What is the capital?', visual: { kind: 'flagtext', code: c.c, text: cname(c) }, answers: c.cap.al, show: { ar: c.cap.ar, en: c.cap.en } };
+      }
+      case 'geo': {
+        const locate = Math.random() < 0.5;
+        const c = pickCountry(x => x.area >= (locate ? 0.8 : 3), maxTier, locate ? 'loc:' : 'shape:');
+        return locate
+          ? { ...base, id: 'loc:' + c.c, titleAr: 'ما هي الدولة المضيئة على الخريطة؟', titleEn: 'Guess the highlighted country', visual: { kind: 'locate', code: c.c }, answers: countryAnswers(c), show: { ar: cname(c), en: c.en[0] } }
+          : { ...base, id: 'shape:' + c.c, titleAr: 'خمّن الدولة من شكلها', titleEn: 'Guess the country by its shape', visual: { kind: 'shape', code: c.c }, answers: countryAnswers(c), show: { ar: cname(c), en: c.en[0] } };
+      }
+      case 'maths': {
+        let a, b, op, r;
+        if (maxTier === 1) { a = 10 + ((Math.random() * 80) | 0); b = 5 + ((Math.random() * 40) | 0); op = Math.random() < 0.5 ? '+' : '−'; if (op === '−' && b > a) [a, b] = [b, a]; r = op === '+' ? a + b : a - b; }
+        else if (maxTier === 2) { a = 3 + ((Math.random() * 10) | 0); b = 3 + ((Math.random() * 10) | 0); op = '×'; r = a * b; }
+        else { a = 12 + ((Math.random() * 30) | 0); b = 3 + ((Math.random() * 7) | 0); op = '×'; r = a * b; }
+        return { ...base, id: 'math:' + a + op + b, titleAr: 'احسب بسرعة', titleEn: 'Quick maths', visual: { kind: 'math', text: `${a} ${op} ${b} = ?` }, answers: [String(r)], show: { ar: String(r), en: '' } };
+      }
+      case 'english':
+      case 'french': {
+        const fr = catId === 'french';
+        const pre = fr ? 'fr:' : 'en:';
+        const used = new Set(st.used);
+        const words = G.QUIZ_WORDS.filter(w => !used.has(pre + (Array.isArray(w[2]) ? w[2][0] : w[2])));
+        if (!words.length) st.used = st.used.filter(u => !u.startsWith(pre));
+        const w = rnd(words.length ? words : G.QUIZ_WORDS);
+        const list = v => (Array.isArray(v) ? v : [v]);
+        const foreign = list(fr ? w[3] : w[2]);
+        const ar = [w[0], ...w[1]];
+        const id = pre + list(w[2])[0];
+        const toArabic = Math.random() < 0.5;
+        const flag = fr ? 'Français 🇫🇷' : 'English 🇬🇧';
+        return toArabic
+          ? { ...base, id, titleAr: 'ترجم إلى العربية', titleEn: fr ? 'Traduire en arabe' : 'Translate to Arabic', visual: { kind: 'text', text: foreign[0], sub: flag + ' → العربية' }, answers: ar, show: { ar: w[0], en: foreign[0] } }
+          : { ...base, id, titleAr: fr ? 'ترجم إلى الفرنسية' : 'ترجم إلى الإنجليزية', titleEn: fr ? 'Traduire en français' : 'Translate to English', visual: { kind: 'text', text: w[0], sub: 'العربية → ' + flag }, answers: foreign, show: { ar: foreign[0], en: w[0] } };
+      }
+      default: {
+        const bank = G.QUIZ_BANK[catId] || [];
+        const used = new Set(st.used);
+        let pool = bank.map((x, i) => ({ x, i })).filter(o => !used.has('bank:' + catId + ':' + o.i));
+        if (!pool.length) { st.used = st.used.filter(u => !u.startsWith('bank:' + catId + ':')); pool = bank.map((x, i) => ({ x, i })); }
+        let easy = pool.filter(o => o.x[3] <= maxTier);
+        const o = rnd(easy.length ? easy : pool);
+        const [text, ans, more] = o.x;
+        const latin = more.find(a => /^[a-z]/i.test(a)) || '';
+        return { ...base, id: 'bank:' + catId + ':' + o.i, titleAr: CAT[catId].ar, titleEn: CAT[catId].en, visual: { kind: 'question', text }, answers: [ans, ...more], show: { ar: ans, en: latin } };
+      }
+    }
+  }
+
+  function enabledCats() {
+    const off = new Set((cfg().quizOff || '').split(',').filter(Boolean));
+    const list = CATS.filter(c => !off.has(c.id));
+    return list.length ? list : CATS;
+  }
+  function chooseCat() {
+    const cats = enabledCats();
+    // avoid repeating the previous category
+    const pool = cats.length > 1 ? cats.filter(c => c.id !== st.lastCat) : cats;
+    return rnd(pool).id;
+  }
+
+  /* =================================================================
+   * FLOW
+   * ================================================================= */
+  function S() { return api.session(); }
+  function ensureState() {
+    const s = S();
+    if (!s.quiz) s.quiz = { no: 0, game: 1, used: [], lastCat: null, asked: 0 };
+    st = s.quiz;
+  }
+  function setPhase(p, ms) { phase = p; phaseEnds = ms ? Date.now() + ms : 0; music(); render(); }
+  // background music follows the game: drum-roll on the roulette, groove on the question, "hot" in the last 10 s
+  function music() {
+    const M = G.Music; if (!M) return;
+    if (phase === 'idle' || cfg().music === false) { M.stop(); return; }
+    M.setVolume(isFinite(parseFloat(cfg().musicVol)) ? parseFloat(cfg().musicVol) : 0.8);
+    M.rotateEvery(cfg().musicRotate || 15);
+    M.setSong(cfg().musicSong || 'arena');
+    if (paused) { M.start('chill'); return; }                     // the break keeps a calm music
+    const mode = phase === 'topic' ? 'roll' : phase === 'question' ? ((phaseEnds - Date.now()) <= 10500 ? 'hot' : 'play') : 'calm';
+    M.start(mode);
+  }
+
+  function start() {
+    ensureState();
+    q = null; paused = false;
+    setPhase('ready', 4000);
+  }
+  function stop() { phase = 'idle'; q = null; paused = false; clearAnim(); if (G.Music) G.Music.stop(); }
+
+  function nextTopic(forceCat) {
+    ensureState();
+    if (st.no >= cfg().qCount) { st.no = 0; st.game++; }
+    st.no++;
+    const cat = forceCat || chooseCat();
+    st.lastCat = cat;
+    roulette = { target: CATS.findIndex(c => c.id === cat), start: Date.now(), dur: 5200, cat };
+    setPhase('topic', 1000 * (Number(cfg().topicTime) || 6.5));
+    // share reminder every N questions, during the roulette (never over a question)
+    const every = Number(cfg().shareEvery == null ? 2 : cfg().shareEvery);
+    if (every > 0 && st.asked > 0 && st.asked % every === 0) showShare();
+    api.save();
+  }
+
+  function askQuestion() {
+    q = makeQuestion(roulette ? roulette.cat : chooseCat(), st.no);
+    q.correct = []; q.got = {}; q.start = Date.now(); q.hintAt = q.start + cfg().qTime * 500;
+    st.used.push(q.id); if (st.used.length > 1500) st.used.splice(0, 300);
+    st.asked++;
+    setPhase('question', cfg().qTime * 1000);
+    api.Sfx.lid();
+    api.save();
+  }
+
+  /* TikTok LIVE lag: viewers see the question a few seconds late and their comments arrive late,
+     so after the visible timer ends we keep accepting answers for a short hidden "grace" time. */
+  const grace = () => Math.max(0, Math.min(20, Number(cfg().grace == null ? 8 : cfg().grace)));
+  function startCollect() {
+    q.collecting = true;
+    if (G.Music) G.Music.duck(false);
+    phaseEnds = Date.now() + grace() * 1000;
+    render(); renderTimer();
+  }
+  function reveal() {
+    if (!q || phase !== 'question') return;
+    if (G.Music) G.Music.duck(false);
+    q.done = true;
+    setPhase('reveal', 1000 * (Number(cfg().revealTime) || 6.5));
+    api.Sfx.win();
+    api.save();
+  }
+
+  function afterReveal() {
+    setPhase('board', cfg().winnersTime * 1000);
+    if (st.no >= cfg().qCount) setTimeout(() => { if (phase === 'board') setPhase('final', 12000); }, Math.min(6000, cfg().winnersTime * 1000));
+  }
+
+  function tick() {
+    if (phase === 'idle' || paused) return;
+    const now = Date.now();
+    if (phase === 'question' && q) {
+      const left = Math.max(0, Math.ceil((phaseEnds - now) / 1000));
+      if (left !== q.lastLeft && !q.collecting) { q.lastLeft = left; if (left <= 5 && left > 0) api.Sfx.tick(left === 1); if (left === 10) music(); if (G.Music) G.Music.duck(left <= 5); renderTimer(); }
+      if (!q.hint && now >= q.hintAt) { q.hint = true; renderHint(); }
+    }
+    if (phase === 'topic') renderRoulette();
+    if (!phaseEnds || now < phaseEnds) return;
+    if (phase === 'ready') return nextTopic();
+    if (phase === 'topic') return askQuestion();
+    if (phase === 'question') return q && !q.collecting && grace() > 0 ? startCollect() : reveal();
+    if (phase === 'reveal') return afterReveal();
+    if (phase === 'support') return nextTopic();
+    if (phase === 'board' || phase === 'final') {
+      const every = Number(cfg().supportEvery == null ? 7 : cfg().supportEvery);
+      if (cfg().autopilot && phase === 'board' && every > 0 && st.asked > 0 && st.asked % every === 0 && st.lastSupport !== st.asked) { st.lastSupport = st.asked; return setPhase('support', 1000 * (Number(cfg().supportTime) || 13)); }
+      if (cfg().autopilot) return nextTopic();
+      phaseEnds = 0;
+    }
+  }
+  setInterval(tick, 200);
+
+  /* ---------------- answers from comments ---------------- */
+  function onChat(c, p, uid) {
+    if (!q || phase !== 'question' || paused) return phase === 'question' ? 'متوقف' : 'ما كاينش سؤال دابا';
+    if (q.got[uid]) return 'جاوب صح من قبل';
+    p.answers = (p.answers || 0) + 1;
+    if (!isCorrect(c.c, q.answers, cfg().fuzzy !== false)) return 'جواب غالط';
+    const t = (Date.now() - q.start) / 1000;
+    const pts = 10 + Math.round(10 * Math.max(0, 1 - t / cfg().qTime));
+    q.got[uid] = { pts, t };
+    q.correct.push(uid);
+    p.pts = (p.pts || 0) + pts; p.correct = (p.correct || 0) + 1; p.last = pts; p.lastQ = st.asked;
+    renderCorrect();
+    api.Sfx.select();
+    return 'صحيح ✓ +' + pts;
+  }
+
+  /* =================================================================
+   * RENDERING (viewers)
+   * ================================================================= */
+  function avatar(p, cls) {
+    const initial = esc((p.n || '?').trim().charAt(0).toUpperCase());
+    let h = 0; for (const ch of String(p.n || '')) h = (h * 31 + ch.charCodeAt(0)) | 0;
+    const col = ['#3B82F6', '#14B8A6', '#8B5CF6', '#F59E0B', '#EF4444', '#22C55E'][Math.abs(h) % 6];
+    const img = p.a && /^https:\/\//.test(p.a) ? `<img src="${esc(p.a)}" referrerpolicy="no-referrer" alt="" onerror="this.remove()">` : '';
+    return `<span class="qa ${cls || ''}" style="background:${col}"><b>${initial}</b>${img}</span>`;
+  }
+  function show(id) { ['qzReady', 'qzTopic', 'qzQuestion', 'qzBoard', 'qzFinal', 'qzSupport'].forEach(x => $(x).classList.toggle('on', x === id)); }
+
+  // keep the bottom of the screen free so TikTok's comment overlay does not cover the game
+  function applyLayout() {
+    const hud = $('quizHud'); if (!hud) return;
+    const free = Math.max(0, Math.min(55, Number(cfg().freeSpace == null ? 40 : cfg().freeSpace)));
+    const top = Math.max(0, Math.min(25, Number(cfg().topSpace == null ? 13 : cfg().topSpace)));
+    hud.style.setProperty('--free', free + 'vh');
+    hud.style.setProperty('--top', top + 'vh');
+    hud.classList.toggle('compact', free >= 30 || top >= 10);
+    hud.classList.toggle('tight', free + top >= 50);
+    const g = $('qzGuides'); if (g) g.classList.toggle('on', !!cfg().showGuides);
+  }
+  function render() {
+    const hud = $('quizHud'); if (!hud) return;
+    applyLayout();
+    $('qzCounter').innerHTML = `<b>${st ? st.no : 0}</b><small>/${cfg().qCount}</small>`;
+    $('qzPaused').classList.remove('show');
+    renderBreak();
+    $('qzPaused').textContent = T('paused');
+    if (phase === 'question') { const sh = $('qzShare'); if (sh) sh.classList.remove('on'); }
+    $('qzPrompt').textContent = q && q.collecting && phase === 'question' ? T('collect') : T('type');
+    $('qzPrompt').classList.toggle('collect', !!(q && q.collecting && phase === 'question'));
+    $('qzPrompt').classList.toggle('on', phase === 'question');
+    const ar = $('qzArena'); if (ar) ar.classList.toggle('on', phase === 'question' || phase === 'reveal');
+    if (phase === 'ready') { show('qzReady'); $('qzReadyText').textContent = T('ready'); setTitle(T('next'), T('nextEn')); renderWall(); }
+    if (phase === 'topic') { show('qzTopic'); setTitle(T('next'), T('nextEn')); renderTopics(); renderWall(); }
+    if (phase === 'question' || phase === 'reveal') { show('qzQuestion'); renderQuestion(); }
+    if (phase === 'board') { show('qzBoard'); setTitle(T('board'), 'Leaderboard'); renderBoard(); }
+    if (phase === 'final') { show('qzFinal'); setTitle(T('final'), 'Champion'); renderFinal(); }
+    if (phase === 'support') { show('qzSupport'); setTitle(T('sp_t'), 'Support us'); renderSupport(); }
+  }
+  function setTitle(ar, en, pts) {
+    $('qzTitle').innerHTML = `<b>${esc(ar)}</b><small>${esc(en || '')}</small>`;
+    $('qzPts').style.visibility = pts ? 'visible' : 'hidden';
+    if (pts) $('qzPts').textContent = '+' + pts;
+  }
+
+  function renderTopics() {
+    $('qzTopics').innerHTML = CATS.map((c, i) => `<div class="qt" data-i="${i}"><i>${c.icon}</i><b>${esc(c.ar)}</b><small>${esc(c.en)}</small></div>`).join('');
+    renderRoulette();
+  }
+  /* ---------------- share reminder ---------------- */
+  let shareTimer = null;
+  function showShare() {
+    const el = $('qzShare'); if (!el) return;
+    $('shTitle').textContent = T('sh_t'); $('shSub').textContent = T('sh_s');
+    el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+    clearTimeout(shareTimer); shareTimer = setTimeout(() => el.classList.remove('on'), 6000);
+  }
+
+  /* ---------------- support (gifts) ---------------- */
+  const giftDelay = () => 1000 * Math.max(0, Math.min(30, Number(cfg().giftDelay == null ? 7 : cfg().giftDelay)));
+  const giftPending = new Map(), giftQueue = [];
+  let giftBusy = false;
+  function nextGiftCard() {
+    if (giftBusy || !giftQueue.length) return;
+    if (phase === 'idle') { giftQueue.length = 0; return; }
+    // shown only while a question is on screen, on top of the photo ring (never over the flag, map or leaderboard)
+    const host = $('qzArena');
+    if (phase !== 'question' || paused || !host || !host.offsetWidth) { setTimeout(nextGiftCard, 1000); return; }
+    const { p, count, coins, gname, gimg } = giftQueue.shift();
+    giftBusy = true;
+    // the REAL gift: its picture (from TikTok) and name; the card grows with the value of the gift
+    const tier = coins >= 100 ? 3 : coins >= 10 ? 2 : 1;
+    const icon = gimg && /^https:\/\//.test(gimg) ? `<img src="${esc(gimg)}" referrerpolicy="no-referrer" alt="" onerror="this.replaceWith('🎁')">` : (/rose/i.test(gname) ? '🌹' : '🎁');
+    const el = document.createElement('div'); el.className = 'qz-toast in-ring gt' + tier;
+    el.innerHTML = `<div class="gt-av">${avatar(p, '')}<i>${icon}</i></div><b>${esc(p.n)}</b><span>${esc(T('thx', { n: '' }).trim())} ❤️</span><em><span class="gi">${icon}</span>${gname ? ' ' + esc(gname) : ''}${count > 1 ? ' ×' + count : ''}</em>`;
+    host.appendChild(el);
+    if (cfg().applause !== false) api.Sfx.applause();
+    const dur = 1000 * Math.max(2, Math.min(10, Number(cfg().giftShow) || 4));
+    setTimeout(() => el.classList.add('out'), dur - 500);
+    setTimeout(() => { el.remove(); giftBusy = false; nextGiftCard(); }, dur);
+  }
+  function supporters() {
+    const s = S();
+    return Object.keys(s.participants).filter(id => s.participants[id].coins > 0).sort((a, b) => s.participants[b].coins - s.participants[a].coins);
+  }
+  function renderSupport() {
+    $('spTitle').textContent = T('sp_t'); $('spText').textContent = T('sp_x');
+    const s = S(), ids = supporters().slice(0, 12);
+    $('spWall').innerHTML = ids.length ? ids.map(id => { const p = s.participants[id]; return `<span>${avatar(p, 'md')}<b>${esc(p.n)}</b><em>🌹 ${p.coins}</em></span>`; }).join('') : `<div class="sp-none">${esc(T('sp_none'))}</div>`;
+    $('spThanks').textContent = ids.length ? T('sp_thx') : '';
+    api.Sfx.hint();
+  }
+  /** a gift arrived (from the relay): remember the supporter and thank them on screen */
+  function onGift(g, p) {
+    const coins = Math.max(1, Number(g.coins) || 1) * Math.max(1, Number(g.count) || 1);
+    p.coins = (p.coins || 0) + coins; p.gifts = (p.gifts || 0) + Math.max(1, Number(g.count) || 1);
+    const s = S(); s.coins = (s.coins || 0) + coins; s.gifts = (s.gifts || 0) + Math.max(1, Number(g.count) || 1);
+    // thank AFTER TikTok's own gift animation: wait 7 s after this viewer's last gift and
+    // merge a burst of gifts into one card; cards are shown one by one
+    if (cfg().giftThanks === false) { if (phase === 'support') renderSupport(); return 'كادو 🌹 ' + coins; }
+    // one card per viewer AND gift type (a burst of 5 Roses = one card «Rose ×5»)
+    const key = (g.u || p.n) + '|' + (g.gname || '');
+    const pend = giftPending.get(key) || { p, count: 0, coins: 0, gname: g.gname || '', gimg: g.gimg || '' };
+    pend.count += Math.max(1, Number(g.count) || 1); pend.coins += coins; pend.p = p;
+    if (g.gimg) pend.gimg = g.gimg;
+    clearTimeout(pend.timer);
+    pend.timer = setTimeout(() => { giftPending.delete(key); giftQueue.push(pend); nextGiftCard(); }, giftDelay());
+    giftPending.set(key, pend);
+    if (phase === 'support') renderSupport();
+    return 'كادو 🌹 ' + coins;
+  }
+
+  function renderBreak() {
+    const b = $('qzBreak'); if (!b) return;
+    b.classList.toggle('on', paused && phase !== 'idle');
+    if (!paused) return;
+    $('brTitle').textContent = T('br_t'); $('brSub').textContent = T('br_s');
+    const s = S();
+    const ids = Object.keys(s.participants).filter(id => s.participants[id].pts > 0).sort((a, b2) => s.participants[b2].pts - s.participants[a].pts).slice(0, 3);
+    $('brTop').innerHTML = ids.length ? `<small>${esc(T('br_top'))}</small><div>` + ids.map((id, i) => { const p = s.participants[id]; return `<span class="m${i + 1}">${avatar(p, 'md')}<b>${esc(p.n)}</b><em>${p.pts}</em></span>`; }).join('') + '</div>' : '';
+    const tips = (TXT[cfg().lang] || TXT.ma).br_tips;
+    $('brTip').textContent = tips[Math.floor(Date.now() / 8000) % tips.length];
+  }
+  setInterval(() => { if (paused) renderBreak(); }, 4000);
+  function renderRoulette() {
+    if (!roulette) return;
+    const tiles = document.querySelectorAll('#qzTopics .qt');
+    const el = Date.now() - roulette.start;
+    const enabled = enabledCats().map(c => CATS.indexOf(c));
+    let idx;
+    if (el >= roulette.dur) idx = roulette.target;
+    else {
+      // decelerating spin: position grows like an ease-out curve
+      const f = el / roulette.dur, steps = 26 + enabled.indexOf(roulette.target);
+      const k = Math.floor(steps * (1 - Math.pow(1 - f, 2.4)));
+      idx = enabled[k % enabled.length];
+    }
+    tiles.forEach((t, i) => { t.classList.toggle('hot', i === idx && el < roulette.dur); t.classList.toggle('pick', i === idx && el >= roulette.dur); t.classList.toggle('off', !enabled.includes(i)); });
+    if (idx !== roulette.lastIdx) { roulette.lastIdx = idx; if (el < roulette.dur) api.Sfx.clack(); else api.Sfx.hint(); }
+  }
+  function renderWall() {
+    const s = S();
+    const ids = Object.keys(s.participants).sort((a, b) => (s.participants[b].pts || 0) - (s.participants[a].pts || 0)).slice(0, 40);
+    const html = ids.map(id => avatar(s.participants[id], 'sm')).join('') + (ids.length ? `<em>✓ ${Object.keys(s.participants).length}</em>` : '');
+    ['qzWall', 'qzWallReady'].forEach(x => { const el = $(x); if (el) el.innerHTML = html; });
+  }
+
+  function renderQuestion() {
+    const cat = CAT[q.cat];
+    setTitle(q.titleAr, q.titleEn, 20);
+    $('qzCat').innerHTML = `${cat.icon} ${esc(cat.ar)}`;
+    const v = q.visual, box = $('qzVisual');
+    if (phase === 'question' && box.dataset.q !== q.id) {
+      box.dataset.q = q.id;
+      clearAnim();
+      if (v.kind === 'flag') box.innerHTML = `<img class="qz-flag" src="flags/${v.code.toLowerCase()}.svg" alt="">`;
+      else if (v.kind === 'flagtext') box.innerHTML = `<img class="qz-flag sm" src="flags/${v.code.toLowerCase()}.svg" alt=""><div class="qz-big">${esc(v.text)}</div>`;
+      else if (v.kind === 'shape' || v.kind === 'locate') { box.innerHTML = '<canvas id="qzMap"></canvas>'; drawMap(v); }
+      else if (v.kind === 'math') box.innerHTML = `<div class="qz-math">${esc(v.text)}</div>`;
+      else if (v.kind === 'text') box.innerHTML = `<div class="qz-big">${esc(v.text)}</div><div class="qz-sub">${esc(v.sub || '')}</div>`;
+      else box.innerHTML = `<div class="qz-qtext">${esc(v.text)}</div>`;
+      $('qzHint').textContent = '';
+    }
+    $('qzQuestion').classList.toggle('revealed', phase === 'reveal');
+    $('qzQuestion').classList.toggle('mapq', v.kind === 'shape' || v.kind === 'locate');
+    $('qzTimerWrap').style.visibility = phase === 'question' ? 'visible' : 'hidden';
+    renderTimer(); renderCorrect();
+    const ans = $('qzAnswer');
+    if (phase === 'reveal') {
+      ans.innerHTML = `<small>${esc(T('answer'))}</small><b>${esc(q.show.ar)}</b>${q.show.en && q.show.en !== q.show.ar ? `<i>${esc(q.show.en)}</i>` : ''}`;
+      ans.classList.add('on');
+      const s = S();
+      const fast = q.correct.slice(0, 6);
+      $('qzFast').innerHTML = fast.length
+        ? `<div class="qz-fast-t">${esc(T('fastest'))}</div><div class="qz-fast-row">` + fast.map(id => { const p = s.participants[id]; return `<div class="qf">${avatar(p, 'md')}<span>${esc(p.n)}</span><em>+${q.got[id].pts}</em></div>`; }).join('') + '</div>'
+        : `<div class="qz-none">${esc(T('nobody'))}</div>`;
+      $('qzFast').classList.add('on');
+      if (v.kind === 'shape' || v.kind === 'locate') drawMap(v, true);
+    } else { ans.classList.remove('on'); $('qzFast').classList.remove('on'); }
+  }
+  function renderTimer() {
+    if (!q || phase !== 'question') return;
+    if (q.collecting) { $('qzSec').textContent = '⏳'; const bar = $('qzBar'); bar.style.transition = 'none'; bar.style.width = '0%'; return; }
+    const total = cfg().qTime * 1000;
+    const left = Math.max(0, paused ? pausedLeft : phaseEnds - Date.now());
+    $('qzSec').textContent = Math.ceil(left / 1000);
+    const bar = $('qzBar');
+    bar.style.transition = 'none'; bar.style.width = (left / total * 100) + '%';
+    bar.classList.toggle('low', left < 6000);
+    if (!paused) { void bar.offsetWidth; bar.style.transition = `width ${left}ms linear`; bar.style.width = '0%'; }
+  }
+  /* Correct answers: photos packed INSIDE a round glass arena (sunflower / Vogel spiral around a ✓ counter).
+     The arena never grows; bubbles shrink a little as more people answer, and never leave the circle.
+     Existing bubbles keep their place, newcomers pop in. Up to 30 photos, then only the counter grows. */
+  const GOLDEN = Math.PI * (3 - Math.sqrt(5));
+  function renderCorrect() {
+    if (!q) return;
+    const box = $('qzCorrect'); if (!box) return;
+    const s = S();
+    if (box.dataset.q !== q.id + q.start) { box.dataset.q = q.id + q.start; box.innerHTML = '<div class="qb-count"><b>0</b><small>✓</small></div>'; }
+    const BW = box.clientWidth || 300, BH = box.clientHeight || 140;
+    const D = Math.min(BW, BH), R = D / 2, CX = BW / 2, CY = BH / 2;   // circle centred in the strip
+    // the LAST N correct answerers (N from the settings), as BIG as possible, on oval rings around the counter
+    // (the strip under the question is wide and short, so the rings are stretched sideways to use the width);
+    // a newcomer takes the oldest spot so everybody gets a moment; the counter shows the total
+    const SHOW = Math.max(4, Math.min(30, Number(cfg().photoMax) || 10)), GAP = 5;
+    const RY = BH / 2, RXmax = BW / 2;
+    const layout = (sz, n) => {
+      const cs0 = Math.max(30, sz * 0.95), pos = [];
+      let k = 1;
+      while (pos.length < n) {
+        const ry = cs0 / 2 + GAP + sz * (k - 0.5) + (k - 1) * GAP;
+        if (ry + sz / 2 > RY - 2) return null;
+        const rx = Math.min(ry * 2.2, RXmax - sz / 2 - 2);
+        if (rx < ry) return null;
+        const per = 2 * Math.PI * Math.sqrt((rx * rx + ry * ry) / 2);
+        const cap = Math.max(1, Math.floor(per / (sz + GAP)));
+        const m = Math.min(cap, n - pos.length);
+        for (let j = 0; j < m; j++) { const th = -Math.PI / 2 + (j / m) * 2 * Math.PI + (k % 2 ? 0 : Math.PI / m); pos.push([rx * Math.cos(th), ry * Math.sin(th)]); }
+        k++;
+      }
+      return { pos, cs: cs0 };
+    };
+    let shown = Math.min(SHOW, q.correct.length), size = 64, L = null;
+    for (;;) {
+      size = 64;
+      while (size >= 24 && !(L = layout(size, shown))) size -= 1;
+      if (L || shown <= 1) break;
+      shown--;                                  // never stack photos: show fewer if they cannot fit
+    }
+    if (!L) { size = 24; L = { pos: [[0, 0]], cs: 30 }; shown = Math.min(1, shown); }
+    const ids = q.correct.slice(q.correct.length - shown), n = ids.length;
+    const cnt = box.querySelector('.qb-count');
+    const cs = L.cs;
+    cnt.style.width = cnt.style.height = Math.round(cs) + 'px';
+    cnt.querySelector('b').textContent = q.correct.length;
+    box.classList.toggle('empty', !n);
+    const have = new Map([...box.querySelectorAll('.qb')].map(el => [el.dataset.u, el]));
+    have.forEach((el, u) => { if (!ids.includes(u) && !el.classList.contains('leave')) { el.classList.add('leave'); setTimeout(() => el.remove(), 350); } });
+    ids.forEach((id, i) => {
+      const x = CX + L.pos[i][0], y = CY + L.pos[i][1];
+      let el = have.get(id);
+      if (!el) {
+        el = document.createElement('div'); el.className = 'qb pop'; el.dataset.u = id;
+        el.innerHTML = avatar(s.participants[id], '');
+        el.style.animationDelay = '0s, ' + (-Math.random() * 3).toFixed(2) + 's';
+        box.appendChild(el);
+      }
+      el.style.width = el.style.height = Math.round(size) + 'px';
+      el.style.left = Math.round(x - size / 2) + 'px'; el.style.top = Math.round(y - size / 2) + 'px';
+    });
+  }
+  function renderHint() {
+    if (!q || !q.hint || phase !== 'question') return;
+    const a = String(q.show.ar);
+    if (/^\d+$/.test(a) || q.visual.kind === 'math') { $('qzHint').textContent = ''; return; }
+    const pattern = a.split(' ').map(w => w.charAt(0) + ' _'.repeat(Math.max(0, [...w].length - 1))).join('   ');
+    $('qzHint').innerHTML = `<small>${esc(T('hint'))}</small> <b dir="auto">${esc(pattern)}</b>`;
+  }
+
+  function renderBoard() {
+    const s = S();
+    const ids = Object.keys(s.participants).filter(id => s.participants[id].pts > 0)
+      .sort((a, b) => (s.participants[b].pts - s.participants[a].pts) || (s.participants[b].correct - s.participants[a].correct)).slice(0, 10);
+    const top = q ? q.correct.slice(0, 6) : [];
+    $('qzBoardTop').innerHTML = top.map(id => { const p = s.participants[id]; return `<div class="qf">${avatar(p, 'md')}<span>${esc(p.n)}</span><em>+${q.got[id].pts}</em></div>`; }).join('');
+    $('qzBoardAns').innerHTML = q ? `<b>${esc(q.show.ar)}</b>${q.show.en && q.show.en !== q.show.ar ? `<i>${esc(q.show.en)}</i>` : ''}<span class="qz-cnt">✓ ${q.correct.length}</span>` : '';
+    $('qzList').innerHTML = ids.length ? ids.map((id, i) => {
+      const p = s.participants[id];
+      const gain = p.lastQ === st.asked && p.last ? `<em>+${p.last}</em>` : '<em></em>';
+      return `<li class="${i < 3 ? 'm' + (i + 1) : ''}"><span class="rk">${i + 1}</span>${avatar(p, 'sm')}<span class="nb"><span class="nm">${esc(p.n)}</span><small><span class="ok">✓ ${p.correct || 0}</span>${gain}</small></span><b>${p.pts}</b></li>`;
+    }).join('') : `<li class="none">${esc(T('nobody'))}</li>`;
+    renderSoon();
+  }
+  function renderSoon() {
+    const el = $('qzSoon'); if (!el) return;
+    el.textContent = cfg().autopilot && phaseEnds && (phase === 'board') ? T('soon', { s: Math.max(0, Math.ceil((phaseEnds - Date.now()) / 1000)) }) : '';
+  }
+  setInterval(() => { if (phase === 'board') renderSoon(); }, 500);
+
+  function renderFinal() {
+    const s = S();
+    const ids = Object.keys(s.participants).filter(id => s.participants[id].pts > 0).sort((a, b) => s.participants[b].pts - s.participants[a].pts).slice(0, 3);
+    const medal = ['gold', 'silver', 'bronze'];
+    $('qzFinalBody').innerHTML = ids.length ? '<div class="qz-podium">' + [1, 0, 2].map(i => {
+      const id = ids[i]; if (!id) return '<div class="qp empty"></div>';
+      const p = s.participants[id];
+      return `<div class="qp ${medal[i]}">${i === 0 ? '<div class="crown">👑</div>' : ''}${avatar(p, 'xl')}<span>${esc(p.n)}</span><em>✓ ${p.correct} · ${p.pts}</em><div class="step">${i + 1}</div></div>`;
+    }).join('') + '</div>' : `<div class="qz-none">${esc(T('nobody'))}</div>`;
+    api.Sfx.fanfare();
+  }
+
+  /* ---------------- maps (Natural Earth) ---------------- */
+  function clearAnim() { if (mapAnim) cancelAnimationFrame(mapAnim); mapAnim = null; }
+  function ringsOf(code) {
+    let rs = W().shapes[code] || [];
+    const lons = rs.flat().map(p => p[0]);
+    if (Math.max(...lons) - Math.min(...lons) > 180) rs = rs.map(r => r.map(([x, y]) => [x < 0 ? x + 360 : x, y]));   // across the date line
+    return rs;
+  }
+  function bboxOf(rs) {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    rs.forEach(r => r.forEach(([x, y]) => { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }));
+    return { x0, y0, x1, y1 };
+  }
+  function drawMap(v, revealed) {
+    const cv = $('qzMap'); if (!cv) return;
+    const box = cv.parentElement;
+    const dpr = Math.min(2.5, window.devicePixelRatio || 1);
+    const w = box.clientWidth, h = box.clientHeight;
+    cv.width = w * dpr; cv.height = h * dpr; cv.style.width = w + 'px'; cv.style.height = h + 'px';
+    const ctx = cv.getContext('2d');
+    const target = ringsOf(v.code);
+    // frame the main land of the country (+ the parts near it): far overseas territories
+    // (Alaska/Hawaii, French Guiana, Canary…) would otherwise zoom the map out to the whole world
+    const areaOf = r => { let a = 0; for (let i = 0, j = r.length - 1; i < r.length; j = i++) a += (r[j][0] + r[i][0]) * (r[j][1] - r[i][1]); return Math.abs(a / 2); };
+    const main = target.reduce((m, r) => areaOf(r) > areaOf(m) ? r : m, target[0] || []);
+    const mb = bboxOf([main]), mcx = (mb.x0 + mb.x1) / 2, mcy = (mb.y0 + mb.y1) / 2;
+    const reach = Math.max(8, (mb.x1 - mb.x0), (mb.y1 - mb.y0)) * 0.45;
+    const near = target.filter(r => { const b = bboxOf([r]); return Math.abs((b.x0 + b.x1) / 2 - mcx) < reach && Math.abs((b.y0 + b.y1) / 2 - mcy) < reach; });
+    const bb = bboxOf(near.length ? near : [main]);
+    const cx = (bb.x0 + bb.x1) / 2, cy = (bb.y0 + bb.y1) / 2;
+    const k = Math.cos(cy * Math.PI / 180) || 1;
+    // the WHOLE country always fits (width AND height), at about half of the frame, with its neighbours
+    // around it (no names) so viewers can place it; tiny countries get a minimum view of ~9° so neighbours show
+    const sx = Math.max(0.05, (bb.x1 - bb.x0) * k), sy = Math.max(0.05, bb.y1 - bb.y0);
+    const FILL = 0.58;
+    const fitScale = Math.min(w * FILL / sx, h * FILL / sy);
+    const minView = 5;                                            // degrees across the shorter side
+    const endScale = Math.min(fitScale, Math.min(w, h) / minView) * dpr;
+    const startScale = v.kind === 'locate' && !revealed ? endScale / 4 : endScale;
+    const t0 = performance.now(), dur = startScale !== endScale ? 1600 : 0;
+    const frame = now => {
+      const f = dur ? Math.min(1, (now - t0) / dur) : 1;
+      const e = 1 - Math.pow(1 - f, 3);
+      const scale = startScale * Math.pow(endScale / startScale, e);
+      const P = (x, y) => [(x - cx) * k * scale + cv.width / 2, (cy - y) * scale + cv.height / 2];
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      const sea = ctx.createLinearGradient(0, 0, 0, cv.height); sea.addColorStop(0, '#1C5FA8'); sea.addColorStop(1, '#0E3F7A');
+      ctx.fillStyle = sea; ctx.fillRect(0, 0, cv.width, cv.height);
+      // dx: the world is drawn again shifted by ±360° so the land around a country across the date line shows;
+      // segments that jump across the date line are not drawn (no stripes over the map)
+      const path = (rs, dxs) => { ctx.beginPath(); (dxs || [0]).forEach(dx => rs.forEach(r => { let px0 = null; r.forEach(([x, y], i) => { const [px, py] = P(x + dx, y); if (i && Math.abs(x - r[i - 1][0]) < 180) ctx.lineTo(px, py); else ctx.moveTo(px, py); px0 = px; }); if (px0 !== null && Math.abs(r[0][0] - r[r.length - 1][0]) < 180) ctx.closePath(); })); };
+      // neighbours: light land with clear white borders
+      path(W().bg, [-360, 0, 360]); ctx.fillStyle = '#E9F1F7'; ctx.fill('evenodd');
+      ctx.lineWidth = 1.2 * dpr; ctx.strokeStyle = 'rgba(70, 110, 160, .9)'; ctx.stroke();
+      // the country of the question: bright, with a glow
+      path(target);
+      ctx.save(); ctx.shadowColor = revealed ? 'rgba(34,197,94,.9)' : 'rgba(255,183,3,.95)'; ctx.shadowBlur = 18 * dpr;
+      ctx.fillStyle = revealed ? '#22C55E' : '#FFB703'; ctx.fill('evenodd'); ctx.restore();
+      ctx.lineWidth = 2.4 * dpr; ctx.strokeStyle = '#fff'; ctx.stroke();
+      if (f < 1) mapAnim = requestAnimationFrame(frame); else mapAnim = null;
+    };
+    clearAnim(); mapAnim = requestAnimationFrame(frame);
+  }
+
+  /* =================================================================
+   * HOST CONTROLS
+   * ================================================================= */
+  const ctl = {
+    next() { paused = false; if (phase === 'question') (q && !q.collecting && grace() > 0 ? startCollect() : reveal()); else if (phase === 'topic') askQuestion(); else nextTopic(); },
+    newTopic(cat) { paused = false; nextTopic(cat && CAT[cat] ? cat : undefined); },
+    // first press: stop the timer but still collect late answers; second press: reveal now
+    reveal() { if (phase === 'question') { paused = false; if (q && !q.collecting && grace() > 0) startCollect(); else reveal(); } else if (phase === 'topic') { askQuestion(); } },
+    togglePause() {
+      if (phase === 'idle') return;
+      if (!paused) { paused = true; pausedLeft = Math.max(0, phaseEnds - Date.now()); }
+      else { paused = false; if (phaseEnds) phaseEnds = Date.now() + pausedLeft; }
+      render(); music(); if (phase === 'question') renderTimer();
+    },
+    support() { paused = false; setPhase('support', 1000 * (Number(cfg().supportTime) || 13)); },
+    share() { showShare(); },
+    showBoard() { if (phase !== 'question') { setPhase('board', cfg().autopilot ? cfg().winnersTime * 1000 : 0); } },
+    hideBoard() { if (phase === 'board' || phase === 'final') { phaseEnds = 0; nextTopic(); } },
+    restart() { ensureState(); st.no = 0; st.game++; paused = false; nextTopic(); },
+    replayQuestion() {
+      if (!q) return;
+      const again = Object.assign({}, q, { correct: [], got: {}, start: Date.now(), hint: false, done: false, collecting: false });
+      again.hintAt = again.start + cfg().qTime * 500;
+      q = again; $('qzVisual').dataset.q = ''; setPhase('question', cfg().qTime * 1000);
+    }
+  };
+
+  /* simulation support: what a fake viewer could answer right now */
+  function simTarget() {
+    if (!q || phase !== 'question' || paused) return null;
+    return { id: q.id, right: rnd(q.answers), wrong: q.visual.kind === 'math' ? String((+q.answers[0] || 10) + 1 + ((Math.random() * 5) | 0)) : rnd(['ما عرفتش', 'باريس', 'مصر', 'لندن', '7', 'روما', 'البرازيل']) };
+  }
+
+  G.Quiz = {
+    CATS,
+    init(a) { api = a; },
+    applyLayout, music,
+    start, stop, onChat, onGift, ctl, simTarget,
+    isCorrect, key,
+    get phase() { return phase; },
+    get paused() { return paused; },
+    stats() {
+      const s = S(); ensureState();
+      return [['السؤال', st.no + '/' + cfg().qCount], ['جاوبو صح (هاد السؤال)', q ? q.correct.length : 0], ['الأسئلة المطروحة', st.asked]];
+    },
+    _debug: () => ({ phase, q, st })
+  };
+})(window);
