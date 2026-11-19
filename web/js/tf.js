@@ -402,22 +402,26 @@
       .map(u => { const [w, d] = foot(els[u], zs[zone]); return { p: els[u]._p, w, d, named: !els[u].classList.contains('noname') }; });
   }
   /** the free place farthest from everybody (best of many random tries over the whole panel) */
+  /** the next free place of a floor, filling it from the top (back) down to the bottom (front), row after row:
+   *  staggered rows, each place a little shifted at random, so the players are spread over the whole floor */
   function scatter(zone, uid) {
-    const [a, b] = ZONES[zone], [hw, dy, full] = foot(els[uid], zs[zone]);
-    const y0 = Math.min(Y1 - 0.02, Y0F), os = others(zone, uid);
-    let best = null, bestS = -1;
-    for (let k = 0; k < 90; k++) {
-      const c = [a + hw + Math.random() * Math.max(0, b - a - 2 * hw), y0 + Math.random() * (Y1 - y0)];
-      let ok = true, sc = 3;
-      for (const o of os) {
-        const dx = Math.abs(c[0] - o.p[0]) / (hw + o.w), dd = Math.abs(c[1] - o.p[1]) / Math.max(dy, o.d);
-        if (dx < 1 && dd < 1) { ok = false; break; }
-        sc = Math.min(sc, Math.hypot(dx, dd));
+    const [a, b] = ZONES[zone], [hw, dy] = foot(els[uid], zs[zone]), os = others(zone, uid);
+    const W = b - a, cols = Math.max(1, Math.floor(W / (2 * hw))), cell = W / cols;
+    const step = dy * 1.18, rows = Math.max(1, Math.floor((Y1 - Y0F) / step) + 1), gapY = rows > 1 ? (Y1 - Y0F) / (rows - 1) : 0;
+    const free = c => os.every(o => Math.abs(c[0] - o.p[0]) >= hw + o.w || Math.abs(c[1] - o.p[1]) >= Math.max(dy, o.d));
+    for (let r = 0; r < rows; r++) {
+      const odd = r % 2 && cols > 1, n = odd ? cols - 1 : cols, off = odd ? cell / 2 : 0;
+      const idx = Array.from({ length: n }, (_, i) => i).sort(() => Math.random() - 0.5);
+      for (const i of idx) {
+        const sx = Math.max(0, cell - 2 * hw) * 0.45, sy = Math.max(0, gapY - dy) * 0.45;
+        for (let t = 0; t < 4; t++) {                          // a few shifted tries inside the place
+          const c = [a + off + (i + 0.5) * cell + (Math.random() - 0.5) * 2 * sx * (t < 3 ? 1 : 0),
+                     Math.min(Y1, Y0F + r * gapY + (Math.random() - 0.5) * 2 * sy * (t < 3 ? 1 : 0))];
+          if (c[0] - hw >= a - 1e-6 && c[0] + hw <= b + 1e-6 && free(c)) return c;
+        }
       }
-      // a little preference for the empty edges of the panel when there are few players
-      if (ok && sc + Math.random() * 0.15 > bestS) { bestS = sc; best = c; }
     }
-    return best;
+    return null;
   }
   function setZoneSize(zone, v) {
     zs.no = zs.mid = zs.yes = v;
@@ -602,7 +606,7 @@
   }
   const RULE_MS = 5000;
   const RULES = ['اكتب «العب» في التعليقات لتدخل اللعبة', 'أجب على كل سؤال بـ «نعم» أو «لا»', 'الإجابة الأولى هي التي تُحتسب، لا يمكن تغييرها',
-    'من لا يجيب يبقى في الوسط ويسقط', 'آخر من يبقى واقفاً هو البطل 👑'];
+    'من يبقى في الوسط بدون إجابة سيخسر', 'آخر من يبقى واقفاً هو البطل 👑'];
   function sessionTop() {
     const s = S(); if (!s) return '';
     const t = Object.keys(s.participants).filter(u => s.participants[u].wins).sort((a, b) => s.participants[b].wins - s.participants[a].wins).slice(0, 3);
