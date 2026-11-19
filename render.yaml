@@ -1,8 +1,9 @@
 # One-click deploy on Render (https://render.com) — works from a phone browser.
 services:
   - type: web
-    name: goldrail-live-relay
+    name: goldrail-relay-eu
     runtime: node
+    region: frankfurt          # Europe: close to Morocco (the old service was in Oregon, USA)
     rootDir: server
     plan: free
     buildCommand: npm ci --omit=dev
