@@ -1,0 +1,29 @@
+name: Build Matches TV
+on:
+  push:
+    branches: [claude/noor-tv-cleanup-fftvwv]
+    paths: ['noor/matches/**', '.github/workflows/matches-tv.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Gathin23/cleanyourtv
+          ref: 3b6b3a15760d426dfcbcc6007bf26c429f35096a
+          path: cleanyourtv
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Look at the matches data
+        run: bash noor/matches/probe.sh
+      - run: bash noor/matches/build.sh
+      - name: Publish to the noor-tv-build release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload noor-tv-build out/matches-launcher.apk noor/matches/debloat-moor2.txt --clobber

@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The app icon: the 3D TV, kept inside the adaptive icon's safe zone. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android" android:drawable="@drawable/i3_tv_big" android:inset="24dp" />

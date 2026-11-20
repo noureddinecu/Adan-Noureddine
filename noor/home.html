@@ -1,0 +1,209 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Zahhaf TV</title>
+<style>
+:root{--bg:#0d0f1e;--card:rgba(255,255,255,.06);--card2:rgba(255,255,255,.1);--line:rgba(255,255,255,.09);
+  --txt:#f5f6ff;--dim:rgba(245,246,255,.62);--a1:#7c5cff;--a2:#00d4ff;--ok:#34d399;--bad:#ff6b8a;--warn:#ffd166;--grad:linear-gradient(135deg,var(--a1),var(--a2));--r:20px;--ease:cubic-bezier(.2,.8,.2,1)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(120% 60% at 100% 0%,#2a1f6b 0%,transparent 60%),radial-gradient(90% 50% at 0% 100%,#0b3b55 0%,transparent 60%),var(--bg);
+  background-attachment:fixed;color:var(--txt);font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;-webkit-user-select:none;user-select:none}
+.c{max-width:620px;margin:0 auto;padding:16px 16px calc(30px + env(safe-area-inset-bottom))}
+.i3{width:28px;height:28px;flex:none;object-fit:contain;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
+/* splash */
+.splash{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);transition:opacity .6s var(--ease),visibility .6s}
+.splash .i3{width:110px;height:110px;animation:pop .8s var(--ease)}
+.splash h1{margin:0;font-size:30px;font-weight:900;animation:up .8s .15s var(--ease) both}.splash h1 b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.splash.off{opacity:0;visibility:hidden}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}@keyframes up{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.head{display:flex;align-items:center;gap:10px;margin:4px 0 18px}
+.head .i3{width:42px;height:42px}.head h1{flex:1;margin:0;font-size:23px;font-weight:900}.head h1 b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.icon{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;padding:0;color:#fff;font-weight:800;font-size:13px}
+.icon .i3{width:26px;height:26px}
+.sub{color:var(--dim);font-size:14px;margin:-8px 2px 14px}
+.tv{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px;animation:in .45s var(--ease) both}
+@keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.tvh{display:flex;align-items:center;gap:12px}.tvh .i3{width:50px;height:50px}.tvh div{flex:1;min-width:0}
+.tvh b{display:block;font-size:18px}.tvh small{color:var(--dim);font-size:13px;direction:ltr;unicode-bidi:plaintext}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;padding:5px 10px;border-radius:999px;background:var(--card2);white-space:nowrap}
+.st i{width:8px;height:8px;border-radius:50%;background:#8a8fb0}.st.ok i{background:var(--ok);box-shadow:0 0 8px var(--ok)}.st.off i{background:var(--bad)}.st.busy i{background:var(--a2);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.3}}
+.msg{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);font-size:13.5px;line-height:1.6;display:none}
+.msg.on{display:block}.msg.bad{background:rgba(255,107,138,.1);border-color:rgba(255,107,138,.3)}
+.acts{display:flex;gap:8px;margin-top:12px}
+.open{flex:1;padding:13px;border:0;border-radius:14px;background:var(--grad);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(124,92,255,.35)}
+.open .i3{width:26px;height:26px}.open:disabled{opacity:.45;box-shadow:none}
+button:active{transform:scale(.96)}
+.add{width:100%;padding:16px;border-radius:var(--r);border:1.5px dashed rgba(255,255,255,.22);background:none;color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px}
+.add .i3{width:30px;height:30px}
+.found{border-color:rgba(255,209,102,.35)}
+.empty{text-align:center;padding:30px 10px}.empty .i3{width:90px;height:90px}.empty h2{margin:12px 0 6px}.empty p{color:var(--dim);line-height:1.7;margin:0}
+/* sheets */
+.veil{position:fixed;inset:0;z-index:30;background:rgba(6,7,16,.6);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.veil.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:620px;margin:0 auto;padding:18px 16px calc(22px + env(safe-area-inset-bottom));border-radius:26px 26px 0 0;
+  background:linear-gradient(180deg,#221d4d,#121430);border:1px solid var(--line);transform:translateY(105%);transition:transform .4s var(--ease)}
+.sheet.on{transform:none}
+.sheet h3{margin:4px 2px 14px;font-size:19px;display:flex;align-items:center;gap:10px}.sheet h3 .i3{width:34px;height:34px}
+.item{width:100%;display:flex;align-items:center;gap:12px;padding:13px 12px;margin-bottom:8px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:#fff;font-size:15.5px;font-weight:700;text-align:start}
+.item .i3{width:30px;height:30px}.item small{display:block;color:var(--dim);font-weight:500;font-size:12.5px;margin-top:2px}.item.red{color:#ffd0da;background:rgba(255,107,138,.08)}
+.field{width:100%;padding:13px 14px;font-size:16px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:#fff;outline:none;margin-bottom:10px;-webkit-user-select:text;user-select:text}
+.check{display:flex;align-items:center;gap:10px;font-size:14px;margin:6px 2px 12px;line-height:1.5}.check input{width:22px;height:22px;accent-color:var(--a1)}
+.go{width:100%;padding:14px;border:0;border-radius:14px;background:var(--grad);color:#fff;font-size:16px;font-weight:800}
+.go.red{background:linear-gradient(135deg,#ff6b8a,#c8436b)}
+.ab{text-align:center;color:var(--dim);font-size:13.5px;line-height:1.8}.ab b{color:#fff}
+/* PIN pad */
+.pin{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:rgba(6,7,16,.72);backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.pin.on{opacity:1;pointer-events:auto}
+.pbox{width:min(88vw,340px);padding:22px 20px;border-radius:26px;background:linear-gradient(180deg,rgba(40,34,90,.95),rgba(16,18,40,.95));border:1px solid var(--line);text-align:center;transform:translateY(20px) scale(.96);transition:transform .35s var(--ease)}
+.pin.on .pbox{transform:none}.pbox .i3{width:58px;height:58px}.pbox h3{margin:10px 0 16px;font-size:19px}
+.dots{display:flex;justify-content:center;gap:16px;margin-bottom:20px;direction:ltr}.dots i{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.4);transition:all .2s var(--ease)}
+.dots i.f{background:var(--grad);border-color:transparent;transform:scale(1.15)}.dots.bad{animation:shake .4s}@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;direction:ltr}
+.key{height:58px;border-radius:18px;border:1px solid var(--line);background:var(--card2);color:#fff;font-size:24px;font-weight:700;display:grid;place-items:center}
+.key .i3{width:30px;height:30px}.key.ghost{background:none;border:0;font-size:15px;color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;pointer-events:none;z-index:60;
+  background:rgba(20,22,44,.95);border:1px solid var(--line);color:#fff;padding:12px 18px;border-radius:999px;font-size:15px;font-weight:600;transition:all .35s var(--ease);max-width:92vw;text-align:center}
+.toast.on{transform:translate(-50%,0);opacity:1}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="splash" id="splash"><img class="i3" data-k="tv" alt=""><h1><b data-t="name1"></b> TV</h1></div>
+<div class="c">
+  <div class="head">
+    <img class="i3" data-k="tv" alt=""><h1><b data-t="name1"></b> TV</h1>
+    <button class="icon" onclick="toggleLang()" id="langb"></button>
+    <button class="icon" onclick="about()"><img class="i3" data-k="info" alt=""></button>
+  </div>
+  <p class="sub" data-t="myTvs"></p>
+  <div id="list"></div>
+  <div id="foundBox"></div>
+  <button class="add" onclick="pin(function(){Zahhaf.setup()})"><img class="i3" data-k="plus" alt=""><span data-t="addTv"></span></button>
+</div>
+
+<div class="veil" id="veil" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"></div>
+<div class="pin" id="pin"><div class="pbox"><img class="i3" data-k="lock" alt=""><h3 data-t="pinT"></h3><div class="dots" id="dots"><i></i><i></i><i></i><i></i></div><div class="keys" id="keys"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+function $(i){return document.getElementById(i)}
+var ICONS=/*ICONS*/{};
+function ic(k){return '<img class="i3" src="'+(ICONS[k]||'')+'" alt="">'}
+function setIcons(){document.querySelectorAll('img[data-k]').forEach(function(e){if(ICONS[e.dataset.k])e.src=ICONS[e.dataset.k]})}
+var L={ar:{name1:'زحاف',myTvs:'تلفازاتي',addTv:'تجهيز تلفاز جديد',open:'فتح',online:'متصل',offline:'غير متصل',checking:'جارٍ التحقق…',updating:'جارٍ التحديث…',
+  upMsg:'يتم تحديث تطبيقات التلفاز تلقائياً، لا تُطفئه.',upDone:'تم تحديث التلفاز ✓',upFail:'تعذّر التحديث: تأكّد أن «تصحيح أخطاء USB» مفعّل ثم اضغط «إصلاح».',
+  offMsg:'التلفاز مطفأ أو على شبكة أخرى. شغّله ثم اسحب للتحديث أو اضغط «إعادة المحاولة».',retry:'إعادة المحاولة',
+  more:'خيارات',repair:'إصلاح التلفاز',repairS:'يعيد تركيب ما ينقص دون المساس بالتنظيف',rename:'تغيير الاسم',restore:'استعادة التلفاز كما كان',restoreS:'يعيد التطبيقات المعطّلة والشاشة الأصلية',
+  remove:'إزالة من القائمة',save:'حفظ',newName:'الاسم الجديد',restoreQ:'استعادة التلفاز كما كان؟',restoreAlso:'وإزالة تطبيقات نور أيضاً (الشاشة الجديدة والأذان والبطاقات)',
+  doRestore:'نعم، استعادة',restoring:'جارٍ الاستعادة…',restored:'عاد التلفاز كما كان 🌿',removed:'أُزيل من القائمة',renamed:'تم تغيير الاسم',
+  emptyH:'لا يوجد تلفاز بعد',emptyP:'جهّز تلفازك الأول: تنظيف وشاشة جديدة ومواقيت الصلاة والأذان والأذكار.',
+  foundH:'وجدنا تلفازاً مجهّزاً',foundP:'هذا التلفاز فيه تطبيقات نور. أضفه إلى القائمة وحدّثه.',adopt:'إضافة وتحديث',adopting:'جارٍ الإضافة…',
+  pinT:'أدخل الرمز',pinBad:'رمز غير صحيح',cancel:'إلغاء',
+  aboutT:'حول التطبيق',version:'الإصدار',checkUp:'التحقق من وجود إصدار جديد',checking2:'جارٍ التحقق…',latest:'لديك أحدث إصدار ✓',newApp:'إصدار جديد متوفر: ',download:'تنزيل',
+  exportT:'حفظ نسخة من بيانات التطبيق',exportS:'التلفازات والنسخ الاحتياطية والأذان، لنقلها إلى هاتف آخر',importT:'استيراد نسخة',importS:'من ملف محفوظ سابقاً',
+  exported:'تم الحفظ ✓',imported:'تم الاستيراد ✓',credits:'يعتمد على CleanYourTV (رخصة MIT) وأيقونات Fluent Emoji من مايكروسوفت (رخصة MIT) وخط أميري (رخصة OFL).',
+  noWifi:'تعذّر الوصول إلى الإنترنت'},
+ es:{name1:'Zahhaf',myTvs:'Mis teles',addTv:'Preparar una tele nueva',open:'Abrir',online:'Conectada',offline:'Sin conexión',checking:'Comprobando…',updating:'Actualizando…',
+  upMsg:'Las apps de la tele se actualizan solas; no la apagues.',upDone:'Tele actualizada ✓',upFail:'No se pudo actualizar: activa «Depuración USB» y pulsa «Reparar».',
+  offMsg:'La tele está apagada o en otra red. Enciéndela y pulsa «Reintentar».',retry:'Reintentar',
+  more:'Opciones',repair:'Reparar la tele',repairS:'Reinstala lo que falte sin tocar la limpieza',rename:'Cambiar el nombre',restore:'Dejar la tele como estaba',restoreS:'Reactiva las apps y la pantalla original',
+  remove:'Quitar de la lista',save:'Guardar',newName:'Nuevo nombre',restoreQ:'¿Dejamos la tele como estaba?',restoreAlso:'Y quitar también las apps de Noor (pantalla nueva, adhan, tarjetas)',
+  doRestore:'Sí, restaurar',restoring:'Restaurando…',restored:'La tele está como antes 🌿',removed:'Quitada de la lista',renamed:'Nombre cambiado',
+  emptyH:'Aún no hay ninguna tele',emptyP:'Prepara tu primera tele: limpieza, pantalla nueva, horarios de oración, adhan y adhkar.',
+  foundH:'Encontré una tele preparada',foundP:'Esta tele ya tiene las apps de Noor. Añádela a la lista y actualízala.',adopt:'Añadir y actualizar',adopting:'Añadiendo…',
+  pinT:'Introduce el código',pinBad:'Código incorrecto',cancel:'Cancelar',
+  aboutT:'Acerca de',version:'Versión',checkUp:'Buscar una versión nueva',checking2:'Comprobando…',latest:'Tienes la última versión ✓',newApp:'Nueva versión: ',download:'Descargar',
+  exportT:'Guardar una copia de la app',exportS:'Teles, copias de seguridad y adhan, para otro móvil',importT:'Importar una copia',importS:'Desde un archivo guardado',
+  exported:'Guardado ✓',imported:'Importado ✓',credits:'Basado en CleanYourTV (licencia MIT), iconos Fluent Emoji de Microsoft (MIT) y la letra Amiri (OFL).',
+  noWifi:'Sin acceso a internet'}};
+var lang=Zahhaf.lang()==='es'?'es':'ar';
+function T(k){return L[lang][k]}
+function applyLang(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('langb').textContent=lang==='ar'?'ES':'ع';
+  document.querySelectorAll('[data-t]').forEach(function(e){e.textContent=T(e.dataset.t)})}
+function toggleLang(){lang=lang==='ar'?'es':'ar';Zahhaf.setLang(lang);applyLang();render()}
+var tt;function say(t){var e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('on')},2800)}
+document.addEventListener('click',function(e){if(e.target.closest('button'))Zahhaf.tap()},true);
+
+/* ---------- Java bridge ---------- */
+var waits={},seq=0;
+function call(fn){var id=++seq,args=[].slice.call(arguments,1);return new Promise(function(res){waits[id]=res;Zahhaf[fn].apply(Zahhaf,[id].concat(args))})}
+function onResult(id,s){var f=waits[id];delete waits[id];var v;try{v=JSON.parse(s)}catch(e){v=s}if(f)f(v)}
+
+/* ---------- the TV list ---------- */
+var tvs=[],state={};
+function render(){tvs=JSON.parse(Zahhaf.tvs());var box=$('list');box.innerHTML='';
+  if(!tvs.length){box.innerHTML='<div class="empty">'+ic('tv')+'<h2>'+T('emptyH')+'</h2><p>'+T('emptyP')+'</p></div>'}
+  tvs.forEach(function(t,i){var s=state[t.key]||{};var d=document.createElement('div');d.className='tv';d.style.animationDelay=(i*60)+'ms';
+    var stCls=s.busy?'busy':s.online===true?'ok':s.online===false?'off':'',stTxt=s.busy?T('updating'):s.online===true?T('online'):s.online===false?T('offline'):T('checking');
+    d.innerHTML='<div class="tvh">'+ic('tv')+'<div><b></b><small></small></div><span class="st '+stCls+'"><i></i>'+stTxt+'</span></div>'
+      +'<div class="msg'+(s.bad?' bad':'')+(s.msg?' on':'')+'"></div>'
+      +'<div class="acts"><button class="open">'+ic('message')+T('open')+'</button><button class="icon">'+ic('gear')+'</button></div>';
+    d.querySelector('b').textContent=t.name||t.model;d.querySelector('small').textContent=(t.model||'')+' · '+(t.ip||'');d.querySelector('.msg').textContent=s.msg||'';
+    var op=d.querySelector('.open');op.disabled=!!s.busy||s.online===false;op.onclick=function(){Zahhaf.control(t.key)};
+    d.querySelector('.icon').onclick=function(){menu(t)};
+    if(s.online===false){var r=document.createElement('button');r.className='icon';r.style.width='auto';r.style.padding='0 12px';r.textContent=T('retry');r.onclick=function(){check(t)};d.querySelector('.acts').appendChild(r)}
+    box.appendChild(d)})}
+function set(key,v){state[key]=Object.assign(state[key]||{},v);render()}
+/* each TV: is it there (it may have a new address), and is it up to date? Older TVs update by themselves. */
+function check(t){set(t.key,{online:undefined,msg:'',bad:false});
+  call('status',t.key).then(function(s){set(t.key,{online:s.online});
+    if(s.online&&s.version<s.latest)update(t,false)})}
+function update(t,repair){set(t.key,{busy:true,msg:T('upMsg'),bad:false});
+  call('update',t.key,!!repair).then(function(r){set(t.key,{busy:false,online:r.ok?true:state[t.key].online,msg:r.ok?T('upDone'):T('upFail'),bad:!r.ok});
+    if(r.ok)setTimeout(function(){set(t.key,{msg:''})},4000)})}
+function checkAll(){render();tvs.forEach(check);
+  call('discover').then(function(list){var box=$('foundBox');box.innerHTML='';list.forEach(function(f){var d=document.createElement('div');d.className='tv found';
+    d.innerHTML='<div class="tvh">'+ic('antenna')+'<div><b></b><small></small></div></div><div class="msg on"></div><div class="acts"><button class="open">'+ic('plus')+T('adopt')+'</button></div>';
+    d.querySelector('b').textContent=T('foundH');d.querySelector('small').textContent=f.ip;d.querySelector('.msg').textContent=T('foundP');
+    d.querySelector('.open').onclick=function(){var b=this;b.disabled=true;b.lastChild.textContent=T('adopting');
+      call('adopt',f.ip).then(function(r){if(r.ok){d.remove();render();var t=tvs.filter(function(x){return x.key===r.key})[0];if(t)update(t,true)}else{b.disabled=false;b.lastChild.textContent=T('adopt');say(T('upFail'))}})};
+    box.appendChild(d)});
+    if(!tvs.length&&!list.length)pin(function(){Zahhaf.setup()})})}
+
+/* ---------- menus ---------- */
+function sheet(html){$('sheet').innerHTML=html;$('sheet').classList.add('on');$('veil').classList.add('on');setIcons()}
+function closeSheet(){$('sheet').classList.remove('on');$('veil').classList.remove('on')}
+function item(icon,title,sub,cls,fn){var id='it'+(++seq);setTimeout(function(){var e=$(id);if(e)e.onclick=fn},0);
+  return '<button class="item '+(cls||'')+'" id="'+id+'">'+ic(icon)+'<div><div>'+title+'</div>'+(sub?'<small>'+sub+'</small>':'')+'</div></button>'}
+function menu(t){sheet('<h3>'+ic('tv')+'<span></span></h3>'
+  +item('wrench',T('repair'),T('repairS'),'',function(){closeSheet();pin(function(){update(t,true)})})
+  +item('pen',T('rename'),'','',function(){rename(t)})
+  +item('restore',T('restore'),T('restoreS'),'red',function(){closeSheet();pin(function(){restore(t)})})
+  +item('clear',T('remove'),'','red',function(){closeSheet();pin(function(){Zahhaf.remove(t.key);delete state[t.key];render();say(T('removed'))})}));
+  $('sheet').querySelector('h3 span').textContent=t.name||t.model}
+function rename(t){sheet('<h3>'+ic('pen')+T('rename')+'</h3><input class="field" id="nn" maxlength="30"><button class="go" id="nb">'+T('save')+'</button>');
+  $('nn').value=t.name||'';$('nn').placeholder=T('newName');$('nb').onclick=function(){Zahhaf.rename(t.key,$('nn').value.trim());closeSheet();render();say(T('renamed'))}}
+function restore(t){sheet('<h3>'+ic('restore')+T('restoreQ')+'</h3><label class="check"><input type="checkbox" id="ro" checked><span>'+T('restoreAlso')+'</span></label><button class="go red" id="rb">'+T('doRestore')+'</button>');
+  $('rb').onclick=function(){var also=$('ro').checked;closeSheet();set(t.key,{busy:true,msg:T('restoring'),bad:false});
+    call('restore',t.key,also).then(function(r){set(t.key,{busy:false,msg:r.ok?T('restored'):r.error,bad:!r.ok});if(r.ok&&also){delete state[t.key];render()}})}}
+function about(){var a=JSON.parse(Zahhaf.about());sheet('<h3>'+ic('info')+T('aboutT')+'</h3><p class="ab"><b>زحاف TV · Zahhaf TV</b><br>'+T('version')+' '+a.name+' ('+a.code+')</p>'
+  +item('update',T('checkUp'),'','',function(){var s=this.querySelector('small')||document.createElement('small');s.textContent=T('checking2');this.querySelector('div').appendChild(s);
+    var self=this;call('checkUpdate').then(function(r){if(!r.ok){s.textContent=T('noWifi');return}if(r.version<=a.code){s.textContent=T('latest');return}
+      s.textContent=T('newApp')+r.name;self.onclick=function(){Zahhaf.openUrl(r.url)}})})
+  +item('export',T('exportT'),T('exportS'),'',function(){closeSheet();call('exportData').then(function(r){if(r.ok)say(T('exported'))})})
+  +item('import',T('importT'),T('importS'),'',function(){closeSheet();call('importData').then(function(r){if(r.ok){say(T('imported'));checkAll()}else if(r.error)say(r.error)})})
+  +'<p class="ab">'+T('credits')+'</p>')}
+
+/* ---------- PIN (0000) before setup, repair, restore and remove ---------- */
+var entered='',afterPin=null;
+function buildKeys(){var k=$('keys');k.innerHTML='';['1','2','3','4','5','6','7','8','9','x','0','<'].forEach(function(v){var b=document.createElement('button');b.className='key'+(v==='x'?' ghost':'');
+  if(v==='<')b.innerHTML=ic('backspace');else b.textContent=v==='x'?T('cancel'):v;
+  b.onclick=function(){if(v==='x'){$('pin').classList.remove('on');return}if(v==='<')entered=entered.slice(0,-1);else if(entered.length<4)entered+=v;dots();if(entered.length===4)setTimeout(checkPin,150)};k.appendChild(b)})}
+function dots(){$('dots').querySelectorAll('i').forEach(function(d,i){d.classList.toggle('f',i<entered.length)})}
+function pin(fn){afterPin=fn;entered='';buildKeys();dots();$('pin').classList.add('on')}
+function checkPin(){if(entered==='0000'){$('pin').classList.remove('on');if(afterPin)afterPin()}
+  else{var d=$('dots');d.classList.remove('bad');void d.offsetWidth;d.classList.add('bad');Zahhaf.buzz();say(T('pinBad'));entered='';setTimeout(dots,300)}}
+
+/* ---------- start ---------- */
+setIcons();applyLang();render();
+setTimeout(function(){$('splash').classList.add('off')},Zahhaf.firstShow()?1100:0);
+checkAll();
+function resumed(){checkAll()}
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""Adds today's matches (Matches.java) to a plain CleanYourTV launcher: a row of its own between the clock header
+and the apps, in the same vertical flow, so it never covers the clock, the date or the buttons. Nothing else of
+Noor goes in. Run from the folder holding cleanyourtv/. Safe to run twice."""
+import os, pathlib, re, shutil, sys
+
+here = pathlib.Path(__file__).resolve().parent
+src = pathlib.Path("cleanyourtv/launcher/app/src/main")
+pkg = src / "java/com/gathin/tvhome"
+
+
+def patch(path, old, new, marker):
+    text = path.read_text(encoding="utf-8")
+    if marker in text:
+        return
+    if text.count(old) != 1:
+        sys.exit(f"matches: the spot in {path} changed upstream ({text.count(old)} matches)")
+    path.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+
+# The matches row is off: the owner asked for it to go (MATCHES_ROW=1 in build.sh brings it back). The rest of
+# this launcher (its name, the remote and Home set-up for this TV) stays.
+ROW = os.environ.get("MATCHES_ROW", "0") == "1"
+row_patch = patch if ROW else (lambda *a: None)
+if ROW:
+    shutil.copy(here / "Matches.java", pkg / "Matches.java")
+# A held volume key keeps going on this TV even with the key services on (VolumeRepeat.java).
+shutil.copy(here / "VolumeRepeat.java", pkg / "VolumeRepeat.java")
+for svc in ("HomeKeyService.java", "InputKeyService.java"):
+    patch(pkg / svc, "        if (consumeVolumeKeys && VolumeKeys.handle(this, event)) return true;\n",
+          "        if (consumeVolumeKeys && VolumeKeys.handle(this, event)) return true;\n"
+          "        if (!consumeVolumeKeys) VolumeRepeat.see(this, event);\n", "VolumeRepeat.see(this, event)")
+row_patch(src / "res/layout/activity_main.xml",
+      """        </RelativeLayout>
+
+        <!-- The wrapper clips at the grid's edge;""",
+      """        </RelativeLayout>
+
+        <!-- Today's matches, a row of its own under the header (filled by Matches; gone until the first answer).
+             Its cards take focus from the dock with Up and scroll sideways. -->
+        <LinearLayout
+            android:id="@+id/noorMatches"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:focusable="false"
+            android:visibility="gone" />
+
+        <!-- The wrapper clips at the grid's edge;""",
+      'android:id="@+id/noorMatches"')
+main = pkg / "MainActivity.java"
+row_patch(main, "    private void updateGreeting() {\n",
+      "    private void updateGreeting() {\n        Matches.update(this);\n", "Matches.update(this)")
+# The app's title above the dock keeps its room under the row instead of rising into it.
+patch(main, "if (MainActivity.this.dockRow && cfg.dockTitle && rowsBelowDock > 0) want",
+      "if (MainActivity.this.dockRow && cfg.dockTitle) want", "cfg.dockTitle) want = Math.max(want, (int) (AppAdapter.TITLE_ROOM_DP")
+manifest = src / "AndroidManifest.xml"
+if "android.permission.INTERNET" not in manifest.read_text(encoding="utf-8"):
+    patch(manifest, '    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />',
+          '    <uses-permission android:name="android.permission.INTERNET" />\n'
+          '    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />', "android.permission.INTERNET")
+# This launcher is for the Xiaomi Google TV (MiTV-MOOR2): its Live TV app, and the remote's YouTube button, which
+# Google's home alone answered (CleanYourTV examples/xiaomi-mitv-moor2).
+cfg = src / "res/values/config.xml"
+patch(cfg, '<string name="live_tv_package" translatable="false">com.mediatek.wwtv.tvcenter</string>',
+      '<string name="live_tv_package" translatable="false">com.mitv.livetv</string>', ">com.mitv.livetv</string>")
+patch(cfg, """    <string-array name="app_keys" translatable="false">
+    </string-array>""", """    <string-array name="app_keys" translatable="false">
+        <item>190:com.google.android.youtube.tv</item>
+    </string-array>""", "<item>190:com.google.android.youtube.tv</item>")
+# Its own name in the Home chooser: the original CleanYourTV launcher is also called «Home» in every language, and a
+# TV with both showed two identical choices.
+for f in src.glob("res/values*/strings.xml"):
+    t = f.read_text(encoding="utf-8")
+    t2 = re.sub(r'(<string name="app_name"[^>]*>)[^<]*(</string>)', r"\g<1>Home ⚽\g<2>", t)
+    if t2 != t:
+        f.write_text(t2, encoding="utf-8")
+# The remote stays the TV's own: no key filtering at all (this Xiaomi firmware stops repeating a held key, volume
+# included, as soon as a service filters keys), and Google's home stays on, with HomeKeyService bringing this one
+# forward whenever Google's comes up. That is the set-up CleanYourTV tested on MiTV-MOOR2 (examples/xiaomi-mitv-moor2,
+# README): Home from any app, held volume, Settings, Input and YouTube buttons all worked.
+patch(cfg, '<bool name="key_filter">true</bool>', '<bool name="key_filter">false</bool>', '<bool name="key_filter">false</bool>')
+patch(cfg, '<string name="stock_home_redirect" translatable="false"></string>',
+      '<string name="stock_home_redirect" translatable="false">com.google.android.apps.tv.launcherx</string>',
+      '>com.google.android.apps.tv.launcherx</string>')
+print("matches row:", "in the home layout, under the header" if ROW else "off")

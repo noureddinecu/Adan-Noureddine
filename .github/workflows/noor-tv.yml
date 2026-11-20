@@ -1,0 +1,37 @@
+name: Build Noor TV
+on:
+  push:
+    branches: [claude/noor-tv-cleanup-fftvwv]
+    paths: ['noor/**', '.github/workflows/noor-tv.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: majedphotos/noor-tv
+          ref: c0ae5b7124332730da534bccfed35d9bef3e08c2
+          path: noor-tv
+      - uses: actions/checkout@v4
+        with:
+          repository: Gathin23/cleanyourtv
+          ref: 3b6b3a15760d426dfcbcc6007bf26c429f35096a
+          path: cleanyourtv
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: bash noor/build.sh
+      - name: Publish to the noor-tv-build release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view noor-tv-build >/dev/null 2>&1 || \
+            gh release create noor-tv-build --target "$GITHUB_SHA" --prerelease \
+              --title "Noor TV build" --notes "APKs and themes for the TV, built from noor/."
+          for old in adhan.txt adhan-search.txt; do gh release delete-asset noor-tv-build "$old" -y 2>/dev/null || true; done
+          gh release upload noor-tv-build out/* --clobber

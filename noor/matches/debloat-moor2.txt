@@ -1,0 +1,36 @@
+# From CleanYourTV (MIT, github.com/Gathin23/cleanyourtv, examples/xiaomi-mitv-moor2/debloat.txt at 3b6b3a1).
+# Tested there on MiTV-MOOR2/MOOR4/MOOR6 (Google TV 11). Only the first part: the stock launcher and the setup
+# wizard (setupwraith) are handled by tv.sh matches itself, after the new Home is installed and checked.
+# Xiaomi telemetry
+com.miui.tv.analytics
+com.xiaomi.statistic
+com.xiaomi.tvqs.overseas               # Firebase analytics + DOWNLOAD_WITHOUT_NOTIFICATION
+
+# Ad rows, promos and content providers on the home screen
+com.mitv.tvhome.oemtab                 # holds ACCESS_ADSERVICES_AD_ID/_ATTRIBUTION - the ad row
+com.mitv.tvhome.michannel              # Mi content rows
+com.mitv.tvhome.mitvplus               # Mi TV+ ad-funded channels
+com.mitv.tvhome.atv                    # PatchWall home; not a HOME candidate on this build
+com.xm.webcontent                      # Xiaomi web promo WebView
+com.google.android.partnersetup        # Google RLZ attribution pings
+
+# Retail demo mode
+fusion.android.tv.demo                 # in-store demo loop (.HorizontalActivity/.VerticalActivity)
+
+# Xiaomi nagware and dead weight
+com.xiaomi.mitv.tvmanager              # "TV Manager" cleaner
+com.mitv.toolhouse
+com.xiaomi.mitv.manualhelp             # on-screen user manual
+com.xiaomo.tv.milegal                  # legal notices app
+android.autoinstalls.config.xiaomi.amelie   # silent preload installer config
+
+# Mi Cast / Miracast - Chromecast still works without them
+com.mitv.milinkservice
+com.xiaomi.mitv.smartshare
+com.xiaomi.wfdsinkhelperservice
+
+# Preloaded apps, off by choice - re-enable any you use
+com.graymatrix.did                     # ZEE5
+com.xiaomi.mimusic2                    # Mi Music
+com.google.android.play.games          # Play Games
+
