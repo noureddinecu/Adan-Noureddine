@@ -19,6 +19,12 @@ def patch(path, old, new, marker):
 
 
 shutil.copy(here / "Matches.java", pkg / "Matches.java")
+# A held volume key keeps going on this TV even with the key services on (VolumeRepeat.java).
+shutil.copy(here / "VolumeRepeat.java", pkg / "VolumeRepeat.java")
+for svc in ("HomeKeyService.java", "InputKeyService.java"):
+    patch(pkg / svc, "        if (consumeVolumeKeys && VolumeKeys.handle(this, event)) return true;\n",
+          "        if (consumeVolumeKeys && VolumeKeys.handle(this, event)) return true;\n"
+          "        if (!consumeVolumeKeys) VolumeRepeat.see(this, event);\n", "VolumeRepeat.see(this, event)")
 patch(src / "res/layout/activity_main.xml",
       """        </RelativeLayout>
 
