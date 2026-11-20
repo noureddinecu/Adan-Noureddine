@@ -2,7 +2,7 @@
 """Adds today's matches (Matches.java) to a plain CleanYourTV launcher: a row of its own between the clock header
 and the apps, in the same vertical flow, so it never covers the clock, the date or the buttons. Nothing else of
 Noor goes in. Run from the folder holding cleanyourtv/. Safe to run twice."""
-import pathlib, re, shutil, sys
+import os, pathlib, re, shutil, sys
 
 here = pathlib.Path(__file__).resolve().parent
 src = pathlib.Path("cleanyourtv/launcher/app/src/main")
@@ -18,14 +18,19 @@ def patch(path, old, new, marker):
     path.write_text(text.replace(old, new, 1), encoding="utf-8")
 
 
-shutil.copy(here / "Matches.java", pkg / "Matches.java")
+# The matches row is off: the owner asked for it to go (MATCHES_ROW=1 in build.sh brings it back). The rest of
+# this launcher (its name, the remote and Home set-up for this TV) stays.
+ROW = os.environ.get("MATCHES_ROW", "0") == "1"
+row_patch = patch if ROW else (lambda *a: None)
+if ROW:
+    shutil.copy(here / "Matches.java", pkg / "Matches.java")
 # A held volume key keeps going on this TV even with the key services on (VolumeRepeat.java).
 shutil.copy(here / "VolumeRepeat.java", pkg / "VolumeRepeat.java")
 for svc in ("HomeKeyService.java", "InputKeyService.java"):
     patch(pkg / svc, "        if (consumeVolumeKeys && VolumeKeys.handle(this, event)) return true;\n",
           "        if (consumeVolumeKeys && VolumeKeys.handle(this, event)) return true;\n"
           "        if (!consumeVolumeKeys) VolumeRepeat.see(this, event);\n", "VolumeRepeat.see(this, event)")
-patch(src / "res/layout/activity_main.xml",
+row_patch(src / "res/layout/activity_main.xml",
       """        </RelativeLayout>
 
         <!-- The wrapper clips at the grid's edge;""",
@@ -47,7 +52,7 @@ patch(src / "res/layout/activity_main.xml",
         <!-- The wrapper clips at the grid's edge;""",
       'android:id="@+id/noorMatches"')
 main = pkg / "MainActivity.java"
-patch(main, "    private void updateGreeting() {\n",
+row_patch(main, "    private void updateGreeting() {\n",
       "    private void updateGreeting() {\n        Matches.update(this);\n", "Matches.update(this)")
 # The app's title above the dock keeps its room under the row instead of rising into it.
 patch(main, "if (MainActivity.this.dockRow && cfg.dockTitle && rowsBelowDock > 0) want",
@@ -81,4 +86,4 @@ patch(cfg, '<bool name="key_filter">true</bool>', '<bool name="key_filter">false
 patch(cfg, '<string name="stock_home_redirect" translatable="false"></string>',
       '<string name="stock_home_redirect" translatable="false">com.google.android.apps.tv.launcherx</string>',
       '>com.google.android.apps.tv.launcherx</string>')
-print("matches row: in the home layout, under the header")
+print("matches row:", "in the home layout, under the header" if ROW else "off")
