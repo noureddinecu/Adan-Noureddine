@@ -5,6 +5,10 @@ B=https://site.api.espn.com/apis/site/v2/sports/soccer
 get() { curl -sS --compressed -m 20 -A "Mozilla/5.0" "$1"; }
 echo "== esp.1 structure"; get "$B/esp.1/scoreboard" | jq -c '{n:(.events|length), leagues:[.leagues[0]|{name,abbreviation,logo:(.logos[0].href)}], ev:(.events[0]|{date,name,status:.status, comp:(.competitions[0]|{venue:.venue.fullName, competitors:[.competitors[]|{homeAway,score,team:(.team|{id,displayName,shortDisplayName,abbreviation,logo})}]})})}'
 for q in "lang=ar&region=sa" "lang=es&region=es"; do echo "== esp.1 $q"; get "$B/esp.1/scoreboard?$q" | jq -c '[.events[0:2][]|.competitions[0].competitors[].team.displayName]'; done
+for l in ita.1 uefa.europa uefa.europa.conf ksa.1 caf.champions por.1 ned.1 tur.1 eng.fa eng.league_cup esp.copa_del_rey ita.coppa_italia ger.dfb_pokal fra.coupe_de_france uefa.euro conmebol.america fifa.cwc; do
+  echo "== $l"; get "$B/$l/scoreboard" | jq -c '{league:.leagues[0].name, n:(.events|length), s:[.events[0:2][]|{date,name,season:.season.slug,note:(.competitions[0].notes[0].headline // null)}]}' 2>&1 | head -c 500; echo; done
+echo "== stage samples"; get "$B/uefa.champions/scoreboard?dates=20260527" | jq -c '[.events[]|{name,season:.season,notes:.competitions[0].notes,type:.competitions[0].type}]' | head -c 900; echo
+get "$B/caf.nations/scoreboard?dates=20260118" | jq -c '[.events[]|{name,season:.season,notes:.competitions[0].notes}]' | head -c 600; echo
 for l in eng.1 uefa.champions fifa.friendly caf.nations fifa.worldq.caf fifa.world caf.nations_qual fifa.wcq.caf uefa.champions_qual; do
   echo "== $l"; get "$B/$l/scoreboard" | jq -c '{league:.leagues[0].name, n:(.events|length), cal:(.leagues[0].calendar|length), sample:[.events[0:3][]|{date,name}]}' 2>&1 | head -c 600; echo; done
 echo "== dates"; get "$B/esp.1/scoreboard?dates=$(date -u +%Y%m%d)" | jq -c '[.events[]|{date,name}]' | head -c 800; echo
