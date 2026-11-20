@@ -157,13 +157,13 @@ final class Matches {
             String[] days = {ymd.format(before.getTime()), ymd.format(today.getTime())};
             List<Game> out = new ArrayList<>();
             java.util.Set<String> asked = new java.util.HashSet<>(), ok = new java.util.HashSet<>();
-            for (Object[] c : COMPS) if (full || active.contains((String) c[0])) asked.add((String) c[0]);
-            for (Object[] c : COMPS) {
-                String l = (String) c[0];
+            for (Object[] comp : COMPS) if (full || active.contains((String) comp[0])) asked.add((String) comp[0]);
+            for (Object[] comp : COMPS) {
+                String l = (String) comp[0];
                 if (!asked.contains(l)) continue;
                 boolean good = false;
                 java.util.Set<String> seen = new java.util.HashSet<>();
-                for (String d : days) good |= read(l, (Integer) c[1], (Integer) c[2], d, today, out, seen);
+                for (String d : days) good |= read(l, (Integer) comp[1], (Integer) comp[2], d, today, out, seen);
                 if (good) ok.add(l);
             }
             if (!full && old != null) {
