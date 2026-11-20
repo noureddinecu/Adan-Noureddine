@@ -52,7 +52,7 @@ CLUBS = {
     "FC St. Pauli": "سانت باولي", "Hamburg SV": "هامبورغ", "Hamburger SV": "هامبورغ", "FC Cologne": "كولن",
     "1. FC Köln": "كولن", "FC Köln": "كولن", "Holstein Kiel": "هولشتاين كيل", "VfL Bochum": "بوخوم",
     "Bochum": "بوخوم", "Hertha Berlin": "هيرتا برلين", "Schalke 04": "شالكه", "SV Darmstadt 98": "دارمشتات",
-    "Darmstadt": "دارمشتات", "Fortuna Düsseldorf": "فورتونا دوسلدورف", "Hannover 96": "هانوفر",
+    "Darmstadt": "دارمشتات", "Fortuna Düsseldorf": "فورتونا دوسلدورف", "Hannover 96": "هانوفر", "SV Elversberg": "إلفرسبيرغ", "Elversberg": "إلفرسبيرغ",
     "SC Paderborn 07": "بادربورن", "Paderborn": "بادربورن", "Freiburg": "فرايبورغ", "Wolfsburg": "فولفسبورغ",
     # France
     "Paris Saint-Germain": "باريس سان جيرمان", "Marseille": "مرسيليا", "AS Monaco": "موناكو", "Monaco": "موناكو",
@@ -60,7 +60,7 @@ CLUBS = {
     "Rennes": "رين", "Strasbourg": "ستراسبورغ", "Stade Brestois": "بريست", "Toulouse": "تولوز", "Nantes": "نانت",
     "AJ Auxerre": "أوكسير", "Auxerre": "أوكسير", "Angers": "أنجيه", "Le Havre AC": "لوهافر", "Le Havre": "لوهافر",
     "Lorient": "لوريان", "Paris FC": "باريس إف سي", "Metz": "ميتز", "Montpellier": "مونبلييه", "Reims": "ريمس",
-    "Saint-Etienne": "سانت إتيان", "AS Saint-Étienne": "سانت إتيان", "Saint-Étienne": "سانت إتيان",
+    "Saint-Etienne": "سانت إتيان", "Troyes": "تروا", "ES Troyes AC": "تروا", "Le Mans": "لومان", "AS Saint-Étienne": "سانت إتيان", "Saint-Étienne": "سانت إتيان",
     # Italy
     "Internazionale": "إنتر ميلان", "Inter Milan": "إنتر ميلان", "AC Milan": "ميلان", "Juventus": "يوفنتوس",
     "Napoli": "نابولي", "Atalanta": "أتالانتا", "AS Roma": "روما", "Roma": "روما", "Lazio": "لاتسيو",
