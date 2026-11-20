@@ -41,7 +41,7 @@ install_apk() {
 case "$CMD" in
 get)
   mkdir -p "$B"
-  for f in launcher.apk matches-launcher.apk prayer-times.apk noor-kahf.apk noor-baqara.apk noor-sabah.apk noor-masa.apk noor-ruqya.apk themes.tar.gz; do
+  for f in launcher.apk matches-launcher.apk debloat-moor2.txt prayer-times.apk noor-kahf.apk noor-baqara.apk noor-sabah.apk noor-masa.apk noor-ruqya.apk themes.tar.gz; do
     curl -fsSL -o "$B/$f" "$URL/$f" && echo "✅ $f"
   done
   rm -rf "$B/themes"; mkdir -p "$B/themes"; tar -xzf "$B/themes.tar.gz" -C "$B/themes"
@@ -51,15 +51,74 @@ get)
   ;;
 
 matches)
-  # The plain CleanYourTV home screen with today's matches, and nothing of Noor: the launcher steps below, with this
-  # one. The backup folder is made if it is new (a TV that was never set up).
-  PKG=app.zahhaf.matches; ACT=$PKG/com.gathin.tvhome.MainActivity; APK="$B/matches-launcher.apk"
+  # The plain CleanYourTV Home with today's matches, and nothing of Noor, on a TV never set up. Steps, as CleanYourTV
+  # tested them on Xiaomi MiTV-MOOR2/4/6 (Google TV 11): its clean-up list (disabled, never uninstalled), the
+  # launcher, its remote-button services (Settings, Input and YouTube keys keep working once Google's home is off),
+  # then Google's home and its setup wizard off (the wizard also answers Home on Google TV, so it must go too - but
+  # never while it owns the Wi-Fi, or the TV drops off the network), then a check that Home really lands here.
+  # Anything that goes wrong puts Home back as it was. bash tv.sh restore undoes all of it.
   need_ip; BK="${3:?usage: bash tv.sh matches <tv-ip> <backup-folder>}"
+  PKG=app.zahhaf.matches; ACT=$PKG/com.gathin.tvhome.MainActivity
+  WIZ=com.google.android.tungsten.setupwraith
   mkdir -p "$BK"; touch "$BK/disabled-by-us.txt"
-  ;&
+  MODEL=$(sh_ "getprop ro.product.model"); echo "TV: $MODEL (Android $(sh_ "getprop ro.build.version.release"))"
+  [ -s "$BK/disabled-before.txt" ] || sh_ "pm list packages -d" | sed 's/^package://' > "$BK/disabled-before.txt"
+  [ -s "$BK/home-before.txt" ] || home_now > "$BK/home-before.txt"
+  off() {  # one package off, if it is there and on; noted for restore
+    sh_ "pm list packages -e $1" | grep -qx "package:$1" || return 0
+    case "$(sh_ "pm disable-user --user 0 $1")" in
+      *disabled-user*) grep -qx "$1" "$BK/disabled-by-us.txt" || echo "$1" >> "$BK/disabled-by-us.txt"; echo "  off: $1" ;;
+      *) echo "  left on (the TV refused): $1" ;;
+    esac
+  }
+  back_on() {  # undo one of ours
+    sh_ "pm enable --user 0 $1" >/dev/null; sed -i "/^${1//./\\.}\$/d" "$BK/disabled-by-us.txt"
+  }
+  case "$MODEL" in
+    MiTV-MOOR2|MiTV-MOOR4|MiTV-MOOR6)
+      echo "clean-up (CleanYourTV's tested list for this model):"
+      for p in $(grep -Eo '^[a-z][A-Za-z0-9_.]+' "$B/debloat-moor2.txt"); do off "$p"; done ;;
+    *) echo "no tested clean-up list for $MODEL yet: only the home screen changes" ;;
+  esac
+  install_apk "$B/matches-launcher.apk" || exit 1
+  OUT=$(sh_ "am start -W -n $ACT")
+  echo "$OUT" | grep -q 'Status: ok' || { echo "⛔ the new Home did not start; nothing else was changed."; echo "$OUT"; exit 1; }
+  # The remote's buttons (CleanYourTV's HOME_KEY_SERVICE=1 INPUT_KEY_SERVICE=1): appended, other services kept.
+  SVC="$PKG/com.gathin.tvhome.HomeKeyService:$PKG/com.gathin.tvhome.InputKeyService"
+  sh_ "s=\$(settings get secure enabled_accessibility_services); case \"\$s\" in *$PKG*) ;; null|'') settings put secure enabled_accessibility_services $SVC ;; *) settings put secure enabled_accessibility_services \"\$s:$SVC\" ;; esac; settings put secure accessibility_enabled 1" >/dev/null
+  echo "remote buttons: on"
+  STOCK=$(cut -d/ -f1 "$BK/home-before.txt")
+  case "$STOCK" in
+    "$PKG") echo "✅ this Home is already the TV's Home"; exit 0 ;;
+    com.google.android.apps.tv.launcherx|com.google.android.tvlauncher|com.google.android.leanbacklauncher|com.mitv.tvhome.atv) ;;
+    *) echo "⛔ Home is '$STOCK', which this script does not know: the launcher is installed but Home was left alone."; exit 1 ;;
+  esac
+  # The setup wizard may own the Wi-Fi saved during first setup; switching it off then drops the TV from Wi-Fi.
+  WIZ_ON=$(sh_ "pm list packages -e $WIZ" | grep -c "package:$WIZ")
+  if [ "$WIZ_ON" -gt 0 ] && sh_ "dumpsys wifi | grep -o 'cname=[^ ]*'" | grep -q setupwraith; then
+    echo "⚠️ Google's setup wizard owns this Wi-Fi network, so it cannot be switched off yet (the TV would drop off Wi-Fi)."
+    echo "   On the TV: Settings > Network & Internet > your Wi-Fi > Forget, join it again, then run this command again."
+    echo "   Home was left as it was; the launcher is installed."
+    exit 1
+  fi
+  off "$STOCK"
+  [ "$WIZ_ON" -gt 0 ] && off "$WIZ"
+  sh_ "cmd package set-home-activity --user 0 $ACT" >/dev/null 2>&1 || true
+  sh_ "input keyevent KEYCODE_HOME"; sleep 4
+  FOC=$(sh_ "dumpsys activity activities | grep -m1 mFocusedApp")
+  case "$FOC" in
+    *"$PKG"*) echo "✅ the new Home is set (the Home button lands on it)" ;;
+    *)
+      echo "⛔ Home still goes elsewhere ($FOC): putting it back as it was"
+      back_on "$STOCK"; [ "$WIZ_ON" -gt 0 ] && back_on "$WIZ"
+      sh_ "input keyevent KEYCODE_HOME"
+      exit 1 ;;
+  esac
+  ;;
+
 launcher)
-  if [ "$CMD" = launcher ]; then need_ip; BK="${3:?usage: bash tv.sh launcher <tv-ip> <backup-folder>}"; fi
-  APK="${APK:-$B/launcher.apk}"
+  need_ip; BK="${3:?usage: bash tv.sh launcher <tv-ip> <backup-folder>}"
+  APK="$B/launcher.apk"
   [ -f "$BK/disabled-by-us.txt" ] || { echo "no backup in $BK"; exit 1; }
   STOCK=$(home_now | cut -d/ -f1)
   case "$STOCK" in
@@ -182,7 +241,7 @@ restore|reset-ours)
   # home found nothing is removed, so the TV is never left without one. The same script as the phone app's restore.
   need_ip; BK="${3:-}"
   ON="$([ -n "$BK" ] && [ -f "$BK/disabled-by-us.txt" ] && grep -E '^[A-Za-z][A-Za-z0-9_.]+$' "$BK/disabled-by-us.txt" | tr '\n' ' ')"
-  OUT=$(sh_ "D=\$(pm list packages -d); n=0; for p in $ON com.miui.tv.analytics com.xiaomi.statistic com.google.android.feedback com.google.android.tv.bugreportsender com.xiaomi.mitv.tvmanager com.mitv.tvhome.atv com.mitv.tvhome.michannel com.xm.webcontent com.xiaomi.floatingframe com.google.android.tvrecommendations android.autoinstalls.config.xiaomi.amelie com.xiaomi.mimusic2 com.google.android.play.games com.google.android.videos com.mitv.gallery com.google.android.katniss com.google.android.backdrop com.mitv.dream com.netflix.ninja com.amazon.amazonvideo.livingroom com.google.android.youtube.tvmusic com.google.android.leanbacklauncher com.google.android.leanbacklauncher.recommendations com.google.android.tvlauncher; do case \"\$D\" in *\"package:\$p\"*) pm enable --user 0 \$p >/dev/null 2>&1 && n=\$((n+1));; esac; done; echo \"on=\$n\"; S=; for p in com.google.android.tvlauncher com.google.android.apps.tv.launcherx com.mitv.tvhome.atv com.mitv.tvhome com.google.android.leanbacklauncher; do pm list packages -e \$p | grep -qx \"package:\$p\" || continue; a=\$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME \$p | tail -n 1); case \"\$a\" in */*) S=\$a; break;; esac; done; [ -n \"\$S\" ] || for a in \$(cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME | grep -oE '[A-Za-z0-9_.]+/[A-Za-z0-9_.\$]+'); do case \"\$a\" in app.noortv.home/*|com.gathin.tvhome/*|com.android.tv.settings/*|com.android.settings/*) ;; *) S=\$a; break;; esac; done; echo \"stock=\$S\"; if [ -n \"\$S\" ]; then cmd package set-home-activity --user 0 \$S >/dev/null 2>&1; pm list packages -s app.noortv.home | grep -q . || { pm uninstall app.noortv.home 2>/dev/null | grep -q Success && echo \"gone=app.noortv.home\"; }; cmd package set-home-activity --user 0 \$S >/dev/null 2>&1; for p in com.majnioui.tv.prayer app.noortv.baqara app.noortv.sabah app.noortv.masa app.noortv.ruqya app.noortv.kahf; do pm list packages \$p | grep -qx \"package:\$p\" || continue; pm list packages -s \$p | grep -qx \"package:\$p\" && continue; pm uninstall \$p 2>/dev/null | grep -q Success && echo \"gone=\$p\"; done; fi; am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1; echo \"home=\$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -n 1)\"; echo done")
+  OUT=$(sh_ "D=\$(pm list packages -d); n=0; for p in $ON com.miui.tv.analytics com.xiaomi.statistic com.google.android.feedback com.google.android.tv.bugreportsender com.xiaomi.mitv.tvmanager com.mitv.tvhome.atv com.mitv.tvhome.michannel com.xm.webcontent com.xiaomi.floatingframe com.google.android.tvrecommendations android.autoinstalls.config.xiaomi.amelie com.xiaomi.mimusic2 com.google.android.play.games com.google.android.videos com.mitv.gallery com.google.android.katniss com.google.android.backdrop com.mitv.dream com.netflix.ninja com.amazon.amazonvideo.livingroom com.google.android.youtube.tvmusic com.google.android.leanbacklauncher com.google.android.leanbacklauncher.recommendations com.google.android.tvlauncher; do case \"\$D\" in *\"package:\$p\"*) pm enable --user 0 \$p >/dev/null 2>&1 && n=\$((n+1));; esac; done; echo \"on=\$n\"; S=; for p in com.google.android.tvlauncher com.google.android.apps.tv.launcherx com.mitv.tvhome.atv com.mitv.tvhome com.google.android.leanbacklauncher; do pm list packages -e \$p | grep -qx \"package:\$p\" || continue; a=\$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME \$p | tail -n 1); case \"\$a\" in */*) S=\$a; break;; esac; done; [ -n \"\$S\" ] || for a in \$(cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.HOME | grep -oE '[A-Za-z0-9_.]+/[A-Za-z0-9_.\$]+'); do case \"\$a\" in app.noortv.home/*|app.zahhaf.matches/*|com.gathin.tvhome/*|com.android.tv.settings/*|com.android.settings/*) ;; *) S=\$a; break;; esac; done; echo \"stock=\$S\"; if [ -n \"\$S\" ]; then cmd package set-home-activity --user 0 \$S >/dev/null 2>&1; pm list packages -s app.noortv.home | grep -q . || { pm uninstall app.noortv.home 2>/dev/null | grep -q Success && echo \"gone=app.noortv.home\"; }; cmd package set-home-activity --user 0 \$S >/dev/null 2>&1; for p in app.zahhaf.matches com.majnioui.tv.prayer app.noortv.baqara app.noortv.sabah app.noortv.masa app.noortv.ruqya app.noortv.kahf; do pm list packages \$p | grep -qx \"package:\$p\" || continue; pm list packages -s \$p | grep -qx \"package:\$p\" && continue; pm uninstall \$p 2>/dev/null | grep -q Success && echo \"gone=\$p\"; done; fi; am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1; echo \"home=\$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -n 1)\"; echo done")
   echo "$OUT" | sed -n 's/^on=/turned back on: /p; s/^stock=/the TV'"'"'s own home: /p; s/^gone=/🗑️ removed: /p'
   H=$(echo "$OUT" | sed -n 's/^home=//p'); S=$(echo "$OUT" | sed -n 's/^stock=//p')
   if [ -z "$S" ]; then echo "⛔ no stock home screen found on the TV: nothing was removed"; exit 1; fi

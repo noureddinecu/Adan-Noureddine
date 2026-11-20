@@ -51,4 +51,13 @@ if "android.permission.INTERNET" not in manifest.read_text(encoding="utf-8"):
     patch(manifest, '    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />',
           '    <uses-permission android:name="android.permission.INTERNET" />\n'
           '    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />', "android.permission.INTERNET")
+# This launcher is for the Xiaomi Google TV (MiTV-MOOR2): its Live TV app, and the remote's YouTube button, which
+# Google's home alone answered (CleanYourTV examples/xiaomi-mitv-moor2).
+cfg = src / "res/values/config.xml"
+patch(cfg, '<string name="live_tv_package" translatable="false">com.mediatek.wwtv.tvcenter</string>',
+      '<string name="live_tv_package" translatable="false">com.mitv.livetv</string>', ">com.mitv.livetv</string>")
+patch(cfg, """    <string-array name="app_keys" translatable="false">
+    </string-array>""", """    <string-array name="app_keys" translatable="false">
+        <item>190:com.google.android.youtube.tv</item>
+    </string-array>""", "<item>190:com.google.android.youtube.tv</item>")
 print("matches row: in the home layout, under the header")
