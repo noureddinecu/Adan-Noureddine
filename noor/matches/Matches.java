@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.LruCache;
@@ -395,11 +394,8 @@ final class Matches {
         shownKey = "";
         cardViews.clear();
         b.removeAllViews();
-        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{0x8014204A, 0x660A1230});
-        bg.setCornerRadius(dp(a, 22));
-        bg.setStroke(px(a, 1), 0x29FFFFFF);
-        b.setBackground(bg);
-        b.setPadding(px(a, 8), px(a, 6), px(a, 8), px(a, 4));
+        b.setBackground(new Glass(dp(a, 1), Glass.BAND));
+        b.setPadding(px(a, 6), px(a, 7), px(a, 6), px(a, 3));
         b.setClipChildren(true);
 
         // The launcher lays out left to right (no supportsRtl): the title is put on the right by hand, and the
@@ -435,14 +431,11 @@ final class Matches {
         // Whole cards only: the cards are sized so a whole number of them fills the row (see fit), and the row moves
         // one whole card at a time, so no card is ever cut at an edge. The padding is the room for the focused card's
         // slight lift; the next card beyond an edge starts a gap further than the padding, so it stays hidden.
-        final int gapPx = px(a, 10);
+        final int gapPx = px(a, 16); // wider than the edge padding, so no sliver of the next card shows
         scroll = new HorizontalScrollView(a) {
             @Override
             protected int computeScrollDeltaToGetChildRectOnScreen(android.graphics.Rect r) {
-                int left = getScrollX() + getPaddingLeft(), right = getScrollX() + getWidth() - getPaddingRight();
-                if (r.left < left) return r.left - left;
-                if (r.right > right) return r.right - right;
-                return 0;
+                return 0; // the cards' own keys move the row (step), so it never shifts by itself
             }
         };
         scroll.setHorizontalScrollBarEnabled(false);
@@ -451,7 +444,7 @@ final class Matches {
         scroll.setFillViewport(true);
         scroll.setClipChildren(false);
         scroll.setClipToPadding(false);
-        scroll.setPadding(px(a, 8), px(a, 6), px(a, 8), px(a, 6));
+        scroll.setPadding(px(a, 14), px(a, 8), px(a, 14), px(a, 8));
         scroll.addOnLayoutChangeListener((v, l, t, r, bt, ol, ot, or, ob) -> fit(gapPx));
         scroll.setOnScrollChangeListener((v, x, y, ox, oy) -> marks(gapPx));
         row = new LinearLayout(a);
@@ -494,13 +487,13 @@ final class Matches {
             for (int i = g.size() - 1; i >= 0; i--) {
                 View card = card(c, g.get(i));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(cardW > 0 ? cardW : px(c, 240), LinearLayout.LayoutParams.WRAP_CONTENT);
-                if (i < g.size() - 1) lp.leftMargin = px(c, 10);
+                if (i < g.size() - 1) lp.leftMargin = px(c, 16);
                 row.addView(card, lp);
             }
             scroll.post(() -> {
-                fit(px(c, 10));
+                fit(px(c, 16));
                 scroll.scrollTo(Math.max(0, row.getWidth() + scroll.getPaddingLeft() + scroll.getPaddingRight() - scroll.getWidth()), 0);
-                marks(px(c, 10));
+                marks(px(c, 16));
                 if (hadFocus && row.getChildCount() > 0) row.getChildAt(row.getChildCount() - 1).requestFocus();
             });
         }
@@ -508,6 +501,17 @@ final class Matches {
             View[] v = cardViews.get(x.id);
             if (v != null) state(c, x, v);
         }
+    }
+
+    /** Slides the row, smoothly, to the nearest place where this card is whole inside it. */
+    private static void step(View card) {
+        if (scroll == null) return;
+        int left = scroll.getScrollX() + scroll.getPaddingLeft(), right = scroll.getScrollX() + scroll.getWidth() - scroll.getPaddingRight();
+        int x = scroll.getScrollX();
+        if (card.getLeft() + scroll.getPaddingLeft() < left) x += card.getLeft() + scroll.getPaddingLeft() - left;
+        else if (card.getRight() + scroll.getPaddingLeft() > right) x += card.getRight() + scroll.getPaddingLeft() - right;
+        int max = Math.max(0, row.getWidth() + scroll.getPaddingLeft() + scroll.getPaddingRight() - scroll.getWidth());
+        scroll.smoothScrollTo(Math.max(0, Math.min(max, x)), 0);
     }
 
     /** Sizes the cards so a whole number of them, at least 230dp each, fills the row exactly. */
@@ -548,15 +552,33 @@ final class Matches {
     private static View card(Context c, Game g) {
         LinearLayout card = new LinearLayout(c);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(px(c, 12), px(c, 7), px(c, 12), px(c, 7));
+
         card.setFocusable(true);
         card.setClickable(true);
-        StateListDrawable bg = new StateListDrawable();
-        bg.addState(new int[]{android.R.attr.state_focused}, glass(c, 0xCC2B3F86, 0xBF162452, 0xE6FFFFFF, 2));
-        bg.addState(new int[]{}, g.star ? glass(c, 0xB3302A4A, 0xA6151231, 0x99E8C987, 1.5f) : glass(c, 0xA61A2556, 0x990B1336, 0x33FFFFFF, 1));
-        card.setBackground(bg);
-        card.setOnFocusChangeListener((v, has) -> v.animate().scaleX(has ? 1.04f : 1f).scaleY(has ? 1.04f : 1f)
-                .setDuration(180).setInterpolator(new DecelerateInterpolator()).start());
+        Glass gl = new Glass(dp(c, 1), g.star ? Glass.STAR : Glass.CARD);
+        card.setBackground(gl);
+        card.setLayerType(View.LAYER_TYPE_SOFTWARE, null); // blurred shadow and glow
+        int in = Math.round(Glass.INSET * dp(c, 1));
+        card.setPadding(in + px(c, 12), in + px(c, 6), in + px(c, 12), in + px(c, 7));
+        card.setOnFocusChangeListener((v, has) -> {
+            gl.setFocused(has);
+            v.animate().scaleX(has ? 1.03f : 1f).scaleY(has ? 1.03f : 1f).setDuration(200)
+                    .setInterpolator(new DecelerateInterpolator()).start();
+        });
+        // Left and right are ours: the next card gets the focus and the row slides to the place where it is whole;
+        // at either end nothing happens, so the row can never be pushed past its first or last match.
+        card.setOnKeyListener((v, code, ev) -> {
+            if (code != android.view.KeyEvent.KEYCODE_DPAD_LEFT && code != android.view.KeyEvent.KEYCODE_DPAD_RIGHT) return false;
+            if (ev.getAction() != android.view.KeyEvent.ACTION_DOWN) return true;
+            int i = row.indexOfChild(v) + (code == android.view.KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
+            if (i < 0 || i >= row.getChildCount()) return true;
+            View next = row.getChildAt(i);
+            step(next);
+            next.requestFocus();
+            v.playSoundEffect(code == android.view.KeyEvent.KEYCODE_DPAD_LEFT
+                    ? android.view.SoundEffectConstants.NAVIGATION_LEFT : android.view.SoundEffectConstants.NAVIGATION_RIGHT);
+            return true;
+        });
 
         // Top line: the time or the status on the left, the competition on the right (one line instead of two keeps
         // the band short enough for the apps under it on a 16:9 TV).
@@ -640,6 +662,101 @@ final class Matches {
         }
         st.setText(s);
         st.setTextColor(col);
+    }
+
+    // ---------- glass ----------
+
+    /**
+     * Glass with depth: a soft shadow under it, a body that is lighter at the top, a sheen over its upper part and
+     * an edge that catches the light along the top. BAND for the row itself; CARD for a match, STAR for a big one
+     * (a gold edge); a focused card glows white. Drawn inside INSET dp so the shadow and the glow stay in its bounds.
+     */
+    static final class Glass extends android.graphics.drawable.Drawable {
+        static final int BAND = 0, CARD = 1, STAR = 2;
+        static final float INSET = 5;
+        private final float d;
+        private final int kind;
+        private boolean focused;
+        private final android.graphics.Paint shadow = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG),
+                glow = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG),
+                body = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG),
+                sheen = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG),
+                edge = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        private final android.graphics.RectF r = new android.graphics.RectF(), q = new android.graphics.RectF();
+
+        Glass(float density, int kind) {
+            d = density;
+            this.kind = kind;
+            shadow.setColor(kind == BAND ? 0x59000000 : 0x8C000000);
+            shadow.setMaskFilter(new android.graphics.BlurMaskFilter((kind == BAND ? 8 : 6) * d, android.graphics.BlurMaskFilter.Blur.NORMAL));
+            glow.setMaskFilter(new android.graphics.BlurMaskFilter(7 * d, android.graphics.BlurMaskFilter.Blur.OUTER));
+            edge.setStyle(android.graphics.Paint.Style.STROKE);
+        }
+
+        void setFocused(boolean f) {
+            if (focused != f) {
+                focused = f;
+                invalidateSelf();
+            }
+        }
+
+        @Override
+        public void draw(android.graphics.Canvas c) {
+            r.set(getBounds());
+            float in = kind == BAND ? 0 : INSET * d;
+            r.inset(in, in);
+            if (kind == BAND) r.bottom -= 3 * d;
+            float rad = (kind == BAND ? 22 : 16) * d;
+            q.set(r);
+            q.offset(0, (kind == BAND ? 2 : 3) * d);
+            if (kind != BAND) c.drawRoundRect(q, rad, rad, shadow);
+            if (focused) {
+                glow.setColor(0x99FFFFFF);
+                c.drawRoundRect(r, rad, rad, glow);
+            }
+            int top, bottom;
+            if (kind == BAND) {
+                top = 0x8C1B2A5E;
+                bottom = 0x730A1236;
+            } else if (focused) {
+                top = 0xE63C55B0;
+                bottom = 0xD91A2A66;
+            } else if (kind == STAR) {
+                top = 0xD93A3460;
+                bottom = 0xCC181433;
+            } else {
+                top = 0xD92D3F86;
+                bottom = 0xCC111B48;
+            }
+            body.setShader(new android.graphics.LinearGradient(0, r.top, 0, r.bottom, top, bottom, android.graphics.Shader.TileMode.CLAMP));
+            c.drawRoundRect(r, rad, rad, body);
+            // The sheen: light on the upper part of the glass, fading out by the middle.
+            sheen.setShader(new android.graphics.LinearGradient(0, r.top, 0, r.top + r.height() * 0.55f,
+                    kind == BAND ? 0x1FFFFFFF : focused ? 0x40FFFFFF : 0x2EFFFFFF, 0x00FFFFFF, android.graphics.Shader.TileMode.CLAMP));
+            c.drawRoundRect(r, rad, rad, sheen);
+            // The edge: brighter along the top than the bottom, which reads as a raised pane.
+            float w = (focused ? 2f : kind == STAR ? 1.5f : 1f) * d;
+            edge.setStrokeWidth(w);
+            int et = focused ? 0xF2FFFFFF : kind == STAR ? 0xE6F0D9A0 : kind == BAND ? 0x47FFFFFF : 0x66FFFFFF;
+            int eb = focused ? 0xB3FFFFFF : kind == STAR ? 0x80B8934A : 0x14FFFFFF;
+            edge.setShader(new android.graphics.LinearGradient(0, r.top, 0, r.bottom, et, eb, android.graphics.Shader.TileMode.CLAMP));
+            q.set(r);
+            q.inset(w / 2, w / 2);
+            c.drawRoundRect(q, rad - w / 2, rad - w / 2, edge);
+        }
+
+        @Override
+        public void setAlpha(int a) {
+        }
+
+        @Override
+        public void setColorFilter(android.graphics.ColorFilter f) {
+        }
+
+        @Override
+        public int getOpacity() {
+            return android.graphics.PixelFormat.TRANSLUCENT;
+        }
     }
 
     // ---------- badges ----------
