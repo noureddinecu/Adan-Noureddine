@@ -96,10 +96,14 @@ matches)
   install_apk "$B/matches-launcher.apk" || exit 1
   OUT=$(sh_ "am start -W -n $ACT")
   echo "$OUT" | grep -q 'Status: ok' || { echo "⛔ the new Home did not start; nothing else was changed."; echo "$OUT"; exit 1; }
-  # The remote's buttons (CleanYourTV's HOME_KEY_SERVICE=1 INPUT_KEY_SERVICE=1): appended, other services kept.
-  SVC="$PKG/com.gathin.tvhome.HomeKeyService:$PKG/com.gathin.tvhome.InputKeyService"
-  sh_ "s=\$(settings get secure enabled_accessibility_services); case \"\$s\" in *$PKG*) ;; null|'') settings put secure enabled_accessibility_services $SVC ;; *) settings put secure enabled_accessibility_services \"\$s:$SVC\" ;; esac; settings put secure accessibility_enabled 1" >/dev/null
-  echo "remote buttons: on"
+  # The remote's buttons: HomeKeyService only (Home, Settings and the YouTube button through app_keys). With
+  # InputKeyService on as well, this firmware stops repeating a held key and the volume crept up one press at a
+  # time (CleanYourTV's MOOR4/6 reports; its MOOR2 report with HomeKeyService alone kept held volume). The remote's
+  # Input button is left to the TV; the Inputs button on the Home screen opens the inputs. Other services are kept,
+  # and the list is cleared and written back so Android binds the service again.
+  SVC="$PKG/com.gathin.tvhome.HomeKeyService"
+  sh_ "s=\$(settings get secure enabled_accessibility_services); k=\$(echo \"\$s\" | tr ':' '\\n' | grep -v '^$PKG/' | grep -v '^null\$' | grep . | tr '\\n' ':' | sed 's/:\$//'); [ -n \"\$k\" ] && n=\"\$k:$SVC\" || n=$SVC; settings put secure enabled_accessibility_services ''; settings put secure accessibility_enabled 0; sleep 1; settings put secure enabled_accessibility_services \"\$n\"; settings put secure accessibility_enabled 1" >/dev/null
+  echo "remote buttons: on (Home, Settings, YouTube)"
   # Any other added home screen (the original CleanYourTV, Noor's) goes off too: two launchers both called «Home»
   # made Android ask which one after an app, and the other one has no matches row. Off, not uninstalled.
   for o in com.gathin.tvhome app.noortv.home; do
