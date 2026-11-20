@@ -55,14 +55,62 @@ final class Matches {
     }
 
     private static final String API = "https://site.api.espn.com/apis/site/v2/sports/soccer/";
-    /** Club competitions: every match. National-team ones: only Morocco's (ESPN team id 2869). */
-    private static final String[] CLUBS = {"uefa.champions", "uefa.champions_qual", "esp.1", "eng.1", "ger.1", "fra.1"};
-    private static final String[] NATIONS = {"fifa.world", "fifa.worldq.caf", "caf.nations", "caf.nations_qual", "fifa.friendly"};
+    /**
+     * The competitions and their weight, most followed first. The big tournaments are only played in their season,
+     * so when they have matches today they come first by themselves, and the leagues follow when they do not.
+     * ALL: every match. CUP: a domestic cup, from the round of 16 or with a club the row knows (no amateur rounds).
+     * MAR: only Morocco's matches (ESPN team id 2869).
+     */
+    private static final int ALL = 0, CUP = 1, MAR = 2;
+    private static final Object[][] COMPS = {
+            {"fifa.world", 1000, ALL}, {"caf.nations", 950, ALL}, {"uefa.euro", 900, ALL}, {"conmebol.america", 850, ALL},
+            {"fifa.cwc", 800, ALL}, {"uefa.champions", 700, ALL},
+            {"eng.1", 500, ALL}, {"esp.1", 490, ALL}, {"ita.1", 480, ALL}, {"ger.1", 470, ALL}, {"fra.1", 460, ALL},
+            {"uefa.europa", 420, ALL}, {"ksa.1", 400, ALL}, {"caf.champions", 390, ALL},
+            {"por.1", 350, ALL}, {"ned.1", 340, ALL}, {"tur.1", 330, ALL},
+            {"eng.fa", 320, CUP}, {"esp.copa_del_rey", 315, CUP}, {"ita.coppa_italia", 310, CUP}, {"ger.dfb_pokal", 305, CUP},
+            {"fra.coupe_de_france", 300, CUP}, {"eng.league_cup", 290, CUP}, {"uefa.champions_qual", 250, ALL},
+            {"fifa.worldq.caf", 0, MAR}, {"caf.nations_qual", 0, MAR}, {"fifa.friendly", 0, MAR}};
     private static final String MOROCCO = "2869";
+    /** Clubs and teams whose meeting is a big match (⭐), and the derbies. ESPN's English names. */
+    private static final java.util.Set<String> BIG = new java.util.HashSet<>(java.util.Arrays.asList(
+            "Real Madrid", "Barcelona", "Atlético Madrid", "Atletico Madrid", "Manchester City", "Liverpool", "Arsenal",
+            "Manchester United", "Chelsea", "Tottenham Hotspur", "Newcastle United", "Bayern Munich", "Borussia Dortmund",
+            "Bayer Leverkusen", "Paris Saint-Germain", "Marseille", "Internazionale", "AC Milan", "Juventus", "Napoli",
+            "AS Roma", "Benfica", "FC Porto", "Sporting CP", "Ajax Amsterdam", "Ajax", "PSV Eindhoven", "Galatasaray",
+            "Fenerbahce", "Al Hilal", "Al Nassr", "Al Ittihad", "Al Ahly", "Zamalek",
+            "Morocco", "Brazil", "Argentina", "France", "Spain", "England", "Germany", "Portugal", "Italy", "Netherlands"));
+    private static final String[][] DERBIES = {
+            {"Real Madrid", "Atlético Madrid"}, {"Real Madrid", "Atletico Madrid"}, {"Internazionale", "AC Milan"},
+            {"AS Roma", "Lazio"}, {"Sevilla", "Real Betis"}, {"Barcelona", "Espanyol"}, {"Arsenal", "Tottenham Hotspur"},
+            {"Liverpool", "Everton"}, {"Borussia Dortmund", "Schalke 04"}, {"Benfica", "Sporting CP"},
+            {"Galatasaray", "Besiktas"}, {"Fenerbahce", "Besiktas"}, {"Celtic", "Rangers"}, {"Juventus", "Torino"},
+            {"Al Hilal", "Al Ittihad"}, {"Al Nassr", "Al Ittihad"}, {"Ajax Amsterdam", "Feyenoord"}, {"Athletic Club", "Real Sociedad"}};
+
+    private static boolean big(String a, String b) {
+        if (BIG.contains(a) && BIG.contains(b)) return true;
+        for (String[] d : DERBIES) if ((d[0].equals(a) && d[1].equals(b)) || (d[0].equals(b) && d[1].equals(a))) return true;
+        return false;
+    }
+
+    /** A knockout stage from ESPN's season slug: its Arabic name and how much it adds. Null for a league round. */
+    private static Object[] stage(String slug) {
+        if (slug == null) return null;
+        String x = slug.toLowerCase(Locale.US);
+        if (x.contains("semi")) return new Object[]{"نصف النهائي", 200};
+        if (x.contains("quarter")) return new Object[]{"ربع النهائي", 120};
+        if (x.equals("final") || x.endsWith("-final") || x.startsWith("final")) return new Object[]{"النهائي", 300};
+        if (x.contains("round-of-16") || x.contains("last-16")) return new Object[]{"ثمن النهائي", 60};
+        if (x.contains("round-of-32") || x.contains("playoff") || x.contains("knockout")) return new Object[]{"الأدوار الإقصائية", 30};
+        if (x.contains("third")) return new Object[]{"المركز الثالث", 40};
+        return null;
+    }
 
     static final class Game {
-        String id, league, leagueLogo, home, away, homeLogo, awayLogo, homeScore, awayScore, state, clock, status;
+        String id, league, leagueLogo, home, away, homeLogo, awayLogo, homeScore, awayScore, state, clock, status, stage;
         long start;
+        int prio;
+        boolean star;
     }
 
     private static final Handler main = new Handler(Looper.getMainLooper());
@@ -109,20 +157,26 @@ final class Matches {
             String[] days = {ymd.format(before.getTime()), ymd.format(today.getTime())};
             List<Game> out = new ArrayList<>();
             java.util.Set<String> asked = new java.util.HashSet<>(), ok = new java.util.HashSet<>();
-            for (String l : CLUBS) if (full || active.contains(l)) asked.add(l);
-            for (String l : NATIONS) if (full || active.contains(l)) asked.add(l);
-            for (String l : asked) {
-                boolean nation = java.util.Arrays.asList(NATIONS).contains(l);
+            for (Object[] c : COMPS) if (full || active.contains((String) c[0])) asked.add((String) c[0]);
+            for (Object[] c : COMPS) {
+                String l = (String) c[0];
+                if (!asked.contains(l)) continue;
                 boolean good = false;
                 java.util.Set<String> seen = new java.util.HashSet<>();
-                for (String d : days) good |= read(l, d, nation, today, out, seen);
+                for (String d : days) good |= read(l, (Integer) c[1], (Integer) c[2], d, today, out, seen);
                 if (good) ok.add(l);
             }
             if (!full && old != null) {
                 // Keep the other competitions' matches, and those of any competition that did not answer this time.
                 for (Game g : old) if (!asked.contains(g.league) || !ok.contains(g.league)) out.add(g);
             }
-            Collections.sort(out, (x, y) -> Long.compare(x.start, y.start));
+            // On now first, then to come, then over; within each, the most followed first, then by kick-off.
+            Collections.sort(out, (x, y) -> {
+                int gx = "in".equals(x.state) ? 0 : "pre".equals(x.state) ? 1 : 2, gy = "in".equals(y.state) ? 0 : "pre".equals(y.state) ? 1 : 2;
+                if (gx != gy) return Integer.compare(gx, gy);
+                if (x.prio != y.prio) return Integer.compare(y.prio, x.prio);
+                return Long.compare(x.start, y.start);
+            });
             long soon = Long.MAX_VALUE;
             java.util.Set<String> act = new java.util.HashSet<>();
             for (Game g : out) {
@@ -146,7 +200,7 @@ final class Matches {
         }, "matches").start();
     }
 
-    private static boolean read(String league, String date, boolean moroccoOnly, Calendar today, List<Game> out,
+    private static boolean read(String league, int weight, int mode, String date, Calendar today, List<Game> out,
                                 java.util.Set<String> seen) {
         try {
             JSONObject j = new JSONObject(get(API + league + "/scoreboard?dates=" + date + "&limit=200"));
@@ -171,24 +225,32 @@ final class Matches {
                 }
                 if (home == null || away == null) continue;
                 JSONObject ht = home.getJSONObject("team"), at = away.getJSONObject("team");
-                if (moroccoOnly && !MOROCCO.equals(ht.optString("id")) && !MOROCCO.equals(at.optString("id"))) continue;
+                boolean morocco = MOROCCO.equals(ht.optString("id")) || MOROCCO.equals(at.optString("id"));
+                if (mode == MAR && !morocco) continue;
+                JSONObject season = e.optJSONObject("season");
+                Object[] st = stage(season == null ? null : season.optString("slug"));
+                String hn = ht.optString("displayName"), an = at.optString("displayName");
+                if (mode == CUP && (st == null || (Integer) st[1] < 60) && !TeamNames.known(hn) && !TeamNames.known(an)) continue;
                 Game g = new Game();
                 g.id = league + ":" + e.optString("id");
                 if (!seen.add(g.id)) continue; // the same match on both days asked
                 g.league = league;
                 g.leagueLogo = leagueLogo;
                 g.start = start;
-                g.home = TeamNames.ar(ht.optString("displayName"), ht.optString("shortDisplayName"));
-                g.away = TeamNames.ar(at.optString("displayName"), at.optString("shortDisplayName"));
+                g.home = TeamNames.ar(hn, ht.optString("shortDisplayName"));
+                g.away = TeamNames.ar(an, at.optString("shortDisplayName"));
+                g.stage = st == null ? null : (String) st[0];
+                g.star = big(hn, an);
+                g.prio = weight + (st == null ? 0 : (Integer) st[1]) + (g.star ? 150 : 0) + (morocco ? 10000 : 0);
                 g.homeLogo = ht.optString("logo");
                 g.awayLogo = at.optString("logo");
                 g.homeScore = home.optString("score");
                 g.awayScore = away.optString("score");
-                JSONObject st = e.optJSONObject("status");
-                JSONObject type = st == null ? null : st.optJSONObject("type");
+                JSONObject so = e.optJSONObject("status");
+                JSONObject type = so == null ? null : so.optJSONObject("type");
                 g.state = type == null ? "pre" : type.optString("state", "pre");
                 g.status = type == null ? "" : type.optString("name");
-                g.clock = st == null ? "" : st.optString("displayClock");
+                g.clock = so == null ? "" : so.optString("displayClock");
                 out.add(g);
             }
             return true;
@@ -339,7 +401,7 @@ final class Matches {
 
         // The launcher lays out left to right (no supportsRtl): the title is put on the right by hand, and the
         // cards are added last-first with the row scrolled to its right end, so the first match is on the right.
-        title = text(a, 13, 0xE6FFFFFF, true);
+        title = text(a, 15, 0xF2FFFFFF, true);
         title.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         title.setTextDirection(View.TEXT_DIRECTION_RTL);
         LinearLayout.LayoutParams tlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -347,7 +409,7 @@ final class Matches {
         tlp.bottomMargin = px(a, 6);
         b.addView(title, tlp);
 
-        empty = text(a, 14, 0xB3FFFFFF, false);
+        empty = text(a, 15.5f, 0xCCFFFFFF, true);
         empty.setGravity(Gravity.CENTER);
         empty.setText("لا توجد مباريات اليوم في هذه البطولات");
         empty.setPadding(0, px(a, 10), 0, px(a, 10));
@@ -400,7 +462,7 @@ final class Matches {
             cardViews.clear();
             for (int i = g.size() - 1; i >= 0; i--) {
                 View card = card(c, g.get(i));
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(px(c, 214), LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(px(c, 240), LinearLayout.LayoutParams.WRAP_CONTENT);
                 if (i < g.size() - 1) lp.leftMargin = px(c, 10);
                 row.addView(card, lp);
             }
@@ -424,7 +486,7 @@ final class Matches {
         card.setClickable(true);
         StateListDrawable bg = new StateListDrawable();
         bg.addState(new int[]{android.R.attr.state_focused}, glass(c, 0xCC2B3F86, 0xBF162452, 0xE6FFFFFF, 2));
-        bg.addState(new int[]{}, glass(c, 0xA61A2556, 0x990B1336, 0x33FFFFFF, 1));
+        bg.addState(new int[]{}, g.star ? glass(c, 0xB3302A4A, 0xA6151231, 0x99E8C987, 1.5f) : glass(c, 0xA61A2556, 0x990B1336, 0x33FFFFFF, 1));
         card.setBackground(bg);
         card.setOnFocusChangeListener((v, has) -> v.animate().scaleX(has ? 1.05f : 1f).scaleY(has ? 1.05f : 1f)
                 .setDuration(180).setInterpolator(new DecelerateInterpolator()).start());
@@ -432,11 +494,11 @@ final class Matches {
         LinearLayout lg = new LinearLayout(c);
         lg.setOrientation(LinearLayout.HORIZONTAL);
         lg.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-        TextView league = text(c, 11, 0xB3FFFFFF, false);
-        league.setText(TeamNames.league(g.league));
+        TextView league = text(c, 12.5f, g.star ? 0xFFE8C987 : 0xCCFFFFFF, true);
+        league.setText((g.star ? "⭐ " : "") + TeamNames.league(g.league) + (g.stage == null ? "" : "  ·  " + g.stage));
         league.setTextDirection(View.TEXT_DIRECTION_RTL);
         ImageView ll = new ImageView(c);
-        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(px(c, 14), px(c, 14));
+        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(px(c, 16), px(c, 16));
         llp.leftMargin = px(c, 5);
         lg.addView(league);
         lg.addView(ll, llp);
@@ -446,7 +508,7 @@ final class Matches {
         View[] home = team(c, card, g.home, g.homeLogo, 6);
         View[] away = team(c, card, g.away, g.awayLogo, 5);
 
-        TextView status = text(c, 12.5f, 0xFFE8C987, true);
+        TextView status = text(c, 14.5f, 0xFFE8C987, true);
         status.setGravity(Gravity.CENTER);
         status.setTextDirection(View.TEXT_DIRECTION_RTL);
         status.setFontFeatureSettings("tnum");
@@ -462,10 +524,10 @@ final class Matches {
         LinearLayout line = new LinearLayout(c);
         line.setOrientation(LinearLayout.HORIZONTAL);
         line.setGravity(Gravity.CENTER_VERTICAL);
-        TextView score = text(c, 18, 0xFFFFFFFF, true);
+        TextView score = text(c, 21, 0xFFFFFFFF, true);
         score.setFontFeatureSettings("tnum");
         score.setMinWidth(px(c, 22));
-        TextView n = text(c, 14.5f, 0xF2FFFFFF, true);
+        TextView n = text(c, 17, 0xFFFFFFFF, true);
         n.setText(name);
         n.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         n.setTextDirection(View.TEXT_DIRECTION_RTL);
@@ -476,8 +538,8 @@ final class Matches {
         nlp.leftMargin = px(c, 6);
         nlp.rightMargin = px(c, 8);
         line.addView(n, nlp);
-        line.addView(badge, new LinearLayout.LayoutParams(px(c, 26), px(c, 26)));
-        logo(badge, logoUrl, px(c, 52));
+        line.addView(badge, new LinearLayout.LayoutParams(px(c, 30), px(c, 30)));
+        logo(badge, logoUrl, px(c, 60));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.topMargin = px(c, top);
         card.addView(line, lp);

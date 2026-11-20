@@ -40,6 +40,11 @@ final class TeamNames {
         return a != null ? a : (shortName == null || shortName.isEmpty() ? display : shortName);
     }
 
+    /** Whether the row knows this team (a club of the leagues it follows, or a national team). */
+    static boolean known(String display) {
+        return T.containsKey(display);
+    }
+
     static String league(String slug) {
         String a = L.get(slug);
         return a == null ? slug : a;
