@@ -122,7 +122,9 @@ final class Matches {
     private static volatile int fetchedDay = -1;
 
     private static LinearLayout box, row;
-    private static TextView title, empty;
+    private static TextView title, empty, moreLeft, moreRight;
+    /** Card width that fits a whole number of cards in the row, so none is ever cut at an edge. */
+    private static int cardW;
     private static HorizontalScrollView scroll;
     private static String shownKey = "";
     private static final Map<String, View[]> cardViews = new HashMap<>();
@@ -402,13 +404,27 @@ final class Matches {
 
         // The launcher lays out left to right (no supportsRtl): the title is put on the right by hand, and the
         // cards are added last-first with the row scrolled to its right end, so the first match is on the right.
+        // Title line: how many matches lie beyond each edge on the outsides, the title on the right.
+        LinearLayout head = new LinearLayout(a);
+        head.setOrientation(LinearLayout.HORIZONTAL);
+        head.setGravity(Gravity.CENTER_VERTICAL);
+        moreLeft = text(a, 14, 0xD9E8C987, true);
+        moreRight = text(a, 14, 0xD9E8C987, true);
         title = text(a, 15, 0xF2FFFFFF, true);
-        title.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         title.setTextDirection(View.TEXT_DIRECTION_RTL);
+        View gap = new View(a);
+        LinearLayout.LayoutParams ml = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        ml.leftMargin = px(a, 14);
+        head.addView(moreLeft, ml);
+        head.addView(gap, new LinearLayout.LayoutParams(0, 1, 1f));
+        LinearLayout.LayoutParams mr = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        mr.rightMargin = px(a, 12);
+        head.addView(moreRight, mr);
+        head.addView(title);
         LinearLayout.LayoutParams tlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         tlp.rightMargin = px(a, 12);
         tlp.bottomMargin = px(a, 1);
-        b.addView(title, tlp);
+        b.addView(head, tlp);
 
         empty = text(a, 15.5f, 0xCCFFFFFF, true);
         empty.setGravity(Gravity.CENTER);
@@ -416,16 +432,28 @@ final class Matches {
         empty.setPadding(0, px(a, 10), 0, px(a, 10));
         b.addView(empty, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        // The cards stay inside the band: the scroller clips them at its edges (faded there), and its padding leaves
-        // room for the focused card's slight lift, so nothing spills out of the frame or off the screen.
-        scroll = new HorizontalScrollView(a);
+        // Whole cards only: the cards are sized so a whole number of them fills the row (see fit), and the row moves
+        // one whole card at a time, so no card is ever cut at an edge. The padding is the room for the focused card's
+        // slight lift; the next card beyond an edge starts a gap further than the padding, so it stays hidden.
+        final int gapPx = px(a, 10);
+        scroll = new HorizontalScrollView(a) {
+            @Override
+            protected int computeScrollDeltaToGetChildRectOnScreen(android.graphics.Rect r) {
+                int left = getScrollX() + getPaddingLeft(), right = getScrollX() + getWidth() - getPaddingRight();
+                if (r.left < left) return r.left - left;
+                if (r.right > right) return r.right - right;
+                return 0;
+            }
+        };
         scroll.setHorizontalScrollBarEnabled(false);
+        scroll.setHorizontalFadingEdgeEnabled(false);
+        scroll.setSmoothScrollingEnabled(true);
         scroll.setFillViewport(true);
-        scroll.setClipChildren(true);
-        scroll.setClipToPadding(true);
-        scroll.setPadding(px(a, 8), px(a, 5), px(a, 8), px(a, 5));
-        scroll.setHorizontalFadingEdgeEnabled(true);
-        scroll.setFadingEdgeLength(px(a, 24));
+        scroll.setClipChildren(false);
+        scroll.setClipToPadding(false);
+        scroll.setPadding(px(a, 8), px(a, 6), px(a, 8), px(a, 6));
+        scroll.addOnLayoutChangeListener((v, l, t, r, bt, ol, ot, or, ob) -> fit(gapPx));
+        scroll.setOnScrollChangeListener((v, x, y, ox, oy) -> marks(gapPx));
         row = new LinearLayout(a);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.RIGHT);
@@ -465,12 +493,14 @@ final class Matches {
             cardViews.clear();
             for (int i = g.size() - 1; i >= 0; i--) {
                 View card = card(c, g.get(i));
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(px(c, 240), LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(cardW > 0 ? cardW : px(c, 240), LinearLayout.LayoutParams.WRAP_CONTENT);
                 if (i < g.size() - 1) lp.leftMargin = px(c, 10);
                 row.addView(card, lp);
             }
             scroll.post(() -> {
-                scroll.fullScroll(View.FOCUS_RIGHT);
+                fit(px(c, 10));
+                scroll.scrollTo(Math.max(0, row.getWidth() + scroll.getPaddingLeft() + scroll.getPaddingRight() - scroll.getWidth()), 0);
+                marks(px(c, 10));
                 if (hadFocus && row.getChildCount() > 0) row.getChildAt(row.getChildCount() - 1).requestFocus();
             });
         }
@@ -478,6 +508,40 @@ final class Matches {
             View[] v = cardViews.get(x.id);
             if (v != null) state(c, x, v);
         }
+    }
+
+    /** Sizes the cards so a whole number of them, at least 230dp each, fills the row exactly. */
+    private static void fit(int gap) {
+        if (scroll == null || row == null) return;
+        int avail = scroll.getWidth() - scroll.getPaddingLeft() - scroll.getPaddingRight();
+        if (avail <= 0) return;
+        int min = px(scroll.getContext(), 230);
+        int n = Math.max(1, (avail + gap) / (min + gap));
+        int w = (avail - (n - 1) * gap) / n;
+        if (w == cardW && !(row.getChildCount() > 0 && row.getChildAt(0).getLayoutParams().width != w)) return;
+        cardW = w;
+        for (int i = 0; i < row.getChildCount(); i++) {
+            View ch = row.getChildAt(i);
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) ch.getLayoutParams();
+            if (lp.width != w) {
+                lp.width = w;
+                ch.setLayoutParams(lp);
+            }
+        }
+        scroll.post(() -> {
+            if (!row.hasFocus()) scroll.scrollTo(Math.max(0, row.getWidth() + scroll.getPaddingLeft() + scroll.getPaddingRight() - scroll.getWidth()), 0);
+            marks(gap);
+        });
+    }
+
+    /** How many whole cards lie beyond each edge, shown quietly on the title line. */
+    private static void marks(int gap) {
+        if (scroll == null || row == null || moreLeft == null || cardW <= 0) return;
+        int max = Math.max(0, row.getWidth() + scroll.getPaddingLeft() + scroll.getPaddingRight() - scroll.getWidth());
+        int step = cardW + gap;
+        int leftN = Math.round(scroll.getScrollX() / (float) step), rightN = Math.round((max - scroll.getScrollX()) / (float) step);
+        moreLeft.setText(leftN > 0 ? "◂  " + leftN : "");
+        moreRight.setText(rightN > 0 ? rightN + "  ▸" : "");
     }
 
     /** One match: competition, the two teams (badge on the right of the name), and the time or the score. */
