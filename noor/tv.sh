@@ -6,6 +6,7 @@
 #   bash tv.sh get                                  download the build into ~/noor-build
 #   bash tv.sh launcher <tv-ip> <backup-folder>     install the new Home; disables the stock one only once the new one runs
 #   bash tv.sh matches <tv-ip> <backup-folder>      the same with the plain CleanYourTV Home and today's matches (no Noor)
+#   bash tv.sh check <tv-ip>                        the matches TV: what runs, and why the matches row may be empty
 #   bash tv.sh prayer <tv-ip>                       install the prayer-times addon
 #   bash tv.sh theme <tv-ip> <zakhrafa|masjid-layl|awqat|plain>
 #   bash tv.sh noor <tv-ip>                         install the Kahf/Baqarah/adhkar/ruqyah cards, reminders and phone page,
@@ -60,6 +61,17 @@ get)
   echo "ready: $B"
   ;;
 
+check)
+  # The matches TV: what runs, and why the matches row may be empty.
+  need_ip
+  echo "launcher: $(sh_ "dumpsys package app.zahhaf.matches | grep -m1 versionCode" | tr -s ' ')"
+  echo "home now: $(sh_ "dumpsys activity activities | grep -m1 mFocusedApp" | tr -s ' ')"
+  echo "key services: $(sh_ "settings get secure enabled_accessibility_services")"
+  echo "TV internet: $(sh_ "ping -c 1 -W 3 site.api.espn.com >/dev/null 2>&1 && echo ok || echo 'no answer from site.api.espn.com'")"
+  echo "phone internet: $(curl -s -m 8 -o /dev/null -w '%{http_code}' https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard)"
+  echo "last errors of the matches row:"; sh_ "logcat -d -s Matches:W | tail -n 8"
+  ;;
+
 matches)
   # The plain CleanYourTV Home with today's matches, and nothing of Noor, on a TV never set up. Steps, as CleanYourTV
   # tested them on Xiaomi MiTV-MOOR2/4/6 (Google TV 11): its clean-up list (disabled, never uninstalled), the
@@ -103,44 +115,25 @@ matches)
   # and the list is cleared and written back so Android binds the service again.
   SVC="$PKG/com.gathin.tvhome.HomeKeyService"
   sh_ "s=\$(settings get secure enabled_accessibility_services); k=\$(echo \"\$s\" | tr ':' '\\n' | grep -v '^$PKG/' | grep -v '^null\$' | grep . | tr '\\n' ':' | sed 's/:\$//'); [ -n \"\$k\" ] && n=\"\$k:$SVC\" || n=$SVC; settings put secure enabled_accessibility_services ''; settings put secure accessibility_enabled 0; sleep 1; settings put secure enabled_accessibility_services \"\$n\"; settings put secure accessibility_enabled 1" >/dev/null
-  echo "remote buttons: on (Home, Settings, YouTube)"
+  echo "Home service: on (the remote itself stays the TV's own)"
   # Any other added home screen (the original CleanYourTV, Noor's) goes off too: two launchers both called «Home»
   # made Android ask which one after an app, and the other one has no matches row. Off, not uninstalled.
   for o in com.gathin.tvhome app.noortv.home; do
     sh_ "pm list packages -s $o" | grep -qx "package:$o" || off "$o"
   done
-  STOCK=$(cut -d/ -f1 "$BK/home-before.txt")
-  case "$STOCK" in
-    com.gathin.tvhome|app.noortv.home)  # one of those was Home: the TV's own is the one behind it
-      STOCK=com.google.android.apps.tv.launcherx
-      sh_ "pm list packages com.google.android.apps.tv.launcherx" | grep -q launcherx || STOCK=com.google.android.tvlauncher ;;
-  esac
-  case "$STOCK" in
-    "$PKG") echo "✅ this Home is already the TV's Home" ;;&
-    "$PKG") sh_ "input keyevent KEYCODE_HOME"; exit 0 ;;
-    com.google.android.apps.tv.launcherx|com.google.android.tvlauncher|com.google.android.leanbacklauncher|com.mitv.tvhome.atv) ;;
-    *) echo "⛔ Home is '$STOCK', which this script does not know: the launcher is installed but Home was left alone."; exit 1 ;;
-  esac
-  # The setup wizard may own the Wi-Fi saved during first setup; switching it off then drops the TV from Wi-Fi.
-  WIZ_ON=$(sh_ "pm list packages -e $WIZ" | grep -c "package:$WIZ" || true)  # 0 when already off (grep -c fails on 0)
-  if [ "$WIZ_ON" -gt 0 ] && sh_ "dumpsys wifi | grep -o 'cname=[^ ]*'" | grep -q setupwraith; then
-    echo "⚠️ Google's setup wizard owns this Wi-Fi network, so it cannot be switched off yet (the TV would drop off Wi-Fi)."
-    echo "   On the TV: Settings > Network & Internet > your Wi-Fi > Forget, join it again, then run this command again."
-    echo "   Home was left as it was; the launcher is installed."
-    exit 1
-  fi
-  off "$STOCK"
-  [ "$WIZ_ON" -gt 0 ] && off "$WIZ"
-  sh_ "cmd package set-home-activity --user 0 $ACT" >/dev/null 2>&1 || true
-  sh_ "input keyevent KEYCODE_HOME"; sleep 4
+  # Google's home and its setup wizard stay on (earlier runs turned them off: back on now). With them on, the
+  # remote is entirely the TV's own again - held volume, Settings, Input, YouTube - and this launcher's
+  # HomeKeyService brings it forward whenever Google's home comes up (stock_home_redirect, CleanYourTV's tested
+  # MOOR2 set-up). No key filtering: that is what stopped a held volume key from repeating.
+  for p in com.google.android.apps.tv.launcherx com.google.android.tvlauncher "$WIZ"; do
+    grep -qx "$p" "$BK/disabled-by-us.txt" && { back_on "$p"; echo "  back on: $p"; }
+  done
+  sh_ "input keyevent KEYCODE_HOME"; sleep 5
   FOC=$(sh_ "dumpsys activity activities | grep -m1 mFocusedApp")
   case "$FOC" in
     *"$PKG"*) echo "✅ the new Home is set (the Home button lands on it)" ;;
-    *)
-      echo "⛔ Home still goes elsewhere ($FOC): putting it back as it was"
-      back_on "$STOCK"; [ "$WIZ_ON" -gt 0 ] && back_on "$WIZ"
-      sh_ "input keyevent KEYCODE_HOME"
-      exit 1 ;;
+    *) echo "⚠️ Home showed: $FOC"
+       echo "   If Google's home stays on screen, run this command again once; send the output if it still does." ;;
   esac
   ;;
 

@@ -73,4 +73,12 @@ for f in src.glob("res/values*/strings.xml"):
     t2 = re.sub(r'(<string name="app_name"[^>]*>)[^<]*(</string>)', r"\g<1>Home ⚽\g<2>", t)
     if t2 != t:
         f.write_text(t2, encoding="utf-8")
+# The remote stays the TV's own: no key filtering at all (this Xiaomi firmware stops repeating a held key, volume
+# included, as soon as a service filters keys), and Google's home stays on, with HomeKeyService bringing this one
+# forward whenever Google's comes up. That is the set-up CleanYourTV tested on MiTV-MOOR2 (examples/xiaomi-mitv-moor2,
+# README): Home from any app, held volume, Settings, Input and YouTube buttons all worked.
+patch(cfg, '<bool name="key_filter">true</bool>', '<bool name="key_filter">false</bool>', '<bool name="key_filter">false</bool>')
+patch(cfg, '<string name="stock_home_redirect" translatable="false"></string>',
+      '<string name="stock_home_redirect" translatable="false">com.google.android.apps.tv.launcherx</string>',
+      '>com.google.android.apps.tv.launcherx</string>')
 print("matches row: in the home layout, under the header")

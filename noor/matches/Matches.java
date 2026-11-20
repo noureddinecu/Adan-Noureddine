@@ -256,6 +256,7 @@ final class Matches {
             }
             return true;
         } catch (Exception e) {
+            android.util.Log.w("Matches", league + " " + date + ": " + e);
             return false;
         }
     }
