@@ -6,7 +6,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import names  # noqa: E402
 
 tz = zoneinfo.ZoneInfo(sys.argv[1] if len(sys.argv) > 1 else "Europe/Madrid")
-CLUBS = ["uefa.champions", "uefa.champions_qual", "esp.1", "eng.1"]
+CLUBS = ["uefa.champions", "uefa.champions_qual", "esp.1", "eng.1", "ger.1", "fra.1"]
 NATIONS = ["fifa.world", "fifa.worldq.caf", "caf.nations", "caf.nations_qual", "fifa.friendly"]
 teams = {**names.CLUBS, **names.NATIONS}
 today = datetime.datetime.now(tz).date()

@@ -8,7 +8,7 @@ sed -i -E "s/^( *versionCode) [0-9]+/\1 $VER/" cleanyourtv/launcher/app/build.gr
 python3 -I noor/matches/apply.py
 # The teams of this season, to list any without an Arabic name (the build goes on; they show in English).
 T=$(mktemp -d)
-for l in esp.1 eng.1 uefa.champions; do
+for l in esp.1 eng.1 ger.1 fra.1 uefa.champions; do
   curl -sS -m 20 -A "Mozilla/5.0" -o "$T/$l.json" "https://site.api.espn.com/apis/site/v2/sports/soccer/$l/teams" || true
 done
 python3 -I noor/matches/gen-names.py cleanyourtv/launcher/app/src/main/java/com/gathin/tvhome "$T"/*.json

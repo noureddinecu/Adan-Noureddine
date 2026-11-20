@@ -42,7 +42,8 @@ import java.util.concurrent.Executors;
 
 /**
  * Today's matches as a row of the home screen's own layout, under the clock header and above the apps: every match
- * of today (the TV's own day) in LaLiga, the Premier League and the Champions League, and every match of Morocco's
+ * of today (the TV's own day) in LaLiga, the Premier League, the Bundesliga, Ligue 1 and the Champions League, and every
+ * match of Morocco's
  * national team, in kick-off order. Each card has the competition, both teams with their badges and Arabic names,
  * and the kick-off time, or the score and the minute while it is played, or the final score. The row scrolls
  * sideways with the remote (up from the dock reaches it), the first match on the right as Arabic reads. Data from
@@ -55,7 +56,7 @@ final class Matches {
 
     private static final String API = "https://site.api.espn.com/apis/site/v2/sports/soccer/";
     /** Club competitions: every match. National-team ones: only Morocco's (ESPN team id 2869). */
-    private static final String[] CLUBS = {"uefa.champions", "uefa.champions_qual", "esp.1", "eng.1"};
+    private static final String[] CLUBS = {"uefa.champions", "uefa.champions_qual", "esp.1", "eng.1", "ger.1", "fra.1"};
     private static final String[] NATIONS = {"fifa.world", "fifa.worldq.caf", "caf.nations", "caf.nations_qual", "fifa.friendly"};
     private static final String MOROCCO = "2869";
 
