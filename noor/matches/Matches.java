@@ -242,8 +242,91 @@ final class Matches {
         return g;
     }
 
+    // ---------- folding away under the apps ----------
+
+    private static boolean folded;
+    private static android.animation.ValueAnimator foldAnim;
+
+    /**
+     * Below the first row of apps the row folds away (its height and its light go together, so the apps move up
+     * smoothly into its place instead of passing under it); back in the first row, the top buttons or the row itself,
+     * it unfolds. Decided by where the focus is, not by the scroll, so the change of room cannot set it going back
+     * and forth. A single sideways row of apps never folds it.
+     */
+    private static void onFocus(Activity a, View n) {
+        if (box == null || n == null) return;
+        androidx.recyclerview.widget.RecyclerView grid = a.findViewById(R.id.grid);
+        View item = grid == null ? null : grid.findContainingItemView(n);
+        if (item == null) {
+            fold(false);
+            return;
+        }
+        androidx.recyclerview.widget.RecyclerView.LayoutManager lm = grid.getLayoutManager();
+        if (!(lm instanceof androidx.recyclerview.widget.GridLayoutManager)
+                || ((androidx.recyclerview.widget.GridLayoutManager) lm).getOrientation() != androidx.recyclerview.widget.RecyclerView.VERTICAL) {
+            fold(false);
+            return;
+        }
+        int span = ((androidx.recyclerview.widget.GridLayoutManager) lm).getSpanCount();
+        int pos = grid.getChildAdapterPosition(item);
+        fold(pos >= span);
+    }
+
+    private static void fold(boolean f) {
+        if (f == folded || box == null) return;
+        folded = f;
+        if (foldAnim != null) foldAnim.cancel();
+        if (games == null) return; // not shown yet: fill() decides
+        LinearLayout b = box;
+        android.view.ViewGroup.LayoutParams lp = b.getLayoutParams();
+        int from, to;
+        if (f) {
+            from = b.getHeight();
+            to = 0;
+        } else {
+            b.setVisibility(View.VISIBLE);
+            int w = ((View) b.getParent()).getWidth() - ((View) b.getParent()).getPaddingLeft() - ((View) b.getParent()).getPaddingRight();
+            b.measure(View.MeasureSpec.makeMeasureSpec(Math.max(0, w), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            from = lp.height == android.view.ViewGroup.LayoutParams.WRAP_CONTENT ? 0 : Math.max(0, lp.height);
+            to = b.getMeasuredHeight();
+        }
+        android.view.ViewGroup.MarginLayoutParams mlp = (android.view.ViewGroup.MarginLayoutParams) lp;
+        int margin = px(b.getContext(), 16);
+        foldAnim = android.animation.ValueAnimator.ofFloat(0f, 1f).setDuration(260);
+        foldAnim.setInterpolator(new DecelerateInterpolator());
+        foldAnim.addUpdateListener(v -> {
+            float t = (float) v.getAnimatedValue();
+            lp.height = Math.round(from + (to - from) * t);
+            float shown = f ? 1f - t : t;
+            mlp.topMargin = Math.round(margin * shown);
+            b.setAlpha(shown);
+            b.setLayoutParams(lp);
+        });
+        foldAnim.addListener(new android.animation.AnimatorListenerAdapter() {
+            private boolean cancelled;
+
+            @Override
+            public void onAnimationCancel(android.animation.Animator x) {
+                cancelled = true;
+            }
+
+            @Override
+            public void onAnimationEnd(android.animation.Animator x) {
+                if (cancelled) return;
+                if (f) b.setVisibility(View.GONE);
+                lp.height = android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+                mlp.topMargin = f ? 0 : margin;
+                b.setAlpha(f ? 0f : 1f);
+                b.setLayoutParams(lp);
+            }
+        });
+        foldAnim.start();
+    }
+
     private static void build(Activity a, LinearLayout b) {
         box = b;
+        folded = false;
+        a.getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener((o, n) -> onFocus(a, n));
         shownKey = "";
         cardViews.clear();
         b.removeAllViews();
@@ -289,8 +372,8 @@ final class Matches {
         if (box == null) return;
         List<Game> g = games;
         // Gone until the first answer, so the layout does not jump; then always there, with a line when there is none.
-        int vis = g == null ? View.GONE : View.VISIBLE;
-        if (box.getVisibility() != vis) box.setVisibility(vis);
+        int vis = g == null || folded ? View.GONE : View.VISIBLE;
+        if (box.getVisibility() != vis && (foldAnim == null || !foldAnim.isRunning())) box.setVisibility(vis);
         if (g == null) return;
         int live = 0;
         for (Game x : g) if ("in".equals(x.state)) live++;
