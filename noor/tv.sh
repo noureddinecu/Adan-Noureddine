@@ -5,6 +5,7 @@
 #
 #   bash tv.sh get                                  download the build into ~/noor-build
 #   bash tv.sh launcher <tv-ip> <backup-folder>     install the new Home; disables the stock one only once the new one runs
+#   bash tv.sh matches <tv-ip> <backup-folder>      the same with the plain CleanYourTV Home and today's matches (no Noor)
 #   bash tv.sh prayer <tv-ip>                       install the prayer-times addon
 #   bash tv.sh theme <tv-ip> <zakhrafa|masjid-layl|awqat|plain>
 #   bash tv.sh noor <tv-ip>                         install the Kahf/Baqarah/adhkar/ruqyah cards, reminders and phone page,
@@ -40,7 +41,7 @@ install_apk() {
 case "$CMD" in
 get)
   mkdir -p "$B"
-  for f in launcher.apk prayer-times.apk noor-kahf.apk noor-baqara.apk noor-sabah.apk noor-masa.apk noor-ruqya.apk themes.tar.gz; do
+  for f in launcher.apk matches-launcher.apk prayer-times.apk noor-kahf.apk noor-baqara.apk noor-sabah.apk noor-masa.apk noor-ruqya.apk themes.tar.gz; do
     curl -fsSL -o "$B/$f" "$URL/$f" && echo "✅ $f"
   done
   rm -rf "$B/themes"; mkdir -p "$B/themes"; tar -xzf "$B/themes.tar.gz" -C "$B/themes"
@@ -49,8 +50,16 @@ get)
   echo "ready: $B"
   ;;
 
+matches)
+  # The plain CleanYourTV home screen with today's matches, and nothing of Noor: the launcher steps below, with this
+  # one. The backup folder is made if it is new (a TV that was never set up).
+  PKG=app.zahhaf.matches; ACT=$PKG/com.gathin.tvhome.MainActivity; APK="$B/matches-launcher.apk"
+  need_ip; BK="${3:?usage: bash tv.sh matches <tv-ip> <backup-folder>}"
+  mkdir -p "$BK"; touch "$BK/disabled-by-us.txt"
+  ;&
 launcher)
-  need_ip; BK="${3:?usage: bash tv.sh launcher <tv-ip> <backup-folder>}"
+  if [ "$CMD" = launcher ]; then need_ip; BK="${3:?usage: bash tv.sh launcher <tv-ip> <backup-folder>}"; fi
+  APK="${APK:-$B/launcher.apk}"
   [ -f "$BK/disabled-by-us.txt" ] || { echo "no backup in $BK"; exit 1; }
   STOCK=$(home_now | cut -d/ -f1)
   case "$STOCK" in
@@ -66,7 +75,7 @@ launcher)
       echo "$p" >> "$BK/disabled-by-us.txt"; echo "noted for restore: $p (was already off)"
     fi
   done
-  install_apk "$B/launcher.apk"
+  install_apk "$APK"
   # Start the new Home first; the stock one is only disabled once this one is really up.
   OUT=$(sh_ "am start -W -a android.intent.action.MAIN -c android.intent.category.HOME -n $ACT")
   echo "$OUT" | grep -q 'Status: ok' && ! echo "$OUT" | grep -qi '^Error' || {
