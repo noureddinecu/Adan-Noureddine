@@ -42,7 +42,7 @@ case "$CMD" in
 get)
   mkdir -p "$B"
   for f in launcher.apk matches-launcher.apk debloat-moor2.txt prayer-times.apk noor-kahf.apk noor-baqara.apk noor-sabah.apk noor-masa.apk noor-ruqya.apk themes.tar.gz; do
-    curl -fsSL -o "$B/$f" "$URL/$f" && echo "✅ $f"
+    curl -fsSL -o "$B/$f" "$URL/$f" && echo "✅ $f" || echo "⛔ $f did not download: run bash tv.sh get again"
   done
   rm -rf "$B/themes"; mkdir -p "$B/themes"; tar -xzf "$B/themes.tar.gz" -C "$B/themes"
   # This script too, so the next run uses the newest one (moved into place, not written over while it runs).
@@ -60,6 +60,9 @@ matches)
   need_ip; BK="${3:?usage: bash tv.sh matches <tv-ip> <backup-folder>}"
   PKG=app.zahhaf.matches; ACT=$PKG/com.gathin.tvhome.MainActivity
   WIZ=com.google.android.tungsten.setupwraith
+  for f in matches-launcher.apk debloat-moor2.txt; do
+    [ -s "$B/$f" ] || { echo "⛔ $f is missing: run bash tv.sh get first. Nothing was changed."; exit 1; }
+  done
   mkdir -p "$BK"; touch "$BK/disabled-by-us.txt"
   MODEL=$(sh_ "getprop ro.product.model"); echo "TV: $MODEL (Android $(sh_ "getprop ro.build.version.release"))"
   [ -s "$BK/disabled-before.txt" ] || sh_ "pm list packages -d" | sed 's/^package://' > "$BK/disabled-before.txt"
