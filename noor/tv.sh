@@ -23,7 +23,17 @@ ACT=$PKG/com.gathin.tvhome.MainActivity
 HOMEQ='cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME'
 CMD="${1:-}"; IP="${2:-}"; D="$IP:5555"
 
-need_ip() { [ -n "$IP" ] || { echo "usage: bash tv.sh $CMD <tv-ip> ..."; exit 1; }; }
+need_ip() {
+  [ -n "$IP" ] || { echo "usage: bash tv.sh $CMD <tv-ip> ..."; exit 1; }
+  # Connect first (the TV drops ADB when it sleeps or restarts), and say plainly what to do when it will not.
+  adb connect "$D" >/dev/null 2>&1 || true
+  case "$(adb -s "$D" get-state 2>&1)" in
+    device) ;;
+    *unauthorized*) echo "⛔ The TV is asking «Allow USB debugging?»: choose «Always allow», then run this again."; exit 1 ;;
+    *) echo "⛔ Cannot reach the TV at $IP. On the TV: Settings > Device Preferences > Developer options:"
+       echo "   turn USB debugging off and on again, check the TV is on the same Wi-Fi, then run this again."; exit 1 ;;
+  esac
+}
 sh_() { adb -s "$D" shell "$@" | tr -d '\r'; }
 home_now() { sh_ "$HOMEQ" | tail -n 1; }
 # The adhkar and the adhan run in the Noor app's background service: allow it over other apps, keep the system from
