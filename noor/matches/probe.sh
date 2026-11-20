@@ -11,3 +11,5 @@ echo "== dates"; get "$B/esp.1/scoreboard?dates=$(date -u +%Y%m%d)" | jq -c '[.e
 echo "== morocco"; for l in fifa.friendly caf.nations fifa.worldq.caf fifa.world; do get "$B/$l/teams" | jq -c --arg l "$l" '[.sports[0].leagues[0].teams[]?.team|select(.abbreviation=="MAR" or .displayName=="Morocco")|{l:$l,id,displayName,abbreviation,logo:(.logos[0].href)}]'; done
 echo "== morocco schedule"; for l in fifa.friendly caf.nations fifa.worldq.caf; do get "$B/$l/teams/2869/schedule" | jq -c '{team:.team.displayName, n:(.events|length), next:[.events[-3:][]?|{date,name,league:.league.abbreviation}]}' 2>&1 | head -c 500; echo; done
 echo "== all scoreboard"; get "$B/all/scoreboard" | jq -c '{n:(.events|length), leagues:[.leagues[]?.slug][0:20]}' 2>&1 | head -c 600; echo
+echo "== range"; get "$B/esp.1/scoreboard?dates=$(date -u -d yesterday +%Y%m%d)-$(date -u -d tomorrow +%Y%m%d)&limit=200" | jq -c '[.events[]|.date]' | head -c 600; echo
+echo "== combiner"; curl -sS -o /dev/null -w "%{http_code} %{content_type} %{size_download}\n" "https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/93.png&w=52&h=52"
