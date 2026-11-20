@@ -1,0 +1,15 @@
+name: Build Matches TV
+on:
+  push:
+    branches: [claude/noor-tv-cleanup-fftvwv]
+    paths: ['noor/matches/**', '.github/workflows/matches-tv.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Look at the matches data
+        run: bash noor/matches/probe.sh
