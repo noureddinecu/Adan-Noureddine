@@ -90,14 +90,25 @@ matches)
   SVC="$PKG/com.gathin.tvhome.HomeKeyService:$PKG/com.gathin.tvhome.InputKeyService"
   sh_ "s=\$(settings get secure enabled_accessibility_services); case \"\$s\" in *$PKG*) ;; null|'') settings put secure enabled_accessibility_services $SVC ;; *) settings put secure enabled_accessibility_services \"\$s:$SVC\" ;; esac; settings put secure accessibility_enabled 1" >/dev/null
   echo "remote buttons: on"
+  # Any other added home screen (the original CleanYourTV, Noor's) goes off too: two launchers both called «Home»
+  # made Android ask which one after an app, and the other one has no matches row. Off, not uninstalled.
+  for o in com.gathin.tvhome app.noortv.home; do
+    sh_ "pm list packages -s $o" | grep -qx "package:$o" || off "$o"
+  done
   STOCK=$(cut -d/ -f1 "$BK/home-before.txt")
   case "$STOCK" in
-    "$PKG") echo "✅ this Home is already the TV's Home"; exit 0 ;;
+    com.gathin.tvhome|app.noortv.home)  # one of those was Home: the TV's own is the one behind it
+      STOCK=com.google.android.apps.tv.launcherx
+      sh_ "pm list packages com.google.android.apps.tv.launcherx" | grep -q launcherx || STOCK=com.google.android.tvlauncher ;;
+  esac
+  case "$STOCK" in
+    "$PKG") echo "✅ this Home is already the TV's Home" ;;&
+    "$PKG") sh_ "input keyevent KEYCODE_HOME"; exit 0 ;;
     com.google.android.apps.tv.launcherx|com.google.android.tvlauncher|com.google.android.leanbacklauncher|com.mitv.tvhome.atv) ;;
     *) echo "⛔ Home is '$STOCK', which this script does not know: the launcher is installed but Home was left alone."; exit 1 ;;
   esac
   # The setup wizard may own the Wi-Fi saved during first setup; switching it off then drops the TV from Wi-Fi.
-  WIZ_ON=$(sh_ "pm list packages -e $WIZ" | grep -c "package:$WIZ")
+  WIZ_ON=$(sh_ "pm list packages -e $WIZ" | grep -c "package:$WIZ" || true)  # 0 when already off (grep -c fails on 0)
   if [ "$WIZ_ON" -gt 0 ] && sh_ "dumpsys wifi | grep -o 'cname=[^ ]*'" | grep -q setupwraith; then
     echo "⚠️ Google's setup wizard owns this Wi-Fi network, so it cannot be switched off yet (the TV would drop off Wi-Fi)."
     echo "   On the TV: Settings > Network & Internet > your Wi-Fi > Forget, join it again, then run this command again."

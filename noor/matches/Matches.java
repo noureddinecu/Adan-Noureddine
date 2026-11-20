@@ -70,7 +70,7 @@ final class Matches {
     private static final LruCache<String, Bitmap> logos = new LruCache<>(120);
     private static volatile List<Game> games;
     private static volatile long fetchedAt, nextFetch;
-    private static volatile boolean fetching;
+    private static volatile boolean fetching, failed;
     private static volatile int fetchedDay = -1;
 
     private static LinearLayout box, row;
@@ -131,6 +131,7 @@ final class Matches {
                 else if ("pre".equals(g.state)) soon = Math.min(soon, g.start - 15 * 60_000L);
             }
             boolean anyOk = !ok.isEmpty();
+            failed = !anyOk;
             if (anyOk) {
                 games = out;
                 active = act;
@@ -277,7 +278,6 @@ final class Matches {
         if (f == folded || box == null) return;
         folded = f;
         if (foldAnim != null) foldAnim.cancel();
-        if (games == null) return; // not shown yet: fill() decides
         LinearLayout b = box;
         android.view.ViewGroup.LayoutParams lp = b.getLayoutParams();
         int from, to;
@@ -372,10 +372,18 @@ final class Matches {
     private static void fill() {
         if (box == null) return;
         List<Game> g = games;
-        // Gone until the first answer, so the layout does not jump; then always there, with a line when there is none.
-        int vis = g == null || folded ? View.GONE : View.VISIBLE;
+        // Always there (unless folded under the apps): a line while the first answer is on its way or the internet
+        // is down, so the row never just disappears.
+        int vis = folded ? View.GONE : View.VISIBLE;
         if (box.getVisibility() != vis && (foldAnim == null || !foldAnim.isRunning())) box.setVisibility(vis);
-        if (g == null) return;
+        if (g == null) {
+            title.setText("⚽  مباريات اليوم");
+            empty.setText(failed ? "تعذّر جلب المباريات، سأعيد المحاولة بعد قليل" : "جارٍ جلب مباريات اليوم…");
+            empty.setVisibility(View.VISIBLE);
+            scroll.setVisibility(View.GONE);
+            return;
+        }
+        empty.setText("لا توجد مباريات اليوم في هذه البطولات");
         int live = 0;
         for (Game x : g) if ("in".equals(x.state)) live++;
         title.setText("⚽  مباريات اليوم  ·  " + g.size() + (live > 0 ? "  ·  " + live + " مباشر" : ""));
