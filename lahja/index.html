@@ -1,0 +1,507 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>منين هاد اللهجة؟</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@500;700;800&display=swap">
+<style>
+/* Layout: a fixed 1080x1920 (9:16) stage scaled to fit the screen, built for screen-recording TikTok videos.
+   Deliberately single dark theme: a night sky over the Arab world, saffron as the one bold colour. */
+:root {
+  --night: #0d1430;      /* stage ground */
+  --night-2: #16204a;    /* raised panels */
+  --land: #1f2b5c;       /* other countries */
+  --edge: #2f3e7a;       /* borders, empty slots */
+  --ink: #f4f1ff;        /* main text */
+  --muted: #9aa3cf;      /* secondary text */
+  --saffron: #ffc23d;    /* the accent */
+  --easy: #4fd1a5;
+  --medium: #ffc23d;
+  --hard: #ff7a59;
+  --impossible: #b58cff;
+  --display: "Lalezar", "Tajawal", "Segoe UI", Tahoma, sans-serif;
+  --body: "Tajawal", "Segoe UI", Tahoma, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; margin: 0; }
+[hidden] { display: none !important; }
+body {
+  background: #070b1c; color: var(--ink); font-family: var(--body);
+  overflow: hidden; display: grid; place-items: center;
+}
+#fit { width: 100%; height: 100%; display: grid; place-items: center; overflow: hidden; }
+#stage {
+  width: 1080px; height: 1920px; flex: none; position: relative; overflow: hidden;
+  background:
+    radial-gradient(1200px 900px at 50% 46%, #1a2559 0%, transparent 70%),
+    var(--night);
+  direction: rtl; transform-origin: center center;
+}
+/* faint zellige star pattern, drawn once on a canvas */
+#pattern { position: absolute; inset: 0; opacity: .07; pointer-events: none; }
+
+/* ---------- header ---------- */
+.head { position: absolute; top: 70px; inset-inline: 0; text-align: center; }
+.kicker { font: 800 34px var(--body); color: var(--muted); letter-spacing: .02em; }
+.title {
+  font: 400 124px/1.05 var(--display); color: var(--ink); margin-top: 6px;
+  text-shadow: 0 6px 0 #0006;
+}
+.title b { color: var(--saffron); font-weight: 400; }
+
+/* ---------- voice note bubble ---------- */
+.bubble {
+  position: absolute; top: 330px; inset-inline: 64px;
+  background: var(--night-2); border: 3px solid var(--edge); border-radius: 44px 44px 44px 10px;
+  padding: 34px 40px 38px; box-shadow: 0 24px 60px #0008;
+  transition: transform .5s cubic-bezier(.2,1.4,.4,1), opacity .4s;
+}
+.bubble.out { transform: translateY(-30px) scale(.96); opacity: 0; }
+.wave-row { display: flex; align-items: center; gap: 26px; direction: ltr; }
+.ring { width: 112px; height: 112px; flex: none; position: relative; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring .track { stroke: var(--edge); }
+.ring .bar { stroke: var(--saffron); transition: stroke-dashoffset .95s linear; }
+.ring .face {
+  position: absolute; inset: 14px; border-radius: 50%; background: var(--saffron); color: var(--night);
+  display: grid; place-items: center; font: 400 60px var(--display);
+}
+.ring .face svg { width: 40px; height: 40px; transform: none; }
+.ring.count .face { animation: pop .95s ease-out infinite; }
+@keyframes pop { 0% { transform: scale(1.18); } 30% { transform: scale(1); } }
+#wave { flex: 1; height: 112px; display: block; }
+.time { font: 700 30px var(--body); color: var(--muted); font-variant-numeric: tabular-nums; min-width: 150px; text-align: left; direction: ltr; }
+.line {
+  margin-top: 26px; font: 800 54px/1.45 var(--body); text-align: center; text-wrap: balance; min-height: 157px;
+}
+.line .w { color: #ffffff55; transition: color .15s; }
+.line .w.said { color: var(--ink); }
+.line .w.now { color: var(--saffron); text-decoration: underline 6px; text-underline-offset: 16px; }
+
+/* ---------- map ---------- */
+.mapbox { position: absolute; top: 760px; inset-inline: 0; height: 700px; }
+#map { width: 100%; height: 100%; display: block; }
+#map .land { fill: var(--land); stroke: #0d1430; stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+#map .arab { fill: #283872; }
+#map .hit { fill: var(--saffron); stroke: #fff; stroke-width: 2.5; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 18px #ffc23dcc); opacity: 0; transition: opacity .5s; }
+#map .hit.on { opacity: 1; }
+.qmark {
+  position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none;
+  font: 400 300px var(--display); color: #ffffff12; transition: opacity .4s;
+}
+.answer {
+  position: absolute; top: 40px; inset-inline-start: 50%; translate: 50% 0;
+  display: flex; align-items: center; gap: 26px; padding: 18px 30px 18px 40px;
+  background: var(--ink); color: var(--night); border-radius: 30px; box-shadow: 0 20px 50px #0009;
+  transform: scale(.4) rotate(-6deg); opacity: 0; transition: transform .55s cubic-bezier(.2,1.6,.4,1), opacity .3s;
+}
+.answer.on { transform: scale(1) rotate(-2deg); opacity: 1; }
+.answer .flag { width: 132px; height: 99px; border-radius: 12px; overflow: hidden; flex: none; box-shadow: 0 0 0 4px #0002; }
+.answer .flag svg { width: 100%; height: 100%; display: block; }
+.answer .cname { font: 400 92px/1 var(--display); padding-top: 12px; }
+.meaning {
+  position: absolute; bottom: 10px; inset-inline: 80px; text-align: center;
+  font: 700 38px/1.4 var(--body); color: var(--muted); opacity: 0; transition: opacity .5s .3s;
+}
+.meaning b { color: var(--saffron); font-weight: 800; }
+.meaning.on { opacity: 1; }
+
+/* ---------- ladder ---------- */
+.ladder { position: absolute; bottom: 120px; inset-inline: 56px; }
+.qcount { display: flex; align-items: baseline; gap: 14px; justify-content: center; margin-bottom: 26px; }
+.qcount .n { font: 400 110px/1 var(--display); color: var(--saffron); font-variant-numeric: tabular-nums; }
+.qcount .of { font: 800 44px var(--body); color: var(--muted); }
+.qcount .tier { font: 800 36px var(--body); padding: 8px 22px; border-radius: 99px; margin-inline-start: 18px; color: var(--night); }
+.tiers { display: flex; gap: 14px; }
+.tiergroup { display: flex; flex-direction: column; gap: 10px; }
+.tiergroup .lbl { font: 800 28px var(--body); text-align: center; }
+.slots { display: flex; gap: 10px; }
+.slot {
+  width: 96px; height: 96px; border-radius: 22px; border: 3px dashed var(--edge);
+  display: grid; place-items: center; position: relative; overflow: hidden;
+  font: 400 44px var(--display); color: var(--edge);
+}
+.slot.cur { border-style: solid; border-color: var(--c); color: var(--c); animation: breathe 1.2s ease-in-out infinite; }
+@keyframes breathe { 50% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--c) 25%, transparent); } }
+.slot.done { border: 3px solid var(--c); padding: 0; }
+.slot.done svg { width: 140%; height: 140%; }
+
+/* ---------- interstitial banners ---------- */
+.banner {
+  position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
+  background: #0d1430e6; opacity: 0; pointer-events: none; transition: opacity .35s;
+}
+.banner.on { opacity: 1; }
+.banner .big { font: 400 150px/1.05 var(--display); color: var(--saffron); text-wrap: balance; padding: 0 60px; }
+.banner .small { font: 800 56px/1.4 var(--body); margin-top: 26px; padding: 0 80px; }
+.banner .emoji { font-size: 170px; line-height: 1.2; }
+.banner.on .emoji { animation: bounce 1s ease-in-out infinite; }
+@keyframes bounce { 50% { transform: translateY(-24px) scale(1.06); } }
+
+/* ---------- start screen & controls (not part of the recording) ---------- */
+.start {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px;
+  background: #0d1430f2; text-align: center; padding: 0 90px;
+}
+.start .title { font-size: 150px; }
+.start p { font: 700 40px/1.5 var(--body); color: var(--muted); }
+.btn {
+  font: 400 76px var(--display); color: var(--night); background: var(--saffron); border: 0; border-radius: 30px;
+  padding: 26px 110px 14px; cursor: pointer; box-shadow: 0 12px 0 #b07d10;
+}
+.btn:active { transform: translateY(6px); box-shadow: 0 6px 0 #b07d10; }
+.btn:focus-visible, .ctl button:focus-visible { outline: 6px solid var(--ink); outline-offset: 6px; }
+.keys { font: 700 30px/1.7 var(--body); color: var(--muted); }
+.keys kbd { font: 800 26px var(--body); background: var(--night-2); border: 2px solid var(--edge); border-radius: 10px; padding: 0 12px; color: var(--ink); }
+.ctl {
+  position: fixed; bottom: max(14px, env(safe-area-inset-bottom, 0px)); left: 50%; translate: -50% 0;
+  display: flex; gap: 8px; padding: 8px; border-radius: 16px; background: #000a; backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity .3s; direction: rtl; z-index: 5;
+}
+.ctl.show { opacity: 1; }
+.ctl button { font: 700 15px var(--body); color: #fff; background: #ffffff1a; border: 0; border-radius: 10px; padding: 9px 14px; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01s !important; }
+}
+</style>
+
+<div id="fit">
+  <div id="stage" aria-live="polite">
+    <canvas id="pattern" width="1080" height="1920"></canvas>
+
+    <header class="head">
+      <div class="kicker">لعبة اللهجات 🎧</div>
+      <div class="title">منين <b>هاد</b> اللهجة؟</div>
+    </header>
+
+    <section class="bubble out" id="bubble">
+      <div class="wave-row">
+        <div class="ring" id="ring">
+          <svg viewBox="0 0 112 112"><circle class="track" cx="56" cy="56" r="50" fill="none" stroke-width="8"/>
+            <circle class="bar" id="ringBar" cx="56" cy="56" r="50" fill="none" stroke-width="8" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="0"/></svg>
+          <div class="face" id="ringFace"></div>
+        </div>
+        <canvas id="wave" width="640" height="112"></canvas>
+        <div class="time" id="time">0:00 / 0:00</div>
+      </div>
+      <div class="line" id="line"></div>
+    </section>
+
+    <section class="mapbox">
+      <svg id="map" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+      <div class="qmark" id="qmark">؟</div>
+      <div class="answer" id="answer"><div class="flag" id="aflag"></div><div class="cname" id="aname"></div></div>
+      <div class="meaning" id="meaning"></div>
+    </section>
+
+    <section class="ladder">
+      <div class="qcount"><span class="n" id="qn">1</span><span class="of">/ 9 سؤال</span><span class="tier" id="tier">ساهل</span></div>
+      <div class="tiers" id="tiers"></div>
+    </section>
+
+    <div class="banner" id="banner"><div><div class="emoji" id="bEmoji"></div><div class="big" id="bBig"></div><div class="small" id="bSmall"></div></div></div>
+
+    <div class="start" id="start">
+      <div class="kicker">لعبة اللهجات 🎧</div>
+      <div class="title">منين <b>هاد</b> اللهجة؟</div>
+      <p>9 ديال الأصوات من 9 ديال البلدان. حضّر التسجيل ديال الشاشة وكليكي على «ابدا».</p>
+      <button class="btn" id="go">ابدا</button>
+      <div class="keys"><kbd>Space</kbd> وقف / كمّل &nbsp; <kbd>←</kbd> اللي من بعد &nbsp; <kbd>R</kbd> من الأول &nbsp; <kbd>F</kbd> الشاشة كاملة</div>
+    </div>
+  </div>
+</div>
+
+<div class="ctl" id="ctl">
+  <button id="cPause">⏯ وقف / كمّل</button>
+  <button id="cNext">⏭ اللي من بعد</button>
+  <button id="cRestart">↺ من الأول</button>
+  <button id="cFull">⛶ الشاشة كاملة</button>
+</div>
+
+<script src="questions.js"></script>
+<script src="audio/timings.js"></script>
+<script src="map.js"></script>
+<script src="flags.js"></script>
+<script>
+(() => {
+  const Q = window.LAHJA_QUESTIONS || [];
+  const TIM = window.LAHJA_TIMINGS || {};
+  const MAP = window.LAHJA_MAP, FLAGS = window.LAHJA_FLAGS || {};
+  const COUNTDOWN = 3;            // ثواني ديال التفكير
+  const HOLD_AFTER_REVEAL = 3200; // شحال يبقى الجواب باين (ms)
+  const TIERS = { easy: ["ساهل", "--easy"], medium: ["متوسط", "--medium"], hard: ["صعيب", "--hard"], impossible: ["مستحيل", "--impossible"] };
+  const $ = id => document.getElementById(id);
+  const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const svgNS = "http://www.w3.org/2000/svg";
+
+  /* ---------- fit 1080x1920 stage to the screen ---------- */
+  const stage = $("stage");
+  function fit() {
+    const s = Math.min(innerWidth / 1080, innerHeight / 1920);
+    stage.style.transform = `scale(${s})`;
+    stage.style.margin = `${(1920 * s - 1920) / 2}px ${(1080 * s - 1080) / 2}px`;
+  }
+  addEventListener("resize", fit); fit();
+
+  /* ---------- zellige-like star pattern ---------- */
+  (function pattern() {
+    const c = $("pattern").getContext("2d"); c.strokeStyle = "#ffc23d"; c.lineWidth = 2;
+    const step = 120;
+    for (let y = 0; y < 1920 + step; y += step) for (let x = (y / step) % 2 ? step / 2 : 0; x < 1080 + step; x += step) {
+      c.save(); c.translate(x, y);
+      for (let k = 0; k < 2; k++) { c.rotate(Math.PI / 4 * k); c.strokeRect(-26, -26, 52, 52); }
+      c.restore();
+    }
+  })();
+
+  /* ---------- map ---------- */
+  const map = $("map");
+  const BASE = [0, 262, 1000, 648];
+  let view = BASE.slice();
+  const setView = v => { view = v; map.setAttribute("viewBox", v.map(n => n.toFixed(1)).join(" ")); };
+  const g = document.createElementNS(svgNS, "g");
+  MAP.land.forEach(d => { const p = document.createElementNS(svgNS, "path"); p.setAttribute("d", d); p.setAttribute("class", "land"); g.appendChild(p); });
+  const hits = {};
+  Object.entries(MAP.shapes).forEach(([k, s]) => {
+    const p = document.createElementNS(svgNS, "path"); p.setAttribute("d", s.d); p.setAttribute("class", "land arab"); g.appendChild(p);
+  });
+  Object.entries(MAP.shapes).forEach(([k, s]) => {
+    const p = document.createElementNS(svgNS, "path"); p.setAttribute("d", s.d); p.setAttribute("class", "hit"); g.appendChild(p); hits[k] = p;
+  });
+  map.appendChild(g); setView(BASE);
+
+  let viewAnim = 0;
+  function zoomTo(target, ms = 1100) {
+    cancelAnimationFrame(viewAnim);
+    const from = view.slice(), t0 = performance.now();
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    const tick = now => {
+      const t = Math.min(1, (now - t0) / ms), e = ease(t);
+      setView(from.map((v, i) => v + (target[i] - v) * e));
+      if (t < 1) viewAnim = requestAnimationFrame(tick);
+    };
+    viewAnim = requestAnimationFrame(tick);
+  }
+  function boxFor(k) {
+    const [x0, y0, x1, y1] = MAP.shapes[k].box;
+    const aspect = 1080 / 700;
+    let w = Math.max(x1 - x0, 170) * 2.1, h = Math.max(y1 - y0, 110) * 1.9;
+    if (w / h < aspect) w = h * aspect; else h = w / aspect;
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2 + h * 0.06;
+    return [cx - w / 2, cy - h / 2, w, h];
+  }
+
+  /* ---------- ladder ---------- */
+  const slots = [];
+  (function ladder() {
+    const order = ["easy", "medium", "hard", "impossible"];
+    order.forEach(tier => {
+      const qs = Q.map((q, i) => [q, i]).filter(([q]) => q.level === tier);
+      if (!qs.length) return;
+      const grp = document.createElement("div"); grp.className = "tiergroup";
+      grp.style.setProperty("--c", css(TIERS[tier][1]));
+      grp.innerHTML = `<div class="lbl" style="color:var(--c)">${TIERS[tier][0]}</div>`;
+      const row = document.createElement("div"); row.className = "slots";
+      qs.forEach(([q, i]) => { const s = document.createElement("div"); s.className = "slot"; s.textContent = i + 1; row.appendChild(s); slots[i] = s; });
+      grp.appendChild(row); $("tiers").appendChild(grp);
+    });
+  })();
+
+  /* ---------- sound effects (WebAudio, no files) ---------- */
+  let ac;
+  function beep(freq, dur = .12, type = "sine", vol = .22, when = 0) {
+    if (!ac) return;
+    const t = ac.currentTime + when, o = ac.createOscillator(), gn = ac.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    gn.gain.setValueAtTime(vol, t); gn.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(gn).connect(ac.destination); o.start(t); o.stop(t + dur + .02);
+  }
+  const tick = () => beep(880, .09, "square", .08);
+  const reveal = () => { [523, 659, 784, 1047].forEach((f, i) => beep(f, .25, "triangle", .18, i * .07)); };
+  const whoosh = () => beep(220, .3, "sawtooth", .05);
+
+  /* ---------- waveform ---------- */
+  const wave = $("wave"), wc = wave.getContext("2d");
+  const BARS = 46;
+  let peaks = new Array(BARS).fill(.3);
+  const peakCache = {};
+  async function loadPeaks(q) {
+    if (peakCache[q.id]) return peakCache[q.id];
+    let p;
+    try {
+      const buf = await (await fetch(`audio/${q.id}.mp3`)).arrayBuffer();
+      const audio = await ac.decodeAudioData(buf);
+      const ch = audio.getChannelData(0), size = Math.floor(ch.length / BARS);
+      p = Array.from({ length: BARS }, (_, i) => { let m = 0; for (let j = i * size; j < (i + 1) * size; j += 32) m = Math.max(m, Math.abs(ch[j])); return m; });
+      const mx = Math.max(...p) || 1; p = p.map(v => .12 + .88 * Math.pow(v / mx, .8));
+    } catch (e) {
+      let seed = q.id.length * 97; p = Array.from({ length: BARS }, () => (seed = (seed * 9301 + 49297) % 233280, .2 + .8 * seed / 233280));
+    }
+    return (peakCache[q.id] = p);
+  }
+  function drawWave(frac) {
+    wc.clearRect(0, 0, wave.width, wave.height);
+    const bw = wave.width / BARS;
+    peaks.forEach((v, i) => {
+      const h = Math.max(10, v * wave.height * .9), x = i * bw + bw * .2;
+      wc.fillStyle = i / BARS <= frac ? css("--saffron") : "#ffffff40";
+      wc.beginPath(); wc.roundRect(x, (wave.height - h) / 2, bw * .6, h, 4); wc.fill();
+    });
+  }
+
+  /* ---------- karaoke line ---------- */
+  let words = [], wordTimes = [];
+  function setLine(q, dur) {
+    const tokens = q.text.split(/\s+/).filter(Boolean);
+    $("line").innerHTML = tokens.map(t => `<span class="w">${t}</span>`).join(" ");
+    words = [...$("line").querySelectorAll(".w")];
+    const t = TIM[q.id];
+    if (t && t.length === tokens.length && Math.abs(t[t.length - 1][1] - dur) < 1.5) wordTimes = t.map(w => w[0]);
+    else wordTimes = tokens.map((_, i) => i * dur / tokens.length);
+  }
+  function paintLine(time) {
+    words.forEach((w, i) => {
+      const said = time >= wordTimes[i];
+      const now = said && (i === words.length - 1 ? time < wordTimes[i] + .6 : time < wordTimes[i + 1]);
+      w.classList.toggle("said", said); w.classList.toggle("now", now);
+    });
+  }
+
+  /* ---------- ring ---------- */
+  const ringBar = $("ringBar"), ringFace = $("ringFace"), ring = $("ring");
+  const PLAY = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>`;
+  const PAUSE = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>`;
+  const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+  /* ---------- flow ---------- */
+  let idx = 0, paused = false, runId = 0, player = null;
+  const sleep = ms => new Promise(res => {
+    let left = ms, last = performance.now();
+    const step = () => { const now = performance.now(); if (!paused) left -= now - last; last = now; left <= 0 ? res() : requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+  const alive = id => id === runId;
+
+  function banner(emoji, big, small) {
+    $("bEmoji").textContent = emoji; $("bBig").textContent = big; $("bSmall").textContent = small;
+    $("banner").classList.add("on");
+  }
+  const hideBanner = () => $("banner").classList.remove("on");
+
+  function resetBoard() {
+    Object.values(hits).forEach(h => h.classList.remove("on"));
+    $("answer").classList.remove("on"); $("meaning").classList.remove("on");
+    $("qmark").style.opacity = 1;
+  }
+
+  async function playQuestion(i, id) {
+    const q = Q[i];
+    resetBoard(); zoomTo(BASE, 700);
+    slots.forEach((s, k) => s.classList.toggle("cur", k === i && !s.classList.contains("done")));
+    $("qn").textContent = i + 1;
+    const [tl, tv] = TIERS[q.level]; $("tier").textContent = tl; $("tier").style.background = css(tv);
+    $("bubble").classList.add("out"); whoosh();
+    await sleep(350); if (!alive(id)) return;
+
+    player = new Audio(`audio/${q.id}.mp3`);
+    await new Promise(r => { player.addEventListener("loadedmetadata", r, { once: true }); player.addEventListener("error", r, { once: true }); });
+    const dur = isFinite(player.duration) ? player.duration : 6;
+    peaks = await loadPeaks(q); setLine(q, dur); drawWave(0); paintLine(-1);
+    $("time").textContent = `0:00 / ${fmt(dur)}`;
+    ring.classList.remove("count"); ringFace.innerHTML = PAUSE; ringBar.style.transition = "none"; ringBar.style.strokeDashoffset = 0;
+    $("bubble").classList.remove("out");
+    await sleep(500); if (!alive(id)) return;
+
+    // play the voice note
+    await new Promise(res => {
+      const p = player;
+      let raf;
+      const loop = () => {
+        if (!alive(id)) { p.pause(); return res(); }
+        const t = p.currentTime; drawWave(t / dur); paintLine(t); $("time").textContent = `${fmt(t)} / ${fmt(dur)}`;
+        if (p.ended) { drawWave(1); paintLine(dur); return res(); }
+        raf = requestAnimationFrame(loop);
+      };
+      p.play().then(loop).catch(() => { res(); });
+    });
+    if (!alive(id)) return;
+    ringFace.innerHTML = PLAY;
+
+    // countdown
+    ring.classList.add("count");
+    for (let n = COUNTDOWN; n >= 1; n--) {
+      ringFace.textContent = n; tick();
+      ringBar.style.transition = "none"; ringBar.style.strokeDashoffset = 314.16 * (1 - n / COUNTDOWN);
+      void ringBar.getBoundingClientRect();
+      ringBar.style.transition = ""; ringBar.style.strokeDashoffset = 314.16 * (1 - (n - 1) / COUNTDOWN);
+      await sleep(1000); if (!alive(id)) return;
+    }
+    ring.classList.remove("count"); ringFace.innerHTML = PLAY;
+
+    // reveal
+    reveal();
+    $("qmark").style.opacity = 0;
+    zoomTo(boxFor(q.country));
+    hits[q.country].classList.add("on");
+    $("aflag").innerHTML = FLAGS[q.country] || ""; $("aname").textContent = q.name;
+    $("answer").classList.add("on");
+    $("meaning").innerHTML = q.level === "impossible" ? `<b>${q.meaning}</b>` : `بالمغربية: <b>${q.meaning}</b>`;
+    $("meaning").classList.add("on");
+    const s = slots[i]; s.classList.remove("cur"); s.classList.add("done"); s.innerHTML = FLAGS[q.country] || q.name;
+    await sleep(HOLD_AFTER_REVEAL);
+  }
+
+  async function run(from = 0) {
+    const id = ++runId; paused = false;
+    for (idx = from; idx < Q.length; idx++) {
+      if (idx === 3) { banner("❤️", "إلا جبتيهم كاملين صحاح", "دير لايك باش نعرفو شحال من واحد فاهم 😏"); await sleep(2600); hideBanner(); if (!alive(id)) return; }
+      if (idx === Q.length - 1) { banner("🔥", "السؤال الأخير… المستحيل", "تابعني وكتب فالتعليقات واش عرفتيه!"); await sleep(2800); hideBanner(); if (!alive(id)) return; }
+      await playQuestion(idx, id); if (!alive(id)) return;
+    }
+    $("bubble").classList.add("out");
+    zoomTo(BASE, 900);
+    banner("👇", "شحال جبتي من 9؟", "كتب النتيجة ديالك فالتعليقات… ونتوما، منين نتوما؟");
+  }
+
+  function restart() {
+    runId++; if (player) player.pause(); hideBanner(); resetBoard();
+    slots.forEach((s, i) => { s.className = "slot"; s.textContent = i + 1; });
+    run(0);
+  }
+  function next() {
+    if (player) player.pause(); hideBanner();
+    if (idx < Q.length - 1) run(idx + 1);
+  }
+  function togglePause() {
+    paused = !paused;
+    if (player && !player.ended) paused ? player.pause() : player.play().catch(() => {});
+  }
+  function full() { (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+
+  $("go").addEventListener("click", () => {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    ac.resume?.();
+    $("start").hidden = true; run(0);
+  });
+  $("cPause").onclick = togglePause; $("cNext").onclick = next; $("cRestart").onclick = restart; $("cFull").onclick = full;
+  addEventListener("keydown", e => {
+    if ($("start").hidden === false) return;
+    if (e.code === "Space") { e.preventDefault(); togglePause(); }
+    else if (e.key === "ArrowLeft" || e.key === "ArrowRight") next();
+    else if (e.key === "r" || e.key === "R") restart();
+    else if (e.key === "f" || e.key === "F") full();
+  });
+  // controls appear on mouse move / tap, then hide so they stay out of the recording
+  let hideT;
+  const showCtl = () => { if (!$("start").hidden) return; $("ctl").classList.add("show"); clearTimeout(hideT); hideT = setTimeout(() => $("ctl").classList.remove("show"), 2200); };
+  addEventListener("mousemove", showCtl); addEventListener("touchstart", showCtl, { passive: true });
+
+  // initial still frame (behind the start screen)
+  peaks = peaks.map((_, i) => .25 + .6 * Math.abs(Math.sin(i * .7)));
+  drawWave(0); ringFace.innerHTML = PLAY; $("bubble").classList.remove("out");
+  $("line").innerHTML = `<span class="w said">${Q[0] ? "اسمع مزيان… ومن بعد قول لينا منين هاد اللهجة" : ""}</span>`;
+  $("tier").textContent = TIERS[Q[0]?.level || "easy"][0]; $("tier").style.background = css(TIERS[Q[0]?.level || "easy"][1]);
+  slots[0]?.classList.add("cur");
+})();
+</script>
