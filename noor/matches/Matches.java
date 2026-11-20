@@ -397,7 +397,8 @@ final class Matches {
         bg.setCornerRadius(dp(a, 22));
         bg.setStroke(px(a, 1), 0x29FFFFFF);
         b.setBackground(bg);
-        b.setPadding(px(a, 12), px(a, 8), px(a, 12), px(a, 8));
+        b.setPadding(px(a, 8), px(a, 6), px(a, 8), px(a, 4));
+        b.setClipChildren(true);
 
         // The launcher lays out left to right (no supportsRtl): the title is put on the right by hand, and the
         // cards are added last-first with the row scrolled to its right end, so the first match is on the right.
@@ -405,8 +406,8 @@ final class Matches {
         title.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         title.setTextDirection(View.TEXT_DIRECTION_RTL);
         LinearLayout.LayoutParams tlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        tlp.rightMargin = px(a, 6);
-        tlp.bottomMargin = px(a, 6);
+        tlp.rightMargin = px(a, 12);
+        tlp.bottomMargin = px(a, 1);
         b.addView(title, tlp);
 
         empty = text(a, 15.5f, 0xCCFFFFFF, true);
@@ -415,12 +416,14 @@ final class Matches {
         empty.setPadding(0, px(a, 10), 0, px(a, 10));
         b.addView(empty, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
+        // The cards stay inside the band: the scroller clips them at its edges (faded there), and its padding leaves
+        // room for the focused card's slight lift, so nothing spills out of the frame or off the screen.
         scroll = new HorizontalScrollView(a);
         scroll.setHorizontalScrollBarEnabled(false);
         scroll.setFillViewport(true);
-        scroll.setClipChildren(false);
-        scroll.setClipToPadding(false);
-        scroll.setPadding(px(a, 4), px(a, 4), px(a, 4), px(a, 4));
+        scroll.setClipChildren(true);
+        scroll.setClipToPadding(true);
+        scroll.setPadding(px(a, 8), px(a, 5), px(a, 8), px(a, 5));
         scroll.setHorizontalFadingEdgeEnabled(true);
         scroll.setFadingEdgeLength(px(a, 24));
         row = new LinearLayout(a);
@@ -481,40 +484,41 @@ final class Matches {
     private static View card(Context c, Game g) {
         LinearLayout card = new LinearLayout(c);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(px(c, 12), px(c, 8), px(c, 12), px(c, 8));
+        card.setPadding(px(c, 12), px(c, 7), px(c, 12), px(c, 7));
         card.setFocusable(true);
         card.setClickable(true);
         StateListDrawable bg = new StateListDrawable();
         bg.addState(new int[]{android.R.attr.state_focused}, glass(c, 0xCC2B3F86, 0xBF162452, 0xE6FFFFFF, 2));
         bg.addState(new int[]{}, g.star ? glass(c, 0xB3302A4A, 0xA6151231, 0x99E8C987, 1.5f) : glass(c, 0xA61A2556, 0x990B1336, 0x33FFFFFF, 1));
         card.setBackground(bg);
-        card.setOnFocusChangeListener((v, has) -> v.animate().scaleX(has ? 1.05f : 1f).scaleY(has ? 1.05f : 1f)
+        card.setOnFocusChangeListener((v, has) -> v.animate().scaleX(has ? 1.04f : 1f).scaleY(has ? 1.04f : 1f)
                 .setDuration(180).setInterpolator(new DecelerateInterpolator()).start());
 
+        // Top line: the time or the status on the left, the competition on the right (one line instead of two keeps
+        // the band short enough for the apps under it on a 16:9 TV).
         LinearLayout lg = new LinearLayout(c);
         lg.setOrientation(LinearLayout.HORIZONTAL);
-        lg.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        lg.setGravity(Gravity.CENTER_VERTICAL);
+        TextView status = text(c, 15, 0xFFE8C987, true);
+        status.setTextDirection(View.TEXT_DIRECTION_RTL);
+        status.setFontFeatureSettings("tnum");
+        lg.addView(status, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         TextView league = text(c, 12.5f, g.star ? 0xFFE8C987 : 0xCCFFFFFF, true);
         league.setText((g.star ? "⭐ " : "") + TeamNames.league(g.league) + (g.stage == null ? "" : "  ·  " + g.stage));
         league.setTextDirection(View.TEXT_DIRECTION_RTL);
+        league.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         ImageView ll = new ImageView(c);
         LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(px(c, 16), px(c, 16));
         llp.leftMargin = px(c, 5);
-        lg.addView(league);
+        LinearLayout.LayoutParams lgp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+        lgp.leftMargin = px(c, 8);
+        lg.addView(league, lgp);
         lg.addView(ll, llp);
         logo(ll, g.leagueLogo, px(c, 28));
         card.addView(lg);
 
         View[] home = team(c, card, g.home, g.homeLogo, 6);
-        View[] away = team(c, card, g.away, g.awayLogo, 5);
-
-        TextView status = text(c, 14.5f, 0xFFE8C987, true);
-        status.setGravity(Gravity.CENTER);
-        status.setTextDirection(View.TEXT_DIRECTION_RTL);
-        status.setFontFeatureSettings("tnum");
-        LinearLayout.LayoutParams slp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        slp.topMargin = px(c, 7);
-        card.addView(status, slp);
+        View[] away = team(c, card, g.away, g.awayLogo, 4);
         cardViews.put(g.id, new View[]{home[0], away[0], status, card});
         return card;
     }
@@ -538,8 +542,8 @@ final class Matches {
         nlp.leftMargin = px(c, 6);
         nlp.rightMargin = px(c, 8);
         line.addView(n, nlp);
-        line.addView(badge, new LinearLayout.LayoutParams(px(c, 30), px(c, 30)));
-        logo(badge, logoUrl, px(c, 60));
+        line.addView(badge, new LinearLayout.LayoutParams(px(c, 28), px(c, 28)));
+        logo(badge, logoUrl, px(c, 56));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.topMargin = px(c, top);
         card.addView(line, lp);
@@ -561,7 +565,7 @@ final class Matches {
             s = "ملغاة";
             col = 0xB3FFFFFF;
         } else if (live) {
-            s = g.status.contains("HALFTIME") ? "● استراحة" : "● مباشر  " + g.clock;
+            s = g.status.contains("HALFTIME") ? "● استراحة" : "● " + g.clock;
             col = 0xFFFF6B6B;
         } else if (pre) {
             s = new SimpleDateFormat("HH:mm", Locale.US).format(g.start);
