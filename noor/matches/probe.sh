@@ -2,7 +2,7 @@
 # Prints the shape of ESPN's public soccer scoreboard for the matches row (run on GitHub Actions: the build needs it).
 set -u
 B=https://site.api.espn.com/apis/site/v2/sports/soccer
-get() { curl -sS -m 20 -A "Mozilla/5.0" "$1"; }
+get() { curl -sS --compressed -m 20 -A "Mozilla/5.0" "$1"; }
 echo "== esp.1 structure"; get "$B/esp.1/scoreboard" | jq -c '{n:(.events|length), leagues:[.leagues[0]|{name,abbreviation,logo:(.logos[0].href)}], ev:(.events[0]|{date,name,status:.status, comp:(.competitions[0]|{venue:.venue.fullName, competitors:[.competitors[]|{homeAway,score,team:(.team|{id,displayName,shortDisplayName,abbreviation,logo})}]})})}'
 for q in "lang=ar&region=sa" "lang=es&region=es"; do echo "== esp.1 $q"; get "$B/esp.1/scoreboard?$q" | jq -c '[.events[0:2][]|.competitions[0].competitors[].team.displayName]'; done
 for l in eng.1 uefa.champions fifa.friendly caf.nations fifa.worldq.caf fifa.world caf.nations_qual fifa.wcq.caf uefa.champions_qual; do

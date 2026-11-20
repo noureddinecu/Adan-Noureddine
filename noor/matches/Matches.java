@@ -444,12 +444,21 @@ final class Matches {
         c.setConnectTimeout(6000);
         c.setReadTimeout(8000);
         c.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android) TV");
-        try (InputStream in = c.getInputStream()) {
+        try (InputStream raw = c.getInputStream()) {
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             byte[] buf = new byte[8192];
             int n;
-            while ((n = in.read(buf)) > 0) b.write(buf, 0, n);
-            return b.toByteArray();
+            while ((n = raw.read(buf)) > 0) b.write(buf, 0, n);
+            byte[] d = b.toByteArray();
+            // ESPN can send a range of days gzipped even unasked: unpack it when it is.
+            if (d.length > 2 && (d[0] & 0xff) == 0x1f && (d[1] & 0xff) == 0x8b) {
+                try (InputStream in = new java.util.zip.GZIPInputStream(new java.io.ByteArrayInputStream(d))) {
+                    b.reset();
+                    while ((n = in.read(buf)) > 0) b.write(buf, 0, n);
+                    d = b.toByteArray();
+                }
+            }
+            return d;
         } finally {
             c.disconnect();
         }

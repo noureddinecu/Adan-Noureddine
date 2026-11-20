@@ -26,7 +26,7 @@ CLUBS = {
     "Valladolid": "بلد الوليد", "Almería": "ألميريا", "Almeria": "ألميريا", "Granada": "غرناطة", "Cádiz": "قادش",
     "Cadiz": "قادش", "Deportivo La Coruña": "ديبورتيفو لاكورونيا", "Deportivo La Coruna": "ديبورتيفو لاكورونيا",
     "Racing Santander": "راسينغ سانتاندير", "Sporting Gijón": "سبورتينغ خيخون", "Sporting Gijon": "سبورتينغ خيخون",
-    "Eibar": "إيبار", "Real Zaragoza": "ريال سرقسطة", "Málaga": "ملقة", "Malaga": "ملقة", "Tenerife": "تينيريفي",
+    "Eibar": "إيبار", "Deportivo": "ديبورتيفو لاكورونيا", "Real Zaragoza": "ريال سرقسطة", "Málaga": "ملقة", "Malaga": "ملقة", "Tenerife": "تينيريفي",
     # England
     "Arsenal": "أرسنال", "Aston Villa": "أستون فيلا", "AFC Bournemouth": "بورنموث", "Bournemouth": "بورنموث",
     "Brentford": "برينتفورد", "Brighton & Hove Albion": "برايتون", "Brighton and Hove Albion": "برايتون",
@@ -73,11 +73,11 @@ CLUBS = {
     "Ferencváros": "فيرينتسفاروش", "Ludogorets Razgrad": "لودوغوريتس", "Ludogorets": "لودوغوريتس",
     "Slovan Bratislava": "سلوفان براتيسلافا", "Levski Sofia": "ليفسكي صوفيا", "NK Celje": "سيلي",
     "Legia Warsaw": "ليغيا وارسو", "Lech Poznan": "ليخ بوزنان", "Qarabag FK": "قره باغ", "Qarabag": "قره باغ",
-    "Kairat Almaty": "كايرات ألماتي", "FC Kairat": "كايرات ألماتي", "Maccabi Tel-Aviv": "مكابي تل أبيب",
+    "Kairat Almaty": "كايرات ألماتي", "Sabah FK": "صباح باكو", "Sabah": "صباح باكو", "FC Kairat": "كايرات ألماتي", "Maccabi Tel-Aviv": "مكابي تل أبيب",
     # Nordic
     "Copenhagen": "كوبنهاغن", "FC Copenhagen": "كوبنهاغن", "FC Midtjylland": "ميتيلاند", "Midtjylland": "ميتيلاند",
     "Bodo/Glimt": "بودو غليمت", "Bodø/Glimt": "بودو غليمت", "Malmo FF": "مالمو", "Malmö FF": "مالمو",
-    "Molde": "مولده", "FC Nordsjaelland": "نوردشيلاند",
+    "Molde": "مولده", "Viking FK": "فايكنغ", "Viking": "فايكنغ", "FC Nordsjaelland": "نوردشيلاند",
 }
 
 NATIONS = {
