@@ -89,30 +89,53 @@ final class Matches {
 
     // ---------- data ----------
 
+    /** Competitions with a match today, from the last full fetch: the only ones asked again while a match is on. */
+    private static volatile java.util.Set<String> active = new java.util.HashSet<>();
+    private static volatile long fullAt;
+
     private static void fetch(Context c, int day) {
         fetching = true;
         new Thread(() -> {
-            List<Game> out = new ArrayList<>();
-            boolean anyOk = false;
-            Calendar today = Calendar.getInstance();
+            long now = System.currentTimeMillis();
+            List<Game> old = games;
+            // A full look (every competition) every 20 minutes or on a new day; in between, only today's competitions.
+            boolean full = old == null || day != fetchedDay || now - fullAt > 20 * 60_000L;
+            Calendar today = Calendar.getInstance(), before = Calendar.getInstance();
+            before.add(Calendar.DAY_OF_YEAR, -1);
             SimpleDateFormat ymd = new SimpleDateFormat("yyyyMMdd", Locale.US);
-            Calendar from = (Calendar) today.clone(), to = (Calendar) today.clone();
-            from.add(Calendar.DAY_OF_YEAR, -1);
-            to.add(Calendar.DAY_OF_YEAR, 1);
-            // ESPN's days are not the TV's: ask for the days around and keep what starts on the TV's today.
-            String range = ymd.format(from.getTime()) + "-" + ymd.format(to.getTime());
-            for (String l : CLUBS) anyOk |= read(l, range, false, today, out);
-            for (String l : NATIONS) anyOk |= read(l, range, true, today, out);
+            // ESPN's days are US days, not the TV's: ask for yesterday and today (one day per request, it takes no
+            // range) and keep what starts on the TV's today.
+            String[] days = {ymd.format(before.getTime()), ymd.format(today.getTime())};
+            List<Game> out = new ArrayList<>();
+            java.util.Set<String> asked = new java.util.HashSet<>(), ok = new java.util.HashSet<>();
+            for (String l : CLUBS) if (full || active.contains(l)) asked.add(l);
+            for (String l : NATIONS) if (full || active.contains(l)) asked.add(l);
+            for (String l : asked) {
+                boolean nation = java.util.Arrays.asList(NATIONS).contains(l);
+                boolean good = false;
+                java.util.Set<String> seen = new java.util.HashSet<>();
+                for (String d : days) good |= read(l, d, nation, today, out, seen);
+                if (good) ok.add(l);
+            }
+            if (!full && old != null) {
+                // Keep the other competitions' matches, and those of any competition that did not answer this time.
+                for (Game g : old) if (!asked.contains(g.league) || !ok.contains(g.league)) out.add(g);
+            }
             Collections.sort(out, (x, y) -> Long.compare(x.start, y.start));
-            long now = System.currentTimeMillis(), soon = Long.MAX_VALUE;
+            long soon = Long.MAX_VALUE;
+            java.util.Set<String> act = new java.util.HashSet<>();
             for (Game g : out) {
+                act.add(g.league);
                 if ("in".equals(g.state)) soon = now;
                 else if ("pre".equals(g.state)) soon = Math.min(soon, g.start - 15 * 60_000L);
             }
+            boolean anyOk = !ok.isEmpty();
             if (anyOk) {
                 games = out;
+                active = act;
                 fetchedDay = day;
                 fetchedAt = now;
+                if (full) fullAt = now;
             }
             // Live or starting within the quarter hour: every minute; otherwise every 20 minutes, sooner for a start.
             nextFetch = !anyOk ? now + 2 * 60_000L : soon <= now ? now + 60_000L : Math.min(now + 20 * 60_000L, soon);
@@ -121,9 +144,10 @@ final class Matches {
         }, "matches").start();
     }
 
-    private static boolean read(String league, String range, boolean moroccoOnly, Calendar today, List<Game> out) {
+    private static boolean read(String league, String date, boolean moroccoOnly, Calendar today, List<Game> out,
+                                java.util.Set<String> seen) {
         try {
-            JSONObject j = new JSONObject(get(API + league + "/scoreboard?dates=" + range + "&limit=200"));
+            JSONObject j = new JSONObject(get(API + league + "/scoreboard?dates=" + date + "&limit=200"));
             String leagueLogo = "";
             JSONArray ls = j.optJSONArray("leagues");
             if (ls != null && ls.length() > 0) {
@@ -148,6 +172,7 @@ final class Matches {
                 if (moroccoOnly && !MOROCCO.equals(ht.optString("id")) && !MOROCCO.equals(at.optString("id"))) continue;
                 Game g = new Game();
                 g.id = league + ":" + e.optString("id");
+                if (!seen.add(g.id)) continue; // the same match on both days asked
                 g.league = league;
                 g.leagueLogo = leagueLogo;
                 g.start = start;
